@@ -1,0 +1,10 @@
+//#define MANIFEST_RESOURCE_ID 1
+aamud11 ICON "mud11.ico"
+//action1 ICON "action.ico"
+//group1 ICON "group.ico"
+//root1 ICON "root.ico"
+//menu1 BITMAP "menu.bmp"
+#define wxUSE_NO_MANIFEST 1
+#include <wx/msw/wx.rc>
+
+
