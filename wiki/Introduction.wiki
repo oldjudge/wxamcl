@@ -1,0 +1,14 @@
+#summary Introduction
+
+= Introduction =
+
+Wxamcl is a mud client using wxWidgets 2.9.1.
+
+
+== Details ==
+
+At the moment there are alpha versions of the client for
+  
+* Windows
+  * Linux
+ 
