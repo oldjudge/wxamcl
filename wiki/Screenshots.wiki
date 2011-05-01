@@ -1,0 +1,3 @@
+#summary Screenshots of wxamcl
+
+http://code.google.com/p/wxamcl/source/browse/wiki/wxamcl_mapper_win7.PNG
