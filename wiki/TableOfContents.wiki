@@ -1,4 +1,4 @@
 #summary Sidebar
 
-[Introduction Introduction]
-[Screenshots Screenshots]
+  * [Introduction Introduction]
+  * [Screenshots Screenshots]
