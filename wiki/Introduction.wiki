@@ -9,6 +9,12 @@ Wxamcl is a mud client using wxWidgets 2.9.1.
 
 At the moment there are alpha versions of the client for
   
-  * Windows
-  * Linux
+  * Windows 7
+  * Linux (Ubuntu and Debian)
+  
+The client has all features you would expect from a mud client.
+Especially it is highly scriptable, using Lua 5.1.4 as (only) scripting language.
+Most of the data files the client uses are lua files and easy to edit.
+
+Scripting allows you to do a lot of things, so there is a script which introduces a mapper using lua and GMCP (via the inbuilt event system) in AardwolfMud.
  
