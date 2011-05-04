@@ -2341,7 +2341,7 @@ static bool colset = false;
 				if (*it==SE &&!ttsent)
 				{
 					//wxString s;
-					char c[12];
+					char c[13];
 					c[0]=(char)IAC;
 					c[1]=(char)SB;
 					c[2]=(char)TERMINAL_TYPE;
@@ -2351,9 +2351,10 @@ static bool colset = false;
 					c[6]='A';
 					c[7]='M';
 					c[8]='C';
-					c[9]=(char)IAC;
-					c[10]=(char)SE;
-					m_sock->Write(c, 11);
+					c[9]='L';
+					c[10]=(char)IAC;
+					c[11]=(char)SE;
+					m_sock->Write(c, 12);
 					ttsent = true;
 					m_parsestate = HAVE_TEXT;
 				}
@@ -2772,15 +2773,15 @@ static int x=1;
 					m_state=HAVE_TEXT;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
 					{
-					wxString ss;
-					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_pushstring(m_L->GetLuaState(), val.c_str());
-					lua_setfield(m_L->GetLuaState(), -2, "Data");
-					ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-						m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
-					m_parent->m_input->ParseCommandLine(&ss);
-					var.Empty();
-					val.Empty();
+						wxString ss;
+						lua_getglobal(m_L->GetLuaState(), "MSDP");
+						lua_pushstring(m_L->GetLuaState(), val.c_str());
+						lua_setfield(m_L->GetLuaState(), -2, "Data");
+						ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+							m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
+						m_parent->m_input->ParseCommandLine(&ss);
+						var.Empty();
+						val.Empty();
 					}
 				}
 				if (*it==MSDP_VAR)
@@ -2788,26 +2789,26 @@ static int x=1;
 					m_state=HAVE_VAR;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
 					{
-					wxString ss;
-					if (x==1)
-					{
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
-						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_setfield(m_L->GetLuaState(), -2, "Data");
-					}
-					else
-					{
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
-						lua_getfield(m_L->GetLuaState(), -1, "Data");
-						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawseti(m_L->GetLuaState(), -2, x++);
-					}
-					ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-						m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
-					m_parent->m_input->ParseCommandLine(&ss);
-					var.Empty();
-					val.Empty();
-					x=1;
+						wxString ss;
+						if (x==1)
+						{
+							lua_getglobal(m_L->GetLuaState(), "MSDP");
+							lua_pushstring(m_L->GetLuaState(), val.c_str());
+							lua_setfield(m_L->GetLuaState(), -2, "Data");
+						}
+						else
+						{
+							lua_getglobal(m_L->GetLuaState(), "MSDP");
+							lua_getfield(m_L->GetLuaState(), -1, "Data");
+							lua_pushstring(m_L->GetLuaState(), val.c_str());
+							lua_rawseti(m_L->GetLuaState(), -2, x++);
+						}
+						ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+							m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
+						m_parent->m_input->ParseCommandLine(&ss);
+						var.Empty();
+						val.Empty();
+						x=1;
 					}
 				}
 				if (*it==MSDP_VAL)//array
@@ -2845,7 +2846,7 @@ static int x=1;
 					m_state = HAVE_OPENVAR;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
 					lua_newtable(m_L->GetLuaState());
-					lua_setfield(m_L->GetLuaState(), -2, "Data1");
+					lua_setfield(m_L->GetLuaState(), -2, "Data");
 					//*** need to remember var as name for table
 					var.Empty();
 					break;
@@ -2866,7 +2867,7 @@ static int x=1;
 				{
 					m_state=HAVE_OPENVAR;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_getfield(m_L->GetLuaState(), -1, "Data1");
+					lua_getfield(m_L->GetLuaState(), -1, "Data");
 					lua_pushstring(m_L->GetLuaState(), var.c_str());
 					lua_pushstring(m_L->GetLuaState(), val.c_str());
 					lua_rawset(m_L->GetLuaState(), -3);
@@ -2878,11 +2879,17 @@ static int x=1;
 				{
 					m_state = HAVE_CLOSE;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_getfield(m_L->GetLuaState(), -1, "Data1");
+					lua_getfield(m_L->GetLuaState(), -1, "Data");
 					lua_pushstring(m_L->GetLuaState(), val.c_str());
 					lua_setfield(m_L->GetLuaState(), -2, var.c_str());
-					var.Empty();
-					val.Empty();
+					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
+					{
+						wxString ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+							m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
+						m_parent->m_input->ParseCommandLine(&ss);
+						var.Empty();
+						val.Empty();
+					}
 				}
 				else
 					val.Append(*it);
@@ -2906,11 +2913,14 @@ static int x=1;
 			lua_pushstring(m_L->GetLuaState(), val.c_str());
 			lua_rawseti(m_L->GetLuaState(), -2, x++);
 		}
-		wxString ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-			m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
-		m_parent->m_input->ParseCommandLine(&ss);
-		var.Empty();
-		val.Empty();
+		if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
+		{
+			wxString ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+				m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
+			m_parent->m_input->ParseCommandLine(&ss);
+			var.Empty();
+			val.Empty();
+		}
 		x=1;
 	}
 	

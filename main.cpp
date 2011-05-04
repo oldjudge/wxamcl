@@ -1235,11 +1235,12 @@ void MudMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void MudMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxAboutDialogInfo info;
-	info.AddDeveloper("A. Sachs");
+	info.AddDeveloper("oldjudge64@gmail.com");
 	info.SetVersion(_("0.0.1"));
 	info.SetName(_("wxAMC"));
 	info.SetDescription(_("Mud client using wxWidgets!"));
-	info.SetWebSite("members.aon.at/asachs");
+	info.SetWebSite("code.google.com/p/wxamcl");
+	
 	wxAboutBox(info);
 	/*wxMessageBox(wxString::Format(
 					wxTRANSLATE("Willkommen zu wxAMC!\n")
