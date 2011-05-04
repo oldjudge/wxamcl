@@ -1,8 +1,7 @@
-#summary Introduction
 
 = Introduction =
 
-Wxamcl is a mud client using wxWidgets 2.9.1.
+wxAmcl is a mud client using wxWidgets 2.9.1.
 
 
 == Details ==
@@ -14,8 +13,8 @@ At the moment there are alpha versions of the client for
   
 The client has all features you would expect from a mud client.
 Especially it is highly scriptable, using Lua 5.1.4 as (only) scripting language.
-Most of the data files the client uses are lua files and easy to edit.
+Most of the data files the client uses are lua files and therefore easy to edit.
 
-Scripting allows you to do a lot of things, so there is a script which introduces a mapper using lua and GMCP (via the inbuilt event system) for 
-[http://aardwolf.com Aardwolf Mud]
+Scripting allows you to do a lot of things, for example scripting a mapper using lua and GMCP (via the inbuilt event system) for [http://aardwolf.com Aardwolf Mud].
+The event system supports also MSDP protocol, OnConnect, OnDisconnect, OnPacketReceived events.
  
