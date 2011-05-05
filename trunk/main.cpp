@@ -129,7 +129,7 @@ bool MudClientApp::OnInit()
 	//wxXmlResource::Get()->Load(wxT("noname.xrc"));
 
     // create the main application window
-    MudMainFrame *frame = new MudMainFrame("wxAMC");
+    MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
 	
     //Output window
@@ -195,7 +195,7 @@ bool MudClientApp::OnInit()
 		else
 			frame->m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_CROSS_MARK, wxART_BUTTON));
 	frame->LoadHosts();
-	frame->m_child->Msg(_("Welcome to wxAmc!"));
+	frame->m_child->Msg(_("Welcome to wxAmcl!"));
 	//frame->m_child->Msg(_("Cross-platform mudclient using wxWidgets!"));
 	frame->m_child->Msg(wxString::Format(_("Cross platform mudclient using %s on %s"), wxVERSION_STRING, wxGetOsDescription().c_str()));
 	frame->luaBuildtrigger();
@@ -454,7 +454,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
     CreateStatusBar(3);
-    SetStatusText(_("Welcome to wxAMC!"));
+    SetStatusText(_("Welcome to wxAmcl!"));
     Center();
 #endif // wxUSE_STATUSBAR
 	/*wxToolBar* wxTB = CreateToolBar();
@@ -912,7 +912,7 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 		wxArrayString as;
 		as = wxSplit(ss, '\n');
 		m_gopt->GetGMCPModules()->clear();
-		for (int i=0;i<as.GetCount();i++)
+		for (size_t i=0;i<as.GetCount();i++)
 			if (!as.Item(i).IsEmpty())
 				m_gopt->GetGMCPModules()->push_back(as.Item(i));
 		//m_child->AdjustScrollPage();
@@ -1063,7 +1063,7 @@ wxString win = wxGetTextFromUser(_("Name of the window:"), _("Create new window"
 void MudMainFrame::OnCreateNb(wxCommandEvent& event)
 {
 wxAuiNotebook* mw;
-int i;
+size_t i;
 wxString win = wxGetTextFromUser(_("Name of the window:"), _("Create new window"));
 	if(win==wxEmptyString)
 		return;
@@ -1237,7 +1237,7 @@ void MudMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	wxAboutDialogInfo info;
 	info.AddDeveloper("oldjudge64@gmail.com");
 	info.SetVersion(_("0.0.1"));
-	info.SetName(_("wxAMC"));
+	info.SetName(_("wxAmcl"));
 	info.SetDescription(_("Mud client using wxWidgets!"));
 	info.SetWebSite("code.google.com/p/wxamcl");
 	
@@ -1718,7 +1718,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	wxFile* file = new wxFile("settings.lua", wxFile::write);
 	if (!file->IsOpened())
 		return false;
-	file->Write("\n\t-- global settings for wxAMC\n\n\tglobal_options = {\n\t\t");
+	file->Write("\n\t-- global settings for wxAmcl\n\n\tglobal_options = {\n\t\t");
 	wxString x="[\"lines\"] =";
 	x<<m_child->GetMaxLines()<<", \n";
 	file->Write(x.c_str());
@@ -1809,7 +1809,7 @@ li_it itl;
 	wxFile* file = new wxFile(s, wxFile::write);
 	if (!file->IsOpened())
 		return false;
-	file->Write(wxT("\n\t-- profile file for wxAMC\n\n\tamc_actions = {\n"));
+	file->Write(wxT("\n\t-- profile file for wxAmcl\n\n\tamc_actions = {\n"));
 	for (it=GetTrigger()->begin();it!=GetTrigger()->end();it++)
 	{
 	    file->Write(wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
@@ -1903,9 +1903,9 @@ li_it itl;
 		}
 		file->Write(wxT("}, }, \n"));
 	}
-	file->Write(wxT("\t}"));
+	file->Write("\t}");
 	
-	file->Write(wxT("\n\n\tamc_prompt = {\n"));
+	file->Write("\n\n\tamc_prompt = {\n");
 	ss<<wxT("\t\t[\"lockprompt\"] = ")<<(m_child->LockPrompt() ? wxT("true"):wxT("false")) << wxT(" , \n");
 	file->Write(ss.c_str());
 	ss.clear();
@@ -1916,7 +1916,7 @@ li_it itl;
 	file->Write(ss.c_str());
 	file->Write("\t}");
 
-	file->Write(wxT("\n\n\tamc_panes = {\n"));
+	file->Write("\n\n\tamc_panes = {\n");
 	s_it sit;
 	//if (!m_panes.empty())
 	if (!GetPanes()->empty())
@@ -1933,17 +1933,17 @@ li_it itl;
 			file->Write(wxString::Format("[\"timestamps\"] = %s},\n", mw->UseTimeStamps() ? "true" : "false"));
 		}
 	}
-	file->Write(wxT("\t}"));
-	file->Write(wxT("\n\n\tamc_nbs = {\n"));
+	file->Write("\t}");
+	file->Write("\n\n\tamc_nbs = {\n");
 	if (!GetNbs()->empty())
 	{
 		for (sit=GetNbs()->begin();sit!=GetNbs()->end();sit++)
 		{
-			file->Write(wxString::Format(wxT("\t\t[[%s]],\n"), sit->c_str()));
+			file->Write(wxString::Format("\t\t[[%s]],\n", sit->c_str()));
 		}
 	}
-	file->Write(wxT("\t}"));
-	file->Write(wxT("\n\n\tamc_nbpanes = {\n"));
+	file->Write("\t}");
+	file->Write("\n\n\tamc_nbpanes = {\n");
 	vector<vector<wxString> >::iterator vit;
 	if (!GetNbPanes()->empty())
 	{
@@ -2081,7 +2081,7 @@ li_it itl;
 	file->Write("\t}");
 
 	file->Write("\n\n\tamc_gmcpmodules = {\n");
-	for (int i=0;i<m_gopt->GetGMCPModules()->size();i++)
+	for (size_t i=0;i<m_gopt->GetGMCPModules()->size();i++)
 	{
 		if (!m_gopt->GetGMCPModules()->at(i).empty())
 		{
@@ -2946,7 +2946,7 @@ host_it it;
 	wxFile *file = new wxFile(wxT("hosts.lua"), wxFile::write);
     if (!file->IsOpened())
 		return false;
-	file->Write(wxT("\n\t-- hosts file for wxAMC\n\n\tamc_hosts = {\n"));
+	file->Write(wxT("\n\t-- hosts file for wxAmcl\n\n\tamc_hosts = {\n"));
 	for (it=GetHosts()->begin(); it!=GetHosts()->end();it++)
 	{
 		file->Write(wxString::Format("\t\t{[\"char\"] = [[%s]], ", it->GetCharName().c_str()));
@@ -3744,7 +3744,7 @@ int sw = m_parent->GetGlobalOptions()->GetSWDelay();
 
 void InputTextCtrl::OnSWDelay(wxTimerEvent& event)
 {
-static int i=0;
+static size_t i=0;
 wxString send;
 
 	send = m_swsend.at(i);
