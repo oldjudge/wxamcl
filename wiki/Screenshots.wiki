@@ -1,3 +1,4 @@
 #summary Screenshots of wxamcl
+#labels Featured
 
 https://wxamcl.googlecode.com/svn/wiki/wxamcl_mapper_win7.PNG
