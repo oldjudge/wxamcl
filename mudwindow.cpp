@@ -618,7 +618,7 @@ void MudWindow::WriteHtmlHeader(wxFile *f)
 {
 wxString s;
 	
-	s<<"<html>\r\n<head>\r\n<title>wxAmc Log-File</title>\r\n<meta name=\"author\" content=\"Mag. Andreas Sachs\">\r\n";
+	s<<"<html>\r\n<head>\r\n<title>wxAmcl Log-File</title>\r\n<meta name=\"author\" content=\"Mag. Andreas Sachs\">\r\n";
 	f->Write(s);
 	s.Clear();
 	s<<"<style type=\"text/css\">";
@@ -3354,7 +3354,7 @@ size_t len;
 				{
 					if (!sub.Cmp("<VERSION>"))
 					{
-						wxString ss = "\x1b[1z<VERSION MXP=\"0.5\" CLIENT=\"wxAmc\" VERSION=\"0.1\">\n";
+						wxString ss = "\x1b[1z<VERSION MXP=\"0.5\" CLIENT=\"wxAmcl\" VERSION=\"0.1\">\n";
 						m_sock->Write(ss.To8BitData(), ss.length());
 						style[index].SetText("");
 					}
@@ -5762,17 +5762,17 @@ wxUint32 uiBytesRead;
 			m_parent->RequestUserAttention();
 		if (m_atcp)
 		{
-			char test[] = {"\xff\xfa\xc8hello wxamc 1.0.0\nroom_brief 1\nchar_vitals 1\n\xff\xf0"};
+			char test[] = {"\xff\xfa\xc8hello wxamcl 1.0.0\nroom_brief 1\nchar_vitals 1\n\xff\xf0"};
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
-			m_sock->Write(test, (wxUint32)52);
+			m_sock->Write(test, (wxUint32)53);
 			//Write(s);
 			m_atcp = false;
 		}
 		if (m_atcp2)
 		{
-			char test[] = {"\x00ff\x00fa\xc9\x43ore.Hello {\"Client\": \"wxAmc\", \"Version\": \"alpha\"}\xff\xf0"};
+			char test[] = {"\x00ff\x00fa\xc9\x43ore.Hello {\"Client\": \"wxAmcl\", \"Version\": \"alpha\"}\xff\xf0"};
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);

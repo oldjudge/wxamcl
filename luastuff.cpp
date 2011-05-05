@@ -1253,6 +1253,74 @@ int luafunc_destroywindow(lua_State *L)
 	}
 	frame->m_mgr.GetPane(s).Hide();
 	frame->m_mgr.DetachPane(mw);
+	frame->m_mgr.Update();
+	mw->Destroy();
+	return 0;
+}
+
+int luafunc_destroyamcwindow(lua_State *L)
+{
+	const char* name = luaL_checkstring(L,1);
+	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	amcWindow* mw = (amcWindow*)amcWindow::FindWindowByName(name, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	s_it sit;
+	wxString s(name);
+	//if (!m_panes.empty())
+	if (!frame->GetAmcWindows()->empty())
+	{
+		for (sit=frame->GetAmcWindows()->begin();sit!=frame->GetAmcWindows()->end();sit++)
+		{
+			if (!s.compare(sit->c_str()))
+			{
+				frame->GetAmcWindows()->erase(sit);
+				break;
+			}
+		}
+	}
+	frame->m_mgr.GetPane(s).Hide();
+	frame->m_mgr.DetachPane(mw);
+	frame->m_mgr.Update();
+	mw->Destroy();
+	return 0;
+}
+
+int luafunc_destroynb(lua_State *L)
+{
+	const char* name = luaL_checkstring(L,1);
+	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxAuiNotebook* mw = (wxAuiNotebook*)wxAuiNotebook::FindWindowByName(name, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	s_it sit;
+	wxString s(name);
+	size_t i=0;
+	//if (!m_panes.empty())
+	if (!frame->GetNbs()->empty())
+	{
+		for (sit=frame->GetNbs()->begin();sit!=frame->GetNbs()->end();sit++,i++)
+		{
+			if (!s.compare(sit->c_str()))
+			{
+				frame->GetNbs()->erase(sit);
+				break;
+			}
+		}
+	}
+	vector<vector<wxString> >::iterator ssit;
+	ssit = frame->GetNbPanes()->begin()+i;
+	frame->GetNbPanes()->erase(ssit);
+	//frame->GetNbPanes()->at(i).clear();
+	frame->m_mgr.GetPane(s).Hide();
+	frame->m_mgr.DetachPane(mw);
+	frame->m_mgr.Update();
 	mw->Destroy();
 	return 0;
 }
