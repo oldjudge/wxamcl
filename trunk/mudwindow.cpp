@@ -439,7 +439,7 @@ void MudWindow::Write(wxString command)
 			
 			//if (ss.empty())
 				//ss= wxString::From8BitData(command);
-			m_sock->Write(f, wxStrlen(f));
+			m_sock->Write(f.c_str(), wxStrlen(f));
 		}
 	
 	}	
@@ -2488,10 +2488,10 @@ static bool colset = false;
 					luaL_dostring(m_L->GetLuaState(), code.c_str());
 					
 					lua_getglobal(m_L->GetLuaState(), "GMCP");
-					lua_getglobal(m_L->GetLuaState(), v);
+					lua_getglobal(m_L->GetLuaState(), v.c_str());
 					if (lua_type(m_L->GetLuaState(),-2)==LUA_TTABLE)
 					{
-						lua_setfield(m_L->GetLuaState(), -2, v);
+						lua_setfield(m_L->GetLuaState(), -2, v.c_str());
 					}
 					//lua_getfield(m_L->GetLuaState(), -1, "RoomNum");
 					//lua_pushstring(m_L->GetLuaState());

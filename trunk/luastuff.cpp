@@ -1008,13 +1008,13 @@ int luafunc_getline(lua_State *L)
 		//lua_settop(L,0);
 		lua_newtable(L);
 		
-		lua_pushstring(L, it->GetText());
+		lua_pushstring(L, it->GetText().c_str());
 		lua_setfield(L, -2, "text");
 		lua_pushnumber(L, it->GetLen());
 		lua_setfield(L, -2, "length");
-		lua_pushstring(L, it->GetFCol().GetAsString(wxC2S_HTML_SYNTAX));
+		lua_pushstring(L, it->GetFCol().GetAsString(wxC2S_HTML_SYNTAX).c_str());
 		lua_setfield(L, -2, "fore");
-		lua_pushstring(L, it->GetBCol().GetAsString(wxC2S_HTML_SYNTAX));
+		lua_pushstring(L, it->GetBCol().GetAsString(wxC2S_HTML_SYNTAX).c_str());
 		lua_setfield(L, -2, "back");
 		lua_rawseti(L, -2, x);
 	}
@@ -4339,7 +4339,7 @@ int luafunc_resultdb(lua_State *L)
 	char** result;
 	sql = lua_tostring(L,2);
 	wxString s(sql);
-	int rc = sqlite3_get_table(db, s/*.mb_str()*/, &result, &rows, &columns, &error);
+	int rc = sqlite3_get_table(db, s.mb_str(), &result, &rows, &columns, &error);
 	if (rc!=SQLITE_OK )//&& error)
 		{
 		lua_pushnil(L);
