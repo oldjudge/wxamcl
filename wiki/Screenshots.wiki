@@ -2,3 +2,7 @@
 #labels Featured
 
 https://wxamcl.googlecode.com/svn/wiki/wxamcl_mapper_win7.PNG
+
+Running in Debian squeeze
+
+https://wxamcl.googlecode.com/svn/wiki/wxamcl_debian.png
