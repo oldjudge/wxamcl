@@ -2737,7 +2737,7 @@ void MudWindow::ParseMSDP(wxString s)
 wxString::iterator it;
 int m_state = HAVE_TEXT;
 int pos=0;
-wxString var, val;
+wxString var, val, arrvar;
 static int x=1;
 	for(it=s.begin();it!=s.end();it++, pos++)
 	{
@@ -2757,6 +2757,7 @@ static int x=1;
 				if (*it==MSDP_VAL)
 				{
 					m_state=HAVE_VAL;
+					arrvar = var;
 					//var.Empty();
 				}
 				else
@@ -2847,7 +2848,7 @@ static int x=1;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
 					lua_newtable(m_L->GetLuaState());
 					lua_setfield(m_L->GetLuaState(), -2, "Data");
-					//*** need to remember var as name for table
+					arrvar=var;
 					var.Empty();
 					break;
 				}
@@ -2868,11 +2869,48 @@ static int x=1;
 					m_state=HAVE_OPENVAR;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
 					lua_getfield(m_L->GetLuaState(), -1, "Data");
-					lua_pushstring(m_L->GetLuaState(), var.c_str());
-					lua_pushstring(m_L->GetLuaState(), val.c_str());
-					lua_rawset(m_L->GetLuaState(), -3);
-					//lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+					if (x==1)
+					{
+						lua_pushstring(m_L->GetLuaState(), var.c_str());
+						lua_pushstring(m_L->GetLuaState(), val.c_str());
+						lua_rawset(m_L->GetLuaState(), -3);
+					}
+					else
+					{
+						wxString chunk;
+						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
+						x=1;
+					}
 					var.Empty();
+					val.Empty();
+				}
+				else if (*it==MSDP_VAL)
+				{
+					lua_getglobal(m_L->GetLuaState(), "MSDP");
+					lua_getfield(m_L->GetLuaState(), -1, "Data");
+					if (x==1)
+					{
+						lua_newtable(m_L->GetLuaState());
+						lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+						/*lua_getglobal(m_L->GetLuaState(), "MSDP");
+						lua_getfield(m_L->GetLuaState(), -1, "Data");
+						lua_getfield(m_L->GetLuaState(), -2, var.mb_str());
+						lua_pushnumber(m_L->GetLuaState(), 1);
+						lua_pushstring(m_L->GetLuaState(), val.c_str());
+						lua_rawset(m_L->GetLuaState(), -3);*/
+										
+						wxString chunk;
+						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
+						//arrvar=var;
+					}
+					else
+					{
+						wxString chunk;
+						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
+					}
 					val.Empty();
 				}
 				else if (*it==MSDP_CLOSE)
@@ -2880,21 +2918,38 @@ static int x=1;
 					m_state = HAVE_CLOSE;
 					lua_getglobal(m_L->GetLuaState(), "MSDP");
 					lua_getfield(m_L->GetLuaState(), -1, "Data");
-					lua_pushstring(m_L->GetLuaState(), val.c_str());
-					lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+					if (x==1)
+					{
+						lua_pushstring(m_L->GetLuaState(), val.c_str());
+						lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+					}
+					else
+					{
+						wxString chunk;
+						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
+					}
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
 					{
 						wxString ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-							m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
+							m_parent->GetGlobalOptions()->GetEventFile(), arrvar.c_str());
 						m_parent->m_input->ParseCommandLine(&ss);
 						var.Empty();
 						val.Empty();
+						arrvar.Empty();
+						x=1;
 					}
 				}
 				else
 					val.Append(*it);
 				break;
 			case HAVE_CLOSE:
+				if (*it==MSDP_VAR)
+				{
+					m_state = HAVE_VAR;
+				}
+				else
+					var.Append(*it);
 				break;
 		}
 	}
@@ -3221,7 +3276,7 @@ wxStringTokenizer tkz;
 		}
 		//if (m_curline-1>linenr)
 		//	CheckTrigger(linenr);
-		if (linenr>=m_curline)
+		if (linenr>=(int)m_curline)
 			linenr--;
 		if (m_vmudlines.at(linenr).IsFull())
 			m_vmudlines.at(linenr).SetTriggered(true);
@@ -3406,7 +3461,7 @@ size_t len;
 
 			}
 			pos = stcpy = ParseTelnet(sLine, pos);
-			if (sLine->GetChar(0)==IAC && sLine->GetChar(sLine->length()-2)==SE && pos==sLine->length()-2)
+			if (sLine->GetChar(0)==IAC && sLine->GetChar(sLine->length()-2)==SE && pos==(int)sLine->length()-2)
 			{
 				m_curline++;			
 				return;
@@ -3459,7 +3514,7 @@ size_t len;
 	}
 	//if (sLine->GetChar(stcpy)==EOS)
 	//	stcpy--;
-	if (pos!=stcpy)
+	if (pos!=(int)stcpy)
 	{
 	//AnsiLineElement *style2 = new AnsiLineElement();
 		
@@ -4243,7 +4298,7 @@ RegExp num("([\\w\\.]+)\\s([\\d\\w,\\(\\)\\s:\\/\\-']+)");
 						ss=GetClientSize();
 						int s_lines = ss.GetHeight()/dc.GetCharHeight();
 						int s_chars = ss.GetWidth()/dc.GetCharWidth();
-						int x = HIBYTE(s_chars);
+						//int x = HIBYTE(s_chars);
 						char c[10];
 						c[0]=(char)IAC;
 						c[1]=(char)SB;
@@ -4488,7 +4543,7 @@ RegExp num("([\\w\\.]+)\\s([\\d\\w,\\(\\)\\s:\\/\\-']+)");
 			lua_State *L = aL->GetLuaState();
 			lua_settop(L,0);
 			lua_getglobal(L, "_amcATCP");
-			int len = lua_objlen(L,-2);
+			//int len = lua_objlen(L,-2);
 			if (num.Match(m_atcpstring))
 			{
 				lua_pushstring(L, num.GetMatch(1).mb_str());
@@ -4508,12 +4563,12 @@ size_t MudWindow::ParseMSP(wxString *sLine, size_t curpos)
 	//MSP-Defaults
 wxString soundname, msp;
 wxString buffer;
-int iVolume = 100;
+/*int iVolume = 100;
 int iRepeat = 1;
 int Priority = 50;
-int Continue = 1;
+int Continue = 1;*/
 size_t pos = curpos;
-int spos=0, anotherpos=0;
+//int spos=0, anotherpos=0;
 wxString sL = *sLine;
 
 	curpos++;
@@ -5926,7 +5981,7 @@ wxString MudWindow::FindPrevAnsi(wxString ansi, int idx)
 {
 	wxString sub = ansi.substr(0, idx);
 	int x = sub.rfind("\x1b[");
-	if (x==string::npos)
+	if (x==(int)string::npos)
 		return "\x1b[0m";
 	else
 	{

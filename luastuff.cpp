@@ -7,7 +7,7 @@ amcLua::amcLua()
 	luaopen_amc(m_L);
 	wxSetWorkingDirectory(wxGetApp().GetFrame()->GetGlobalOptions()->GetLuaDir());
 	luaL_dofile(m_L, "json.lua");
-	
+	luaL_dofile(m_L, "printt.lua");
 }
 
 amcLua::~amcLua()
