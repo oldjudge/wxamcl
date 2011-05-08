@@ -29,11 +29,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	wxGridBagSizer* gbSizer3;
 	gbSizer3 = new wxGridBagSizer( 0, 0 );
-	gbSizer3->AddGrowableCol( 0 );
-	gbSizer3->AddGrowableCol( 1 );
-	gbSizer3->AddGrowableCol( 2 );
-	gbSizer3->AddGrowableRow( 0 );
-	gbSizer3->AddGrowableRow( 1 );
+	
 	gbSizer3->SetFlexibleDirection( wxBOTH );
 	gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -247,7 +243,11 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer13->Add( m_eventfile, 0, wxALL|wxEXPAND, 5 );
 	
 	gbSizer3->Add( sbSizer13, wxGBPosition( 1, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
-	
+	gbSizer3->AddGrowableCol( 0 );
+	gbSizer3->AddGrowableCol( 1 );
+	gbSizer3->AddGrowableCol( 2 );
+	gbSizer3->AddGrowableRow( 0 );
+	gbSizer3->AddGrowableRow( 1 );
 	bSizer2->Add( gbSizer3, 1, wxALL|wxEXPAND, 5 );
 	
 	m_general->SetSizer( bSizer2 );
@@ -451,7 +451,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	wxGridBagSizer* gbSizer4;
 	gbSizer4 = new wxGridBagSizer( 0, 0 );
-	gbSizer4->AddGrowableCol( 1 );
+	
 	gbSizer4->SetFlexibleDirection( wxBOTH );
 	gbSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -545,7 +545,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer221->Add( m_luadir, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	gbSizer4->Add( sbSizer221, wxGBPosition( 6, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
-	
+	gbSizer4->AddGrowableCol( 1 );
 	bSizer61->Add( gbSizer4, 1, wxEXPAND, 5 );
 	
 	m_log->SetSizer( bSizer61 );
