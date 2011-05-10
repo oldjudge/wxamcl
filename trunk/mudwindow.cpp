@@ -1685,7 +1685,7 @@ static bool colset = false;
 				{
 					m_parsestate = HAVE_DELIMITER1;
 					esc.ToLong(&col1);
-					if (col1>39 && col1<48)
+					if (col1<30 || (col1>39 && col1<48) || (col1>89 && col1<110) )
 						SwitchColor(col1, offset, &style[index]);
 					colset = true;
 					esc.Empty();
@@ -1778,7 +1778,8 @@ static bool colset = false;
 				if (*it=='m')
 				{
 					esc.ToLong(&col2);
-					if (index)
+					
+					if (index && !colset)
 					{
 						style[index].SetFCol(style[index-1].GetFColIndex(), style[index-1].GetFCol());
 						style[index].SetBCol(style[index-1].GetBColIndex(), style[index-1].GetBCol());
@@ -1812,7 +1813,7 @@ static bool colset = false;
 				esc.Append(*it);
 				break;
 			case HAVE_DELIMITER2:
-				if (*it=='m')
+				if (*it=='m' || *it==';')
 				{
 					esc.ToLong(&col3);
 					if (col1==38 && col2==5)
@@ -1847,16 +1848,22 @@ static bool colset = false;
 					SwitchColor(col3, offset, &style[index]);
 					offset=30;
 					m_parsestate = HAVE_TEXT;
+					
 					colset = true;
+					if (*it==';')
+					{
+						m_parsestate = HAVE_DELIMITER1;
+						//colset=false;
+					}
 					esc.Empty();
 					break;
 				}
-				if (*it==';')
+				/*if (*it==';')
 				{
 					m_parsestate = HAVE_ESCBR;
 					esc.Empty();
 					break;
-				}
+				}*/
 				esc.Append(*it);
 				break;
 			case HAVE_IAC:
@@ -3052,6 +3059,31 @@ void MudWindow::SwitchColor(long c, int offset, AnsiLineElement* ale)
 		case 57:
 			ale->SetFCol(c-40, m_colansi[c-40]);
 			f = m_colansi[c-40];
+			break;
+		case 90:
+		case 91:
+		case 92:
+		case 93:
+		case 94:
+		case 95:
+		case 96:
+		case 97:
+		case 98:
+		case 99:
+			ale->SetFCol(c-82, m_colansi[c-82]);
+			f = m_colansi[c-82];
+			break;
+		case 100:
+		case 101:
+		case 102:
+		case 103:
+		case 104:
+		case 105:
+		case 106:
+		case 107:
+		case 108:
+		case 109:
+			ale->SetBCol(c-92, m_colansi[c-92]);
 			break;
 	}
 	m_curansicolor = f;
