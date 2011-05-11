@@ -23,7 +23,11 @@ ObjDlg( parent )
 	//wxIcon group(wxICON(group1));
 	//wxIcon action(wxICON(action1));
 	wxIcon root(root1_xpm);
-	
+	#ifdef __WXMSW__
+		SetWindowTheme((HWND)m_tree->GetHandle(), L"Explorer", NULL);
+		SetWindowTheme((HWND)m_pattern->GetHandle(), L"Explorer", NULL); 
+		SetWindowTheme((HWND)m_action->GetHandle(), L"Explorer", NULL); 
+	#endif
 	wxIcon group(group1_xpm);
 	wxIcon action(action1_xpm);
 	int x = action.GetHeight();

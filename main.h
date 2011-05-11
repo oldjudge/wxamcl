@@ -71,6 +71,7 @@ extern "C"
 	#include "lua.h"
 	#include "lauxlib.h"
 	#include "lualib.h"
+	#include <Uxtheme.h>
 }
 #endif
 #include "sqlite3.h"

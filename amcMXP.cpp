@@ -526,6 +526,7 @@ static bool intagtext = false;
 				aTag.AppendText(*it);
 			break;
 		case MXP_ENDTAG:
+			//mw->Refresh();
 			if (*it=='/')
 				m_tagopen = false;
 			if (*it=='!')
