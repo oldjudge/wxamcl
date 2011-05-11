@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -16,15 +16,14 @@ connectdlg::connectdlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
 	
-	bSizer1->SetMinSize( wxSize( 500,-1 ) ); 
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
-	bSizer2->SetMinSize( wxSize( -1,200 ) ); 
+	bSizer2->SetMinSize( wxSize( 600,-1 ) ); 
 	m_list = new wxListCtrl( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_HRULES|wxLC_REPORT|wxLC_SINGLE_SEL );
-	bSizer2->Add( m_list, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_list, 2, wxALL|wxEXPAND, 5 );
 	
-	bSizer1->Add( bSizer2, 1, wxEXPAND, 5 );
+	bSizer1->Add( bSizer2, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _("Data:") ), wxVERTICAL );
@@ -140,4 +139,5 @@ connectdlg::~connectdlg()
 	m_add->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( connectdlg::OnAdd ), NULL, this );
 	m_edit->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( connectdlg::OnEdit ), NULL, this );
 	m_del->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( connectdlg::OnDelete ), NULL, this );
+	
 }

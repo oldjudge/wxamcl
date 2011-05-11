@@ -1382,7 +1382,7 @@ void MudWindow::ParseNBuffer(char* cBuffer, bool b)
 static wxString sLine = wxEmptyString;
 static wxString esc = wxEmptyString;
 static AnsiLine line;
-static AnsiLineElement style[500];
+static AnsiLineElement style[2000];
 static int index=0;
 static wxString atcp = wxEmptyString;
 int pos=0;
@@ -1390,7 +1390,7 @@ int pos=0;
 int aoldpos=0;
 static int opos=0;
 wxString s;
-long col1, col2, col3;
+static long col1=0, col2=0, col3=0;
 int offset=30;
 bool gotline = false;
 static bool ttsent = false;
@@ -1852,7 +1852,7 @@ static bool colset = false;
 					colset = true;
 					if (*it==';')
 					{
-						m_parsestate = HAVE_DELIMITER1;
+						m_parsestate = HAVE_DELIMITER2;
 						//colset=false;
 					}
 					esc.Empty();
@@ -2670,6 +2670,7 @@ static bool colset = false;
 		line.SetFull(true);
 		m_parsestate=HAVE_TEXT;
 		sLine.Empty();
+		index=0;
 		gotline = false;
 		for (int i=0;i<=index;i++)
 		{
@@ -2702,6 +2703,7 @@ static bool colset = false;
 	line.SetDateTime(d);
 	line.SetAnsiLine(s.SubString(aoldpos, it-s.begin()-1));
 	aoldpos = it-s.begin();
+	
 	//line.SetAnsiLine(*sLine);
 	if (m_parsestate!=HAVE_LF)
 	{

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Sep  8 2010)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -57,16 +57,17 @@ class connectdlg : public wxDialog
 		wxButton* m_cancel;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnInit( wxInitDialogEvent& event ){ event.Skip(); }
-		virtual void OnItemActivate( wxListEvent& event ){ event.Skip(); }
-		virtual void OnItemSelected( wxListEvent& event ){ event.Skip(); }
-		virtual void OnFileChanged( wxFileDirPickerEvent& event ){ event.Skip(); }
-		virtual void OnAdd( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnEdit( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnDelete( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnInit( wxInitDialogEvent& event ) { event.Skip(); }
+		virtual void OnItemActivate( wxListEvent& event ) { event.Skip(); }
+		virtual void OnItemSelected( wxListEvent& event ) { event.Skip(); }
+		virtual void OnFileChanged( wxFileDirPickerEvent& event ) { event.Skip(); }
+		virtual void OnAdd( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnEdit( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDelete( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
+		
 		connectdlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connect to a mud"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
 		~connectdlg();
 	
