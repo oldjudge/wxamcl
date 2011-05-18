@@ -213,18 +213,18 @@ bool MudClientApp::OnInit()
 		frame->LoadProfile(f);
 	}
 	wxInitAllImageHandlers();
+	
 	//wxString s1 = p.GetParam(1);
 	//wxString s("\u0419\u0634");
 	//frame->m_child->ParseLine(&s);
-	wxString s="\x1b[4;1;33;";
-	frame->m_child->ParseNBuffer(s.char_str(), false);
-	s="40mtest \x1b[0;33mtest";
+	//frame->m_child->ParseNBuffer(s.char_str(), false);
+	//s="40mtest \x1b[0;33mtest";
 	//wxString s="You drop a set of protective arm sleeves.\n\r<\x1b[1;32m2239/2435Hp \x1b[1;33m1003/2642Ma \x1b[1;36m1938/1938Mv \x1b[1;37m609Xp \x1b[1;35m0qt\x1b[0;37m>: \x1b[0;37m\x1b";
 	//wxString ss="[0;36mAyla gives you \x1b[1;33m24\x1b[0;36m gold coins for a set of protective arm sleeves.\x1b[0;37m";
 	//wxString s ="\x1b[33mSo Sheni barters:\x1b[0;37mhttp://frostblade.net/aardwolf/claneq/display.php?sort=level    Bookmark this page, it is the EQ bible ^^";
 	//wxString s = "\x1b[0;36;44m:\x1b[0;0m\x1b[0;37m \x1b[1;34m\x1b[1;36m()\x1b[1;34m Up in the sky\x1b[0;37m  via \x1b[1;36m(StdOpenDoorway)\x1b[0;37m \x1b[0;0m";
 	//wxString s="\xff\xfa\x45\x01variable\x02test\xff\xf0";
-	frame->m_child->ParseNBuffer(s.char_str(), false);
+	//frame->m_child->ParseNBuffer(s.char_str(), false);
 	//frame->m_child->ParseNBuffer(ss.char_str(), false);
 	//s.clear();
 	//s = "37m~";
@@ -4520,6 +4520,13 @@ int InputTextCtrl::Info(wxString *sPar)
 		s.clear();
 		s << _("Elements received: ") << m_parent->m_child->GetMXPParser()->GetNumElements();
 		m_parent->m_child->Msg(s);
+		
+		for (size_t i=0;i<m_parent->m_child->GetMXPParser()->GetNumElements();i++)
+		{
+			s.clear();
+			s << _("    Received element * ")<< m_parent->m_child->GetMXPParser()->GetElementAt(i)<<" * ";//<<m_parent->m_child->GetMXPParser()->GetActionAt(i);
+			m_parent->m_child->Msg(s);
+		}
 		s.clear();
 		s << _("Entities received: ") << m_parent->m_child->GetMXPParser()->GetNumEntities();
 		m_parent->m_child->Msg(s);
@@ -4537,6 +4544,9 @@ int InputTextCtrl::Info(wxString *sPar)
 		s << _("    Received variable * ") << m_parent->m_child->GetGMCPModules()->at(i) << " * .";
 		m_parent->m_child->Msg(s);
 	}
+	s.clear();
+	s << _("MSDP: ") << (m_parent->m_child->IsMSDPActive() ? _("active") : _("not active"));
+	m_parent->m_child->Msg(s);
 	s.clear();
 	s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress();
 	m_parent->m_child->Msg(s);

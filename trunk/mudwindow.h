@@ -53,6 +53,7 @@ public:
 	bool IsMXPActive() {return m_mxp;}
 	bool IsMSPActive() {return m_msp;}
 	bool IsGMCPActive() {return m_gmcp;}
+	bool IsMSDPActive() {return m_msdp;}
 	wxIPV4address *GetIPAddr() {return &m_addr;}
 	class amcMXP* GetMXPParser() {return m_MXP;}
 	bool GetFocusOnInput() {return m_focusoninput;}
@@ -72,6 +73,7 @@ public:
 	void SetMCCP2(bool b) {m_mccp2 = b;}
 	void SetMXP(bool b) {m_mxp = b;}
 	void SetMSP(bool b) {m_msp = b;}
+	void SetMSDP(bool b) {m_msdp = b;}
 	void SetLogging(bool b) {m_log=b;}
 	void SetAnsiLogging(bool b) {m_logansi=b;}
 	void SetDateLogging(bool b) {m_logdate=b;}
@@ -200,6 +202,7 @@ private:
 	size_t m_oddmccp2;//helper for mccp2
 	bool m_mxp;//mxp active?
 	bool m_msp;//msp active?
+	bool m_msdp;//msdp active?
 	unsigned int m_wrap;//linewrap column
 	bool m_selected;//text selected with mouse?
 	bool m_linkclicked;
