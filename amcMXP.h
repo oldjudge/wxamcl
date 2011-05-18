@@ -24,56 +24,6 @@
 #define MXP_MODE_LOCKSECURE 6
 #define MXP_MODE_LOCKLOCKED 7
 
-class amcMXP
-{
-public:
-	amcMXP(MudWindow *mw);
-	~amcMXP();
-	bool Parse(wxString s);
-	//bool ParseElement(wxString s, size_t *pos);
-	bool ParseElementRex(wxString s, size_t *pos);
-	bool ParseElementInternals(wxString s);
-	bool ParseTag(class amcMXPTag *t, int elnum);
-	bool ParseSingleTag(class amcMXPTag *t);
-	bool ParseOpenTag(class amcMXPTag *t);
-	bool ParseEntity(wxString s);
-	bool ParseEntityRex(wxString s, size_t *pos);
-	void ReplaceEntities(wxString* s);
-	int FindEntity(wxString m);
-	int FindElement(wxString m);
-	size_t GetNumElements() {return m_elems.size();}
-	size_t GetNumEntities() {return m_entities.size();}
-	vector<wxString> SplitString(wxString c, wxString s);
-	map<wxString, wxColour> GetMXPColorMap() {return m_mxpcolor;}
-private:
-	void SetColors();
-	map<wxString, wxColour> m_mxpcolor;
-	static int m_parsestate;
-	int m_mxpmode;
-	bool m_tagopen;
-	vector<class amcMXPElement> m_elems;
-	vector<class amcMXPEntity> m_entities;
-	MudWindow* m_parent;
-};
-
-class amcMXPEntity
-{
-public:
-	amcMXPEntity();
-	~amcMXPEntity();
-	void SetName(wxString k) {m_name = k;}
-	void SetValue(wxString k) {m_value = k;}
-	wxString GetName() {return m_name;}
-	wxString GetValue() {return m_value;}
-private:
-	wxString m_name;
-	wxString m_value;
-	bool m_publish;
-	bool m_delete;
-	bool m_add;
-	bool m_remove;
-};
-
 class amcMXPTag
 {
 public:
@@ -177,6 +127,59 @@ private:
 	vector<wxString> m_attributes;
 	vector<wxString> m_sendcommands;
 	vector<wxString> m_labels;
+};
+
+class amcMXP
+{
+public:
+	amcMXP(MudWindow *mw);
+	~amcMXP();
+	bool Parse(wxString s);
+	//bool ParseElement(wxString s, size_t *pos);
+	bool ParseElementRex(wxString s, size_t *pos);
+	bool ParseElementInternals(wxString s);
+	bool ParseTag(class amcMXPTag *t, int elnum);
+	bool ParseSingleTag(class amcMXPTag *t);
+	bool ParseOpenTag(class amcMXPTag *t);
+	bool ParseEntity(wxString s);
+	bool ParseEntityRex(wxString s, size_t *pos);
+	void ReplaceEntities(wxString* s);
+	void ReplaceHtmlEntities(wxString* s);
+	int FindEntity(wxString m);
+	int FindElement(wxString m);
+	size_t GetNumElements() {return m_elems.size();}
+	size_t GetNumEntities() {return m_entities.size();}
+	wxString GetElementAt(size_t x) {return m_elems.at(x).GetName();}
+	wxString GetActionAt(size_t x) {return m_elems.at(x).GetAction();}
+	vector<wxString> SplitString(wxString c, wxString s);
+	map<wxString, wxColour> GetMXPColorMap() {return m_mxpcolor;}
+private:
+	void SetColors();
+	map<wxString, wxColour> m_mxpcolor;
+	static int m_parsestate;
+	int m_mxpmode;
+	bool m_tagopen;
+	vector<class amcMXPElement> m_elems;
+	vector<class amcMXPEntity> m_entities;
+	MudWindow* m_parent;
+};
+
+class amcMXPEntity
+{
+public:
+	amcMXPEntity();
+	~amcMXPEntity();
+	void SetName(wxString k) {m_name = k;}
+	void SetValue(wxString k) {m_value = k;}
+	wxString GetName() {return m_name;}
+	wxString GetValue() {return m_value;}
+private:
+	wxString m_name;
+	wxString m_value;
+	bool m_publish;
+	bool m_delete;
+	bool m_add;
+	bool m_remove;
 };
 
 #endif

@@ -115,6 +115,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	m_mccpneg = false;
 	m_mxp = false; //MXP negotiated
 	m_msp = false;
+	m_msdp=false;
 	m_MXP = new amcMXP(this);
 	m_atcp = false;
 	m_atcp2 = false;
@@ -152,7 +153,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	
 	//m_mxp = new amcMXP();
 	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -232,6 +233,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 	m_atcp = false;
 	m_atcp2 = false;
 	m_gmcp = false;
+	m_msdp=false;
 	m_atcpstring = wxEmptyString;
 	m_charset = wxEmptyString;
 	m_wrap = 150;
@@ -2137,6 +2139,7 @@ static bool colset = false;
 						s.Printf("%c%c%c", IAC, DO , MSDP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 						Write(s);
+						m_msdp = true;
 						Msg(_("MSDP negotiated!"));
 						m_parent->luaCreateMSDPTable();
 					}
@@ -2146,6 +2149,7 @@ static bool colset = false;
 						s.Printf("%c%c%c", IAC, DONT, MSDP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 						Write(s);
+						m_msdp = false;
 					}
 					break;
 				}
@@ -2670,7 +2674,7 @@ static bool colset = false;
 		line.SetFull(true);
 		m_parsestate=HAVE_TEXT;
 		sLine.Empty();
-		index=0;
+		
 		gotline = false;
 		for (int i=0;i<=index;i++)
 		{
@@ -2680,6 +2684,7 @@ static bool colset = false;
 			style[i].SetFCol(7, m_colansi[7]);
 			style[i].SetBCol(0, m_colansi[0]);
 		}
+		index=0;
 	}
 	if (m_parsestate == HAVE_COMPRESS_START)
 		m_parsestate = HAVE_TEXT;

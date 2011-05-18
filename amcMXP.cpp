@@ -332,7 +332,7 @@ static bool intagtext = false;
 	s.Replace("\n\r", "\n");
 	s.Replace("<nobr>", "");
 	s.Replace("<sbr>", " ");
-	
+	//ReplaceEntities(&s);
 	size_t alpha, omega;
 	alpha = s.Lower().Find("<p>");
 	if (alpha!=wxNOT_FOUND)
@@ -674,12 +674,12 @@ static bool intagtext = false;
 			escTag.AppendText(*it);
 			if (*it=='m')
 			{
-				if (aTag.IsMXPTag())
+				/*if (aTag.IsMXPTag())
 				{
 					if (!ParseSingleTag(&aTag))
 						aTag.Reset();
-					break;
-				}
+					//break; ???
+				}*/
 				m_parsestate = MXP_TEXTINTAG;
 				wxString s = escTag.GetText();
 				aTag.SetText(aTag.GetText().append(s));
@@ -722,8 +722,8 @@ bool amcMXP::ParseSingleTag(amcMXPTag *t)
 {
 //Parse all Tags IsMXPTag returns true
 //RegExp comm("send href=('|\")?([\\?|\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")?(?: PROMPT|prompt)?");
-RegExp comm("send (?:prompt |hint=.+ )?(?:prompt |hint=.+ )?href=('|\")?([\\?|\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")?(?: PROMPT|prompt)?");
-//RegExp hint("(?:HINT|hint)=(?:\"|')([a-zA-Z\\s&;\\|-]+)(?:\"|')");
+RegExp comm("send (?:prompt |hint=.+ )?(?:prompt |hint=.+ )?(?:href=)?('|\")?([\\?|\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")?(?: PROMPT|prompt)?");
+//RegExp r("send (?:hint=.+ |prompt )?(?:hint=.+ |prompt )?(?:href=)?('|\")([\\?+|\\w+|&+|;+|\\s+|\\+||#+|\\d+|\\-+|\\.+|\\!+|\\(+|\\)+]+)('|\")?(?: PROMPT|prompt)?");
 RegExp hint("(?:HINT|hint)=(?:\"|')([\\w|&|;|\\s|\\||\\d|\\-|\\!|\\.]+)(?:\"|')");
 RegExp color("(?:c(?:olor)? |C(?:OLOR)? )(?:fore=|FORE=)?((?!back=)[\\w|\\d|#]+)?\\s?(?:back=|BACK=)?([\\w|\\d|#]+)?");
 RegExp a("a href=('|\")([\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")");
@@ -801,7 +801,7 @@ MudWindow *mw = m_parent;
 						for (vit=v_parms.begin();vit!=v_parms.end();vit++, i++)
 						{
 							command.Replace("&"+el.GetAttributes()->at(i)+";", *vit);
-							//hint.Replace("&"+it->GetAttr(i)+";", *vit);
+							
 						}
 					}
 					command.Replace("&quot;", "\"");
@@ -840,15 +840,14 @@ MudWindow *mw = m_parent;
 				else it->SetHint(el.GetHint());
 			}
 			ale_it tt = it;
-			if (tt>= mw->GetLineStyle(oldline)->begin()+1)
+			/*if (tt>= mw->GetLineStyle(oldline)->begin()+1)
 			{
 				tt--;
 				it->SetFCol(tt->GetFColIndex(), tt->GetFCol());
 				it->SetBCol(tt->GetBColIndex(), tt->GetBCol());
-			}
+			}*/
 		}
-		//it->SetFCol((it-1)->GetFColIndex(), (it-1)->GetFCol());
-			//	it->SetBCol(tt->GetBColIndex(), tt->GetBCol());
+		
 		t->Reset();
 	}
 	else if (t->GetTag().Lower().StartsWith("color") || t->GetTag().Lower().StartsWith("c"))
@@ -972,7 +971,7 @@ MudWindow *mw = m_parent;
 		}
 		if (!t->GetText().empty())
 			mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
-		//f->m_child->ParseBuffer(t->GetText().char_str());
+		//return true;
 		t->Reset();
 	}
 return false;
@@ -1518,12 +1517,33 @@ void amcMXP::ReplaceEntities(wxString* s)
 	{
 		s->Replace("&"+it->GetName()+";", it->GetValue());
 	}
+	//to do html entities replace
+	ReplaceHtmlEntities(s);
+	/*s->Replace("&gt;", ">");
+	s->Replace("&lt;", "<");
+	s->Replace("&amp;", "&");
+	s->Replace("&quot;", "\"");
+	s->Replace("&apos;", "'");
+	s->Replace("&nbsp;", " ");
+	s->Replace("&#39;", "'");*/
+}
+
+void amcMXP::ReplaceHtmlEntities(wxString* s)
+{
+	//to do html entities replace
 	s->Replace("&gt;", ">");
 	s->Replace("&lt;", "<");
 	s->Replace("&amp;", "&");
 	s->Replace("&quot;", "\"");
 	s->Replace("&apos;", "'");
 	s->Replace("&nbsp;", " ");
+	for (size_t i=10;i<255;i++)
+	{
+		wxString en;
+		en<<"&#"<<i<<";";
+		s->Replace(en, wxUniChar(i));
+	}
+	//s->Replace("&#39;", "'");
 }
 
 int amcMXP::FindEntity(wxString f)
