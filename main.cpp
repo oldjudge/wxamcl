@@ -3168,21 +3168,21 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
         : wxTextCtrl(parent, id, value, pos, size, style)
 {
 	m_parent = (MudMainFrame*)parent;
-	m_sComm[wxT("raw")] = &InputTextCtrl::CommRaw;
-	m_sComm[wxT("connect")] = &InputTextCtrl::Connect;
-	m_sComm[wxT("pwd")] = &InputTextCtrl::Pwd;
-	m_sComm[wxT("capturewin")] = &InputTextCtrl::CaptureWin;
-	m_sComm[wxT("capturenb")] = &InputTextCtrl::CaptureNb;
-	m_sComm[wxT("capstart")] = &InputTextCtrl::CapStart;
-	m_sComm[wxT("capend")] = &InputTextCtrl::CapEnd;
-	m_sComm[wxT("clearwin")] = &InputTextCtrl::ClearWin;
-	m_sComm[wxT("refreshwin")] = &InputTextCtrl::RefreshWin;
-	m_sComm[wxT("help")] = &InputTextCtrl::Help;
-	m_sComm[wxT("gagwin")] = &InputTextCtrl::GagWin;
-	m_sComm[wxT("gag")] = &InputTextCtrl::Gag;
-	m_sComm[wxT("func")] = &InputTextCtrl::Func;
-	m_sComm[wxT("setvar")] = &InputTextCtrl::SetVar;
-	m_sComm[wxT("script")] = &InputTextCtrl::Script;
+	m_sComm["raw"] = &InputTextCtrl::CommRaw;
+	m_sComm["connect"] = &InputTextCtrl::Connect;
+	m_sComm["pwd"] = &InputTextCtrl::Pwd;
+	m_sComm["capturewin"] = &InputTextCtrl::CaptureWin;
+	m_sComm["capturenb"] = &InputTextCtrl::CaptureNb;
+	m_sComm["capstart"] = &InputTextCtrl::CapStart;
+	m_sComm["capend"] = &InputTextCtrl::CapEnd;
+	m_sComm["clearwin"] = &InputTextCtrl::ClearWin;
+	m_sComm["refreshwin"] = &InputTextCtrl::RefreshWin;
+	m_sComm["help"] = &InputTextCtrl::Help;
+	m_sComm["gagwin"] = &InputTextCtrl::GagWin;
+	m_sComm["gag"] = &InputTextCtrl::Gag;
+	m_sComm["func"] = &InputTextCtrl::Func;
+	m_sComm["setvar"] = &InputTextCtrl::SetVar;
+	m_sComm["script"] = &InputTextCtrl::Script;
 	//m_sComm[wxT("bscript")] = &InputTextCtrl::BScript;
 	m_sComm["tscript"] = &InputTextCtrl::TScript;
 	m_sComm["log"] = &InputTextCtrl::Log;
@@ -3343,7 +3343,6 @@ static bool boFirst = true;
 			sendto->GetEventHandler()->ProcessEvent(newevt);
 			return;
 		case WXK_END:
-
 			if (m_parent->m_splitter->IsShown())
 			{
 				m_parent->m_child->Freeze();
@@ -3461,12 +3460,18 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						m_parent->SetTriggersOn(false);
 						ParseVars(&comm);
 						ParseLists(&comm);
-						/***m_parent->m_child->Msg(comm, 16);***/
-						wxString out = "\x1b[56m"+comm+"\x1b[0m\n";
-						if (m_parent->GetGlobalOptions()->UseUTF8())
-							m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
-						else
-							m_parent->m_child->ParseNBuffer(out.char_str(), false);
+						wxString out;
+						
+						out = "\x1b[56m"+comm+"\x1b[0m\n";
+
+						/***always UTF8!***/
+						//if (m_parent->GetGlobalOptions()->UseUTF8())
+						bool t = m_parent->GetGlobalOptions()->UseUTF8();
+						m_parent->GetGlobalOptions()->SetUTF8(true);
+						m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
+						m_parent->GetGlobalOptions()->SetUTF8(t);
+						//else
+						//m_parent->m_child->ParseNBuffer((char*)out.c_str(), false);
 						m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
