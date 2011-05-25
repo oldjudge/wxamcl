@@ -946,7 +946,7 @@ MudWindow *mw = m_parent;
 	}
 	else if (!ss.Cmp("version"))
 	{
-		wxString sss = "\x1b[1z<VERSION MXP=\"1.0\" CLIENT=\"wxAmc\" VERSION=\"0.1\">\n";
+		wxString sss = "\x1b[1z<VERSION MXP=\"1.0\" CLIENT=\"wxAmcl\" VERSION=\"0.1\">\n";
 		f->m_child->Write(sss.To8BitData());
 		t->Reset();
 	}
@@ -1080,9 +1080,8 @@ return false;
 
 bool amcMXP::ParseTag(amcMXPTag *t, int elnum)
 {
-//RegExp comm("send href=(\"|')(.*)(\"|')");
-RegExp comm("send href=('|\")([\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/\\[\\]]+)('|\")");
-//RegExp hint("(?:HINT|hint)=(?:\"|')([a-zA-Z\\s&;\\|-]+)(?:\"|')");
+//RegExp comm("send href=('|\")([\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/\\[\\]]+)('|\")");
+RegExp comm("send (?:prompt |hint=.+ )?(?:prompt |hint=.+ )?(?:href=)?('|\")?([\\?|\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")?(?: PROMPT|prompt)?");
 RegExp hint("(?:HINT|hint)=(?:\"|')([\\w|&|;|\\s|\\||\\d|\\-|\\!|\\.\\[\\]\\>]+)(?:\"|')");
 RegExp color("(?:c(?:olor)? |C(?:OLOR)? )(?:fore=|FORE=)?([\\w|\\d|#]+)\\s?(?:back=|BACK=)?([\\w|\\d|#]+)?");
 MudMainFrame *f = wxGetApp().GetFrame();
@@ -1182,7 +1181,10 @@ MudWindow *mw = m_parent;
 				for (int c = ii; c<i;c++)
 				//for(ait = f->m_child->GetLineStyle(line)->begin()+ii;ait!=f->m_child->GetLineStyle(line)->begin()+i-1;ait++)
 				{
+					
 					ait = mw->GetLineStyle(line)->begin()+c;
+					if (!ait->GetText().length())
+						continue;
 					ait->SetMXPSend(true);
 					ait->SetFontStyle(4);
 					if (it->IsSendPrompt())
@@ -1217,7 +1219,7 @@ MudWindow *mw = m_parent;
 								hint.Replace("&"+it->GetAttr(i)+";", *vit);
 							}
 						}
-						command.Replace("&quot;", "\"");
+						//command.Replace("&quot;", "\"");
 						ait->AddMXPCommand(command);
 					}
 					for (sit = it->GetLabels()->begin();sit!=it->GetLabels()->end();sit++)
@@ -1235,7 +1237,7 @@ MudWindow *mw = m_parent;
 								hint.Replace("&"+it->GetAttr(i)+";", *vit);
 							}
 						}
-						command.Replace("&quot;", "\"");
+						//command.Replace("&quot;", "\"");
 						ait->AddMXPLabel(command);
 					}
 					hint.Replace("|", "\n");
