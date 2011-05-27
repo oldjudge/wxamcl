@@ -27,12 +27,17 @@ public:
 	wxString GetEvFile() {return m_evfile;}
 	void SetEvFile(wxString s) {m_evfile=s;}
 	void SetTip(wxString s) {m_tt->SetTip(s);}
+	void EnableMouseEvents() {m_mouseevents=true;}
+	void DisableMouseEvents() {m_mouseevents=false;}
+	
 private:
 	class MudMainFrame *m_parent;
 	wxFont *m_font;
 	wxColour m_background;
 	wxBitmap m_bitmap;
+	
 	wxMemoryDC* m_dc;
+	bool m_mouseevents;
 	wxString m_evfile;
 	wxString m_mousewheel;
 	wxString m_mouseleft;

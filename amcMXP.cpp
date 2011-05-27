@@ -855,7 +855,8 @@ MudWindow *mw = m_parent;
 		AnsiLineElement ale;
 		wxColour c, b;
 		b.Set("BLACK");
-		c.Set("GREY");
+		//c.Set("GREY");
+		c = mw->GetCurAnsiColour();
 		if (color.Match(t->GetTag()))
 		{
 			if (color.GetMatch(0).length())
@@ -872,7 +873,7 @@ MudWindow *mw = m_parent;
 				else
 					b = m_mxpcolor[color.GetMatch(1)];
 			}
-			
+			mw->SetCurAnsiColour(c);
 
 		}
 		

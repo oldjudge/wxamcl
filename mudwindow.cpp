@@ -4975,6 +4975,7 @@ wxSize si;
 				dc->SetFont(*m_ufont);
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==3)//italic
 				dc->SetFont(*m_ifont);
+			
 			si = dc->GetTextExtent(sub);
 			dc->SetClippingRegion(startx, starty, si.GetWidth(), char_height);
 			dc->DrawText(sub, startx, starty);
@@ -5033,6 +5034,7 @@ wxCoord MudWindow::DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, w
 		dc->SetFont(*m_ufont);
 	if (m_vmudlines.at(lnr).m_vstyle.at(snr).GetFontStyle()==3)//italic
 		dc->SetFont(*m_ifont);
+	
 		//m_font->SetUnderlined(true);
 	wxString text;
 	text = m_vmudlines.at(lnr).m_vstyle.at(snr).GetText();
@@ -5856,7 +5858,7 @@ wxUint32 uiBytesRead;
 			m_parent->RequestUserAttention();
 		if (m_atcp)
 		{
-			char test[] = {"\xff\xfa\xc8hello wxamcl 1.0.0\nroom_brief 1\nchar_vitals 1\n\xff\xf0"};
+			char test[] = {"\xff\xfa\xc8hello wxamcl 1.0.0\nroom_brief 1\nchar_vitals 1\n\xff\xf0\0"};
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
@@ -5866,13 +5868,14 @@ wxUint32 uiBytesRead;
 		}
 		if (m_atcp2)
 		{
-			char test[] = {"\x00ff\x00fa\xc9\x43ore.Hello {\"Client\": \"wxAmcl\", \"Version\": \"alpha\"}\xff\xf0"};
+			char test[] = {"\x00ff\x00fa\xc9\x43ore.Hello {\"Client\": \"wxAmcl\", \"Version\": \"alpha\"}\xff\xf0\0"};
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
 			m_sock->Write(test, wxStrlen(test));
 			//Write(s);
 			char gmcp[1500];
+			gmcp[0]='\0';
 			wxStrcat(gmcp, "\xff\xfa\xc9\x43ore.Supports.Set [\"");
 			for (int i = 0; i<m_parent->GetGlobalOptions()->GetGMCPModules()->size();i++)
 			{
