@@ -980,6 +980,23 @@ int luafunc_registermovehandler(lua_State *L)
 	return 1;
 }
 
+int luafunc_mouseevents(lua_State *L)
+{
+	const char* s;
+	s = luaL_checkstring(L, 1);
+	const wxString* name = new wxString(s);
+	class amcWindow *frame = (amcWindow*)amcWindow::FindWindowByName(*name);
+	if (frame==NULL)
+		return 0;
+	delete name;
+	bool b = lua_toboolean(L,2)!=0;
+	if (b)
+		frame->EnableMouseEvents();
+	else frame->DisableMouseEvents();
+	//lua_setglobal(L, s);
+	return 0;
+}
+
 int luafunc_settip(lua_State *L)
 {
 	const char* s;

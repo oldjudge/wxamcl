@@ -12,21 +12,7 @@ wxString AnsiLine::m_codes[20] =
 {"\x1b[0;30m", "\x1b[0;31m", "\x1b[0;32m", "\x1b[0;33m", "\x1b[0;34m", "\x1b[0;35m", "\x1b[0;36m", "\x1b[0;37m",
 "\x1b[1;30m", "\x1b[1;31m", "\x1b[1;32m", "\x1b[1;33m", "\x1b[1;34m", "\x1b[1;35m", "\x1b[1;36m", "\x1b[1;37m",
 m_codes[10], m_codes[14]};
-/*wxString AnsiLine::m_bcodes[1] = "\x1b[41m";
-wxString AnsiLine::m_bcodes[2] = "\x1b[42m";
-wxString AnsiLine::m_bcodes[3] = "\x1b[43m";
-wxString AnsiLine::m_bcodes[4] = "\x1b[44m";
-wxString AnsiLine::m_bcodes[5] = "\x1b[45m";
-wxString AnsiLine::m_bcodes[6] = "\x1b[46m";
-wxString AnsiLine::m_bcodes[7] = "\x1b[47m";
-wxString AnsiLine::m_bcodes[8] = "\x1b[48m";
-wxString AnsiLine::m_bcodes[9] = "\x1b[49m";
-wxString AnsiLine::m_bcodes[10] = "\x1b[50m";
-wxString AnsiLine::m_bcodes[11] = "\x1b[51m";
-wxString AnsiLine::m_bcodes[12] = "\x1b[52m";
-wxString AnsiLine::m_bcodes[13] = "\x1b[53m";
-wxString AnsiLine::m_bcodes[14] = "\x1b[54m";
-wxString AnsiLine::m_bcodes[15] = "\x1b[55m";*/
+
 
 AnsiLineElement::AnsiLineElement()
 {

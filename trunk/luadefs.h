@@ -51,6 +51,7 @@ int luafunc_registerwheelhandler(lua_State *L);
 int luafunc_registerrighthandler(lua_State *L);
 int luafunc_registermovehandler(lua_State *L);
 int luafunc_seteventfile(lua_State *L);
+int luafunc_mouseevents(lua_State *L);
 int luafunc_getline(lua_State *L);
 //action
 int luafunc_newaction(lua_State *L);
@@ -177,6 +178,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"setwheelhanlder", luafunc_registerwheelhandler},
 	{"setmovehandler", luafunc_registermovehandler},
 	{"seteventfile", luafunc_seteventfile},
+	{"mouseevents", luafunc_mouseevents},
 	{"getline", luafunc_getline},
 	
 	//sqlite3

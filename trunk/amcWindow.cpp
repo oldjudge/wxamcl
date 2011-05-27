@@ -41,12 +41,14 @@ amcWindow::amcWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
+	m_mouseevents=false;
 	m_mouseleft = "OnMouseLeft";
 	m_mouseright = "OnMouseRight";
 	m_mousewheel = "OnMouseWheel";
 	m_mousemove = "OnMouseMove";
 	m_evfile = "event.lua";
 	m_wheelrot=0;
+	
 	m_tt = NULL;
 }
 /*! \brief constructor
@@ -58,12 +60,14 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 	m_parent = (MudMainFrame*) parent;
 	SetName(name);
 	SetLabel(name);
+	m_mouseevents=false;
 	m_mouseleft = "OnMouseLeft";
 	m_mouseright = "OnMouseRight";
 	m_mousewheel = "OnMouseWheel";
 	m_mousemove = "OnMouseMove";
 	m_evfile = "events.lua";
 	m_wheelrot = 0;
+	
 	m_bitmap.Create(1278, 1024);
 	m_dc = new wxMemoryDC(m_bitmap);
 	#if defined __WX_MSW__
@@ -83,7 +87,7 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 		m_font = new wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
-	m_dc->SetBackgroundMode(wxSOLID);
+	m_dc->SetBackgroundMode(wxTRANSPARENT);
 	m_dc->SetBackground(*wxBLACK_BRUSH);
 	m_dc->SetFont(*m_font);
 	m_dc->Clear();
@@ -98,8 +102,6 @@ amcWindow::~amcWindow()
 
 void amcWindow::OnEraseBackground(wxEraseEvent& event)
 {
-	//SetBackgroundColour(m_background);
-	//ClearBackground();
 }
 
 void amcWindow::OnPaint(wxPaintEvent& event)
@@ -111,9 +113,6 @@ void amcWindow::OnPaint(wxPaintEvent& event)
 
 void amcWindow::OnSize(wxSizeEvent& event)
 {
-	/*wxSize ss=GetClientSize();
-	m_bitmap.SetHeight(ss.y);
-	m_bitmap.SetWidth(ss.x);*/
 	Refresh();
 	Update();
 }
@@ -124,11 +123,14 @@ void amcWindow::OnRightDown(wxMouseEvent &event)
 
 void amcWindow::OnLeftDown(wxMouseEvent &event)
 {
-	wxPoint p = event.GetPosition();
-	wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\',\'%d')\")", m_parent->GetGlobalOptions()->GetCommand(),
+	if (m_mouseevents)
+	{
+		wxPoint p = event.GetPosition();
+		wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\',\'%d')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							m_evfile, m_mouseleft, p.x, p.y);
-	//wxString s = wxString::Format("?%s('%d','%d')", m_mouseleft, p.x, p.y);
-	m_parent->m_input->ParseCommandLine(&s);
+		//wxString s = wxString::Format("?%s('%d','%d')", m_mouseleft, p.x, p.y);
+		m_parent->m_input->ParseCommandLine(&s);
+	}
 	event.Skip();
 }
 
@@ -138,22 +140,25 @@ void amcWindow::OnMouseWheel(wxMouseEvent &event)
 	m_wheelrot += event.GetWheelRotation();
 	int line = m_wheelrot/event.GetWheelDelta();
 	m_wheelrot -= line*event.GetWheelDelta();
-	
-	
-	
-	wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\')\")", m_parent->GetGlobalOptions()->GetCommand(),
+	if (m_mouseevents)
+	{
+		wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							m_evfile, m_mousewheel, line);
-	//wxString s = wxString::Format("?%s('%d','%d')", m_mouseleft, p.x, p.y);
-	m_parent->m_input->ParseCommandLine(&s);
+		//wxString s = wxString::Format("?%s('%d','%d')", m_mouseleft, p.x, p.y);
+		m_parent->m_input->ParseCommandLine(&s);
+	}
 	event.Skip();
 }
 
 void amcWindow::OnMouseMove(wxMouseEvent &event)
 {
 	wxPoint p = event.GetPosition();
-	wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\',\'%d')\")", m_parent->GetGlobalOptions()->GetCommand(),
+	if (m_mouseevents)
+	{
+		wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\',\'%d')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							m_evfile, m_mousemove, p.x, p.y);
-	m_parent->m_input->ParseCommandLine(&s);
+		m_parent->m_input->ParseCommandLine(&s);
+	}
 	event.Skip();
 }
 
