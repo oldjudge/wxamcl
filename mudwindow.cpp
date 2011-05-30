@@ -1492,6 +1492,11 @@ static bool colset = false;
 					sLine.Append(*it);
 					break;
 				}
+				if (*it==BELL)
+				{
+					wxBell();
+					break;
+				}
 				if (*it==ESC)
 				{
 					m_parsestate = HAVE_ESC;

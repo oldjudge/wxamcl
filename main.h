@@ -142,6 +142,7 @@ using namespace std;
 //wxT defines
 #define CR 13
 #define LF 10
+#define BELL 7
 #define EOS 0
 #define ESC 0x1b
 #define BR '['
