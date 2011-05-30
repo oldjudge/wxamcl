@@ -847,13 +847,39 @@ int luafunc_drawbitmap(lua_State *L)
 		return 0;
 	delete name;
 	bmap = luaL_checkstring(L, 2);
-	int x = luaL_checkint(L,3);
-	int y = luaL_checkint(L,4);
+	int mode = luaL_optint(L, 3, 0);
+	int x = luaL_optint(L,4,0);
+	int y = luaL_optint(L,5, 0);
+	int cx = luaL_optint(L,6,0);
+	int cy = luaL_optint(L,7,0);
 	
 	class MudMainFrame *parent = wxGetApp().GetFrame();
 	wxSetWorkingDirectory(parent->GetGlobalOptions()->GetWorkDir());
 	wxBitmap bm(bmap, wxBITMAP_TYPE_ANY);
-	frame->GetamcWinDC()->DrawBitmap(bm, x, y);
+
+	if (!mode)
+		frame->GetamcWinDC()->DrawBitmap(bm, x, y);
+	else if (mode==1) //scale
+		{
+			wxImage img = bm.ConvertToImage();
+			img.Rescale(cx, cy);
+			wxBitmap bmp(img);
+			frame->GetamcWinDC()->DrawBitmap(bmp, x, y);
+		}
+	else if (mode==2) //tile
+	{
+		int w = bm.GetWidth();
+		int h = bm.GetHeight();
+		int ww , hh; 
+		frame->GetClientSize(&ww, &hh);
+		int col = abs(ww/w);
+		int row = abs(hh/h);
+		for (int i=0;i<=row;i++)
+		{
+			for (int ii=0;ii<=col;ii++)
+				frame->GetamcWinDC()->DrawBitmap(bm, 0+ii*w, 0+i*h);
+		}
+	}
 	frame->Refresh();
 	return 0;
 }

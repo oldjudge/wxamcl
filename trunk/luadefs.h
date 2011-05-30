@@ -175,7 +175,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"createamcwin", luafunc_createamcwin},
 	{"setlefthandler", luafunc_registerlefthandler},
 	{"setrighthandler", luafunc_registerrighthandler},
-	{"setwheelhanlder", luafunc_registerwheelhandler},
+	{"setwheelhandler", luafunc_registerwheelhandler},
 	{"setmovehandler", luafunc_registermovehandler},
 	{"seteventfile", luafunc_seteventfile},
 	{"mouseevents", luafunc_mouseevents},

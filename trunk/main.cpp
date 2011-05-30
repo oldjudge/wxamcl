@@ -217,7 +217,7 @@ bool MudClientApp::OnInit()
 	//wxString s1 = p.GetParam(1);
 	//wxString s("\u0419\u0634");
 	//frame->m_child->ParseLine(&s);
-	//frame->m_child->ParseNBuffer(s.char_str(), false);
+	
 	//s="40mtest \x1b[0;33mtest";
 	//wxString s="You drop a set of protective arm sleeves.\n\r<\x1b[1;32m2239/2435Hp \x1b[1;33m1003/2642Ma \x1b[1;36m1938/1938Mv \x1b[1;37m609Xp \x1b[1;35m0qt\x1b[0;37m>: \x1b[0;37m\x1b";
 	//wxString ss="[0;36mAyla gives you \x1b[1;33m24\x1b[0;36m gold coins for a set of protective arm sleeves.\x1b[0;37m";
