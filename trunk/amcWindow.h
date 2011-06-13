@@ -29,7 +29,7 @@ public:
 	void SetTip(wxString s) {m_tt->SetTip(s);}
 	void EnableMouseEvents() {m_mouseevents=true;}
 	void DisableMouseEvents() {m_mouseevents=false;}
-	
+	void SetFont(wxFont *f) {m_font=f;m_dc->SetFont(*m_font);}
 private:
 	class MudMainFrame *m_parent;
 	wxFont *m_font;

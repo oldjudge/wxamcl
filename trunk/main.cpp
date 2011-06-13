@@ -4495,6 +4495,9 @@ int InputTextCtrl::Info(wxString *sPar)
 	m_parent->m_child->Msg("");
 	m_parent->m_child->Msg(s, 17, 4);
 	s.clear();
+	s<<_("Version: ")<<APP_VERSION;
+	m_parent->m_child->Msg(s);
+	s.clear();
 	m_parent->m_child->Msg(_("--- Libraries used ---"));
 	s.clear();
 	s << _("Lua version ") << LUA_RELEASE;
@@ -4599,9 +4602,9 @@ size_t idx1=0, idx2=0;
 bool InputTextCtrl::SaveHistory()
 {
     wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-    wxTextFile file(wxT("history.txt"));
-    if (!::wxFileExists(wxT("history.txt")))
-		file.Create(wxT("history.txt"));
+    wxTextFile file("history.txt");
+    if (!::wxFileExists("history.txt"))
+		file.Create("history.txt");
 	if (!file.Open())
 		return false;
 	file.Clear();
@@ -4616,10 +4619,10 @@ bool InputTextCtrl::SaveHistory()
 bool InputTextCtrl::LoadHistory()
 {
 wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-wxTextFile file(wxT("history.txt"));
+wxTextFile file("history.txt");
 wxString str;
 
-    if (!::wxFileExists(wxT("history.txt")))
+    if (!::wxFileExists("history.txt"))
 		return false;
 	if (!file.Open())
 		return false;
@@ -4636,9 +4639,9 @@ wxString str;
 bool InputTextCtrl::LoadTabText()
 {
 wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-wxTextFile file(wxT("tabcompletion.txt"));
+wxTextFile file("tabcompletion.txt");
 wxString str;
-if (!::wxFileExists(wxT("tabcompletion.txt")))
+if (!::wxFileExists("tabcompletion.txt"))
 		return false;
 	if (!file.Open())
 		return false;
