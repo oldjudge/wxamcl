@@ -52,6 +52,7 @@ int luafunc_registerrighthandler(lua_State *L);
 int luafunc_registermovehandler(lua_State *L);
 int luafunc_seteventfile(lua_State *L);
 int luafunc_mouseevents(lua_State *L);
+int luafunc_setfont(lua_State *L);
 int luafunc_getline(lua_State *L);
 //action
 int luafunc_newaction(lua_State *L);
@@ -70,7 +71,7 @@ int luafunc_enabletriggers(lua_State *L);
 int luafunc_disabletriggers(lua_State *L);
 int luafunc_getallactions(lua_State *L);
 int luafunc_actiontostring(lua_State *L);
-int luafunc_deleteclass(lua_State *L);
+//int luafunc_deleteclass(lua_State *L);
 int luafunc_enabletrgroup(lua_State *L);
 int luafunc_deltrgroup(lua_State *L);
 //alias
@@ -97,6 +98,9 @@ int luafunc_getvar(lua_State *L);
 int luafunc_setvar(lua_State *L);
 int luafunc_delvar(lua_State *L);
 int luafunc_enablevar(lua_State *L);
+int luafunc_getallvar(lua_State *L);
+int luafunc_delvargroup(lua_State *L);
+int luafunc_enablevargroup(lua_State *L);
 //list
 int luafunc_newlist(lua_State *L);
 int luafunc_additem(lua_State *L);
@@ -267,7 +271,7 @@ static const struct luaL_Reg amclib_trigger[] = {
 	{"enableall", luafunc_enabletriggers},
 	{"disableall", luafunc_disabletriggers},
 	{"getall", luafunc_getallactions},
-	{"delgroup", luafunc_deleteclass},
+	//{"delgroup", luafunc_deleteclass},
 	{"enablegroup", luafunc_enabletrgroup},
 	{"delgroup", luafunc_deltrgroup},
 	{NULL, NULL}
@@ -290,6 +294,9 @@ static const struct luaL_Reg amclib_vars[] = {
 	{"get", luafunc_getvar},
 	{"delete", luafunc_delvar},
 	{"enable", luafunc_enablevar},
+	{"getall", luafunc_getallvar},
+	{"enablegroup", luafunc_enablevargroup},
+	{"delgroup", luafunc_delvargroup},
 	{NULL, NULL}
 };
 
@@ -332,6 +339,7 @@ static const struct luaL_Reg amclib_draw[] = {
 	{"circle", luafunc_drawcircle},
 	{"square", luafunc_drawsquare},
 	{"bitmap", luafunc_drawbitmap},
+	{"setfont", luafunc_setfont},
 	{"line", luafunc_drawline},
 	{"clear", luafunc_clear},
 	{"winsize", luafunc_amcwinsize},

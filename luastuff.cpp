@@ -801,7 +801,7 @@ int luafunc_drawtext(lua_State*L)
 	const char* fcol;
 	const char* bcol;
 	const char* text;
-	int x, y;
+	int x, y, bb;
 
 	winname = luaL_checkstring(L, 1);
 	text = luaL_optstring(L, 2, "");
@@ -809,6 +809,7 @@ int luafunc_drawtext(lua_State*L)
 	y = luaL_optint(L, 4, 1);
 	fcol = luaL_optstring(L, 5, "silver");
 	bcol = luaL_optstring(L, 6, "black");
+	bb = luaL_optint(L,7,0);
 	const wxString* name = new wxString(winname);
 	class amcWindow *frame = (amcWindow*)amcWindow::FindWindowByName(*name);
 	if (frame==NULL)
@@ -827,15 +828,34 @@ int luafunc_drawtext(lua_State*L)
 		b.Set(bcol);
 	}
 	else b = m[bcol];
-	
+	if (bb)
+		frame->GetamcWinDC()->SetBackgroundMode(wxSOLID);
 	frame->GetamcWinDC()->SetTextForeground(f);
 	frame->GetamcWinDC()->SetTextBackground(b);
 	frame->GetamcWinDC()->DrawText(text, x, y);
-	//lua_pushstring(L, text);
+	frame->GetamcWinDC()->SetBackgroundMode(wxTRANSPARENT);
 	frame->Refresh();
 	return 0;
 }
 
+int luafunc_setfont(lua_State *L)
+{
+	const char* win;
+	const char* font;
+	int psize;
+	win = luaL_checkstring(L, 1);
+	const wxString* name = new wxString(win);
+	class amcWindow *frame = (amcWindow*)amcWindow::FindWindowByName(*name);
+	if (frame==NULL)
+		return 0;
+	delete name;
+	font = luaL_checkstring(L,2);
+	psize = luaL_checknumber(L,3);
+	wxFont *f = new wxFont(psize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, font);
+	frame->GetamcWinDC()->SetFont(*f);
+	delete f;
+	return 0;
+}
 int luafunc_drawbitmap(lua_State *L)
 {
 	const char* winname;
@@ -2388,7 +2408,7 @@ int luafunc_disabletriggers(lua_State *L)
 	return 1;
 }
 
-int luafunc_deleteclass(lua_State *L)
+/*int luafunc_deleteclass(lua_State *L)
 {
 char* c;
 s_it it;
@@ -2425,7 +2445,7 @@ s_it it;
 		}
 	}
 	return 0;
-}
+}*/
 
 int luafunc_enabletrgroup(lua_State *L)
 {
@@ -3606,6 +3626,91 @@ str_var* v=NULL;
 	return 1;
 }
 
+int luafunc_getallvar(lua_State *L)
+{
+	size_t i;
+
+	MudMainFrame *frame = wxGetApp().GetFrame();
+
+	lua_settop(L,0);
+	lua_newtable(L);
+	for (i=0;i<frame->GetVars()->size();i++)
+	{
+		lua_pushstring(L, frame->GetVars()->at(i).GetName().mb_str());
+		lua_rawseti(L, -2, i+1);
+	}
+	lua_pushnumber(L, i);
+	return 2;
+}
+
+int luafunc_enablevargroup(lua_State *L)
+{
+v_it iter;
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	const char* vgroup;
+	vgroup = luaL_checkstring(L, 1);
+	bool active = lua_toboolean(L,2) != 0;
+	for (iter = frame->GetVars()->begin(); iter!= frame->GetVars()->end(); iter++)
+	{
+		if (vgroup == iter->GetGroup())
+		{
+			iter->SetActive(active);
+		}
+	}
+	if (frame->IsVerbose())
+	{
+		wxString s;
+		if (active)
+			s<<_("Enabled variable class ")<<vgroup<<".";
+		else
+			s<<_("Disabled variable class ")<<vgroup<<".";
+		frame->m_child->Msg(s, 3);
+	}
+	return 0;
+}
+
+int luafunc_delvargroup(lua_State *L)
+{
+s_it it;
+const char* vgroup;
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	vgroup = luaL_checkstring(L, 1);
+	
+	for (size_t i=0;i<frame->GetVars()->size(); i++)
+	{
+		if(frame->GetVars()->at(i).GetGroup()==vgroup)
+		{
+			frame->GetVars()->erase(frame->GetVars()->begin()+i--);
+		}
+	}
+	
+	for (it = amcVar::GetVarGroups()->begin(); it!=amcVar::GetVarGroups()->end(); it++)
+	{
+		if (*it == vgroup)
+		{
+			amcVar::GetVarGroups()->erase(it);
+			if (frame->IsVerbose())
+			{
+				wxString s;
+				s<<_("Deleted variable class ")<<vgroup<<".";
+				frame->m_child->Msg(s, 3);
+			}
+			return 0;
+		}
+	}
+	if (it==amcVar::GetVarGroups()->end())
+	{
+		wxString s;
+		s<<_("Group ")<<vgroup<<_(" does not exist!");
+		frame->m_child->Msg(s,3);
+		return 0;
+	}
+
+	
+	return 0;
+}
+
+
 //list
 int luafunc_newlist(lua_State *L)
 {
@@ -4469,7 +4574,7 @@ int luafunc_sendgmcp(lua_State *L)
 {
 	char mes[1000];
 	char gmcp[] = {"\xff\xfa\xc9"};
-	char end[] = {"\xff\xf0"};
+	char end[] = {"\xff\xf0\0"};
 	const char *msg;
 	msg = luaL_checkstring(L,1);
 	class MudMainFrame *frame = wxGetApp().GetFrame();
