@@ -3496,7 +3496,7 @@ int luafunc_getvar(lua_State *L)
 const char* name;
 str_var* v;
 int idx;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));	
+MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
 	if (lua_type(L,1)==LUA_TUSERDATA)
 	{
 		v = checkvar(L);
@@ -3720,7 +3720,7 @@ const char* c;
 str_ll* l;
 int index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();//MudMainFrame::FindWindowByName("wxAMC");
 //	int x= sizeof(struct str_ll);
 	//called from amc.newlist
 	if(lua_type(L, index) != LUA_TTABLE)
@@ -3786,13 +3786,93 @@ int index=1;
 	return 1;
 }
 
+int luafunc_getlist(lua_State *L)
+{
+const char* c;
+int i, index=1;
+str_ll* l;
+
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	if (lua_type(L,index)==LUA_TUSERDATA)
+	{
+		l = (str_ll*)lua_touserdata(L, index++);
+		i = frame->GetListIndexByLabel(l->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	else
+	{
+		c = luaL_checkstring(L,index++);
+		i = frame->GetListIndexByLabel(c);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	lua_settop(L,0);
+	lua_newtable(L);
+	int co = frame->GetLists()->at(i).GetSize();
+	for (int ii=0;ii<co;ii++)
+	{
+		lua_pushstring(L, frame->GetLists()->at(i).GetItem(ii));
+		lua_rawseti(L, -2, ii+1);
+	}
+	lua_pushnumber(L, co);
+	return 2;
+}
+
+int luafunc_getitemat(lua_State *L)
+{
+const char* c;
+int i, index=1;
+str_ll* l;
+
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	if (lua_type(L,index)==LUA_TUSERDATA)
+	{
+		l = (str_ll*)lua_touserdata(L, index++);
+		i = frame->GetListIndexByLabel(l->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	else
+	{
+		c = luaL_checkstring(L,index++);
+		i = frame->GetListIndexByLabel(c);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	int co = luaL_checknumber(L, index);
+	if (co>frame->GetLists()->at(i).GetSize()||!co)
+	{
+		if (frame->IsVerbose())
+		{
+			frame->m_child->Msg(_("Given index out of bounds!"), 3);
+		}
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_pushstring(L,frame->GetLists()->at(i).GetItem(co-1).c_str());
+	return 1;
+}
+
 int luafunc_additem(lua_State *L)
 {
 const char* c;
 int i, index=1;
 str_ll* l;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
@@ -3921,7 +4001,6 @@ str_ll* l;
 		return 1;
 	}
 	frame->GetLists()->at(i).DeleteItemAt(idx-1);
-	
 	lua_pushnumber(L, frame->GetLists()->size());
 	return 1;
 }
@@ -3985,6 +4064,37 @@ str_ll* l;
 		lua_pushboolean(L, 0);
 	else
 		lua_pushboolean(L, 1);
+	return 1;
+}
+
+int luafunc_getsize(lua_State *L)
+{
+const char* c;
+int i, index=1;
+str_ll* l;
+
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	if (lua_type(L,index)==LUA_TUSERDATA)
+	{
+		l = (str_ll*)lua_touserdata(L, index++);
+		i = frame->GetListIndexByLabel(l->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	else
+	{
+		c = luaL_checkstring(L,index++);
+		i = frame->GetListIndexByLabel(c);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+	}
+	lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
 	return 1;
 }
 

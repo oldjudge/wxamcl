@@ -103,12 +103,15 @@ int luafunc_delvargroup(lua_State *L);
 int luafunc_enablevargroup(lua_State *L);
 //list
 int luafunc_newlist(lua_State *L);
+int luafunc_getlist(lua_State *L);
+int luafunc_getitemat(lua_State *L);
 int luafunc_additem(lua_State *L);
 int luafunc_delallitems(lua_State *L);
 int luafunc_dellist(lua_State *L);
 int luafunc_delitemat(lua_State *L);
 int luafunc_delitem(lua_State *L);
 int luafunc_contains(lua_State *L);
+int luafunc_getsize(lua_State *L);
 //timer
 int luafunc_newtimer(lua_State *L);
 int luafunc_deltimer(lua_State *L);
@@ -310,12 +313,15 @@ static const struct luaL_Reg amclib_hk [] = {
 
 static const struct luaL_Reg amclib_list [] = {
 	{"new", luafunc_newlist},
+	{"get", luafunc_getlist},
+	{"getitemat", luafunc_getitemat},
 	{"additem", luafunc_additem},
 	{"clear", luafunc_delallitems},
 	{"delete", luafunc_dellist},
 	{"delitemat", luafunc_delitemat},
 	{"delitem", luafunc_delitem},
 	{"contains", luafunc_contains},
+	{"getsize", luafunc_getsize},
 	{NULL, NULL}
 };
 

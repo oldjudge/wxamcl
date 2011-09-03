@@ -370,8 +370,8 @@ void dlg_options::OnColCustom(wxColourPickerEvent &event)
 void dlg_options::BuildSample()
 {
 	m_sample->Clear();
-	wxRichTextAttr ra(m_frame->m_child->GetColour(7), m_frame->m_child->GetColour(0));
-	m_sample->SetBasicStyle(ra);
+	//wxRichTextAttr ra((m_frame->m_child->GetColour(7), m_frame->m_child->GetColour(0));
+	//m_sample->SetBasicStyle(ra);
 	
 	m_sample->SetBackgroundColour(m_frame->m_child->GetColour(0));
 	m_sample->SetFont(*m_frame->m_child->GetFont());
