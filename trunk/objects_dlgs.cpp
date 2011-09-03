@@ -36,9 +36,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_trigger, wxID_ANY, _("Define action") ), wxVERTICAL );
 	
 	wxGridBagSizer* gbSizer2;
-	gbSizer2 = new wxGridBagSizer( 0, 0 );
+	gbSizer2 = new wxGridBagSizer( 1, 1 );
 	
-	gbSizer2->SetFlexibleDirection( wxBOTH );
+	gbSizer2->SetFlexibleDirection( wxHORIZONTAL );
 	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	gbSizer2->SetMinSize( wxSize( 10,10 ) ); 
@@ -46,7 +46,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText6->Wrap( -1 );
 	gbSizer2->Add( m_staticText6, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_label = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxSUNKEN_BORDER );
+	m_label = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxFULL_REPAINT_ON_RESIZE );
 	m_label->SetToolTip( _("Name of the trigger") );
 	
 	gbSizer2->Add( m_label, wxGBPosition( 0, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
@@ -55,7 +55,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText10->Wrap( -1 );
 	gbSizer2->Add( m_staticText10, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_pattern = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_CHARWRAP|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2 );
+	m_pattern = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_WORDWRAP|wxFULL_REPAINT_ON_RESIZE );
 	m_pattern->SetToolTip( _("Regular expression pattern of mud text") );
 	m_pattern->SetMaxSize( wxSize( -1,24 ) );
 	
@@ -68,8 +68,8 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText11->Wrap( -1 );
 	gbSizer2->Add( m_staticText11, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_action= new amcScriptEdit(m_trigger, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-	gbSizer2->Add( m_action, wxGBPosition( 3, 1 ), wxGBSpan( 5, 3 ), wxALL|wxEXPAND, 5 );
+	m_action= new amcScriptEdit(m_trigger, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+	gbSizer2->Add( m_action, wxGBPosition( 3, 1 ), wxGBSpan( 5, 3 ), wxALL|wxEXPAND, 0 );
 	
 	m_sceditor = new wxButton( m_trigger, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_sceditor, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
@@ -133,7 +133,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sendscript = new wxCheckBox( m_trigger, wxID_ANY, _("Send to script"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_sendscript, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	gbSizer2->AddGrowableCol( 1 );
-	sbSizer2->Add( gbSizer2, 1, wxALL|wxEXPAND, 5 );
+	sbSizer2->Add( gbSizer2, 1, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer10;
 	bSizer10 = new wxBoxSizer( wxVERTICAL );
@@ -159,7 +159,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_trigger->SetSizer( bSizer8 );
 	m_trigger->Layout();
 	bSizer8->Fit( m_trigger );
-	m_notebook->AddPage( m_trigger, _("Actions"), false );
+	m_notebook->AddPage( m_trigger, _("Actions"), true );
 	m_alias = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -491,7 +491,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_gauge->SetSizer( bSizer102 );
 	m_gauge->Layout();
 	bSizer102->Fit( m_gauge );
-	m_notebook->AddPage( m_gauge, _("Gauges"), true );
+	m_notebook->AddPage( m_gauge, _("Gauges"), false );
 	m_hotkey = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );
