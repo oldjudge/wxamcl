@@ -38,10 +38,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxGridBagSizer* gbSizer2;
 	gbSizer2 = new wxGridBagSizer( 1, 1 );
 	
-	gbSizer2->SetFlexibleDirection( wxHORIZONTAL );
-	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gbSizer2->SetFlexibleDirection( wxBOTH );
+	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
-	gbSizer2->SetMinSize( wxSize( 10,10 ) ); 
 	m_staticText6 = new wxStaticText( m_trigger, wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	gbSizer2->Add( m_staticText6, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
