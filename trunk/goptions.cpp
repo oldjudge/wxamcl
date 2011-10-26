@@ -65,6 +65,9 @@ void GlobalOptions::Init()
 	m_gmcpmodules.push_back("Room 1");
 	m_gmcpmodules.push_back("Comm 1");
 	m_gmcpmodules.push_back("Group 1");
+
+	m_curencoding = wxFONTENCODING_SYSTEM;
+
 	#if defined __WXMSW__
 		/*wxStandardPaths p;
 		wxString dir = p.GetUserDataDir();

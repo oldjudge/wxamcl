@@ -58,6 +58,7 @@ BEGIN_EVENT_TABLE(MudMainFrame, wxFrame)
     EVT_FIND_CLOSE(wxID_ANY, MudMainFrame::OnFindDialog)
 	EVT_MENU_RANGE(ID_USERWINDOW, ID_USERWINDOW+100, MudMainFrame::OnUserWindow)
 	EVT_MENU_RANGE(ID_USERBUTTON, ID_USERBUTTON+1000, MudMainFrame::OnUserButton)
+	EVT_MENU_RANGE(ID_CHARENCODING, ID_CHARENCODING+20, MudMainFrame::OnCharEncoding)
 	EVT_UPDATE_UI(wxID_COPY/*Amcl_CopyClipboard*/, MudMainFrame::OnMenuUi)
 	EVT_UPDATE_UI(Amcl_CopyClipboard, MudMainFrame::OnMenuUi)
 	//EVT_ERASE_BACKGROUND(MudMainFrame::OnEraseBackground)
@@ -443,7 +444,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	extraMenu->Append(prefs);
 
 	viewMenu->AppendCheckItem(ID_SPLITTER, _("Split window\tF2"), _("Show the splitter window"));
-  
+	
+	BuildEncodingMenu(viewMenu);
+	
 	// now append the freshly created menu to the menu bar...
     wxMenuBar *menuBar = new wxMenuBar();
     menuBar->Append(fileMenu, _("&File"));
@@ -820,6 +823,66 @@ void MudMainFrame::OnUserButton(wxCommandEvent& event)
 		return;
 	if (GetButtons()->at(idx).IsActive())
 		m_input->Parse(GetButtons()->at(idx).GetAction());
+	return;
+}
+
+void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
+{
+	wxFontEncoding ec;
+	int id = event.GetId();
+	wxMenuBar* bar = GetMenuBar();
+	wxMenuItem* item;
+	for (int i=ID_CHARENCODING;i<ID_CHARENCODING+11;i++)
+	{
+		item = bar->FindItem(i);
+		item->Check(false);
+	}
+	item = bar->FindItem(id);
+	item->Check();
+	switch(id)
+	{
+	case ID_CHARENCODING:
+		ec = wxFONTENCODING_SYSTEM;
+		break;
+	case ID_CHARENCODING+1:
+		ec = wxFONTENCODING_UTF8;
+		break;
+	case ID_CHARENCODING+2:
+		ec = wxFONTENCODING_ISO8859_1;
+		break;
+	case ID_CHARENCODING+3:
+		ec = wxFONTENCODING_ISO8859_15;
+		break;
+	case ID_CHARENCODING+4:
+		ec = wxFONTENCODING_ISO8859_7;
+		break;
+	case ID_CHARENCODING+5:
+		ec = wxFONTENCODING_CP1253;
+		break;
+	case ID_CHARENCODING+6:
+		ec = wxFONTENCODING_KOI8;
+		break;
+	case ID_CHARENCODING+7:
+		ec = wxFONTENCODING_KOI8_U;
+		break;
+	case ID_CHARENCODING+8:
+		ec = wxFONTENCODING_ISO8859_5;
+		break;
+	case ID_CHARENCODING+9:
+		ec = wxFONTENCODING_CP1251;
+		break;
+	case ID_CHARENCODING+10:
+		ec = wxFONTENCODING_CP950;
+		break;
+	case ID_CHARENCODING+11:
+		ec = wxFONTENCODING_CP936;
+		break;
+	}
+	m_gopt->SetEncoding(ec);
+	if (id!=ID_CHARENCODING)
+		m_gopt->SetUTF8(true);
+	else	m_gopt->SetUTF8(false);
+	this->SaveGlobalOptions();
 	return;
 }
 
@@ -1270,6 +1333,33 @@ void MudMainFrame::OnParseInput(wxCommandEvent& event)
 		m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_CROSS_MARK, wxART_BUTTON));
 }
 
+void MudMainFrame::BuildEncodingMenu(wxMenu* view)
+{
+	view->AppendSeparator();
+	wxMenu *subMenu1 = new wxMenu;
+	subMenu1->AppendCheckItem(ID_CHARENCODING, _("Standard"), _("Standard encoding (ASCII)"));
+	subMenu1->AppendCheckItem(ID_CHARENCODING+1, _("UTF-8"), _("UTF-8"));
+	wxMenu *subMenu11 = new wxMenu;
+	subMenu11->AppendCheckItem(ID_CHARENCODING+2, _("ISO-8859-1"), _("ISO-8859-1"));
+	subMenu11->AppendCheckItem(ID_CHARENCODING+3, _("ISO-8859-15"), _("ISO-8859-15"));
+	subMenu1->AppendSubMenu(subMenu11,_("Western"), _("Western"));
+	wxMenu *subMenu12 = new wxMenu;
+	subMenu12->AppendCheckItem(ID_CHARENCODING+4, _("ISO-8859-7"), _("ISO-8859-7"));
+	subMenu12->AppendCheckItem(ID_CHARENCODING+5, _("Windows-1253"), _("Windows1253"));
+	subMenu1->AppendSubMenu(subMenu12,_("Greek"), _("Greek"));
+	wxMenu *subMenu2 = new wxMenu;
+	subMenu2->AppendCheckItem(ID_CHARENCODING+6, _("KOI-8R"), _("KOI-8R"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+7, _("KOI-8U"), _("KOI-8U"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+8, _("ISO8859-5"), _("ISO8859-5"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+9, _("Windows-1251"), ("Windows-1251"));
+	subMenu1->AppendSubMenu(subMenu2,_("Cyrillic"), _("Russian"));
+	wxMenu *subMenu3 = new wxMenu;
+	subMenu3->AppendCheckItem(ID_CHARENCODING+10, _("Big5"), _("Big5"));
+	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("GB2312"), ("GB2312"));
+	subMenu1->AppendSubMenu(subMenu3,_("Chinese"), _("Chinese"));
+	view->AppendSubMenu(subMenu1, _("Character encoding"), _("Change character encoding"));
+}
+
 void MudMainFrame::CreateDefVars()
 {
 	GetDefVars()->push_back(amcDefVar("amcChar", " "));
@@ -1453,6 +1543,63 @@ bool MudMainFrame::LoadGlobalOptions()
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
+	aL->GetField(-34, "charencoding");
+	int ec = (int)aL->GetInt(-1);
+	wxMenuBar* bar = GetMenuBar();
+	wxMenuItem* item;
+	switch(ec)
+	{
+		case wxFONTENCODING_SYSTEM:
+			item = bar->FindItem(ID_CHARENCODING);
+			item->Check();
+		break;
+		case wxFONTENCODING_UTF8:
+			item = bar->FindItem(ID_CHARENCODING+1);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_1:
+			item = bar->FindItem(ID_CHARENCODING+2);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_15:
+			item = bar->FindItem(ID_CHARENCODING+3);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_7:
+			item = bar->FindItem(ID_CHARENCODING+4);
+			item->Check();
+		break;
+		case wxFONTENCODING_CP1253:
+			item = bar->FindItem(ID_CHARENCODING+5);
+			item->Check();
+		break;
+		case wxFONTENCODING_KOI8:
+			item = bar->FindItem(ID_CHARENCODING+6);
+			item->Check();
+		break;
+		case wxFONTENCODING_KOI8_U:
+			item = bar->FindItem(ID_CHARENCODING+7);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_5:
+			item = bar->FindItem(ID_CHARENCODING+8);
+			item->Check();
+		break;
+		case wxFONTENCODING_CP1251:
+			item = bar->FindItem(ID_CHARENCODING+9);
+			item->Check();
+		break;
+		case wxFONTENCODING_BIG5:
+			item = bar->FindItem(ID_CHARENCODING+10);
+			item->Check();
+		break;
+		case wxFONTENCODING_GB2312:
+			item = bar->FindItem(ID_CHARENCODING+11);
+			item->Check();
+		break;
+		break;
+	}
+	m_gopt->SetEncoding((wxFontEncoding)aL->GetInt(-1));
 	aL->GetGlobal("global_colors");
 	int len = aL->GetObjectLen();
 	aL->Pop(1);
@@ -1760,6 +1907,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"autoreconnect\"] = %s,\n", m_gopt->GetAutoConnect() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"acdelay\"] = %d,\n", m_gopt->GetACDelay()));
 	file->Write(wxString::Format("\t\t[\"scriptfont\"] = \"%s\", \n", this->GetScriptFont()->GetFaceName()));
+	file->Write(wxString::Format("\t\t[\"charencoding\"] = %d, \n", m_gopt->GetCurEncoding()));
 	file->Write("\t}\n\n");
 	file->Write(wxT("\tglobal_colors = {\n\t\t"));
 	/*file->Write(wxString::Format("%i, %i, %i, %i, %i, %i, %i, %i,\n\t\t", m_child->GetAnsiColor(0).GetPixel(), m_child->GetAnsiColor(1).GetPixel(), m_child->GetAnsiColor(2).GetPixel(),
@@ -2721,6 +2869,61 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			//delete tb;
 		}
 	}
+	BuildEncodingMenu(view);
+	int ec = (int)m_gopt->GetCurEncoding();
+	//wxMenuBar* bar1 = GetMenuBar();
+	wxMenuItem* item;
+	switch(ec)
+	{
+		case wxFONTENCODING_SYSTEM:
+			item = bar->FindItem(ID_CHARENCODING);
+			item->Check();
+		break;
+		case wxFONTENCODING_UTF8:
+			item = bar->FindItem(ID_CHARENCODING+1);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_1:
+			item = bar->FindItem(ID_CHARENCODING+2);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_15:
+			item = bar->FindItem(ID_CHARENCODING+3);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_7:
+			item = bar->FindItem(ID_CHARENCODING+4);
+			item->Check();
+		break;
+		case wxFONTENCODING_CP1253:
+			item = bar->FindItem(ID_CHARENCODING+5);
+			item->Check();
+		break;
+		case wxFONTENCODING_KOI8:
+			item = bar->FindItem(ID_CHARENCODING+6);
+			item->Check();
+		break;
+		case wxFONTENCODING_KOI8_U:
+			item = bar->FindItem(ID_CHARENCODING+7);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO8859_5:
+			item = bar->FindItem(ID_CHARENCODING+8);
+			item->Check();
+		break;
+		case wxFONTENCODING_CP1251:
+			item = bar->FindItem(ID_CHARENCODING+9);
+			item->Check();
+		break;
+		case wxFONTENCODING_BIG5:
+			item = bar->FindItem(ID_CHARENCODING+10);
+			item->Check();
+		break;
+		case wxFONTENCODING_GB2312:
+			item = bar->FindItem(ID_CHARENCODING+11);
+			item->Check();
+		break;
+	}
 	//delete view;
 	m_toolbar->Refresh();
 	m_toolbar->Update();
@@ -3467,13 +3670,13 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						out = "\x1b[56m"+comm+"\x1b[0m\n";
 
 						/***always UTF8!***/
-						//if (m_parent->GetGlobalOptions()->UseUTF8())
-						bool t = m_parent->GetGlobalOptions()->UseUTF8();
-						m_parent->GetGlobalOptions()->SetUTF8(true);
-						m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
-						m_parent->GetGlobalOptions()->SetUTF8(t);
+						//bool t = m_parent->GetGlobalOptions()->UseUTF8();
+						//m_parent->GetGlobalOptions()->SetUTF8(true);
+						m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), false);
+						//m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
+						//m_parent->GetGlobalOptions()->SetUTF8(t);
 						//else
-						//m_parent->m_child->ParseNBuffer((char*)out.c_str(), false);
+						//m_parent->m_child->ParseNBuffer(out.char_str(), false);
 						m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
@@ -3501,7 +3704,7 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 					out.append(wxEmptyString);
 					out.append("\x1b[0m\n");
 					/**m_parent->m_child->ParseBuffer(out.char_str());**/
-					m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
+					m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), false);
 				}
 			}
 			if (!ParseCommandLine(&comm))

@@ -94,6 +94,7 @@ public:
 	//socket functions
 	void MyConnect(wxIPV4address addr);
 	void Write(wxString command);
+	void Write8Bit(wxString command);
 	void Close();
 	
 	//functions to parse the mud packets
