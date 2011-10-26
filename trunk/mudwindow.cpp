@@ -449,7 +449,8 @@ void MudWindow::Write8Bit(wxString command)
 	if (m_sock->IsConnected())
 	{
 		#ifdef __WXGTK__
-			wxString su = command.ToUTF8();
+			//wxString su = command.ToUTF8();
+			wxString su = command;
 			if (su.empty()&&!command.empty())
 				su = command;
 			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
@@ -1428,8 +1429,13 @@ static bool colset = false;
 			//s=f;
 			//if (f.empty()&& wxStrlen(cBuffer)>0)
 			//{
-				s = wxString::From8BitData((const char*) cBuffer);
-				
+			#ifdef __WXGTK__
+			
+			s = wxString::From8BitData((const char*) cBuffer);
+			#endif
+			#ifdef __WXMSW__
+			s = wxString::From8BitData((const char*) cBuffer);
+			#endif
 				//wxString ff(s.To8BitData(), wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 				//s=ff;
 			//}
