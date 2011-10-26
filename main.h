@@ -55,6 +55,7 @@
 #include <wx/tooltip.h>
 #include <wx/tipwin.h>
 #include <wx/fdrepdlg.h>
+#include <wx/buffer.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
@@ -123,6 +124,7 @@ using namespace std;
 #define ID_COPY 1500
 #define ID_MAKEACTION 1510
 #define ID_SPLITTER 1600
+#define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000
 #define ID_CREATEWINDOW 1602
 #define ID_CREATEGAUGEWIN 1603
@@ -235,7 +237,7 @@ enum
 #define OVECCOUNT 60
 //wxDECLARE_EVENT(wxEVENT_CMD_PAUSE2, wxThreadEvent);
 
-#define APP_VERSION "0.1.r45"
+#define APP_VERSION "0.1.r46"
 
 #include "mudwindow.h"
 #include "luadefs.h"
@@ -342,6 +344,7 @@ public:
 	void OnShowSplitter(wxCommandEvent& event);
 	void OnUserWindow(wxCommandEvent& event);
 	void OnUserButton(wxCommandEvent& event);
+	void OnCharEncoding(wxCommandEvent& event);
 	void OnCreateCapture(wxCommandEvent& event);
 	void OnCreateNb(wxCommandEvent& event);
 	void OnCreateTB(wxCommandEvent& event);
@@ -407,6 +410,7 @@ public:
 	friend class amcScriptThread;
 	void SetScriptFont(wxFont *f) {delete m_scriptfont;m_scriptfont = new wxFont(*f);}
 	wxFont* GetScriptFont() {return m_scriptfont;}
+	void BuildEncodingMenu(wxMenu*);
 	//class wxMediaCtrl *GetMediaCtrl() {return &m_media;}
 private:
 	bool m_usesplitter;

@@ -64,8 +64,8 @@ public:
 	size_t Freq(wxString *st, wxChar ch=ESC);
 	void SetLinenumber(wxUint32 ln) {m_linenumber=ln;}
 	wxUint32 GetLinenumber() {return m_linenumber;}
-	void SetLineText(wxString st) {m_linetext.append(st);}
-	void AssignText(wxString st) {m_linetext = st;}
+	void SetLineText(wxString st);
+	void AssignText(wxString st);
 	wxString GetLineText() {return m_linetext;}
 	void SetAnsiLine(wxString s) {m_ansiline.append(s);}
 	wxString GetAnsiLine() {return m_ansiline;}

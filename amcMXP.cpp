@@ -375,7 +375,7 @@ static bool intagtext = false;
 			{
 				m_parsestate = MXP_TAG_OPEN;
 			}
-			else if (*it==0x1b)
+			else if (*it=='\x1b')
 			{
 				m_parsestate = MXP_ESC;
 				escTag.AppendText(*it);

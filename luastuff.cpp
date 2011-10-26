@@ -80,9 +80,9 @@ wxString amcLua::GetwxString(int idx)
 	if (lua_isstring(m_L, idx))
 	{
 		const char *string = lua_tostring(m_L, idx);
-		wxString s(string, wxCSConv(wxFONTENCODING_UTF8), wxStrlen(string));
-		if (s.empty())
-			s= wxString::From8BitData(string);
+		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
+		//if (s.empty())
+		wxString s= wxString::From8BitData(string);
 		//s= wxString::FromUTF8(string);
 		//s = wxString::Format("%c", string);
 		return s;
@@ -102,7 +102,7 @@ const char* amcLua::GetString(int idx)
 
 int amcLua::DoString(wxString s)
 {
-	return luaL_dostring(m_L, s.char_str(wxCSConv(wxFONTENCODING_UTF8)));
+	return luaL_dostring(m_L, s.char_str(wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding())));
 }
 
 int amcLua::DoFile(wxString s)
@@ -255,7 +255,7 @@ int luafunc_echo(lua_State*L)
 	}
 	else
 		ale.SetBCol(99,m[bcol]);
-	wxString ba(text, wxCSConv(wxFONTENCODING_UTF8));
+	wxString ba(text, wxCSConv(parent->GetGlobalOptions()->GetCurEncoding()));
 	if (ba.IsEmpty())
 		ba<<text;
 	//replace vars

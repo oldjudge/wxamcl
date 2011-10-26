@@ -424,29 +424,44 @@ void MudWindow::Write(wxString command)
 			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
 		#endif
 		#ifdef __WXMSW__
-			m_sock->Write(command.To8BitData(), wxStrlen(command.To8BitData()));
+			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
 		#endif
 
 		}
 		else
 		{
-			/*wxString s = command.ToUTF8();
-			m_sock->Write(command.ToUTF8(), command.ToUTF8().length());*/
-			wxString f = command.ToUTF8();
+			wxString f(command.char_str(), wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 			if (f.empty() && !command.empty())
 			{
 				f = command;
-				m_sock->Write(f.To8BitData(), f.To8BitData().length());
+				m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());
 				return;
 			}
-			
-			//if (ss.empty())
-				//ss= wxString::From8BitData(command);
-			m_sock->Write(f.c_str(), wxStrlen(f));
+			m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
 		}
 	
 	}	
-		//m_sock->Write(test, wxStrlen(test));
+}
+
+void MudWindow::Write8Bit(wxString command)
+{
+	
+	if (m_sock->IsConnected())
+	{
+		#ifdef __WXGTK__
+			wxString su = command.ToUTF8();
+			if (su.empty()&&!command.empty())
+				su = command;
+			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
+			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+		#endif
+		#ifdef __WXMSW__
+			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
+			wxUint32 x = m_sock->LastCount();
+			//m_sock->Write(command, wxStrlen(command));
+		#endif
+
+	}
 }
 
 void MudWindow::Close()
@@ -1367,17 +1382,18 @@ void MudWindow::ParseBufferMXP(char *Buffer)
 		s = wxString::From8BitData((const char*) Buffer);
 	else
 	{
-		wxString f(Buffer, wxCSConv(wxFONTENCODING_UTF8));
-		s=f;
-		if (f.empty()&& wxStrlen(Buffer)>0)
-		{
-			s = wxString::From8BitData((const char*) Buffer);
-		}
+		//wxString f(Buffer, wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+		//s=f;
+		//if (f.empty()&& wxStrlen(Buffer)>0)
+		//{
+		s = wxString::From8BitData((const char*) Buffer);
+		//}
 	}
 	//wxString s;
 	//s = wxString::From8BitData((const char*)Buffer);
 	m_MXP->Parse(s);
 }
+
 void MudWindow::ParseNBuffer(char* cBuffer, bool b)
 {
 	//try a state machine^^
@@ -1404,14 +1420,20 @@ static bool colset = false;
 		s = wxString::From8BitData((const char*) cBuffer);
 	else
 	{
-		wxString f(cBuffer, wxCSConv(wxFONTENCODING_UTF8));
-		s=f;
-		if (f.empty()&& wxStrlen(cBuffer)>0)
+		//if (cBuffer[0]==(char)IAC)
+		//	s = wxString::From8BitData((const char*) cBuffer);
+		//else
 		{
-			s = wxString::From8BitData((const char*) cBuffer);
-			//s=cBuffer;
+			//wxString f(cBuffer, wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+			//s=f;
+			//if (f.empty()&& wxStrlen(cBuffer)>0)
+			//{
+				s = wxString::From8BitData((const char*) cBuffer);
+				
+				//wxString ff(s.To8BitData(), wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+				//s=ff;
+			//}
 		}
-		
 	}
 	//s = wxString::FromAscii(cBuffer);	
 	wxString::iterator it;
@@ -1472,6 +1494,7 @@ static bool colset = false;
 		}
 	}
 	m_indexstart = line.m_vstyle.size();
+	
 	for (it=s.begin()+pos;it!=s.end();it++, pos++)
 	{
 		switch (m_parsestate)
@@ -1915,14 +1938,14 @@ static bool colset = false;
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, DO, WILLEOR);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), 3);
 					}
 					else
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, WILLEOR);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), 3);
 					}
 					break;	
@@ -1936,7 +1959,7 @@ static bool colset = false;
 							wxString s;
 							s.Printf("%c%c%c", IAC, DO, TELOPT_COMPRESS2);
 							//m_sock->Write(s.To8BitData(), s.length());
-							Write(s);
+							Write8Bit(s);
 							m_mccpneg = true;
 							Msg(_("MCCP2 agreed!"));
 						}
@@ -1945,7 +1968,7 @@ static bool colset = false;
 							wxString s;
 							s.Printf("%c%c%c", IAC, DONT, TELOPT_COMPRESS2);
 							//m_sock->Write(s, s.length());
-							Write(s);
+							Write8Bit(s);
 							//m_sock->Write("\xff\xfe\x56", 3); //IAC DONT MCCP
 						}
 					}
@@ -1955,7 +1978,7 @@ static bool colset = false;
 				{
 					wxString s;
 					s.Printf("%c%c%c", IAC, DONT, TELOPT_COMPRESS);
-					Write(s);
+					Write8Bit(s);
 					//m_sock->Write("\xff\xfe\x55", 3);
 					break;
 				}                 
@@ -1965,9 +1988,9 @@ static bool colset = false;
 					{
 						//m_sock->Write("\xff\xfd\x5a", 3);
 						wxString s;
-						s.Printf("%c%c%c", IAC, DO, MXP);
+						s.Printf("%c%c%c", IAC, DO, MSP);
 						//m_sock->Write(s.To8BitData(), 3);
-						Write(s);
+						Write8Bit(s);
 						m_msp = true;
 						Msg(_("MSP enabled!"));
 					}
@@ -1976,7 +1999,7 @@ static bool colset = false;
 						//m_sock->Write("\xff\xfe\x5a", 3);
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, MSP);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), 3);
 						m_msp = false;
 						Msg(_("MSP denied!"));
@@ -1989,7 +2012,7 @@ static bool colset = false;
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, DO, MXP);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), 3);
 						m_mxp = true;
 						Msg(_("MXP enabled!"));
@@ -2000,7 +2023,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, MXP);
 						//m_sock->Write(s.To8BitData(), 3);
-						Write(s);
+						Write8Bit(s);
 						Msg(_("MXP denied!"));
 					}
 					break;
@@ -2010,7 +2033,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, DO, SUPPRESS_GO_AHEAD);
 					//m_sock->Write(s.To8BitData(), (wxUint32)s.length());
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				if (*it== NAWS)
@@ -2021,8 +2044,8 @@ static bool colset = false;
 						wxSize ss;
 						s.Printf("%c%c%c", IAC, WILL, NAWS);
 						//m_sock->Write(s.To8BitData(), (wxUint32)s.length());
-						Write(s);
-						//Msg(_("NAWS agreed!"));
+						Write8Bit(s);
+						Msg(_("NAWS agreed!"));
 						ss=GetClientSize();
 						wxClientDC dc(this);
 						dc.SetFont(*m_font);
@@ -2044,7 +2067,7 @@ static bool colset = false;
 					{
 						wxString s;
 						s.sprintf("%c%c%c", IAC, WONT, NAWS);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), 3);
 					}
 					break;
@@ -2055,16 +2078,15 @@ static bool colset = false;
 					{
 						wxString s;
 						s.sprintf("%c%c%c", IAC, DO, AARD1);
-						Write(s);
+						Write8Bit(s);
 					}
 					else
 					{
 						wxString s;
 						s.sprintf("%c%c%c", IAC, DONT, AARD1);
-						
-						Write(s);
+						Write8Bit(s);
 					}
-					//m_sock->Write(s.To8BitData(), 3);
+					//m_sock->Write8Bit(s.To8BitData(), 3);
 					//Msg(_("AARD telnet negotiated!"));
 					break;
 				}
@@ -2075,7 +2097,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, DO, ATCP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
-						Write(s);
+						Write8Bit(s);
 						Msg(_("ATCP negotiated!"));
 						m_atcp = true;
 						m_parent->luaCreateATCPTable();
@@ -2085,7 +2107,7 @@ static bool colset = false;
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, ATCP);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 					}
 					break;
@@ -2097,7 +2119,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, DO, ATCP2);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
-						Write(s);
+						Write8Bit(s);
 						Msg(_("GMCP negotiated!"));
 						m_atcp2 = true;
 						m_parent->luaCreateGMCPTable();
@@ -2107,7 +2129,7 @@ static bool colset = false;
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, ATCP2);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 					}
 					break;
@@ -2117,7 +2139,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, DO, TERMINAL_TYPE);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					//Msg(_("Terminal type requested!"));
 					break;
 				}
@@ -2126,7 +2148,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, DONT , ZMP);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				if (*it== MSSP)
@@ -2134,7 +2156,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, DONT , MSSP);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				if (*it== MSDP)
@@ -2144,7 +2166,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, DO , MSDP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
-						Write(s);
+						Write8Bit(s);
 						m_msdp = true;
 						Msg(_("MSDP negotiated!"));
 						m_parent->luaCreateMSDPTable();
@@ -2154,7 +2176,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, DONT, MSDP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
-						Write(s);
+						Write8Bit(s);
 						m_msdp = false;
 					}
 					break;
@@ -2164,15 +2186,14 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, DONT , NEW_ENVIRON);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				else
 				{
 					wxString s;
 					s.Printf("%c%c%c", IAC, DONT , *it);
-					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				break;
@@ -2183,7 +2204,7 @@ static bool colset = false;
 				{
 					wxString s;
 					s.Printf("%c%c%c", IAC, WONT, TELOPT_COMPRESS);
-					Write(s);
+					Write8Bit(s);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
 					break;
 				}
@@ -2191,8 +2212,7 @@ static bool colset = false;
 				{
 					wxString s;
 					s.Printf("%c%c%c", IAC, WILL, TERMINAL_TYPE);
-					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					//Msg(_("Terminal type requested!"));
 					break;
 				}
@@ -2203,7 +2223,7 @@ static bool colset = false;
 						wxString s;
 						wxSize ss;
 						s.Printf("%c%c%c", IAC, WILL, NAWS);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 						//Msg(_("NAWS agreed!"));
 						ss=GetClientSize();
@@ -2234,7 +2254,7 @@ static bool colset = false;
 					{
 						s.Printf("%c%c%c", IAC, WILL, MXP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)s.length());
-						Write(s);
+						Write8Bit(s);
 						Msg(_("MXP enabled!"));
 						m_mxp = true;
 					}
@@ -2242,9 +2262,9 @@ static bool colset = false;
 					{
 						s.Printf("%c%c%c", IAC, WONT, MXP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)s.length());
-						Write(s);
+						Write8Bit(s);
 						m_mxp = false;
-						//Msg(_("MXP denied!"));
+						Msg(_("MXP denied!"));
 					}
 					break;
 				}
@@ -2254,13 +2274,13 @@ static bool colset = false;
 					{
 						wxString s;
 						s.sprintf("%c%c%c", IAC, WILL, AARD1);
-						Write(s);
+						Write8Bit(s);
 					}
 					else
 					{
 						wxString s;
 						s.sprintf("%c%c%c", IAC, WONT, AARD1);
-						Write(s);
+						Write8Bit(s);
 					}
 					//m_sock->Write(s.To8BitData(), 3);
 					break;
@@ -2272,7 +2292,7 @@ static bool colset = false;
 						wxString s;
 						s.Printf("%c%c%c", IAC, WILL, ATCP);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
-						Write(s);
+						Write8Bit(s);
 						m_atcp = true;
 						m_parent->luaCreateATCPTable();
 						
@@ -2281,7 +2301,7 @@ static bool colset = false;
 					{
 						wxString s;
 						s.Printf("%c%c%c", IAC, WONT, ATCP);
-						Write(s);
+						Write8Bit(s);
 						//m_sock->Write(s.To8BitData(), (wxUint32)3);
 						m_atcp = false;
 					}
@@ -2292,7 +2312,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, WONT , NEW_ENVIRON);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				if (*it==CHARSET)
@@ -2301,12 +2321,12 @@ static bool colset = false;
 					if (m_parent->GetGlobalOptions()->UseUTF8())
 					{
 						s.Printf("%c%c%c", IAC, WILL, CHARSET);
-						Write(s);
+						Write8Bit(s);
 					}
 					else
 					{
 						s.Printf("%c%c%c", IAC, WONT, CHARSET);
-						Write(s);
+						Write8Bit(s);
 					}
 				}
 				else
@@ -2314,7 +2334,7 @@ static bool colset = false;
 					wxString s;
 					s.Printf("%c%c%c", IAC, WONT , *it);
 					//m_sock->Write(s.To8BitData(), (wxUint32)3);
-					Write(s);
+					Write8Bit(s);
 					break;
 				}
 				
@@ -2613,6 +2633,7 @@ static bool colset = false;
 				if (*it=='!')
 				{
 					m_parsestate = HAVE_MSP;
+					sLine.Append(*it);
 					//sLine.RemoveLast();
 				}
 				else if (*it==ESC)
@@ -2634,6 +2655,11 @@ static bool colset = false;
 						it = s.begin()+pos;
 						m_parsestate = HAVE_TEXT;
 						sLine.Empty();
+					}
+					else
+					{
+						m_parsestate = HAVE_TEXT;
+						sLine.Append(*it);
 					}
 				}
 				break;
@@ -4203,7 +4229,9 @@ RegExp num("([\\w\\.]+)\\s([\\d\\w,\\(\\)\\s:\\/\\-']+)");
 				}
 				else
 				{
-					m_sock->Write("\xff\xfe\x5b", 3);
+					wxString s;
+					s.Printf("%c%c%c", IAC, DONT , MXP);
+					m_sock->Write(s.To8BitData(), 3);
 					Msg(_("MXP denied!"));
 				}
 				break;
@@ -5704,8 +5732,8 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 
 void MudWindow::OnSocketEvent(wxSocketEvent& event)
 {
-//char cBuffer[30001];// = new wxChar[15001];
-char cBuf[64000];// = NULL; //new wxChar[30000];
+char cBuf[64000];
+//wxCharTypeBuffer<char> cBuf(64000);
 wxString s, buffer;
 wxUint32 uiBytesRead;
 //  int scrollpos;
@@ -5776,10 +5804,16 @@ wxUint32 uiBytesRead;
 					wxString sss = GetLState()->GetwxString(-1);
 					if (m_mccp2 && cBuf!=NULL)
 					{
-						wxStrcpy(cBuf, sss.char_str(wxCSConv(wxFONTENCODING_UTF8)));
+						//wxStrcpy(cBuf, sss.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())));
+						//if (cBuf[0]=='\0')
+						wxStrcpy(cBuf, sss.char_str());
 					}
 					else if (uiBytesRead)
-						wxStrcpy(m_cBuffer, sss.char_str(wxCSConv(wxFONTENCODING_UTF8)));
+					{
+						//wxStrcpy(m_cBuffer, sss.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())));
+						//if (m_cBuffer[0]=='\0')
+							wxStrcpy(m_cBuffer, sss.char_str());
+					}
 				}
 			}
 		}

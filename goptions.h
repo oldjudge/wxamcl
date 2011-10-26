@@ -105,7 +105,8 @@ public:
 	wxString* GetMsgCol() {return m_echocol;}
 	//wxWindow* GetParent() {return m_parent;}
 	MudMainFrame* GetParent() {return m_parent;}
-
+	wxFontEncoding GetCurEncoding() {return m_curencoding;}
+	void SetEncoding(wxFontEncoding ec) {m_curencoding=ec;}
 private:
 	//Global prefs
 	//int m_maxlines;
@@ -158,6 +159,7 @@ private:
 
 	//wxWindow *m_parent;
 	MudMainFrame *m_parent;
+	wxFontEncoding m_curencoding;
 	wxFileName m_workdir;
 	wxFileName m_profiledir;
 	wxFileName m_scriptdir;

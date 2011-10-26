@@ -90,7 +90,11 @@ void AnsiLineElement::SetText(wxString text)
 	//delete m_text;
 	//m_text = new wxString(text);
 	m_text.clear();
-	m_text.append(text);
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxString ff(text.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	if (ff.empty())
+		ff=text;
+	m_text.append(ff);
 	m_len = m_text.length();
 }
 
@@ -253,4 +257,20 @@ int i;
 		s<<m_codes[it->GetFColIndex()]<<m_bcodes[it->GetBColIndex()]<<it->GetText();
 	}
 	return s;
+}
+
+void AnsiLine::SetLineText(wxString st)
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	m_linetext.append(ff);
+}
+
+void AnsiLine::AssignText(wxString st)
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	if (ff.empty())
+		ff=st;
+	m_linetext = ff;
 }
