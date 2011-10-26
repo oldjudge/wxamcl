@@ -82,10 +82,18 @@ wxString amcLua::GetwxString(int idx)
 		const char *string = lua_tostring(m_L, idx);
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		//if (s.empty())
+		#ifdef __WXMSW_
 		wxString s= wxString::From8BitData(string);
-		//s= wxString::FromUTF8(string);
-		//s = wxString::Format("%c", string);
 		return s;
+		#endif
+		#ifdef __WXGTK__
+		//wxString s(string, wxCSConv(wxFONTENCODING_ISO8859_1));
+		return wxString::FromUTF8Unchecked(string);
+		//return s;
+		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
+		#endif
+		//s = wxString::Format("%c", string);
+		//return s;
 	}
 	else return wxEmptyString;
 }
