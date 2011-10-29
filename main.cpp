@@ -203,7 +203,8 @@ bool MudClientApp::OnInit()
 	frame->luaBuildalias();
 	//wxInfoMessageBox(frame);
 	frame->m_input->SetFocus();
-
+	wxFileName ff("defaultprofile.lua");
+	frame->LoadProfile(ff);
 	wxCmdLineParser p(g_cmddesc, wxGetApp().argc, wxGetApp().argv);
 	p.Parse(false);
 	int i = p.GetParamCount();
@@ -876,6 +877,14 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		break;
 	case ID_CHARENCODING+11:
 		ec = wxFONTENCODING_CP936;
+	case ID_CHARENCODING+12:
+		ec = wxFONTENCODING_SHIFT_JIS;
+		break;
+	case ID_CHARENCODING+13:
+		ec = wxFONTENCODING_ISO2022_JP;
+		break;
+	case ID_CHARENCODING+14:
+		ec = wxFONTENCODING_EUC_JP;
 		break;
 	}
 	m_gopt->SetEncoding(ec);
@@ -1310,18 +1319,6 @@ void MudMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 	info.SetWebSite("code.google.com/p/wxamcl");
 	
 	wxAboutBox(info);
-	/*wxMessageBox(wxString::Format(
-					wxTRANSLATE("Willkommen zu wxAMC!\n")
-                    wxTRANSLATE("\n")
-                    wxTRANSLATE("Mein erstes wxWidgets Programm\n")
-                    wxTRANSLATE("unter %s."),
-                    wxVERSION_STRING,
-                    wxGetOsDescription().c_str()
-                 ),
-                 wxT("Amcl"),
-                 wxOK | wxICON_INFORMATION,
-                 this);*/
-	//wxMessageBox(_("wxAMC mudclient v 0.001"), _("About wxAMC"), wxOK|wxICON_INFORMATION, this);
 }
 
 void MudMainFrame::OnParseInput(wxCommandEvent& event)
@@ -1357,6 +1354,11 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 	subMenu3->AppendCheckItem(ID_CHARENCODING+10, _("Big5"), _("Big5"));
 	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("GB2312"), ("GB2312"));
 	subMenu1->AppendSubMenu(subMenu3,_("Chinese"), _("Chinese"));
+	wxMenu *subMenu4 = new wxMenu;
+	subMenu4->AppendCheckItem(ID_CHARENCODING+12, _("Shift-JIS"), _("JIS"));
+	subMenu4->AppendCheckItem(ID_CHARENCODING+13, _("ISO2022-JP"), ("ISO2022-JP"));
+	subMenu4->AppendCheckItem(ID_CHARENCODING+14, _("EUC_JP"), ("EUC_JP"));
+	subMenu1->AppendSubMenu(subMenu4,_("Japanese"), _("Japanese"));
 	view->AppendSubMenu(subMenu1, _("Character encoding"), _("Change character encoding"));
 }
 
@@ -1549,6 +1551,7 @@ bool MudMainFrame::LoadGlobalOptions()
 	wxMenuItem* item;
 	switch(ec)
 	{
+		
 		case wxFONTENCODING_SYSTEM:
 			item = bar->FindItem(ID_CHARENCODING);
 			item->Check();
@@ -1597,6 +1600,18 @@ bool MudMainFrame::LoadGlobalOptions()
 			item = bar->FindItem(ID_CHARENCODING+11);
 			item->Check();
 		break;
+		break;
+		case wxFONTENCODING_SHIFT_JIS:
+			item = bar->FindItem(ID_CHARENCODING+12);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO2022_JP:
+			item = bar->FindItem(ID_CHARENCODING+13);
+			item->Check();
+		break;
+		case wxFONTENCODING_EUC_JP:
+			item = bar->FindItem(ID_CHARENCODING+14);
+			item->Check();
 		break;
 	}
 	m_gopt->SetEncoding((wxFontEncoding)aL->GetInt(-1));
@@ -2225,11 +2240,13 @@ li_it itl;
 	}
 	file->Write("\t}");
 	file->Write("\n\n\tamc_events = {\n");
+	file->Write(wxString::Format("\t\t[\"useevents\"] = %s,\n", m_gopt->GetUseEvents() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_onconnect\"] = %s,\n", m_gopt->GetUseEvConn() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_onreceived\"] = %s,\n", m_gopt->GetUseEvRecv() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_ondisconnect\"] = %s,\n", m_gopt->GetUseEvDisco() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_ontelnetdata\"] = %s,\n", m_gopt->GetUseEvTelnetData() ? "true" : "false"));
-	file->Write(wxString::Format("\t\t[\"event_ongmcpdata\"] = %s,\n", m_gopt->GetUseEvGMCPData  () ? "true" : "false"));
+	file->Write(wxString::Format("\t\t[\"event_ongmcpdata\"] = %s,\n", m_gopt->GetUseEvGMCPData () ? "true" : "false"));
+	file->Write(wxString::Format("\t\t[\"event_ongmsdpdata\"] = %s,\n", m_gopt->GetUseEvMSDPData() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"eventfile\"] = [[%s]],\n", m_gopt->GetEventFile().c_str()));
 	file->Write("\t}");
 
@@ -2779,17 +2796,21 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	}
 
 	aL->GetGlobal("amc_events");
-	aL->GetField(-1, wxT("event_onconnect"));
+	aL->GetField(-1, "useevents");
+	m_gopt->SetUseEvents(aL->GetBoolean(-1));
+	aL->GetField(-2, wxT("event_onconnect"));
 	m_gopt->SetUseEvConn(aL->GetBoolean(-1));
-	aL->GetField(-2, wxT("event_onreceived"));
+	aL->GetField(-3, wxT("event_onreceived"));
 	m_gopt->SetUseEvRecv(aL->GetBoolean(-1));
-	aL->GetField(-3, "event_ondisconnect");
+	aL->GetField(-4, "event_ondisconnect");
 	m_gopt->SetUseEvDisco(aL->GetBoolean(-1));
-	aL->GetField(-4, "event_ontelnetdata");
+	aL->GetField(-5, "event_ontelnetdata");
 	m_gopt->SetUseEvTelnetData(aL->GetBoolean(-1));
-	aL->GetField(-5, "event_ongmcpdata");
+	aL->GetField(-6, "event_ongmcpdata");
 	m_gopt->SetUseEvGMCPData(aL->GetBoolean(-1));
-	aL->GetField(-6, "eventfile");
+	aL->GetField(-7, "event_ongmsdpdata");
+	m_gopt->SetUseEvGMCPData(aL->GetBoolean(-1));
+	aL->GetField(-8, "eventfile");
 	wxString f = aL->GetwxString(-1);
 	m_gopt->SetEventFile(f);
 	
@@ -2875,6 +2896,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	wxMenuItem* item;
 	switch(ec)
 	{
+		
 		case wxFONTENCODING_SYSTEM:
 			item = bar->FindItem(ID_CHARENCODING);
 			item->Check();
@@ -2921,6 +2943,18 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		break;
 		case wxFONTENCODING_GB2312:
 			item = bar->FindItem(ID_CHARENCODING+11);
+			item->Check();
+		break;
+		case wxFONTENCODING_SHIFT_JIS:
+			item = bar->FindItem(ID_CHARENCODING+12);
+			item->Check();
+		break;
+		case wxFONTENCODING_ISO2022_JP:
+			item = bar->FindItem(ID_CHARENCODING+13);
+			item->Check();
+		break;
+		case wxFONTENCODING_EUC_JP:
+			item = bar->FindItem(ID_CHARENCODING+14);
 			item->Check();
 		break;
 	}
@@ -3666,17 +3700,18 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						ParseVars(&comm);
 						ParseLists(&comm);
 						wxString out;
-						
-						out = "\x1b[56m"+comm+"\x1b[0m\n";
-
+						//wxString 
+						out << "\x1b[56m" <<comm <<"\x1b[0m\n";
+						out = out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 						/***always UTF8!***/
 						//bool t = m_parent->GetGlobalOptions()->UseUTF8();
 						//m_parent->GetGlobalOptions()->SetUTF8(true);
-						m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), false);
+						//m_parent->m_child->ParseNBuffer((char*)out.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), false);
+						//m_parent->m_child->ParseNBuffer((char*)out.char_str(), false);
 						//m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
 						//m_parent->GetGlobalOptions()->SetUTF8(t);
 						//else
-						//m_parent->m_child->ParseNBuffer(out.char_str(), false);
+						m_parent->m_child->ParseNBuffer(out.char_str(), false);
 						m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
