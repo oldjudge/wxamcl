@@ -430,14 +430,21 @@ void MudWindow::Write(wxString command)
 		}
 		else
 		{
-			wxString f(command.char_str(), wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+			wxString f;
+			wxFontEncoding fe = m_parent->GetGlobalOptions()->GetCurEncoding();
+			if (fe != wxFONTENCODING_UTF8)
+				f = command.mb_str(wxCSConv(fe));
+			else f = command.ToUTF8();
 			if (f.empty() && !command.empty())
 			{
-				f = command;
-				m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());
+				f = command.ToUTF8();
+				m_sock->Write(f, f.Length());
+				//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());
 				return;
 			}
-			m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
+			//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
+			m_sock->Write(f, wxStrlen(f));
+			//m_sock->Write(command.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), wxStrlen(command));
 		}
 	
 	}	
@@ -1430,7 +1437,6 @@ static bool colset = false;
 			//if (f.empty()&& wxStrlen(cBuffer)>0)
 			//{
 			#ifdef __WXGTK__
-			
 			s = wxString::From8BitData((const char*) cBuffer);
 			#endif
 			#ifdef __WXMSW__
@@ -2643,7 +2649,21 @@ static bool colset = false;
 					//sLine.RemoveLast();
 				}
 				else if (*it==ESC)
+				{
 					m_parsestate = HAVE_ESC;
+					sLine.Replace("\t", "    ");
+					style[index].SetText(sLine);
+					if (m_bourl)
+					{	
+						if (m_url->Match(style[index].GetText(), false))
+							style[index].SetURL(true);
+					}
+					//opos=pos;
+					line.m_vstyle.push_back(style[index++]);
+					m_indexend=line.m_vstyle.size();
+					line.SetLineText(sLine);
+					sLine.Empty();
+				}
 				else if (*it=='\n')
 					m_parsestate = HAVE_LINE;
 				else

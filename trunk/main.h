@@ -237,7 +237,7 @@ enum
 #define OVECCOUNT 60
 //wxDECLARE_EVENT(wxEVENT_CMD_PAUSE2, wxThreadEvent);
 
-#define APP_VERSION "0.1.r46"
+#define APP_VERSION "0.1.r48"
 
 #include "mudwindow.h"
 #include "luadefs.h"
@@ -410,8 +410,7 @@ public:
 	friend class amcScriptThread;
 	void SetScriptFont(wxFont *f) {delete m_scriptfont;m_scriptfont = new wxFont(*f);}
 	wxFont* GetScriptFont() {return m_scriptfont;}
-	void BuildEncodingMenu(wxMenu*);
-	//class wxMediaCtrl *GetMediaCtrl() {return &m_media;}
+	void BuildEncodingMenu(wxMenu*);	//class wxMediaCtrl *GetMediaCtrl() {return &m_media;}
 private:
 	bool m_usesplitter;
 	bool m_triggerson;

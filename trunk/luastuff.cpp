@@ -82,7 +82,7 @@ wxString amcLua::GetwxString(int idx)
 		const char *string = lua_tostring(m_L, idx);
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		//if (s.empty())
-		#ifdef __WXMSW_
+		#ifdef __WXMSW__
 		wxString s= wxString::From8BitData(string);
 		return s;
 		#endif
