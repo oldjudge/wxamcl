@@ -1437,7 +1437,10 @@ static bool colset = false;
 			//if (f.empty()&& wxStrlen(cBuffer)>0)
 			//{
 			#ifdef __WXGTK__
-			s = wxString::From8BitData((const char*) cBuffer);
+			s = wxString(cBuffer);
+			//s = wxString::From8BitData((const char*) cBuffer);
+			if (s.empty())
+				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
 			#ifdef __WXMSW__
 			s = wxString::From8BitData((const char*) cBuffer);
