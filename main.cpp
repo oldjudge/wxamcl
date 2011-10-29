@@ -3703,6 +3703,9 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						//wxString 
 						out << "\x1b[56m" <<comm <<"\x1b[0m\n";
 						out = out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+						if (out.empty())
+							out << "\x1b[56m" <<comm <<"\x1b[0m\n";
+						//out = out.ToUTF8();
 						/***always UTF8!***/
 						//bool t = m_parent->GetGlobalOptions()->UseUTF8();
 						//m_parent->GetGlobalOptions()->SetUTF8(true);
@@ -3711,7 +3714,7 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						//m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
 						//m_parent->GetGlobalOptions()->SetUTF8(t);
 						//else
-						m_parent->m_child->ParseNBuffer(out.char_str(), false);
+						m_parent->m_child->ParseNBuffer((char*)out.char_str(), false);
 						m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
