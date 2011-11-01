@@ -438,12 +438,12 @@ void MudWindow::Write(wxString command)
 			if (f.empty() && !command.empty())
 			{
 				f = command.ToUTF8();
-				m_sock->Write(f, f.Length());
+				m_sock->Write(f.c_str(), f.Length());
 				//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());
 				return;
 			}
 			//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
-			m_sock->Write(f, wxStrlen(f));
+			m_sock->Write(f.c_str(), wxStrlen(f));
 			//m_sock->Write(command.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), wxStrlen(command));
 		}
 	

@@ -2366,7 +2366,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		return false;
 	}
 	
-	aL->GetGlobal(wxT("amc_actions"));
+	aL->GetGlobal("amc_actions");
 	int len = aL->GetObjectLen();
 	m_trigger.clear();
 	Trigger::GetTriggerClasses()->clear();
@@ -2378,18 +2378,18 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		aL->GetField(-1, "label");
-		tr.SetLabel(aL->GetwxString(-1));
-		aL->GetField(-2, wxT("pattern"));
-		tr.SetPattern(aL->GetwxString(-1));
-		aL->GetField(-3, wxT("action"));
-		tr.SetAction(aL->GetwxString(-1));
-		aL->GetField(-4, wxT("class"));
-		tr.SetClass(aL->GetwxString(-1));
-		aL->GetField(-5, wxT("priority"));
+		tr.SetLabel(aL->GetUTF8String(-1));
+		aL->GetField(-2, "pattern");
+		tr.SetPattern(aL->GetUTF8String(-1));
+		aL->GetField(-3, "action");
+		tr.SetAction(aL->GetUTF8String(-1));
+		aL->GetField(-4, "class");
+		tr.SetClass(aL->GetUTF8String(-1));
+		aL->GetField(-5, "priority");
 		tr.SetPriority(aL->GetInt(-1));
-		aL->GetField(-6, wxT("colmatch"));
+		aL->GetField(-6, "colmatch");
 		tr.SetColMatch(aL->GetInt(-1));
-		aL->GetField(-7, wxT("matchcount"));
+		aL->GetField(-7, "matchcount");
 		tr.SetMatchCount((long)aL->GetInt(-1));
 		aL->GetField(-8, "on");
 		tr.SetActive(aL->GetBoolean(-1));
@@ -2411,16 +2411,17 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	for (int i=0; i<len; i++)
 	{
 		amcAlias al;
-		aL->GetGlobal(wxT("amc_alias"));
+		aL->GetGlobal("amc_alias");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
-		aL->GetField(-1, wxT("alias"));
-		al.SetAlias(aL->GetwxString(-1));
-		aL->GetField(-2, wxT("action"));
-		al.SetAction(aL->GetwxString(-1));
-		aL->GetField(-3, wxT("group"));
-		al.SetGroup(aL->GetwxString(-1));
-		aL->GetField(-4, wxT("on"));
+		aL->GetField(-1, "alias");
+		
+		al.SetAlias(aL->GetUTF8String(-1));
+		aL->GetField(-2, "action");
+		al.SetAction(aL->GetUTF8String(-1));
+		aL->GetField(-3, "group");
+		al.SetGroup(aL->GetUTF8String(-1));
+		aL->GetField(-4, "on");
 		al.SetActive(aL->GetBoolean(-1));
 		aL->SetTop(0);
 		m_alias.push_back(al);
@@ -2435,20 +2436,20 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	for (int i=0; i<len; i++)
 	{
 		amcHotkey hk;
-		aL->GetGlobal(wxT("amc_hotkey"));
+		aL->GetGlobal("amc_hotkey");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
-		aL->GetField(-1, wxT("name"));
-		hk.SetName(aL->GetwxString(-1));
-		aL->GetField(-2, wxT("action"));
-		hk.SetAction(aL->GetwxString(-1));
-		aL->GetField(-3, wxT("group"));
-		hk.SetGroup(aL->GetwxString(-1));
-		aL->GetField(-4, wxT("on"));
+		aL->GetField(-1, "name");
+		hk.SetName(aL->GetUTF8String(-1));
+		aL->GetField(-2, "action");
+		hk.SetAction(aL->GetUTF8String(-1));
+		aL->GetField(-3, "group");
+		hk.SetGroup(aL->GetUTF8String(-1));
+		aL->GetField(-4, "on");
 		hk.SetActive(aL->GetBoolean(-1));
-		aL->GetField(-5, wxT("key"));
+		aL->GetField(-5, "key");
 		hk.SetHotkey(aL->GetLong(-1));
-		aL->GetField(-6, wxT("modifier"));
+		aL->GetField(-6, "modifier");
 		hk.SetMods(aL->GetInt(-1));
 		aL->SetTop(0);
 		m_hotkeys.push_back(hk);
@@ -2465,13 +2466,13 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->GetGlobal("amc_vars");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
-		aL->GetField(-1, wxT("name"));
-		v.SetName(aL->GetwxString(-1));
-		aL->GetField(-2, wxT("value"));
-		v.SetValue(aL->GetwxString(-1));
-		aL->GetField(-3, wxT("group"));
-		v.SetGroup(aL->GetwxString(-1));
-		aL->GetField(-4, wxT("on"));
+		aL->GetField(-1, "name");
+		v.SetName(aL->GetUTF8String(-1));
+		aL->GetField(-2, "value");
+		v.SetValue(aL->GetUTF8String(-1));
+		aL->GetField(-3, "group");
+		v.SetGroup(aL->GetUTF8String(-1));
+		aL->GetField(-4, "on");
 		v.SetActive(aL->GetBoolean(-1));
 		aL->SetTop(0);
 		m_vars.push_back(v);
@@ -2486,29 +2487,29 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	for (int i=0; i<len; i++)
 	{
 		amcList li;
-		aL->GetGlobal(wxT("amc_lists"));
+		aL->GetGlobal("amc_lists");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
-		aL->GetField(-1, wxT("name"));
-		li.SetName(aL->GetwxString(-1));
-		aL->GetField(-2, wxT("group"));
-		li.SetGroup(aL->GetwxString(-1));
-		aL->GetField(-3, wxT("on"));
+		aL->GetField(-1, "name");
+		li.SetName(aL->GetUTF8String(-1));
+		aL->GetField(-2, "group");
+		li.SetGroup(aL->GetUTF8String(-1));
+		aL->GetField(-3, "on");
 		li.SetActive(aL->GetBoolean(-1));
-		aL->GetField(-4, wxT("items"));
+		aL->GetField(-4, "items");
 		int l = aL->GetObjectLen();
 		aL->Pop(1);
 		for (int ii=0;ii<l;ii++)
 		{
-			aL->GetField(-4, wxT("items"));
+			aL->GetField(-4, "items");
 			aL->RawGeti(-1, ii+1);
-			li.AddItem(aL->GetwxString(-1));
+			li.AddItem(aL->GetUTF8String(-1));
 			aL->Pop(2);
 		}
 		aL->SetTop(0);
 		m_lists.push_back(li);
 	}
-	stable_sort(m_alias.begin(), m_alias.end(), less<class amcAlias>());
+	//stable_sort(m_alias.begin(), m_alias.end(), less<class amcAlias>());
 
 	m_panes.clear();
 	m_nbs.clear();
@@ -2521,12 +2522,12 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		aL->GetField(-1, "name");
-		wxString win = aL->GetwxString(-1);
+		wxString win = aL->GetUTF8String(-1);
 		GetPanes()->push_back(win);
 		
 		wxFont f;
 		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetwxString(-1));
+		f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		int fs;
 		f.SetPointSize(fs=aL->GetInt(-1));
@@ -2556,12 +2557,12 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		aL->GetField(-1, "name");
-		wxString win = aL->GetwxString(-1);
+		wxString win = aL->GetUTF8String(-1);
 		GetAmcWindows()->push_back(win);
 		
 		wxFont f;
 		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetwxString(-1));
+		f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		int fs;
 		f.SetPointSize(fs=aL->GetInt(-1));
@@ -2599,14 +2600,14 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->GetGlobal("amc_nbs");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
-		wxString win = aL->GetwxString(-1);
+		wxString win = aL->GetUTF8String(-1);
 		GetNbs()->push_back(win);
 		vector<wxString> s;
 		GetNbPanes()->push_back(s);
 		wxAuiNotebook * nb = new wxAuiNotebook(this);
 		nb->SetName(win);
 		nb->SetLabel(win);
-		aL->GetGlobal(wxT("amc_nbpanes"));
+		aL->GetGlobal("amc_nbpanes");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		int len1 = aL->GetObjectLen();
@@ -2614,19 +2615,19 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 
 		for(int x=0; x<len1; x++)
 		{
-			aL->GetGlobal(wxT("amc_nbpanes"));
+			aL->GetGlobal("amc_nbpanes");
 			aL->PushInt(i+1);
 			aL->GetTable(-2);
 			aL->PushInt(x+1);
 			aL->GetTable(-2);
 			aL->GetField(-1, "name");
-			wxString win1 = aL->GetwxString(-1);
+			wxString win1 = aL->GetUTF8String(-1);
 			MudWindow * mw = new MudWindow(this, win1, 9);
 			mw->SetName(win1);
 			GetNbPanes()->at(i).push_back(win1);
 			aL->GetField(-2, "fontname");
 			wxFont f;
-			f.SetFaceName(aL->GetwxString(-1));
+			f.SetFaceName(aL->GetUTF8String(-1));
 			aL->GetField(-3, "fontsize");
 			f.SetPointSize(aL->GetInt(-1));
 			mw->SetNFont(&f);
@@ -2657,7 +2658,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		aL->GetField(-1, "name");
-		wxString win = aL->GetwxString(-1);
+		wxString win = aL->GetUTF8String(-1);
 		GetGaugePanes()->push_back(win);
 		vector<wxString> s;
 		GetGauges()->push_back(s);
@@ -2666,7 +2667,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		gw->SetLabel(win);
 		wxFont f;
 		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetwxString(-1));
+		f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		f.SetPointSize(aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
@@ -2682,24 +2683,24 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 
 		for(int x=0; x<len1; x++)
 		{
-			aL->GetGlobal(wxT("amc_gauges"));
+			aL->GetGlobal("amc_gauges");
 			aL->PushInt(i+1);
 			aL->GetTable(-2);
 			aL->PushInt(x+1);
 			aL->GetTable(-2);
-			aL->GetField(-1, wxT("gaugename"));
-			wxString win1 = aL->GetwxString(-1);
+			aL->GetField(-1, "gaugename");
+			wxString win1 = aL->GetUTF8String(-1);
 			GetGauges()->at(i).push_back(win1);
-			aL->GetField(-2, wxT("var1"));
-			wxString var1 = aL->GetwxString(-1);
-			aL->GetField(-3, wxT("var2"));
-			wxString var2 = aL->GetwxString(-1);
-			aL->GetField(-4, wxT("fcol"));
-			wxString fcol = aL->GetwxString(-1);
-			aL->GetField(-5, wxT("bcol"));
-			wxString bcol = aL->GetwxString(-1);
+			aL->GetField(-2, "var1");
+			wxString var1 = aL->GetUTF8String(-1);
+			aL->GetField(-3, "var2");
+			wxString var2 = aL->GetUTF8String(-1);
+			aL->GetField(-4, "fcol");
+			wxString fcol = aL->GetUTF8String(-1);
+			aL->GetField(-5, "bcol");
+			wxString bcol = aL->GetUTF8String(-1);
 			aL->GetField(-6, "alarm");
-			wxString al = aL->GetwxString(-1);
+			wxString al = aL->GetUTF8String(-1);
 			aL->GetField(-7, "alarmperc");
 			int f = aL->GetInt(-1);
 			aL->GetField(-8, "x");
@@ -2717,7 +2718,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			aL->GetField(-14, "showvalue");
 			bool c = aL->GetBoolean(-1);
 			aL->GetField(-15, "textcol");
-			wxString tcol = aL->GetwxString(-1);
+			wxString tcol = aL->GetUTF8String(-1);
 			aL->GetField(-16, "textpos");
 			int t = aL->GetInt(-1);
 			wxColour fc;
@@ -2756,40 +2757,40 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	{
 		aL->GetGlobal("amc_packages");
 		aL->RawGeti(-1, i+1);
-		GetPackages()->push_back(aL->GetwxString(-1));
+		GetPackages()->push_back(aL->GetUTF8String(-1));
 		aL->SetTop(0);
 	}
-	aL->GetGlobal(wxT("amc_prompt"));
-	aL->GetField(-1, wxT("lockprompt"));
+	aL->GetGlobal("amc_prompt");
+	aL->GetField(-1, "lockprompt");
 	m_child->SetLockPrompt(aL->GetBoolean(-1));
-	aL->GetField(-2, wxT("gagprompt"));
+	aL->GetField(-2, "gagprompt");
 	m_child->SetGagPrompt(aL->GetBoolean(-1));
-	aL->GetField(-3, wxT("promptpattern"));
-	wxString reg = aL->GetwxString(-1);
+	aL->GetField(-3, "promptpattern");
+	wxString reg = aL->GetUTF8String(-1);
 	m_child->SetPromptRegExp(reg.data());
 	aL->SetTop(0);
 
-	aL->GetGlobal(wxT("amc_buttons"));
+	aL->GetGlobal("amc_buttons");
 	len = aL->GetObjectLen();
 	aL->Pop(1);
 	//GetPackages()->clear();
 	for (int i=0; i<len; i++)
 	{
 		amcButton b;
-		aL->GetGlobal(wxT("amc_buttons"));
+		aL->GetGlobal("amc_buttons");
 		aL->PushInt(i+1);
 		aL->GetTable(-2);
 		aL->GetField(-1, "name");
-		b.SetName(aL->GetwxString(-1));
-		b.SetText(aL->GetwxString(-1));
+		b.SetName(aL->GetUTF8String(-1));
+		b.SetText(aL->GetUTF8String(-1));
 		aL->GetField(-2, "action");
-		b.SetAction(aL->GetwxString(-1));
+		b.SetAction(aL->GetUTF8String(-1));
 		aL->GetField(-3, "id");
 		b.SetId(aL->GetInt(-1));
 		aL->GetField(-4, "group");
-		b.SetGroup(aL->GetwxString(-1));
+		b.SetGroup(aL->GetUTF8String(-1));
 		aL->GetField(-5, "tb");
-		b.SetTbName(aL->GetwxString(-1));
+		b.SetTbName(aL->GetUTF8String(-1));
 		b.SetActive(true);
 		aL->SetTop(0);
 		m_buttons.push_back(b);
@@ -2798,9 +2799,9 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	aL->GetGlobal("amc_events");
 	aL->GetField(-1, "useevents");
 	m_gopt->SetUseEvents(aL->GetBoolean(-1));
-	aL->GetField(-2, wxT("event_onconnect"));
+	aL->GetField(-2, "event_onconnect");
 	m_gopt->SetUseEvConn(aL->GetBoolean(-1));
-	aL->GetField(-3, wxT("event_onreceived"));
+	aL->GetField(-3, "event_onreceived");
 	m_gopt->SetUseEvRecv(aL->GetBoolean(-1));
 	aL->GetField(-4, "event_ondisconnect");
 	m_gopt->SetUseEvDisco(aL->GetBoolean(-1));
@@ -2811,7 +2812,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	aL->GetField(-7, "event_ongmsdpdata");
 	m_gopt->SetUseEvGMCPData(aL->GetBoolean(-1));
 	aL->GetField(-8, "eventfile");
-	wxString f = aL->GetwxString(-1);
+	wxString f = aL->GetUTF8String(-1);
 	m_gopt->SetEventFile(f);
 	
 	aL->GetGlobal("amc_gmcpmodules");
@@ -2822,29 +2823,29 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	{
 		aL->GetGlobal("amc_gmcpmodules");
 		aL->RawGeti(-1, i+1);
-		m_gopt->GetGMCPModules()->push_back(aL->GetwxString(-1));
+		m_gopt->GetGMCPModules()->push_back(aL->GetUTF8String(-1));
 	}
 
 	aL->GetGlobal("amc_directories");
 	aL->GetField(-1, "scriptdir");
-	f = aL->GetwxString(-1);
+	f = aL->GetUTF8String(-1);
 	m_gopt->SetScriptDir(f);
 	aL->GetField(-2, "logdir");
-	f = aL->GetwxString(-1);
+	f = aL->GetUTF8String(-1);
 	m_gopt->SetLogDir(f);
 	aL->GetField(-3, "sounddir");
-	f = aL->GetwxString(-1);
+	f = aL->GetUTF8String(-1);
 	m_gopt->SetSoundDir(f);
 	aL->GetField(-4, "packagedir");
-	f = aL->GetwxString(-1);
+	f = aL->GetUTF8String(-1);
 	m_gopt->SetPackageDir(f);
 	aL->GetField(-5, "databasedir");
-	f = aL->GetwxString(-1);
+	f = aL->GetUTF8String(-1);
 	m_gopt->SetDatabaseDir(f);
 	aL->SetTop(0);
 	
 	aL->GetGlobal("amc_layout");
-	wxString p = aL->GetwxString(-1);
+	wxString p = aL->GetUTF8String(-1);
 	aL->Pop(1);
 	m_mgr.LoadPerspective(p);
 	//m_mgr.Update();
@@ -4655,6 +4656,9 @@ int InputTextCtrl::Test(wxString *sPar)
 		return -1;
 	wxString s = GetFParam(1);
 	s = "\x1b[0m" + s + (char)LF;
+	s = s.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+	if (s.empty())
+		s << "\x1b[0m" << GetFParam(1) <<"\n";
 	/**m_parent->m_child->ParseBuffer(s.char_str());**/
 	m_parent->m_child->ParseNBuffer(s.char_str());
 	return 0;

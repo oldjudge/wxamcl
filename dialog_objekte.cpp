@@ -2010,7 +2010,15 @@ wxAuiToolBar *tb;
 		return;
 	tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(s, m_frame);
 	if (!tb)
-		return;
+	{
+		tb = new wxAuiToolBar(m_frame, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_TEXT | wxAUI_TB_GRIPPER);
+		tb->SetName(s);
+		tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
+		m_frame->m_mgr.AddPane(tb, wxAuiPaneInfo().Name(s).Caption(s).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
+		m_frame->m_mgr.Update();
+		//m_frame->m_mgr.GetPane(tb).Show();
+		
+	}
 	b.SetTbName(s);
 	b.SetParent(tb);
 	tb->AddTool(b.GetId(), b.GetName(), script_xpm);
@@ -2019,7 +2027,7 @@ wxAuiToolBar *tb;
 	//stable_sort(m_frame->GetVars()->begin(), m_frame->GetVars()->end(), less<class amcVar>());
 	BuildButtons();
 	tb->Realize();
-	m_frame->m_mgr.Update();
+	//m_frame->m_mgr.Update();
 }
 
 void dlg_obj::OnButtonDelete(wxCommandEvent& event)
@@ -2072,7 +2080,7 @@ b_it it;
 		m_frame->GetButtons()->at(index).SetAction(m_butcommand->GetValue());
 		m_frame->GetButtons()->at(index).SetTbName(m_parenttool->GetValue());
 		BuildButtons();
-		wxAuiToolBar* tb = (wxAuiToolBar*)it->GetParent();
+		wxAuiToolBar* tb = (wxAuiToolBar*)m_frame->GetButtons()->at(index).GetParent();
 		tb->Realize();
 		m_frame->m_mgr.Update();
 	}

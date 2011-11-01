@@ -1700,12 +1700,12 @@ void amcMXPElement::BuildMXPSendCommands()
 //split a send string;
 size_t p, pos = 0;
 wxString build;
-RegExp r("send (?:hint=.+ |prompt )?(?:hint=.+ |prompt )?(?:href=)?('|\")([\\?+|\\w+|&+|;+|\\s+|\\+||#+|\\d+|\\-+|\\.+|\\!+|\\(+|\\)+]+)('|\")?(?: PROMPT|prompt)?");
-RegExp r2("send (?:hint=.+ |prompt )?(?:hint=.+ |prompt )?(?:href=)?([\\?+|\\w+|&+|;+|\\+||#+|\\d+|\\-+|\\.+|\\!+|\\(+|\\)+]+)\\s*");
+RegExp r("send (?:hint=.+ |prompt )?(?:hint=.+ |prompt )?(?:href=)?('|\")([\\?+|\\w+|&+|;+|\\s+|\\+|#+|\\d+|\\-+|\\.+|\\!+|\\(+|\\)+||]+)('|\")?(?: PROMPT|prompt)?");
+RegExp r2("send (?:hint=.+ |prompt )?(?:hint=.+ |prompt )?(?:href=)?([\\?+|\\w+|&+|;+|\\+|#+|\\d+|\\-+|\\.+|\\!+|\\(+|\\)+||]+)\\s*");
 
 //RegExp hint("(?:HINT|hint)=(?:\"|')([a-zA-Z\\s&;\\|-]+)(?:\"|')");
-RegExp hint("(?:HINT|hint)=(?:\"|')([\\w|&|;|\\s|\\||\\d|\\-|\\!|\\.]+)(?:\"|')");
-RegExp hint2("(?:HINT|hint)=([\\w|&|;|\\||\\d|\\-|\\!|\\.]+)\\s*");
+RegExp hint("hint=(?:\"|')([\\w+|\\d+|\\s|!+|?+|&+|;+\\+|\\(+|\\)+|\\.+|#+||]+)(\"|')");
+RegExp hint2("hint=(?:[\\w+|\\s|\\d+|!+|?+|&+|;+\\+|\\(+|\\)+|\\.+|#+||]+]+)\\s*");
 	if (!r.Match(m_action.Lower()))
 	{
 		if (!r2.Match(m_action.Lower()))
@@ -1739,9 +1739,9 @@ RegExp hint2("(?:HINT|hint)=([\\w|&|;|\\||\\d|\\-|\\!|\\.]+)\\s*");
 	{
 		m_sendcommands.push_back(build.substr(pos));
 	}
-	if (!hint.Match(m_action))
+	if (!hint.Match(m_action.Lower()))
 	{
-		if (!hint2.Match(m_action))
+		if (!hint2.Match(m_action.Lower()))
 		{
 			m_labels = m_sendcommands;
 			m_hint = m_labels.at(0);
