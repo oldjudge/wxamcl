@@ -434,6 +434,7 @@ void dlg_options::OnUseEvents(wxCommandEvent &event)
 		m_ontelnetdata->Enable();
 		m_ongmcpdata->Enable();
 		m_onmsdpdata->Enable();
+		
 	}
 	else
 	{

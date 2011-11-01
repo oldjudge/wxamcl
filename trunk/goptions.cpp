@@ -92,6 +92,7 @@ void GlobalOptions::Init()
 			wxMkdir("profiles");
 			wxMkdir("logs");
 			wxMkdir("scripts");
+			wxMkdir("scripts/samples");
 			wxMkdir("packages");
 			wxMkdir("databases");
 			wxMkdir("sounds");
@@ -177,7 +178,7 @@ RegExp::RegExp(wxString pattern)
 	else
 	{
 		wxString s = m_pattern.ToUTF8();
-		m_re = pcre_compile(s.char_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
 		
 	}
 		//m_prextra = pcre_study(m_re, 0, &m_error);
@@ -261,7 +262,7 @@ pcre* RegExp::Compile()
 	else
 	{
 		wxString s = m_pattern.ToUTF8();
-		m_re = pcre_compile(s.char_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
 		
 	}
 	return m_re;
@@ -273,11 +274,11 @@ pcre* RegExp::CompileMulti()
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	
 	if (!frame->GetGlobalOptions()->UseUTF8())
-		m_re = pcre_compile(m_pattern.mb_str(), PCRE_MULTILINE, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(m_pattern.char_str(), PCRE_MULTILINE, &m_error, &m_erroffset, NULL);
 	else
 	{
 		wxString s = m_pattern.ToUTF8();
-		m_re = pcre_compile(s.char_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK|PCRE_MULTILINE, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK|PCRE_MULTILINE, &m_error, &m_erroffset, NULL);
 	}
 	return m_re;
 }
@@ -295,8 +296,8 @@ int RegExp::Exec()
 	{
 		wxString s = m_match.ToUTF8();
 		if (m_precompiled)
-			return m_r = pcre_exec(m_re, m_prextra, m_match.mb_str(), (int)m_match.length(), 0, PCRE_NO_UTF8_CHECK, m_ovector, OVECCOUNT);
-		else return m_r = pcre_exec(m_re, NULL, s.mb_str(), (int)s.length(), 0, PCRE_NO_UTF8_CHECK, m_ovector, OVECCOUNT);
+			return m_r = pcre_exec(m_re, m_prextra, s.mb_str(), (int)s.mb_str().length(), 0, PCRE_NO_UTF8_CHECK, m_ovector, OVECCOUNT);
+		else return m_r = pcre_exec(m_re, NULL, s.mb_str(), (int)s.mb_str().length(), 0, PCRE_NO_UTF8_CHECK, m_ovector, OVECCOUNT);
 	}
 	//return m_rc;
 }
@@ -307,14 +308,14 @@ int RegExp::ExecMulti()
 	if (!frame->GetGlobalOptions()->UseUTF8())
 	{
 		if (m_precompiled)
-			return m_r = pcre_exec(m_re, m_prextra, m_match.mb_str(), (int)m_match.length(), 0, PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
-		else return m_r = pcre_exec(m_re, NULL, m_match.c_str(), (int)m_match.length(), 0, PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
+			return m_r = pcre_exec(m_re, m_prextra, m_match.To8BitData().data(), (int)m_match.length(), 0, PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
+		else return m_r = pcre_exec(m_re, NULL, m_match.To8BitData().data(), (int)m_match.length(), 0, PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
 	}
 	else
 	{
 		wxString s = m_match.ToUTF8();
 		if (m_precompiled)
-			return m_r = pcre_exec(m_re, m_prextra, m_match.mb_str(), (int)m_match.length(), 0, PCRE_NO_UTF8_CHECK|PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
+			return m_r = pcre_exec(m_re, m_prextra, s.mb_str(), (int)m_match.length(), 0, PCRE_NO_UTF8_CHECK|PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
 		else return m_r = pcre_exec(m_re, NULL, s.mb_str(), (int)s.length(), 0, PCRE_NO_UTF8_CHECK|PCRE_NOTBOL|PCRE_NOTEOL, m_ovector, OVECCOUNT);
 	}
 	//return m_rc;
@@ -327,17 +328,26 @@ wxString sub;
 
 	if (!m_matches.empty())
 		m_matches.clear();
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	for (i = 1; i < m_r; i++)
 	{
 		if (m_ovector[2*i]!=-1)
 		{
-			sub = m_match.substr(m_ovector[2*i], m_ovector[2*i+1] - m_ovector[2*i]);
-			m_matches.push_back(sub);
+			if (frame->GetGlobalOptions()->UseUTF8())
+			{
+				wxString s = m_match.ToUTF8();
+				sub = s.substr(m_ovector[2*i], m_ovector[2*i+1] - m_ovector[2*i]);
+				m_matches.push_back(wxString::FromUTF8(sub));
+			}
+			else
+			{
+				sub = m_match.substr(m_ovector[2*i], m_ovector[2*i+1] - m_ovector[2*i]);
+				m_matches.push_back(sub);
+			}
 		}
 		else m_matches.push_back("");
 	}
 	//Expose wildcards to lua
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	amcLua *aL = frame->m_child->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	s_it it;

@@ -8,6 +8,7 @@
 #define checkalias(L) (str_al*)luaL_checkudata(L, 1, "amc.mtal")
 #define checkvar(L) (str_var*)luaL_checkudata(L, 1, "amc.mtv")
 #define checktimer(L) (str_timer*)luaL_checkudata(L, 1, "amc.mtt")
+#define checkhk(L) (str_hk*)luaL_checkudata(L, 1, "amc.mthk")
 int luafunc_createwindow(lua_State *L);
 int luafunc_hidewindow(lua_State *L);
 int luafunc_showwindow(lua_State *L);
@@ -88,9 +89,15 @@ int luafunc_enablegroup(lua_State *L);
 int luafunc_aliastostring(lua_State *L);
 //hotkey
 int luafunc_newhk(lua_State *L);
+int luafunc_gethk(lua_State *L);
 int luafunc_delhk(lua_State *L);
+int luafunc_gethkaction(lua_State *L);
+int luafunc_sethkaction(lua_State *L);
 int luafunc_enablehk(lua_State *L);
 int luafunc_deletehkgroup(lua_State *L);
+int luafunc_exechk(lua_State *L);
+int luafunc_getallhk(lua_State *L);
+int luafunc_enablehkgroup(lua_State *L);
 //var
 int luafunc_newvar(lua_State *L);
 int luafunc_newvar1(lua_State *L);
@@ -112,6 +119,9 @@ int luafunc_delitemat(lua_State *L);
 int luafunc_delitem(lua_State *L);
 int luafunc_contains(lua_State *L);
 int luafunc_getsize(lua_State *L);
+int luafunc_enablelistgroup(lua_State *L);
+int luafunc_getalllist(lua_State *L);
+int luafunc_dellistgroup(lua_State *L);
 //timer
 int luafunc_newtimer(lua_State *L);
 int luafunc_deltimer(lua_State *L);
@@ -140,6 +150,7 @@ int luafunc_insertdb(lua_State *L);
 int luafunc_setmxp(lua_State *L);
 int luafunc_parsemxp(lua_State *L);
 int luafunc_parsemxpwin(lua_State *L);
+int luafunc_linkmxp(lua_State *L);
 //msp script stuff
 int luafunc_setmsp(lua_State *L);
 //
@@ -243,6 +254,7 @@ static const struct luaL_Reg amclib_mxp [] = {
 	{"enable", luafunc_setmxp},
 	{"echo", luafunc_parsemxp},
 	{"echowin", luafunc_parsemxpwin},
+	{"link", luafunc_linkmxp},
 	{NULL, NULL}
 };
 static const struct luaL_Reg amclib_alias[] = {
@@ -305,9 +317,15 @@ static const struct luaL_Reg amclib_vars[] = {
 
 static const struct luaL_Reg amclib_hk [] = {
 	{"new", luafunc_newhk},
+	{"get", luafunc_gethk},
 	{"delete", luafunc_delhk},
+	{"getaction", luafunc_gethkaction},
+	{"setaction", luafunc_sethkaction},
 	{"enable", luafunc_enablehk},
+	{"getall", luafunc_getallhk},
+	{"enablegroup", luafunc_enablehkgroup},
 	{"delgroup", luafunc_deletehkgroup},
+	{"execute", luafunc_exechk},
 	{NULL, NULL}
 };
 
@@ -322,6 +340,9 @@ static const struct luaL_Reg amclib_list [] = {
 	{"delitem", luafunc_delitem},
 	{"contains", luafunc_contains},
 	{"getsize", luafunc_getsize},
+	{"getall", luafunc_getalllist},
+	{"enablegroup", luafunc_enablelistgroup},
+	{"delgroup", luafunc_dellistgroup},
 	{NULL, NULL}
 };
 
@@ -450,6 +471,7 @@ public:
 	float GetFloat(int idx);
 	bool GetBoolean(int idx);
 	wxString GetwxString(int idx);
+	wxString GetUTF8String(int idx);
 	const char* GetString(int idx);
 	void SetGlobal(wxString s);
 	void SetGlobal(const char* s);

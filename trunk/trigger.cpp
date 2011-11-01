@@ -26,7 +26,7 @@ Trigger::Trigger()
 
 Trigger::Trigger(wxString pattern, wxString action, wxString label, wxString cl, wxUint32 prior, bool on, int col, int lines, bool show)
 {
-	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	m_parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	m_pattern = pattern;
 	m_action = action;
 	m_label = label;
@@ -79,7 +79,7 @@ bool Trigger::Match(wxString match)
 		else
 		{
 			int begin = m_rexp.GetMatchStart();
-			class MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+			class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 			if (frame->m_child->GetLines()->at(frame->m_child->m_curline - 1).GetCharFColIndex(begin) == m_colmatch)
 			{
 				m_matchcount++;

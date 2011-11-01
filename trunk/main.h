@@ -237,7 +237,7 @@ enum
 #define OVECCOUNT 60
 //wxDECLARE_EVENT(wxEVENT_CMD_PAUSE2, wxThreadEvent);
 
-#define APP_VERSION "0.1.r49"
+#define APP_VERSION "0.1.r50"
 
 #include "mudwindow.h"
 #include "luadefs.h"

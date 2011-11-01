@@ -102,9 +102,9 @@ wxString var;
 wxString amcAlias::GetName()
 {
 wxString name;
-	if (m_alias.at(0)==wxT('^'))
+	if (m_alias.at(0)=='^')
 		name = m_alias.substr(1);
-	if (m_alias.at(m_alias.length()-1)==wxT('$'))
+	if (m_alias.at(m_alias.length()-1)=='$')
 		name = name.substr(0, name.length()-1);
 	return name;
 }

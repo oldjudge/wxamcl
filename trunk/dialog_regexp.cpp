@@ -22,7 +22,18 @@ void dialog_regexp::OnTest( wxCommandEvent& event )
 	{
 		wxString s;
 		s<< _("Matched from ") << rexp.GetMatchStart() << _(" to ") << rexp.GetMatchEnd() << "\r\n";
-		s<< _("Match is: ") << test.substr(rexp.GetMatchStart(), rexp.GetMatchLen()) << "\r\n";
+		if (wxGetApp().GetFrame()->GetGlobalOptions()->UseUTF8())
+		{
+			wxString ss = test.ToUTF8();
+			test = ss.substr(rexp.GetMatchStart(), rexp.GetMatchLen());
+			ss = wxString::FromUTF8(test);
+			s<< _("Match is: ") << ss << "\r\n";
+			
+		}
+		else
+		{
+			s<< _("Match is: ") << test.substr(rexp.GetMatchStart(), rexp.GetMatchLen()) << "\r\n";
+		}
 		s<< _("Captured ") << rexp.GetNumCaptured() << _(" strings.\r\n");
 		for (int i=0;i<rexp.GetNumCaptured();i++)
 		{
