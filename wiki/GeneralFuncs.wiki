@@ -2,60 +2,64 @@
 
 = General functions =
 
-General functions
-
+General functions documentation.
 
 = Functions =
 
-  == Output on screen ==
-  === amc.echo ===
+[GeneralFuncs#amc.echo]
+[GeneralFuncs#amc.echowin]
+[GeneralFuncs#amc.color]
+[GeneralFuncs#amc.colorwin]
+
+== Output to screen ==
+	=== amc.echo ===
 	Print text to the main mud window.
     ==== Usage: ====
-      `msg = amc.echo(text, fg-color (optional), bg-color (optional))`
-       Examples:
-       {{{
-          msg = amc.echo("This is a test", "black", "green")
-          amc.echo("Text on screen")
-          amc.echo("Test me!", "crimson", "deepskyblue")
-          amc.echo("Text", "#44cc00", "#000000")
-       }}}
+		`msg = amc.echo(text, fg-color (optional), bg-color (optional))`
+		Examples:
+		{{{
+			msg = amc.echo("This is a test", "black", "green")
+			amc.echo("Text on screen")
+			amc.echo("Test me!", "crimson", "deepskyblue")
+			amc.echo("Text", "#44cc00", "#000000")
+		}}}
      The function returns the text parameter.
-  === amc.echowin ===
-  Print text to a user created window.
+	=== amc.echowin ===
+	Print text to a user created window.
 	==== Usage: ====
-      `msg = amc.echo(window, text, fg-color (optional), bg-color (optional))`
-       Examples:
-       {{{
-          msg = amc.echo("chat", "This is a test in a window named 'chat'!", "black", "green")
-          amc.echo("userwin1", "Text on screen")
-          amc.echo("win", "Test me!", "crimson", "deepskyblue")
-          amc.echo("window1", "Text", "#44cc00", "#000000")
+		`msg = amc.echo(window, text, fg-color (optional), bg-color (optional))`
+		Examples:
+		{{{
+			msg = amc.echo("chat", "This is a test in a window named 'chat'!", "black", "green")
+			amc.echo("userwin1", "Text on screen")
+			amc.echo("win", "Test me!", "crimson", "deepskyblue")
+			amc.echo("window1", "Text", "#44cc00", "#000000")
        }}}
-     The function returns the text parameter.
-  === amc.color ===
+	The function returns the text parameter.
+	=== amc.color ===
 	Print colored text to the main mud window without creating a newline to create multicolored text lines.
     ==== Usage: ====
-      `amc.color(text, fg-color (optional), bg-color (optional))`
-       Examples:
-       {{{
-          amc.color("This is a test", "black", "green")
-          amc.color("Text on screen")
-          amc.color("Test me!", "crimson", "deepskyblue")
-          amc.color("Text", "#44cc00", "#000000")
-       }}}
-	   Create a line with multiple colors like this:
-	   {{{
-	     amc.echo("")
-		 amc.color("Text ", "red")
-		 amc.color("and text in green ", "green")
-		 amc.color("and text in cyan ", "cyan")
-		 amc.color("and so on!", "yellow")
+		`amc.color(text, fg-color (optional), bg-color (optional))`
+		Examples:
+		{{{
+			amc.color("This is a test", "black", "green")
+			amc.color("Text on screen")
+			amc.color("Test me!", "crimson", "deepskyblue")
+			amc.color("Text", "#44cc00", "#000000")
+		}}}
+		Create a line with multiple colors like this:
+		{{{
+			amc.echo("")
+			amc.color("Text ", "red")
+			amc.color("and text in green ", "green")
+			amc.color("and text in cyan ", "cyan")
+			amc.color("and so on!", "yellow")
 	    }}}
-     The function returns nothing.
-  === amc.colorline ===
-  === amc.colorword ===
-  === amc.colorall ===
-  === amc.colorwin ===
-  == Send commands to the MUD ==
-  === amc.send ===
-  === amc.execute ===
+	The function returns nothing.
+	=== amc.colorline ===
+	=== amc.colorword ===
+	=== amc.colorall ===
+	=== amc.colorwin ===
+== Send commands to the MUD ==
+	=== amc.send ===
+	=== amc.execute ===
