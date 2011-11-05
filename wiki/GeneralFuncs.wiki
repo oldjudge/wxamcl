@@ -6,7 +6,7 @@ General functions documentation.
 
 = Functions =
 
-[GeneralFuncs#amc.echo]
+[GeneralFuncs#amc.echo amc.echo]
 [GeneralFuncs#amc.echowin]
 [GeneralFuncs#amc.color]
 [GeneralFuncs#amc.colorwin]
