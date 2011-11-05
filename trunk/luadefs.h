@@ -72,9 +72,10 @@ int luafunc_enabletriggers(lua_State *L);
 int luafunc_disabletriggers(lua_State *L);
 int luafunc_getallactions(lua_State *L);
 int luafunc_actiontostring(lua_State *L);
-//int luafunc_deleteclass(lua_State *L);
+int luafunc_exectr(lua_State *L);
 int luafunc_enabletrgroup(lua_State *L);
 int luafunc_deltrgroup(lua_State *L);
+int luafunc_gettrgroup(lua_State *L);
 //alias
 int luafunc_newalias(lua_State *L);
 int luafunc_newalias1(lua_State *L);//for amc.alias....
@@ -286,9 +287,10 @@ static const struct luaL_Reg amclib_trigger[] = {
 	{"enableall", luafunc_enabletriggers},
 	{"disableall", luafunc_disabletriggers},
 	{"getall", luafunc_getallactions},
-	//{"delgroup", luafunc_deleteclass},
+	{"getgroup", luafunc_gettrgroup},
 	{"enablegroup", luafunc_enabletrgroup},
 	{"delgroup", luafunc_deltrgroup},
+	{"execute", luafunc_exectr},
 	{NULL, NULL}
 };
 
