@@ -2,3 +2,5 @@
 
   * [Introduction Introduction]
   * [Screenshots Screenshots]
+  * [ScriptingDocs Scripting Documentation]
+     * [GeneralFuncs General functions]
