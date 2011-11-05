@@ -1,0 +1,31 @@
+#summary Documentation for general Lua functions
+
+= General functions =
+
+General functions
+
+
+= Functions =
+
+  == Output on screen ==
+  === amc.echo ===
+    ==== Usage: ====
+      `msg = amc.echo(text, fg-color (optional), bg-color (optional))`
+       Examples:
+       {{{
+          msg = amc.echo("This is a test", "black", "green")
+          amc.echo("Text on screen")
+          amc.echo("Test me!", "crimson", "deepskyblue")
+          amc.echo("Text", "#44cc00", "#000000")
+       }}}
+     The function returns the text parameter.
+
+  === amc.echowin ===
+  === amc.color ===
+  === amc.colorline ===
+  === amc.colorword ===
+  === amc.colorall ===
+  === amc.colorwin ===
+  == Send commands to the MUD ==
+  === amc.send ===
+  === amc.execute ===
