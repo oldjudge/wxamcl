@@ -2176,7 +2176,7 @@ tr_it it;
 const char* l;
 str_ac* t;
 int index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
 
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
@@ -2401,7 +2401,7 @@ int luafunc_getallactions(lua_State*L)
 {
 size_t i;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();//
 
 	lua_settop(L,0);
 	lua_newtable(L);
@@ -2430,44 +2430,6 @@ int luafunc_disabletriggers(lua_State *L)
 	return 1;
 }
 
-/*int luafunc_deleteclass(lua_State *L)
-{
-char* c;
-s_it it;
-
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-	c = (char*)luaL_checkstring(L,1);
-	bool del = lua_toboolean(L,2)!=0;
-	if (del)
-	{
-		for (size_t i=0;i<frame->GetTrigger()->size(); i++)
-		{
-			if(frame->GetTrigger()->at(i).GetClass()==c)
-			{
-				frame->GetTrigger()->erase(frame->GetTrigger()->begin()+i--);
-			}
-		}
-	}
-	else
-	{
-		for (size_t i=0;i<frame->GetTrigger()->size(); i++)
-		{
-			if(frame->GetTrigger()->at(i).GetClass()==c)
-			{
-				frame->GetTrigger()->at(i).SetClass(wxT("default"));
-			}
-		}
-	}
-	for (it = Trigger::GetTriggerClasses()->begin(); it!=Trigger::GetTriggerClasses()->end(); it++)
-	{
-		if (*it == c)
-		{
-			Trigger::GetTriggerClasses()->erase(it);
-			break;
-		}
-	}
-	return 0;
-}*/
 
 int luafunc_enabletrgroup(lua_State *L)
 {
@@ -2511,10 +2473,69 @@ const char* trgroup;
 	if (frame->IsVerbose())
 	{
 		wxString s;
-		s<<_("Deleted action class ")<<trgroup<<".";
+		s<<_("Deleted action group ")<<trgroup<<".";
 		frame->m_child->Msg(s, 3);
 	}
 	return 0;
+}
+
+int luafunc_gettrgroup(lua_State *L)
+{
+const char* trgroup;
+size_t i;
+int x=0;
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	trgroup = luaL_checkstring(L, 1);
+	lua_settop(L,0);
+	lua_newtable(L);
+	for (i=0;i<frame->GetTrigger()->size();i++)
+	{
+		if (frame->GetTrigger()->at(i).GetClass()==trgroup)
+		{
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().char_str());
+			lua_rawseti(L, -2, x+1);
+			x++;
+		}
+	}
+	lua_pushnumber(L, x);
+	return 2;
+	
+}
+
+int luafunc_exectr(lua_State *L)
+{
+tr_it it;
+const char* l;
+str_ac* t;
+int index=1;
+int i;
+	MudMainFrame *frame = wxGetApp().GetFrame();
+
+	if (lua_type(L, index)==LUA_TUSERDATA)
+	{
+		t = checkaction(L);
+		lua_pushstring(L, t->action);
+		i = frame->GetTriggerIndexByLabel(t->label);
+	}
+	else
+	{
+		l = luaL_checkstring(L,index);
+		i = frame->GetTriggerIndexByLabel(l);
+		lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().char_str());
+	}
+	if (i==-1)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	
+	int state = frame->m_child->GetParseState();
+	frame->m_child->SetParseState(0);//HAVE_TEXT
+	wxString command = frame->GetTrigger()->at(i).GetAction();
+	frame->m_input->Parse(command, true);
+	frame->m_child->SetParseState(state);
+	return 1;
+	
 }
 
 int luafunc_actiontostring(lua_State *L)
