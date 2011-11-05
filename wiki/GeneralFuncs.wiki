@@ -5,17 +5,18 @@
 General functions documentation.
 
 = Functions =
-[GeneralFuncs#Output_to_screen Output functions]
- [GeneralFuncs#amc.echo amc.echo]
- [GeneralFuncs#amc.echowin amc.echowin]
- [GeneralFuncs#amc.color amc.color]
- [GeneralFuncs#amc.colorwin amc.colorwin]
- [GeneralFuncs#amc.colorword amc.colorword]
- [GeneralFuncs#amc.colorline amc.colorline]
- [GeneralFuncs#amc.colorall amc.colorall]
-[GeneralFuncs#Send_commands_to_the_mud Send commands]
- [GeneralFuncs#amc.send amc.send]
- [GeneralFuncs#ams.execute amc.execute]
+<wiki:toc max_depth="3" />
+*[GeneralFuncs#Output_to_screen Output functions]
+ *[GeneralFuncs#amc.echo amc.echo]
+ *[GeneralFuncs#amc.echowin amc.echowin]
+ *[GeneralFuncs#amc.color amc.color]
+ *[GeneralFuncs#amc.colorwin amc.colorwin]
+ *[GeneralFuncs#amc.colorword amc.colorword]
+ *[GeneralFuncs#amc.colorline amc.colorline]
+ *[GeneralFuncs#amc.colorall amc.colorall]
+*[GeneralFuncs#Send_commands_to_the_mud Send commands]
+ *[GeneralFuncs#amc.send amc.send]
+ *[GeneralFuncs#ams.execute amc.execute]
 == Output to screen ==
 	=== amc.echo ===
 	Print text to the main mud window.
