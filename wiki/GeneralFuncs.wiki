@@ -5,12 +5,17 @@
 General functions documentation.
 
 = Functions =
-
-[GeneralFuncs#amc.echo amc.echo]
-[GeneralFuncs#amc.echowin]
-[GeneralFuncs#amc.color]
-[GeneralFuncs#amc.colorwin]
-
+[GeneralFuncs#Output_to_screen Output functions]
+ [GeneralFuncs#amc.echo amc.echo]
+ [GeneralFuncs#amc.echowin amc.echowin]
+ [GeneralFuncs#amc.color amc.color]
+ [GeneralFuncs#amc.colorwin amc.colorwin]
+ [GeneralFuncs#amc.colorword amc.colorword]
+ [GeneralFuncs#amc.colorline amc.colorline]
+ [GeneralFuncs#amc.colorall amc.colorall]
+[GeneralFuncs#Send_commands_to_the_mud Send commands]
+ [GeneralFuncs#amc.send amc.send]
+ [GeneralFuncs#ams.execute amc.execute]
 == Output to screen ==
 	=== amc.echo ===
 	Print text to the main mud window.
@@ -23,7 +28,7 @@ General functions documentation.
 			amc.echo("Test me!", "crimson", "deepskyblue")
 			amc.echo("Text", "#44cc00", "#000000")
 		}}}
-     The function returns the text parameter.
+	The function returns the text parameter.
 	=== amc.echowin ===
 	Print text to a user created window.
 	==== Usage: ====
@@ -56,10 +61,30 @@ General functions documentation.
 			amc.color("and so on!", "yellow")
 	    }}}
 	The function returns nothing.
-	=== amc.colorline ===
-	=== amc.colorword ===
-	=== amc.colorall ===
 	=== amc.colorwin ===
+	Print colored text to a user created window without creating a newline to create multicolored text lines.
+    ==== Usage: ====
+		`amc.colorwin(window, text, fg-color (optional), bg-color (optional))`
+		Examples:
+		{{{
+			amc.colorwin("chat", "This is a test", "black", "green")
+			amc.colorwin("window", "Text on screen")
+			amc.colorwin("win1", "Test me!", "crimson", "deepskyblue")
+			amc.colorwin("testwin", "Text", "#44cc00", "#000000")
+		}}}
+		Create a line with multiple colors like this:
+		{{{
+			amc.echowin("test", "")
+			amc.colorwin("test", "Text ", "red")
+			amc.colorwin("test", "and text in green ", "green")
+			amc.colorwin("test", "and text in cyan ", "cyan")
+			amc.colorwin("test", "and so on!", "yellow")
+	    }}}
+	The function returns nothing.
+	=== amc.colorword ===
+	=== amc.colorline ===
+	=== amc.colorall ===
+	
 == Send commands to the MUD ==
 	=== amc.send ===
 	=== amc.execute ===
