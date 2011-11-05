@@ -1,0 +1,10 @@
+#Documentation for inbuilt Lua Scripting
+
+= Introduction =
+
+This section is the documentation for the client Lua interface.
+
+
+= Details =
+
+You will find here a documentation of all scripting functions.
