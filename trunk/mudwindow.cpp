@@ -120,6 +120,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	m_atcp = false;
 	m_atcp2 = false;
 	m_gmcp = false;
+	m_debuggmcp = false;
 	m_atcpstring = wxEmptyString;
 	m_charset=wxEmptyString;
 	m_oddmccp2 = 0;
@@ -154,7 +155,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	//m_mxp = new amcMXP();
 	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
 	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{3,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -234,6 +235,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 	m_atcp = false;
 	m_atcp2 = false;
 	m_gmcp = false;
+	m_debuggmcp = false;
 	m_msdp=false;
 	m_atcpstring = wxEmptyString;
 	m_charset = wxEmptyString;
@@ -422,9 +424,13 @@ void MudWindow::Write(wxString command)
 				su = command;
 			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
 			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
 		#ifdef __WXMSW__
 			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(command.char_str(), command.char_str().length(), false);
 		#endif
 
 		}
@@ -462,10 +468,14 @@ void MudWindow::Write8Bit(wxString command)
 				su = command;
 			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
 			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
 		#ifdef __WXMSW__
 			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
 			wxUint32 x = m_sock->LastCount();
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(command.char_str(), command.char_str().length(), false);
 			//m_sock->Write(command, wxStrlen(command));
 		#endif
 
@@ -783,8 +793,8 @@ void MudWindow::SetDefaultColors()
 	m_colcodes[wxT("send")] = wxT("1;32;");
 	m_colcodes[wxT("italic")] = wxT("3;");
 	m_colcodes[wxT("underlined")] = wxT("4;");
-	m_colcodes[wxT("custom")] = wxT("1;40;");
-	m_colcodes[wxT("custom1")] = wxT("1;41;");
+	m_colcodes[wxT("custom")] = wxT("1;58;");
+	m_colcodes[wxT("custom1")] = wxT("1;59;");
 
 	//xterm colours
 	m_xterm[0].Set(RGB(0, 0, 0));         // (black)       
@@ -821,7 +831,6 @@ void MudWindow::SetDefaultColors()
 
 
   // finish off with 24 greyscale colours  
-
   int grey;
   for (grey = 0; grey < 24; grey++)
     {
@@ -1462,26 +1471,29 @@ static bool colset = false;
 	{
 		int spos = 0;
 		
-		
-		while (m_url->Match(s.substr(spos), false, true))
+		bool b = m_parent->GetGlobalOptions()->UseUTF8();
+		m_parent->GetGlobalOptions()->SetUTF8(false);
+		while (m_url->Match(s.Mid(spos), false, true))
 		{
 			int start=0;
 			int sub=0;
 			sub = m_url->GetMatchStart()-8;//some stuff cause ansicodes can mess regexp detection of URL
 			if (sub<0)
 				sub=0;
-			bool b = m_ansicode->Match(s.substr(sub+spos, m_url->GetMatchLen()), false);
+			int xx = m_url->GetMatchLen();
+			wxString test = s.Mid(sub+spos, xx);
+			
+			bool b = m_ansicode->Match(test, false);
 			//bool b = m_ansicode->Match(s.substr(spos-8, m_url->GetMatchLen()), false);
 			if (!b)
 				sub=0;
-			
 			//if (b && m_url->GetMatchStart()<m_ansicode->GetMatchEnd()+spos+1)
 			if (b)
 			{
 				if (m_url->GetMatchStart()<m_ansicode->GetMatchEnd()+sub+1)
-					start = m_ansicode->GetMatchEnd();
+					start = m_ansicode->GetMatchEnd()+sub;
 				else if (m_url->GetMatchStart()==m_ansicode->GetMatchEnd()+sub+1)
-					start = m_ansicode->GetMatchEnd()+1;
+					start = m_ansicode->GetMatchEnd()+1+sub;
 				else
 					start = m_url->GetMatchStart();
 			}       
@@ -1491,11 +1503,21 @@ static bool colset = false;
 				start += spos;
 			if (!sub && !m_url->GetMatchStart())
 				start=0;
-			s = s.insert(start+sub, "\x1b[4m");
-			//sLine.insert(m_url->GetMatchStart(), "\x1b[4m");
-			s= s.insert(m_url->GetMatchEnd()+4+spos, "\x1b[0m");
-			spos += m_url->GetMatchEnd()+4;
+			m_url->Match(s.Mid(start));
+			xx=m_url->GetMatchLen();
+			test = s;
+			
+			wxString s1 = test.Left(start);
+			wxString s2 = test.Mid(start, xx);
+			wxString s3 = test.Mid(start+xx);
+			s = s1<<"\x1b[4m"<<s2<<"\x1b[0m"<<s3;
+			
+			//s = s.insert(start+sub, "\x1b[4m");
+			//s= s.insert(m_url->GetMatchEnd()+4+spos, "\x1b[0m");
+			//spos += m_url->GetMatchEnd()+4;
+			spos = start+xx+8;
 		}
+		m_parent->GetGlobalOptions()->SetUTF8(b);
 	}
 	if (!m_vmudlines.empty())
 	{
@@ -1665,7 +1687,7 @@ static bool colset = false;
 				d = wxDateTime::UNow();
 				line.SetDateTime(d);
 				line.SetAnsiLine(s.SubString(aoldpos, it-s.begin()-1));
-				aoldpos = it-s.begin();
+				aoldpos = it-s.begin()+1;
 				//line.SetAnsiLine(*sLine);
 				if (!line.GetGagme())
 				{
@@ -2076,7 +2098,8 @@ static bool colset = false;
 						c[6]=(char)LOBYTE(s_lines);
 						c[7]=(char)IAC;
 						c[8]=(char)SE;
-						m_sock->Write(c, 9);
+						//m_sock->Write(c, 9);
+						Write8Bit(wxString(c, 9));
 					}
 					else
 					{
@@ -2258,7 +2281,8 @@ static bool colset = false;
 						c[6]=(char)LOBYTE(s_lines);
 						c[7]=(char)IAC;
 						c[8]=(char)SE;
-						m_sock->Write(c, 9);
+						//m_sock->Write(c, 9);
+						Write8Bit(wxString(c, 9));
 						break;
 					}
 				}
@@ -2406,7 +2430,8 @@ static bool colset = false;
 					c[9]='L';
 					c[10]=(char)IAC;
 					c[11]=(char)SE;
-					m_sock->Write(c, 12);
+					//m_sock->Write(c, 12);
+					Write8Bit(wxString(c, 12));
 					ttsent = true;
 					m_parsestate = HAVE_TEXT;
 				}
@@ -2423,7 +2448,8 @@ static bool colset = false;
 					c[7]='I';
 					c[8]=(char)IAC;
 					c[9]=(char)SE;
-					m_sock->Write(c, 10);
+					//m_sock->Write(c, 10);
+					Write8Bit(wxString(c, 10));
 					//ttsent = false;
 					m_parsestate = HAVE_TEXT;
 				}
@@ -2431,7 +2457,7 @@ static bool colset = false;
 			case HAVE_IACSBMXP:
 				if (*it==SE)
 				{
-					//m_mxp = true;
+					index--;
 					m_parsestate = HAVE_TEXT;
 				}
 				break;
@@ -2524,10 +2550,20 @@ static bool colset = false;
 				if (*it==SE)
 				{
 					//m_atcpstring.Replace("\n", " ");
+					
 					m_atcpstring.Replace("\x1b[4m", "");
 					m_atcpstring.Replace("\x1b[0m", "");
-					
 					m_parsestate = HAVE_TEXT;
+					wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+					wxFile* file = new wxFile("debuggmcp.txt", wxFile::write_append);
+					file->Write(m_atcpstring+"\n");
+					file->Close();
+					delete file;
+					if (m_atcpstring.empty())
+					{
+						index--;
+						break;
+					}
 					wxString s = m_atcpstring.AfterFirst(' ');
 					wxString code;
 					wxString v = m_atcpstring.BeforeFirst(' ');
@@ -3125,8 +3161,12 @@ void MudWindow::SwitchColor(long c, int offset, AnsiLineElement* ale)
 			break;
 		case 56:
 		case 57:
+		case 58:
 			ale->SetFCol(c-40, m_colansi[c-40]);
 			f = m_colansi[c-40];
+			break;
+		case 59:
+			ale->SetBCol(c-40, m_colansi[c-40]);
 			break;
 		case 90:
 		case 91:
@@ -5797,6 +5837,13 @@ wxUint32 uiBytesRead;
 			//cBuf=new wxChar[30000];
 			m_dc->GetUCBuffer(cBuf);
 		}
+		if (m_parent->GetGlobalOptions()->DebugRaw())
+		{
+			if (m_mccp2 && cBuf!=NULL)
+				WriteRaw(cBuf, m_dc->GetUCLen());
+			else if (uiBytesRead!=0)
+				WriteRaw(m_cBuffer, uiBytesRead);
+		}
 		//wxString test(cBuffer, uiBytesRead);
 		//expose rawPacket to lua
 		GetLState()->SetTop(0);
@@ -5852,9 +5899,6 @@ wxUint32 uiBytesRead;
 		{
 			if (m_parent->GetGlobalOptions()->UseUTF8())
 			{
-				//wxString t(cBuf, uiBytesRead);
-				//wxString f(cBuf, wxCSConv(wxFONTENCODING_UTF8), m_dc->GetUCLen());
-				//ParseUTF8Buffer(f);
 				if (!m_mxp)
 					ParseNBuffer(cBuf, false);
 				else ParseBufferMXP(cBuf);
@@ -5866,7 +5910,6 @@ wxUint32 uiBytesRead;
 					ParseBufferMXP(cBuf);
 				}
 				else
-					//ParseBuffer(cBuf);
 					ParseNBuffer(cBuf, false);
 			}
 		}
@@ -5888,11 +5931,8 @@ wxUint32 uiBytesRead;
 					ParseBufferMXP(m_cBuffer);
 				}
 				else
-				/***	ParseBuffer(cBuffer); ***/
 				{
-					
 					ParseNBuffer(m_cBuffer, false);
-					
 				}
 			}
 		}
@@ -5904,17 +5944,7 @@ wxUint32 uiBytesRead;
 			//ParseBuffer(cBuf);
 			ParseNBuffer(cBuf);
 		}
-		if (m_parent->GetGlobalOptions()->DebugRaw())
-		{
-			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-			wxFile* file = new wxFile("raw.dat", wxFile::write_append);
-			if (m_mccp2 && cBuf!=NULL)
-				file->Write(cBuf, m_dc->GetUCLen());
-			else if (uiBytesRead!=0)
-				file->Write(m_cBuffer, uiBytesRead);
-			file->Close();
-			delete file;
-		}
+		
 		if (!m_noscroll)
 		{
 			
@@ -5931,8 +5961,8 @@ wxUint32 uiBytesRead;
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
-			m_sock->Write(test, (wxUint32)53);
-			//Write(s);
+			//m_sock->Write(test, (wxUint32)53);
+			Write8Bit(s);
 			m_atcp = false;
 		}
 		if (m_atcp2)
@@ -5941,8 +5971,9 @@ wxUint32 uiBytesRead;
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
-			m_sock->Write(test, wxStrlen(test));
-			//Write(s);
+			//m_sock->Write(test, wxStrlen(test));
+			Write8Bit(s);
+			
 			char gmcp[1500];
 			gmcp[0]='\0';
 			wxStrcat(gmcp, "\xff\xfa\xc9\x43ore.Supports.Set [\"");
@@ -5953,7 +5984,10 @@ wxUint32 uiBytesRead;
 			}
 			gmcp[wxStrlen(gmcp)-3]='\0';
 			wxStrcat(gmcp, "]\xff\xf0\0");
-			m_sock->Write(gmcp, wxStrlen(gmcp));
+			wxString ss(gmcp);
+			Write8Bit(ss);
+			
+			//m_sock->Write(gmcp, wxStrlen(gmcp));
 			m_atcp2 = false;
 			m_gmcp = true;
 			gmcp[0]='\0';
@@ -6054,6 +6088,10 @@ wxUint32 uiBytesRead;
 		m_sock->Read(m_cBuffer, 3000);
 		uiBytesRead = m_sock->LastCount();
 		m_cBuffer[uiBytesRead]=EOS;
+		
+		if (m_parent->GetGlobalOptions()->DebugRaw())
+			WriteRaw(m_cBuffer, uiBytesRead);
+		
 		if (m_parent->GetGlobalOptions()->UseUTF8())
 		{
 			//m_parent->GetGlobalOptions()->SetUTF8(false);
@@ -6063,15 +6101,7 @@ wxUint32 uiBytesRead;
 		else
 			ParseNBuffer(m_cBuffer);
 
-		if (m_parent->GetGlobalOptions()->DebugRaw())
-		{
-			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-			wxFile* file = new wxFile("raw.dat", wxFile::write_append);
-			if (uiBytesRead!=0)
-				file->Write(m_cBuffer, uiBytesRead);
-			file->Close();
-			delete file;
-		}
+		
 		SetScrollPage();
 		Refresh();
 		Update();
@@ -6086,6 +6116,54 @@ wxUint32 uiBytesRead;
 		m_parent->SetStatusText(wxString::Format(_("Lines: %d"), m_vmudlines.at(m_curline-1).GetLinenumber()), 2);
 	if (m_connected)
 		m_parent->SetStatusText(_("Connected!"), 1);
+}
+
+void MudWindow::WriteRaw(char* buf, int len, bool inc)
+{
+	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
+	wxFile* file = new wxFile(RAW_FILE, wxFile::write_append);
+	wxString t, tt;
+	wxDateTime d;
+	//d.SetToCurrent();
+	d = wxDateTime::UNow();
+	wxString date;
+	date = wxString::Format("%02d:%02d:%02d:%03d", d.GetHour(), d.GetMinute(), d.GetSecond(), d.GetMillisecond());
+	if (inc)
+		file->Write(t<<_("incoming packet: ")<< len <<_(" bytes (")<<date<<(")\n"));
+	else
+		file->Write(t<<_("sent packet: ")<<len<<_(" bytes (")<<date<<(")\n"));
+
+	for (int i=0;i<len;i+=32)
+	{
+		for (int ii=0;ii<32;ii++)
+		{
+			if (i+ii>=len)
+			{
+				file->Write(" ", 1);
+				continue;
+			}
+		if (buf[i+ii]=='\r' || buf[i+ii]=='\n' || buf[i+ii]==ESC)
+			file->Write(".", 1);
+		else
+			file->Write(wxString(buf[i+ii]), 1);
+		}
+		file->Write("\t", 1);
+		for (int ii=0;ii<32;ii++)
+		{
+			if (i+ii>=len)
+				break;
+			t = wxString::Format(" %02X", buf[i+ii]);
+			tt.Empty();
+			if (t.length()>3)
+				tt <<" "<<t.substr(7,2);
+			else tt = t;
+			file->Write(tt, tt.length());
+		}
+		file->Write("\n", 1);
+		}
+	file->Write("\n", 1);
+	file->Close();
+	delete file;
 }
 
 wxString MudWindow::FindPrevAnsi(wxString ansi, int idx)

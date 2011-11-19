@@ -174,11 +174,12 @@ RegExp::RegExp(wxString pattern)
 	m_pattern = pattern;
 	if (!frame->GetGlobalOptions()->UseUTF8())
 		m_re = pcre_compile(m_pattern.To8BitData().data(), 0, &m_error, &m_erroffset, NULL);
-		//m_re = pcre_compile(m_pattern.char_str(), 0, &m_error, &m_erroffset, NULL);
+	
 	else
 	{
-		wxString s = m_pattern.ToUTF8();
-		m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
+		wxString s = m_pattern;//.ToUTF8();
+		//m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(m_pattern.ToUTF8(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
 		
 	}
 		//m_prextra = pcre_study(m_re, 0, &m_error);

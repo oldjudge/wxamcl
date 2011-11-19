@@ -355,24 +355,8 @@ int luafunc_color(lua_State*L)
 	
 	ale.SetText(text);
 	frame->GetLines()->back().m_vstyle.push_back(ale);
-	//line.m_vstyle.push_back(ale);
-	//frame->Msg(wxString(text));
-	/*wxString s(fcol);
-	if (s.at(0)=='#')
-	{
-		fcol = "custom";
-		long col = frame->ParseHexColor(s.substr(1));
-		frame->SetCustomColour(col);
-	}
-	map<wxString, wxString> m = frame->GetColCodes();
-	map<wxString, int> b = frame->GetBCol();
-	wxString ss = m[fcol];
-	wxString msg;
-	if (s=="reset")
-		msg<<"\x1b[0m";
-	else msg = wxString::Format("\x1b[%s%02dm", ss.c_str(), b[bcol]);
-	lua_pushstring(L, msg.c_str());*/
 	lua_pushstring(L,"");
+	wxGetApp().GetChild()->Refresh();
 	return 1;
 }
 
@@ -425,24 +409,37 @@ int luafunc_colorall(lua_State*L)
 	const char* bcol;
 	fcol=luaL_optstring(L, 1, "white");
 	bcol=luaL_optstring(L, 2, "black");
-	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName("amcoutput");
+	class MudWindow *frame = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
-	//frame->Msg(wxString(text));
-	wxString s(fcol);
-	if (s.at(0)=='#')
+	wxColour c;
+	map<wxString, wxColour> mm = frame->GetMXPParser()->GetMXPColorMap();
+	
+	if (wxString(fcol).StartsWith('#'))
 	{
-		fcol = "custom";
-		long col = frame->ParseHexColor(s.substr(1));
-		frame->SetCustomColour(col);
+		c.Set(fcol);
+		frame->SetCustomColour(c.GetRGB());
+		fcol="custom";
 	}
-	//map<wxString, wxString> m = frame->GetColCodes();
+	else
+	{
+		frame->SetCustomColour(mm[fcol].GetRGB());
+		fcol = "custom";
+	}
+	if (wxString(bcol).StartsWith('#'))
+	{
+		c.Set(bcol);
+		frame->SetColour(19, c.GetRGB());
+		bcol="bcustom";
+	}
+	else
+	{
+		frame->SetColour(19, mm[bcol].GetRGB());
+		bcol = "bcustom";
+	}
 	map<wxString, int> b = frame->GetBCol();
-	//wxString ss = m[fcol];
-	//wxString msg = wxString::Format(wxT("\x1b[%s%02dm"), ss.c_str(), b[bcol]);
-	//lua_pushstring(L, msg.c_str());
 	ale_it it;
-	//deque<class AnsiLine> *v = frame->GetLines();
+	
 	for (unsigned long i= frame->GetEndLine();i<frame->GetStartLine();i++)
 	{
 		for (it = frame->GetLineStyle(i)->begin(); it!=frame->GetLineStyle(i)->end(); it++)
@@ -451,7 +448,6 @@ int luafunc_colorall(lua_State*L)
 			it->SetBCol(0, frame->GetColour(b[bcol]-40));
 		}
 	}
-	//frame->SetLineBuffer(v);
 	frame->Refresh();
 	frame->Update();
 	return 0;
@@ -470,25 +466,39 @@ int luafunc_colorline(lua_State*L)
 	long nr;
 	fcol=luaL_optstring(L, 1, "white");
 	bcol=luaL_optstring(L, 2, "black");
-	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(wxT("amcoutput"));
+	class MudWindow *frame = wxGetApp().GetChild();//
 	if (frame==NULL)
 		return 0;
 	nr = luaL_optnumber(L, 3, frame->GetStartLine()-1);
-	wxString s(fcol);
-	if (s.at(0)=='#')
-	{
-		fcol = "custom";
-		long col = frame->ParseHexColor(s.substr(1));
-		frame->SetCustomColour(col);
-	}
-	//map<wxString, wxString> m = frame->GetColCodes();
-	map<wxString, int> b = frame->GetBCol();
-	//wxString ss = m[fcol];
-	//wxString msg = wxString::Format(wxT("\x1b[%s%02dm"), ss.c_str(), b[bcol]);
-	//lua_pushstring(L, msg.c_str());
-	ale_it it;
-	//deque<class AnsiLine> *v = frame->GetLines();
+	wxColour c;
+	map<wxString, wxColour> mm = frame->GetMXPParser()->GetMXPColorMap();
 	
+	if (wxString(fcol).StartsWith('#'))
+	{
+		c.Set(fcol);
+		frame->SetCustomColour(c.GetRGB());
+		fcol="custom";
+	}
+	else
+	{
+		frame->SetCustomColour(mm[fcol].GetRGB());
+		fcol = "custom";
+	}
+	if (wxString(bcol).StartsWith('#'))
+	{
+		c.Set(bcol);
+		frame->SetColour(19, c.GetRGB());
+		bcol="bcustom";
+	}
+	else
+	{
+		frame->SetColour(19, mm[bcol].GetRGB());
+		bcol = "bcustom";
+	}
+	map<wxString, int> b = frame->GetBCol();
+	
+	ale_it it;
+		
 	for (it = frame->GetLineStyle(nr)->begin(); it!=frame->GetLineStyle(nr)->end(); it++)
 		{
 			it->SetFCol(7, frame->GetColour(b[fcol]-40));
@@ -519,20 +529,32 @@ int luafunc_colorword(lua_State*L)
 	class MudWindow *frame = wxGetApp().GetChild();//(MudWindow*)MudWindow::FindWindowByName("amcoutput");
 	if (frame==NULL)
 		return 0;
-	wxString s(fcol);
-	if (s.at(0)=='#')
+	wxColour c;
+	map<wxString, wxColour> mm = frame->GetMXPParser()->GetMXPColorMap();
+	
+	if (wxString(fcol).StartsWith('#'))
 	{
+		c.Set(fcol);
+		frame->SetCustomColour(c.GetRGB());
+		fcol="custom";
+	}
+	else
+	{
+		frame->SetCustomColour(mm[fcol].GetRGB());
 		fcol = "custom";
-		long col = frame->ParseHexColor(s.substr(1));
-		frame->SetCustomColour(col);
 	}
-	wxString bs(bcol);
-	if (bs.at(0)=='#')
+	if (wxString(bcol).StartsWith('#'))
 	{
-		bcol = "bcustom";
-		long col = frame->ParseHexColor(bs.substr(1));
-		frame->SetColour(19, col);
+		c.Set(bcol);
+		frame->SetColour(19, c.GetRGB());
+		bcol="bcustom";
 	}
+	else
+	{
+		frame->SetColour(19, mm[bcol].GetRGB());
+		bcol = "bcustom";
+	}
+	
 	map<wxString, wxString> m = frame->GetColCodes();
 	map<wxString, int> b = frame->GetBCol();
 	wxString f = m[fcol];
@@ -561,19 +583,11 @@ int luafunc_colorword(lua_State*L)
 		}
 		frame->GetLines()->pop_back();
 		frame->m_curline--;
-		frame->ParseLine(&ansi);/*
-		AnsiLineElement ale(word, b[fcol]-40, 0);//b[bcol]-40);
-		ale_it it;
-		int len=0;
-		RegExp test(word);
-		test.Match(frame->GetLines()->at(frame->m_curline-1).GetLineText());
-		for(it=frame->GetLines()->at(frame->m_curline-1).GetStyle()->begin();it!=frame->GetLines()->at(frame->m_curline-1).GetStyle()->end();it++)
-		{
-			if (len<test.GetMatchStart())
-				len+=it->GetLen();
-			else break;
-		}
-		frame->GetLines()->at(frame->m_curline-1).GetStyle()->erase(it);*/
+		bool p = wxGetApp().GetFrame()->TriggersOn();
+		wxGetApp().GetFrame()->SetTriggersOn(false);
+		frame->SetParseState(0);//HAVE_TEXT
+		frame->ParseNBuffer(ansi.char_str());
+		wxGetApp().GetFrame()->SetTriggersOn(p);
 	}
 	frame->Refresh();
 	frame->Update();
@@ -1807,18 +1821,18 @@ int index=1;
 */
 int luaopen_amc(lua_State *L)
 {
-	luaL_newmetatable(L, "amc.mta");//action type
+	luaL_newmetatable(L, "wxamcl.mta");//action type
 	luaL_register(L, NULL, amclib_m);
-	luaL_newmetatable(L, "amc.mtal");//alias type
+	luaL_newmetatable(L, "wxamcl.mtal");//alias type
 	luaL_register(L, NULL, amclib_al);
-	luaL_newmetatable(L, "amc.mtv");//var type
+	luaL_newmetatable(L, "wxamcl.mtv");//var type
 	luaL_register(L, NULL, amclib_v);
-	luaL_newmetatable(L, "amc.mthk");//hotkey type
+	luaL_newmetatable(L, "wxamcl.mthk");//hotkey type
 	luaL_register(L, NULL, amclib_h);
-	luaL_newmetatable(L, "amc.mtt");//timer type
+	luaL_newmetatable(L, "wxamcl.mtt");//timer type
 	luaL_register(L, NULL, amclib_timers);
 	lua_pushvalue (L, LUA_GLOBALSINDEX);
-	luaL_register(L, "amc", amclib_f);
+	luaL_register(L, "wxamcl", amclib_f);
 	lua_pushliteral(L, "__index");
 	lua_pushvalue(L, -2);         // push metatable
 	lua_rawset(L, -3);
@@ -1827,18 +1841,18 @@ int luaopen_amc(lua_State *L)
 	/*lua_getglobal(L, "amc");
 	lua_newtable(L);
 	lua_setfield(L, -2, "gmcp");*/
-	luaL_register(L, "amc.action", amclib_trigger);
-	luaL_register(L, "amc.alias", amclib_alias);
-	luaL_register(L, "amc.gmcp", amclib_gmcp);
-	luaL_register(L, "amc.gauge", amclib_gauge);
-	luaL_register(L, "amc.mxp", amclib_mxp);
-	luaL_register(L, "amc.hk", amclib_hk);
-	luaL_register(L, "amc.var", amclib_vars);
-	luaL_register(L, "amc.timer", amclib_timers);
-	luaL_register(L, "amc.list", amclib_list);
-	luaL_register(L, "amc.button", amclib_btn);
-	luaL_register(L, "amc.db", amclib_db);
-	luaL_register(L, "amc.draw", amclib_draw);
+	luaL_register(L, "wxamcl.action", amclib_trigger);
+	luaL_register(L, "wxamcl.alias", amclib_alias);
+	luaL_register(L, "wxamcl.gmcp", amclib_gmcp);
+	luaL_register(L, "wxamcl.gauge", amclib_gauge);
+	luaL_register(L, "wxamcl.mxp", amclib_mxp);
+	luaL_register(L, "wxamcl.hk", amclib_hk);
+	luaL_register(L, "wxamcl.var", amclib_vars);
+	luaL_register(L, "wxamcl.timer", amclib_timers);
+	luaL_register(L, "wxamcl.list", amclib_list);
+	luaL_register(L, "wxamcl.button", amclib_btn);
+	luaL_register(L, "wxamcl.db", amclib_db);
+	luaL_register(L, "wxamcl.draw", amclib_draw);
 	return 1;
 }
 
@@ -1960,7 +1974,7 @@ int index=1;
 	t->colmatch = tr.GetColMatch();
 	t->count = tr.GetMatchCount();
 	t->lines = tr.GetLines();
-	luaL_getmetatable(L, "amc.mta");
+	luaL_getmetatable(L, "wxamcl.mta");
 	lua_setmetatable(L, -2);
 	//frame->luaBuildtrigger();
 	return 1;
@@ -2544,7 +2558,7 @@ str_ac* t;
 
 	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	t = (str_ac*)checkaction(L);
-	lua_pushfstring(L, "type: amc.action, label: \"%s\", pattern: \"%s\", action: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action);
+	lua_pushfstring(L, "type: wxamcl.action, label: \"%s\", pattern: \"%s\", action: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action);
 	return 1;
 }
 
@@ -2623,7 +2637,7 @@ int index=1;
 	wxStrcpy(a->action, al.GetAction().c_str());
 	wxStrcpy(a->cla, al.GetGroup().c_str());
 	a->on = al.IsActive();
-	luaL_getmetatable(L, "amc.mtal");
+	luaL_getmetatable(L, "wxamcl.mtal");
 	lua_setmetatable(L, -2);
 	return 1;
 }
@@ -2706,7 +2720,7 @@ int index=1;
 	wxStrcpy(a->action, al.GetAction().c_str());
 	wxStrcpy(a->cla, al.GetGroup().c_str());
 	a->on = al.IsActive();
-	luaL_getmetatable(L, "amc.mtal");
+	luaL_getmetatable(L, "wxamcl.mtal");
 	lua_setmetatable(L, -2);
 	return 1;
 }
@@ -3095,7 +3109,7 @@ amcTimer timer;
 	strt->on = timer.IsActive();
 	strt->intervall = timer.GetInterval();
 	strt->repeat = timer.GetRepeat();
-	luaL_getmetatable(L, "amc.mtt");
+	luaL_getmetatable(L, "wxamcl.mtt");
 	lua_setmetatable(L, -2);
 	return 1;
 }
@@ -3299,7 +3313,7 @@ int index=1;
 	hkey->on = hk.IsActive();
 	hkey->keycode = hk.GetHotkey();
 	hkey->mod = hk.GetModifier();
-	luaL_getmetatable(L, "amc.mthk");
+	luaL_getmetatable(L, "wxamcl.mthk");
 	lua_setmetatable(L, -2);
 	return 1;
 }
@@ -3665,7 +3679,7 @@ int index=1;
 	wxStrcpy(a->value, v.GetValue().c_str());
 	wxStrcpy(a->group, v.GetGroup().c_str());
 	a->on = v.IsActive();
-	luaL_getmetatable(L, "amc.mtv");
+	luaL_getmetatable(L, "wxamcl.mtv");
 	lua_setmetatable(L, -2);
 	return 1;
 	
@@ -3727,7 +3741,7 @@ int index=1;
 	wxStrcpy(av->value, v.GetValue().c_str());
 	wxStrcpy(av->group, v.GetGroup().c_str());
 	av->on = v.IsActive();
-	luaL_getmetatable(L, "amc.mtv");
+	luaL_getmetatable(L, "wxamcl.mtv");
 	lua_setmetatable(L, -2);
 	return 1;
 }

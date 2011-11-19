@@ -13,23 +13,23 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	wxString luawords =
 		wxT("function end if then do else for in return break while local repeat elseif and or not false true nil require");
 	wxString luawords2 =
-		wxT("amc.echo amc.echowin amc.gag amc.color amc.colorline amc.colorall amc.scroll \
-				amc.getlinenumber amc.execute amc.wait amc.waitfor amc.loadprofile \
-				amc.createwindow amc.hidewindow amc.showwindow amc.clearwindow \
-				amc.action.new amc.action.get amc.action.delete amc.action.enable amc.action.getpattern amc.action.setpattern \
-				amc.action.getact amc.action.setact amc.action.getpriority amc.action.setpriority amc.action.getcolmatch amc.action.setcolmatch \
-				amc.action.enableall amc.action.disableall amc.action.getall amc.action.delgroup amc.action.enablegroup \
-				amc.alias.new amc.alias.get amc.alias.delete amc.alias.enable amc.alias.getall amc.alias.getaction\
-				amc.alias.setaction amc.alias.delgroup amc.alias.enablegroup \
-				amc.hk.new amc.hk.delgroup amc.hk.delete amc.hk.enable \
-				amc.var.new amc.var.set amc.var.get amc.var.delete amc.var.enable \
-				amc.gauge.update amc.gauge.new amc.gauge.setsize amc.gauge.setcolor amc.gauge.createwindow amc.gauge.setlabel \
-				amc.timer.new amc.timer.delete amc.timer.start amc.timer.stop amc.timer.enable \
-				amc.mxp.enable amc.mxp.echo amc.mxp.echowin \
-				amc.list.new amc.list.additem amc.list.clear amc.list.delete amc.list.contains amc.list.delitem amc.list.delitemat \
-				amc.gmcp.send \
-				amc.db.open amc.db.execute amc.db.columns amc.db.results amc.db.close amc.db.insert \
-				amc.draw.text amc.draw.line amc.draw.circle amc.draw.square amc.draw.winsize");
+		wxT("wxamcl.echo wxamcl.echowin wxamcl.gag wxamcl.color wxamcl.colorwin wxamcl.colorline wxamcl.colorword wxamcl.colorall wxamcl.scroll \
+				wxamcl.getlinenumber wxamcl.execute wxamcl.wait wxamcl.waitfor wxamcl.loadprofile \
+				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow \
+				wxamcl.action.new wxamcl.action.get wxamcl.action.delete wxamcl.action.enable wxamcl.action.getpattern wxamcl.action.setpattern \
+				wxamcl.action.getact wxamcl.action.setact wxamcl.action.getpriority wxamcl.action.setpriority wxamcl.action.getcolmatch wxamcl.action.setcolmatch \
+				wxamcl.action.enableall wxamcl.action.disableall wxamcl.action.getall wxamcl.action.delgroup wxamcl.action.enablegroup \
+				wxamcl.alias.new wxamcl.alias.get wxamcl.alias.delete wxamcl.alias.enable wxamcl.alias.getall wxamcl.alias.getaction\
+				wxamcl.alias.setaction wxamcl.alias.delgroup wxamcl.alias.enablegroup \
+				wxamcl.hk.new wxamcl.hk.delgroup wxamcl.hk.delete wxamcl.hk.enable \
+				wxamcl.var.new wxamcl.var.set wxamcl.var.get wxamcl.var.delete wxamcl.var.enable \
+				wxamcl.gauge.update wxamcl.gauge.new wxamcl.gauge.setsize wxamcl.gauge.setcolor wxamcl.gauge.createwindow wxamcl.gauge.setlabel \
+				wxamcl.timer.new wxamcl.timer.delete wxamcl.timer.start wxamcl.timer.stop wxamcl.timer.enable \
+				wxamcl.mxp.enable wxamcl.mxp.echo wxamcl.mxp.echowin \
+				wxamcl.list.new wxamcl.list.additem wxamcl.list.clear wxamcl.list.delete wxamcl.list.contains wxamcl.list.delitem wxamcl.list.delitemat \
+				wxamcl.gmcp.send \
+				wxamcl.db.open wxamcl.db.execute wxamcl.db.columns wxamcl.db.results wxamcl.db.close wxamcl.db.insert \
+				wxamcl.draw.text wxamcl.draw.line wxamcl.draw.circle wxamcl.draw.square wxamcl.draw.winsize");
 	wxString amcwords =
 		wxT("clearwin capstart capend setvar gag help loadprofile func script bscript gagwin connect pwd refreshwin raw capturewin capturenb log htmllog resume test"); 
 	

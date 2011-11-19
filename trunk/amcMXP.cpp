@@ -932,6 +932,32 @@ MudWindow *mw = m_parent;
 		mw->GetLines()->back().SetFull(false);
 		t->Reset();
 	}
+	else if (t->GetTag().Lower().StartsWith("var ") || t->GetTag().Lower().IsSameAs('v'))
+	{
+		if (t->GetText().empty())
+			return true;
+		amcVar var;
+		wxString n = t->GetTag().AfterFirst(' ').Lower();
+		
+		if (f->GetVarIndexByLabel(n)==-1)
+		{
+			var.SetName(n);
+			var.SetActive(true);
+			var.SetValue(t->GetText());
+			var.SetGroup("mxp_autovar");
+			f->GetVars()->push_back(var);
+		}
+		else
+		{
+			int idx = f->GetVarIndexByLabel(n);
+			f->GetVars()->at(idx).SetValue(t->GetText());
+		}
+		
+		if (!t->GetText().empty())
+			mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
+		t->Reset();
+
+	}
 	else if (!ss.Cmp("user"))
 	{
 		if (f->GetCurHost()!=-1)
@@ -1586,6 +1612,28 @@ amcMXPTag::amcMXPTag()
 	m_fontname = "Fixed";
 #endif	
 	m_fontattr = 0;
+	
+	m_mxptags["user"]=true;
+	m_mxptags["password"]=true;
+	m_mxptags["version"]=true;
+	m_mxptags["support"]=true;
+	m_mxptags["expire"]=true;
+	m_mxptags["color"]=true;
+	m_mxptags["c"]=true;
+	m_mxptags["send"]=true;
+	m_mxptags["a"]=true;
+	//m_mxptags["a"]=true;
+	m_mxptags["var"]=true;
+	m_mxptags["v"]=true;
+
+	m_mxpopentags["bold"]=true;
+	m_mxpopentags["b"]=true;
+	m_mxpopentags["underline"]=true;
+	m_mxpopentags["u"]=true;
+	m_mxpopentags["italic"]=true;
+	m_mxpopentags["i"]=true;
+	m_mxpopentags["strikeout"]=true;
+	m_mxpopentags["s"]=true;
 }
 
 amcMXPTag::~amcMXPTag()
@@ -1648,15 +1696,22 @@ bool amcMXPTag::IsEmpty()
 
 bool amcMXPTag::IsMXPTag()
 {
+	
+	if (m_mxptags[m_tag.BeforeFirst(' ').Lower()])
+		return true;
+	else return false;
 	//look if this is literally sent by the mud
-	return (!m_tag.CmpNoCase("user") || !m_tag.CmpNoCase("password") || !m_tag.CmpNoCase("version") ||
+	/*return (!m_tag.CmpNoCase("user") || !m_tag.CmpNoCase("password") || !m_tag.CmpNoCase("version") ||
 		m_tag.Lower().StartsWith("support") || m_tag.Lower().StartsWith("expire") || m_tag.Lower().StartsWith("color ") ||
 		m_tag.Lower().StartsWith("c ") || m_tag.Lower().StartsWith("send") || m_tag.Lower().StartsWith("a ") ||
-		m_tag.Lower().IsSameAs('a'));
+		m_tag.Lower().IsSameAs('a') || m_tag.Lower().StartsWith("var") || m_tag.Lower().IsSameAs('v'));*/
 }
 
 bool amcMXPTag::IsOpenTag()
 {
+	if (m_mxpopentags[m_tag.Lower()])
+		return true;
+	else return false;
 	//look if this is literally sent by the mud
 	return (!m_tag.Lower().CmpNoCase("bold") ||	!m_tag.Lower().CmpNoCase("b") || !m_tag.Lower().CmpNoCase("underline") ||
 		!m_tag.Lower().CmpNoCase("u") || !m_tag.Lower().CmpNoCase("strikeout") ||
