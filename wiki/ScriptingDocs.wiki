@@ -13,4 +13,4 @@ This section contains the documentation for the client Lua interface.
   If you want to use wxamlc.wait or wxamcl.waitfor to pause the script you need to use the '#tscript' command:
    #tscript("waitfor.lua")
   You can call a single function from a file:
-   #func("functest.lua", "Test('Grün', 'red')")
+   #func("functest.lua", "Test('green', 'red')")

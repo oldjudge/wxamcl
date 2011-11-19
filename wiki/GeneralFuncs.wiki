@@ -1,7 +1,7 @@
 #summary Documentation for general Lua functions
 
 = General Functions =
-* [GeneralFuncs#Output_to_screen Print functions]
+* [GeneralFuncs#Output_to_screen Print, color and output buffer functions]
  * [GeneralFuncs#wxamcl.echo wxamcl.echo]
  * [GeneralFuncs#wxamcl.echowin wxamcl.echowin] 
  * [GeneralFuncs#wxamcl.color wxamcl.color]
@@ -9,6 +9,9 @@
  * [GeneralFuncs#wxamcl.colorword wxamcl.colorword]
  * [GeneralFuncs#wxamcl.colorline wxamcl.colorline]
  * [GeneralFuncs#wxamcl.colorall wxamcl.colorall]
+ * [GeneralFuncs#wxamcl.getlinenumber wxamcl.getlinenumber]
+ * [GeneralFuncs#wxamcl.getline wxamcl.getline]
+ * [GenerFuncs#wxamcl.scroll wxamcl.scroll]
 * [GeneralFuncs#Send_commands_to_the_MUD Send commands]
  * [GeneralFuncs#wxamcl.send wxamcl.send]
  * [GeneralFuncs#wxamcl.execute wxamcl.execute]
@@ -109,7 +112,8 @@
 		{{{
 		wxamcl.colorall("lavender", "maroon")
 		wxamcl.colorall("#ffffff")
-		wxamcl.colorall(444, "#44cc00", "#000000")
+		wxamcl.colorall("#44cc00", "#000000")
+		wxamcl.colorall() -- white and black
 		}}}
 	The function returns nothing.
    === wxamcl.getlinenumber ===
@@ -134,6 +138,34 @@
 		end 
 		}}}
 	The function returns a table containing the line and its styles. Fields of the table are: text, fore, back, length
+   === wxamcl.scroll ===
+	This function enables or disables scrolling of the main output window.
+    ==== Usage: ====
+		`wxamcl.scroll(true|false)`
+		Examples:
+		{{{
+		wxamcl.scroll(true) --normal scrolling
+		wxamcl.scroll(false) --do not scroll even if new text arrives from mud
+		}}}
+	The function returns nothing.
 == Send commands to the MUD ==
-	=== wxamcl.send ===
-	=== wxamcl.execute ===
+   === wxamcl.send ===
+    Sends text unparsed to the Mud.
+	==== Usage: ====
+		`wxamcl.send(command)`
+		Examples:
+		{{{
+		wxamcl.send("say ;)")
+		wxamcl.send("quit")
+		}}}
+	The function returns nothing.
+   === wxamcl.execute ===
+    Sends a command to the Mud. The command is parsed as if typed in the command line. You can therefore send aliases, variables and so on.
+	==== Usage: ====
+		`wxamcl.send(command)`
+		Examples:
+		{{{
+		wxamcl.send("look at "..$target)
+		wxamcl.send("quit")
+		}}}
+	The function returns nothing.
