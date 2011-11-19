@@ -149,6 +149,7 @@ using namespace std;
 #define ESC 0x1b
 #define BR '['
 #define AC_M 'm'
+#define RAW_FILE "raw.txt"
 //color index defines
 #define DEF_FORECOL 7
 #define DEF_BACKCOL 0
@@ -237,7 +238,7 @@ enum
 #define OVECCOUNT 60
 //wxDECLARE_EVENT(wxEVENT_CMD_PAUSE2, wxThreadEvent);
 
-#define APP_VERSION "0.1.r55"
+#define APP_VERSION "0.1.r70"
 
 #include "mudwindow.h"
 #include "luadefs.h"
@@ -520,6 +521,7 @@ private:
 	int Media(wxString *sPar);//#media
 	int Mxp(wxString *sPar);//#mxp
 	int Info(wxString *sPar);//#info
+	int DebugGMCP(wxString *sPar);//#debuggmcp
 
 	int ParseFParams(wxString *sPar, wxChar delim = wxT('\"'));
 	wxString GetFParam(int index) {return m_fparams.at(index-1);}

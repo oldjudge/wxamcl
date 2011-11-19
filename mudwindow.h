@@ -131,6 +131,7 @@ public:
 	void DeleteHtmlLog() {delete m_htmllog;m_htmllog=NULL;}
 	void SendLineToLog(wxUint64 i);
 	void WriteHtmlHeader(wxFile *f);
+	void WriteRaw(char* buffer, int len, bool inc=true);
 	
 	//Scrolling/line buffer functions
 	wxUint64 GetScrollPage();
@@ -153,6 +154,8 @@ public:
 	map<wxString, bool> *GetCapWindow() {return &m_capwindow;}
 	//GMCP
 	vector<wxString> * GetGMCPModules() {return &m_gmcpmods;}
+	void SetDebugGMCP(bool b) {m_debuggmcp=b;}
+	bool GetDebugGMCP() {return m_debuggmcp;}
 	//Static functions
 	static void SetNewLine(bool bo) {m_bonewline=bo;}
 	static bool GetNewLine() {return m_bonewline;}
@@ -211,6 +214,7 @@ private:
 	bool m_atcp;/*!< atcp negotiated? */
 	bool m_atcp2;/*!< atcp2 = gmcp negotiated? */
 	bool m_gmcp;/*!< are we using gmcp? */
+	bool m_debuggmcp;/*!<write gmcp messages to file */
 	std::vector<wxString> m_gmcpmods;
 	wxPoint m_selstart;
 	wxPoint m_selend;

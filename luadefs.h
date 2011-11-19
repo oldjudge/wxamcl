@@ -4,11 +4,11 @@
 #define luaL_doresume(L, fn) \
 	(luaL_loadfile(L, fn) || lua_resume(L, 0))
 //amc namespace functions
-#define checkaction(L) (str_ac*)luaL_checkudata(L, 1, "amc.mta")
-#define checkalias(L) (str_al*)luaL_checkudata(L, 1, "amc.mtal")
-#define checkvar(L) (str_var*)luaL_checkudata(L, 1, "amc.mtv")
-#define checktimer(L) (str_timer*)luaL_checkudata(L, 1, "amc.mtt")
-#define checkhk(L) (str_hk*)luaL_checkudata(L, 1, "amc.mthk")
+#define checkaction(L) (str_ac*)luaL_checkudata(L, 1, "wxamcl.mta")
+#define checkalias(L) (str_al*)luaL_checkudata(L, 1, "wxamcl.mtal")
+#define checkvar(L) (str_var*)luaL_checkudata(L, 1, "wxamcl.mtv")
+#define checktimer(L) (str_timer*)luaL_checkudata(L, 1, "wxamcl.mtt")
+#define checkhk(L) (str_hk*)luaL_checkudata(L, 1, "wxamcl.mthk")
 int luafunc_createwindow(lua_State *L);
 int luafunc_hidewindow(lua_State *L);
 int luafunc_showwindow(lua_State *L);

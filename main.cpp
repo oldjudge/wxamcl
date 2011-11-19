@@ -187,9 +187,9 @@ bool MudClientApp::OnInit()
     frame->Maximize();
 	frame->Show(true);
 	frame->Update();
-	
-	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
 	frame->LoadGlobalOptions();
+	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
+	
 	
 	if (frame->m_input->GetParse())
 			frame->m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
@@ -229,7 +229,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer(s.char_str(), false);
 	//frame->m_child->ParseNBuffer(ss.char_str(), false);
 	//s.clear();
-	//s = "37m~";
+	//wxString s = "\xff\xfb\x5b";
 	//frame->m_child->ParseBuffer(s.char_str());
 	//wxString s = wxVERSION_STRING;
 	//frame->m_child->Msg(wxString::Format(wxT("%s on %s"), s.c_str(), wxGetOsDescription().c_str()));
@@ -243,12 +243,14 @@ bool MudClientApp::OnInit()
 	frame->m_trigger.push_back(tr1);
 	frame->m_trigger.push_back(tr2);*/
 	//frame->m_child->Msg(frame->GetGlobalOptions()->GetWorkDir());
-	//frame->m_child->ParseNBuffer("in der nichts unmöglich ist\n\x1b");
-	//frame->m_child->ParseNBuffer("\x1b[2", false);
+	//frame->m_child->ParseNBuffer("                       Посетите наш сайт: www.mud.ru");
+	frame->m_child->ParseNBuffer("http://bit.ly", false);
 	//frame->m_child->ParseNBuffer("JThis \x1b[33;1;44mis a \x1b[32mtest!\r\nNExtline\r\n", false);
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
 	//amcMXP am(frame->m_child);
+	//am.Parse("<VAR hp>100</VAR>");
+	//am.Parse("By what name shall we know thee?\xff\xfa\x5b\xff\xf0\xff\xfa\xc9\xff\xf0");
 	//am.Parse("\x1b[1z<send \"look leather satchel\" hint=\"Click to see menu|look|eat|wear|remove|drop\">a \x1b[1;30mleather\x1b[0m satchel</Send>");
 	//am.Parse("\x1b[1z<!ELEMENT RName '<FONT \"Comic Sans MS\" COLOR=CYAN> <B>' FLAG=\"RoomName\"><!ELEMENT RDesc FLAG='RoomDesc'><!ELEMENT RExits FLAG='RoomExit'><!ELEMENT Ex '<SEND>'><!ELEMENT List \"<send href='buy &#39;&name;&#39;' hint='Buy &desc;'>\" ATT='name desc'>\x1b[1z<SUPPORT image send frame state>");
 	//am.Parse("<send prompt hint='text' href='?mapper.walk|?mapper.talk'>Test me!</send>\n");
@@ -892,6 +894,8 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		m_gopt->SetUTF8(true);
 	else	m_gopt->SetUTF8(false);
 	this->SaveGlobalOptions();
+	this->m_child->Refresh();
+	m_child->Update();
 	return;
 }
 
@@ -2246,7 +2250,7 @@ li_it itl;
 	file->Write(wxString::Format("\t\t[\"event_ondisconnect\"] = %s,\n", m_gopt->GetUseEvDisco() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_ontelnetdata\"] = %s,\n", m_gopt->GetUseEvTelnetData() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"event_ongmcpdata\"] = %s,\n", m_gopt->GetUseEvGMCPData () ? "true" : "false"));
-	file->Write(wxString::Format("\t\t[\"event_ongmsdpdata\"] = %s,\n", m_gopt->GetUseEvMSDPData() ? "true" : "false"));
+	file->Write(wxString::Format("\t\t[\"event_onmsdpdata\"] = %s,\n", m_gopt->GetUseEvMSDPData() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"eventfile\"] = [[%s]],\n", m_gopt->GetEventFile().c_str()));
 	file->Write("\t}");
 
@@ -2809,8 +2813,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_gopt->SetUseEvTelnetData(aL->GetBoolean(-1));
 	aL->GetField(-6, "event_ongmcpdata");
 	m_gopt->SetUseEvGMCPData(aL->GetBoolean(-1));
-	aL->GetField(-7, "event_ongmsdpdata");
-	m_gopt->SetUseEvGMCPData(aL->GetBoolean(-1));
+	aL->GetField(-7, "event_onmsdpdata");
+	m_gopt->SetUseEvMSDPData(aL->GetBoolean(-1));
 	aL->GetField(-8, "eventfile");
 	wxString f = aL->GetUTF8String(-1);
 	m_gopt->SetEventFile(f);
@@ -3000,7 +3004,7 @@ size_t i;
 	}
 	//register this as table in global namespace amc
 	lua_setglobal(L, "_amctrigger");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amctrigger");
 	lua_setfield(L, -2, "Action");
 	lua_settop(L,0);
@@ -3044,9 +3048,9 @@ size_t i;
 		lua_settable(L,-3);
 
 	}
-	//register this as table in global namespace amc
+	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amcalias");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcalias");
 	lua_setfield(L, -2, "Alias");
 	lua_settop(L,0);
@@ -3092,7 +3096,7 @@ size_t i;
 	}
 	//register this as table in global namespace amc
 	lua_setglobal(L, "_amcvariables");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcvariables");
 	lua_setfield(L, -2, "Vars");
 	lua_settop(L,0);
@@ -3130,7 +3134,7 @@ void MudMainFrame::luaCreateATCPTable()
 	//lua_settable(L, -3);
 	//register this as table in global namespace amc
 	lua_setglobal(L, "_amcATCP");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcATCP");
 	lua_setfield(L, -2, "ATCP");
 	lua_settop(L,0);
@@ -3152,7 +3156,7 @@ void MudMainFrame::luaCreateGMCPTable()
 	//lua_settable(L, -3);
 	//register this as table in global namespace amc
 	lua_setglobal(L, "_amcGMCP");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcGMCP");
 	lua_setfield(L, -2, "GMCP");
 	lua_settop(L,0);
@@ -3174,7 +3178,7 @@ void MudMainFrame::luaCreateMSDPTable()
 	//lua_settable(L, -3);
 	//register this as table in global namespace amc
 	lua_setglobal(L, "_amcMSDP");
-	lua_getglobal(L, "amc");
+	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcMSDP");
 	lua_setfield(L, -2, "MSDP");
 	lua_settop(L,0);
@@ -3433,6 +3437,7 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
 	m_sComm["media"] = &InputTextCtrl::Media;
 	m_sComm["mxp"] = &InputTextCtrl::Mxp;
 	m_sComm["info"] = &InputTextCtrl::Info;
+	m_sComm["debugGMCP"] = &InputTextCtrl::DebugGMCP;
 	m_keepinput = true;
 	m_parse = true;
 	m_hpos = 0;
@@ -4073,9 +4078,9 @@ wxString s, params;
 /***Mud Commands***/
 int InputTextCtrl::CommRaw(wxString *sPar)
 {
-	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-	if (::wxFileExists("raw.dat"))
-		::wxRemoveFile("raw.dat");
+	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
+	if (::wxFileExists(RAW_FILE))
+		::wxRemoveFile(RAW_FILE);
 	m_parent->GetGlobalOptions()->SetDebugRaw(true);
 	return 0;
 }
@@ -4808,6 +4813,22 @@ int InputTextCtrl::Info(wxString *sPar)
 	s.clear();
 	s << _("--- Information end----");
 	m_parent->m_child->Msg(s, 17, 4);
+	return 0;
+}
+
+int InputTextCtrl::DebugGMCP(wxString *sPar)
+{
+	if (ParseFParams(sPar) != 1)
+		return -1;
+	if (!GetFParam(1).Cmp("on"))
+	{
+		m_parent->m_child->SetDebugGMCP(true);
+		wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+		if (::wxFileExists("debuggmcp.txt"))
+			::wxRemoveFile("debuggmcp.txt");
+	}
+	else if (!GetFParam(1).Cmp("off"))
+		m_parent->m_child->SetDebugGMCP(false);
 	return 0;
 }
 

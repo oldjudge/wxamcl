@@ -108,45 +108,8 @@ AnsiLine::AnsiLine()
 	m_bogagme=false;
 	m_linenumber=0;
 	m_ypos=0;
-	//m_linetext = new wxString(wxT(""));
-	m_linetext = "";
+	m_linetext = wxEmptyString;
 	m_ansiline = wxEmptyString;
-	/*m_codes[0] = "\x1b[0;30m";
-	m_codes[1] = "\x1b[0;31m";
-	m_codes[2] = "\x1b[0;32m";
-	m_codes[3] = "\x1b[0;33m";
-	m_codes[4] = "\x1b[0;34m";
-	m_codes[5] = "\x1b[0;35m";
-	m_codes[6] = "\x1b[0;36m";
-	m_codes[7] = "\x1b[0;37m";
-	m_codes[8] = "\x1b[1;30m";
-	m_codes[9] = "\x1b[1;31m";
-	m_codes[10] = "\x1b[1;32m";
-	m_codes[11] = "\x1b[1;33m";
-	m_codes[12] = "\x1b[1;34m";
-	m_codes[13] = "\x1b[1;35m";
-	m_codes[14] = "\x1b[1;36m";
-	m_codes[15] = "\x1b[1;37m";
-	m_codes[16] = m_codes[10];
-	m_codes[17] = m_codes[14];*/
-
-	/*m_bcodes[0] = "\x1b[40m";
-	m_bcodes[1] = "\x1b[41m";
-	m_bcodes[2] = "\x1b[42m";
-	m_bcodes[3] = "\x1b[43m";
-	m_bcodes[4] = "\x1b[44m";
-	m_bcodes[5] = "\x1b[45m";
-	m_bcodes[6] = "\x1b[46m";
-	m_bcodes[7] = "\x1b[47m";
-	m_bcodes[8] = "\x1b[48m";
-	m_bcodes[9] = "\x1b[49m";
-	m_bcodes[10] = "\x1b[50m";
-	m_bcodes[11] = "\x1b[51m";
-	m_bcodes[12] = "\x1b[52m";
-	m_bcodes[13] = "\x1b[53m";
-	m_bcodes[14] = "\x1b[54m";
-	m_bcodes[15] = "\x1b[55m";*/
-	
 }
 
 AnsiLine::AnsiLine(const AnsiLine& al)
@@ -166,41 +129,6 @@ AnsiLine::AnsiLine(const AnsiLine& al)
 	//for (i=0;i<al.m_vstyle.size();i++)
     //    m_vstyle.push_back(al.m_vstyle.at(i));//al.m_vstyle;
 	m_cdt = al.m_cdt;
-	/*m_codes[0] = "\x1b[0;30m";
-	m_codes[1] = "\x1b[0;31m";
-	m_codes[2] = "\x1b[0;32m";
-	m_codes[3] = "\x1b[0;33m";
-	m_codes[4] = "\x1b[0;34m";
-	m_codes[5] = "\x1b[0;35m";
-	m_codes[6] = "\x1b[0;36m";
-	m_codes[7] = "\x1b[0;37m";
-	m_codes[8] = "\x1b[1;30m";
-	m_codes[9] = "\x1b[1;31m";
-	m_codes[10] = "\x1b[1;32m";
-	m_codes[11] = "\x1b[1;33m";
-	m_codes[12] = "\x1b[1;34m";
-	m_codes[13] = "\x1b[1;35m";
-	m_codes[14] = "\x1b[1;36m";
-	m_codes[15] = "\x1b[1;37m";
-	m_codes[16] = m_codes[10];
-	m_codes[17] = m_codes[14];*/
-
-	/*m_bcodes[0] = "\x1b[40m";
-	m_bcodes[1] = "\x1b[41m";
-	m_bcodes[2] = "\x1b[42m";
-	m_bcodes[3] = "\x1b[43m";
-	m_bcodes[4] = "\x1b[44m";
-	m_bcodes[5] = "\x1b[45m";
-	m_bcodes[6] = "\x1b[46m";
-	m_bcodes[7] = "\x1b[47m";
-	m_bcodes[8] = "\x1b[48m";
-	m_bcodes[9] = "\x1b[49m";
-	m_bcodes[10] = "\x1b[50m";
-	m_bcodes[11] = "\x1b[51m";
-	m_bcodes[12] = "\x1b[52m";
-	m_bcodes[13] = "\x1b[53m";
-	m_bcodes[14] = "\x1b[54m";
-	m_bcodes[15] = "\x1b[55m";*/
 }
 
 AnsiLine::~AnsiLine()
@@ -263,6 +191,8 @@ void AnsiLine::SetLineText(wxString st)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	if (ff.empty())
+		ff=st;
 	m_linetext.append(ff);
 }
 

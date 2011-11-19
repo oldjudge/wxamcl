@@ -55,6 +55,8 @@ private:
 	wxString m_endtag;
 	wxString m_text;
 	vector<wxString> m_param;
+	std::map<class wxString, bool> m_mxptags;
+	std::map<class wxString, bool> m_mxpopentags;
 	wxColour m_fore;
 	wxColour m_back;
 	int m_fontattr;
