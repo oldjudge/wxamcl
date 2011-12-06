@@ -24,11 +24,13 @@ public:
 	void SetId(const int& id) {this->m_id = id;}
 	void SetName(const wxString& name) {this->m_name = name;}
 	void SetText(const wxString& text) {this->m_text = text;}
+	void SetBitmap(const wxString& bit);
 	void SetActive(const bool& on) {this->m_on = on;}
 	void SetParent(wxAuiToolBar* parent) {this->m_parent = parent;}
 	void SetTbName(const wxString& name) {this->m_tbname = name;}
 	const wxString& GetAction() const {return m_action;}
 	const wxString& GetGroup() const {return m_group;}
+	const wxString& GetBitmap() const {return m_bitmap;}
 	const int& GetId() const {return m_id;}
 	const wxString& GetName() const {return m_name;}
 	const wxString& GetText() const {return m_text;}
@@ -37,6 +39,7 @@ public:
 	const wxAuiToolBar* GetParent() const {return m_parent;}
 	const bool& GetShow() const {return m_show;}
 	void SetShow(const bool& b) {this->m_show = b;}
+	void SetAsSeparator(wxAuiToolBar* tb);
 	void Register();
 	static std::vector<wxString> * GetButtonGroups() {return &m_bgroup;} //!< get all timer groups as pointer
 private:
@@ -48,6 +51,7 @@ private:
 	wxString m_action;
 	wxString m_group;
 	wxString m_tbname;
+	wxString m_bitmap;
 	bool m_on;
 	int m_id;
 	bool m_show;

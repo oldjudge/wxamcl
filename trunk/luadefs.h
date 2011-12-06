@@ -9,6 +9,8 @@
 #define checkvar(L) (str_var*)luaL_checkudata(L, 1, "wxamcl.mtv")
 #define checktimer(L) (str_timer*)luaL_checkudata(L, 1, "wxamcl.mtt")
 #define checkhk(L) (str_hk*)luaL_checkudata(L, 1, "wxamcl.mthk")
+#define checkbtn(L) (str_btn*)luaL_checkudata(L, 1, "wxamcl.mtbtn");
+#define checklist(L) (str_lst*)luaL_checkudata(L, 1, "wxamcl.mtll");
 int luafunc_createwindow(lua_State *L);
 int luafunc_hidewindow(lua_State *L);
 int luafunc_showwindow(lua_State *L);
@@ -30,6 +32,7 @@ int luafunc_colorwin(lua_State *L);
 int luafunc_colorall(lua_State *L);
 int luafunc_colorline(lua_State *L);
 int luafunc_colorword(lua_State *L);
+int luafunc_replacetext(lua_State *L);
 int luafunc_getlinenr(lua_State *L);
 int luafunc_scroll(lua_State *L);
 int luafunc_loadprofile(lua_State *L);
@@ -76,6 +79,7 @@ int luafunc_exectr(lua_State *L);
 int luafunc_enabletrgroup(lua_State *L);
 int luafunc_deltrgroup(lua_State *L);
 int luafunc_gettrgroup(lua_State *L);
+int luafunc_gettruserdata(lua_State *L);
 //alias
 int luafunc_newalias(lua_State *L);
 int luafunc_newalias1(lua_State *L);//for amc.alias....
@@ -140,6 +144,12 @@ int luafunc_deletegauge(lua_State *L);
 //button
 int luafunc_newbtn(lua_State *L);
 int luafunc_delbtn(lua_State *L);
+int luafunc_getbtn(lua_State *L);
+int luafunc_setacbtn(lua_State *L);
+int luafunc_getacbtn(lua_State *L);
+int luafunc_sellabelbtn(lua_State *L);
+int luafunc_setbitmap(lua_State *L);
+int luafunc_pressbtn(lua_State *L);
 //sqlite3
 int luafunc_newdb(lua_State *L);
 int luafunc_execdb(lua_State *L);
@@ -179,6 +189,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"echowin", luafunc_echowin},
 	{"color", luafunc_color},
 	{"colorwin", luafunc_colorwin},
+	{"substitute", luafunc_replacetext},
 	{"loadprofile", luafunc_loadprofile},
 	{"convertprofile", luafunc_convertprofile},
 	{"wait", luafunc_wait},
@@ -200,17 +211,9 @@ static const struct luaL_Reg amclib_f [] = {
 	{"mouseevents", luafunc_mouseevents},
 	{"getline", luafunc_getline},
 	
-	//sqlite3
-	/*{"opendb", luafunc_newdb},
-	{"execdb", luafunc_execdb},
-	{"closedb", luafunc_closedb},
-	{"columnsdb", luafunc_columnsdb},
-	{"resultsdb", luafunc_resultdb},
-	{"insertdb", luafunc_insertdb},*/
 	//msp stuff
 	{"setmsp", luafunc_setmsp},
-	//telnet
-	//{"sendGMCP", luafunc_sendgmcp},
+	
 	{NULL, NULL}
 };
 
@@ -291,6 +294,7 @@ static const struct luaL_Reg amclib_trigger[] = {
 	{"enablegroup", luafunc_enabletrgroup},
 	{"delgroup", luafunc_deltrgroup},
 	{"execute", luafunc_exectr},
+	{"getuserdata", luafunc_gettruserdata},
 	{NULL, NULL}
 };
 
@@ -360,6 +364,12 @@ static const struct luaL_Reg amclib_timers[] = {
 static const struct luaL_Reg amclib_btn[] = {
 	{"new", luafunc_newbtn},
 	{"delete", luafunc_delbtn},
+	{"get", luafunc_getbtn},
+	{"setaction", luafunc_setacbtn},
+	{"getaction", luafunc_getacbtn},
+	{"setlabel", luafunc_sellabelbtn},
+	{"setbitmap", luafunc_setbitmap},
+	{"press", luafunc_pressbtn},
 	{NULL, NULL}
 };
 

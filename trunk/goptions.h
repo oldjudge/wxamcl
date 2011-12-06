@@ -91,6 +91,7 @@ public:
 	wxString GetDatabaseDir() {return m_databasedir.GetFullPath();}
 	wxString GetSoundDir() {return m_sounddir.GetFullPath();}
 	wxString GetLuaDir() {return m_luadir.GetFullPath();}
+	wxString GetImagesDir() {return m_imagesdir.GetFullPath();}
 	void SetWorkDir(wxString s) {m_workdir.AssignDir(s);}
 	void SetLogDir(wxString s) {m_logdir.AssignDir(s);}
 	void SetSoundDir(wxString s) {m_sounddir.AssignDir(s);}
@@ -99,6 +100,7 @@ public:
 	void SetProfileDir(wxString s) {m_profiledir.AssignDir(s);}
 	void SetPackageDir(wxString s) {m_packagedir.AssignDir(s);}
 	void SetLuaDir(wxString s) {m_luadir.AssignDir(s);}
+	void SetImagesDir(wxString s) {m_imagesdir.AssignDir(s);}
 
 	vector<wxString>* GetGMCPModules() {return &m_gmcpmodules;}
 	wxString* GetClientCol() {return m_clientcol;}
@@ -168,6 +170,7 @@ private:
 	wxFileName m_databasedir;
 	wxFileName m_sounddir;
 	wxFileName m_luadir;
+	wxFileName m_imagesdir;
 };
 
 

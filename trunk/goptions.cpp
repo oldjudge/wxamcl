@@ -97,6 +97,7 @@ void GlobalOptions::Init()
 			wxMkdir("databases");
 			wxMkdir("sounds");
 			wxMkdir("lua");
+			wxMkdir("images");
 			s = p.GetDataDir();
 			wxString src = s;
 			src<<"/hosts.lua";
@@ -152,6 +153,8 @@ void GlobalOptions::Init()
 	m_sounddir.AppendDir("sounds");
 	m_luadir.AssignDir(m_workdir.GetFullPath());
 	m_luadir.AppendDir("lua");
+	m_imagesdir.AssignDir(m_workdir.GetFullPath());
+	m_imagesdir.AppendDir("images");
 	m_eventfile = m_scriptdir.GetFullPath();
 	m_eventfile.Append("events.lua");
 }

@@ -26,7 +26,9 @@ ObjDlg( parent )
 	#ifdef __WXMSW__
 		SetWindowTheme((HWND)m_tree->GetHandle(), L"Explorer", NULL);
 		SetWindowTheme((HWND)m_pattern->GetHandle(), L"Explorer", NULL); 
-		SetWindowTheme((HWND)m_action->GetHandle(), L"Explorer", NULL); 
+		SetWindowTheme((HWND)m_action->GetHandle(), L"Explorer", NULL);
+		SetWindowTheme((HWND)m_treeCtrl3->GetHandle(), L"Explorer", NULL);
+		SetWindowTheme((HWND)m_gaugew->GetHandle(), L"Explorer", NULL);
 	#endif
 	wxIcon group(group1_xpm);
 	wxIcon action(action1_xpm);
@@ -308,6 +310,8 @@ vector<wxTreeItemId> id;
 			int i=0;
 			for (s = list.begin();s != list.end();s++, i++)
 			{
+				if (iter->GetName()=="seperator")
+					continue;
 				if (iter->GetTbName()==*s)
 					m_treeCtrl3->AppendItem(id.at(i), iter->GetName());
 			}
@@ -1975,6 +1979,7 @@ void dlg_obj::OnButtonSelChanged( wxTreeEvent& event )
 		return;
 	m_butlabel->SetValue(m_frame->GetButtons()->at(index).GetText());
 	m_butcommand->SetValue(m_frame->GetButtons()->at(index).GetAction());
+	m_bitmap->SetValue(m_frame->GetButtons()->at(index).GetBitmap());
 	int found = m_parenttool->FindString(m_frame->GetButtons()->at(index).GetTbName());
 	if (found==wxNOT_FOUND)
 	{
@@ -2000,6 +2005,21 @@ wxAuiToolBar *tb;
 			return;
 		}
 	}
+	if (s==_("seperator"))
+	{
+		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(m_parenttool->GetValue(), m_frame);
+		if (tb)
+		{
+			tb->AddSeparator();
+			b.SetAsSeparator(tb);
+			b.SetTbName(m_parenttool->GetValue());
+			m_frame->GetButtons()->push_back(b);
+			BuildButtons();
+			tb->Realize();
+			return;
+		}
+		else return;
+	}
 	b.SetName(s);
 	b.SetText(s);
 	b.SetAction(m_butcommand->GetValue());
@@ -2021,13 +2041,18 @@ wxAuiToolBar *tb;
 	}
 	b.SetTbName(s);
 	b.SetParent(tb);
-	tb->AddTool(b.GetId(), b.GetName(), script_xpm);
+	b.SetBitmap(m_bitmap->GetValue());
+	//tb->AddTool(b.GetId(), b.GetName(), script_xpm);
+	wxBitmap bt;
+	wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
+	bt.LoadFile(b.GetBitmap(), wxBITMAP_TYPE_XPM);
+	tb->AddTool(b.GetId(), b.GetName(), bt);
 	tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 	m_frame->GetButtons()->push_back(b);
 	//stable_sort(m_frame->GetVars()->begin(), m_frame->GetVars()->end(), less<class amcVar>());
 	BuildButtons();
 	tb->Realize();
-	//m_frame->m_mgr.Update();
+	m_frame->m_mgr.Update();
 }
 
 void dlg_obj::OnButtonDelete(wxCommandEvent& event)
@@ -2048,7 +2073,6 @@ b_it it;
 		m_treeCtrl3->Delete(id);
 		//stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
 		BuildButtons();
-		
 		tb->Realize();
 		m_frame->m_mgr.Update();
 	}
@@ -2076,13 +2100,22 @@ b_it it;
 			}
 		}
 		m_frame->GetButtons()->at(index).SetName(s);
+		m_treeCtrl3->SetItemText(id, s);
 		m_frame->GetButtons()->at(index).SetText(s);
 		m_frame->GetButtons()->at(index).SetAction(m_butcommand->GetValue());
 		m_frame->GetButtons()->at(index).SetTbName(m_parenttool->GetValue());
-		BuildButtons();
+		m_frame->GetButtons()->at(index).SetBitmap(m_bitmap->GetValue());
+		//BuildButtons();
 		wxAuiToolBar* tb = (wxAuiToolBar*)m_frame->GetButtons()->at(index).GetParent();
+		tb->SetToolLabel(m_frame->GetButtons()->at(index).GetId(), s);
+		wxBitmap bt;
+		wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
+		bt.LoadFile(m_bitmap->GetValue(), wxBITMAP_TYPE_XPM);
+		tb->SetToolBitmap(m_frame->GetButtons()->at(index).GetId(), bt);
 		tb->Realize();
-		m_frame->m_mgr.Update();
+		//m_frame->m_mgr.Update();
+		m_treeCtrl3->SetFocus();
+		m_treeCtrl3->SelectItem(id);
 	}
 }
 

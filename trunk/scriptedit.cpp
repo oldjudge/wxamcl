@@ -25,6 +25,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.var.new wxamcl.var.set wxamcl.var.get wxamcl.var.delete wxamcl.var.enable \
 				wxamcl.gauge.update wxamcl.gauge.new wxamcl.gauge.setsize wxamcl.gauge.setcolor wxamcl.gauge.createwindow wxamcl.gauge.setlabel \
 				wxamcl.timer.new wxamcl.timer.delete wxamcl.timer.start wxamcl.timer.stop wxamcl.timer.enable \
+				wxamcl.button.new, wxamcl.button.delete, wxamcl.button.get, wxamcl.button.setaction, wxamcl.button.getaction, wxamcl.button.press, wxamcl.button.setlabel, wxamcl.button.setbitmap, \
 				wxamcl.mxp.enable wxamcl.mxp.echo wxamcl.mxp.echowin \
 				wxamcl.list.new wxamcl.list.additem wxamcl.list.clear wxamcl.list.delete wxamcl.list.contains wxamcl.list.delitem wxamcl.list.delitemat \
 				wxamcl.gmcp.send \

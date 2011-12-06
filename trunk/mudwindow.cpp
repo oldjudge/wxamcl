@@ -805,7 +805,7 @@ void MudWindow::SetDefaultColors()
   m_xterm[5].Set(RGB (128, 0, 128));     // (purple)      
   m_xterm[6].Set(RGB (0, 128, 128));     // (teal)        
   m_xterm[7].Set(RGB (192, 192, 192));   // (silver)      
-	m_xterm[8].Set(RGB (128, 128, 128));  // (gray)                 
+  m_xterm[8].Set(RGB (128, 128, 128));  // (gray)                 
   m_xterm[9] .Set(RGB (255, 0, 0));      // (red)               
   m_xterm[10].Set(RGB (0, 255, 0));      // (lime)              
   m_xterm[11].Set(RGB (255, 255, 0));    // (yellow)            
@@ -837,6 +837,17 @@ void MudWindow::SetDefaultColors()
     BYTE value = 8 + (grey * 10);
     m_xterm [232 + grey].Set(RGB (value, value, value));
     }
+
+  m_replcol["^0"]="\x1b[0m";
+  wxString ss="^x";
+  wxString sss="\x1b[38;5;";
+  for (int xx=0;xx<255;xx++)
+	{
+	m_replcol[ss<<xx]=sss<<xx<<"m";
+	ss="^x";
+	sss="\x1b[38;5;";
+	}
+  
 
 }
 
@@ -3070,7 +3081,8 @@ static int x=1;
 		{
 			lua_getglobal(m_L->GetLuaState(), "MSDP");
 			lua_pushstring(m_L->GetLuaState(), val.c_str());
-			lua_setfield(m_L->GetLuaState(), -2, "Data");
+			//lua_setfield(m_L->GetLuaState(), -2, "Data");
+			lua_setfield(m_L->GetLuaState(), -2, var.c_str());
 		}
 		else
 		{
@@ -3369,7 +3381,13 @@ wxStringTokenizer tkz;
 				while ( tkz.HasMoreTokens() )
 				{
 					wxString comm = tkz.GetNextToken();
-					
+					RegExp colsub("(\\^x\\d+)+");
+					int posm=0;
+					while (colsub.Match(comm.Mid(posm)))
+					{
+						comm.Replace(colsub.GetMatch(0), m_replcol[colsub.GetMatch(0)]);
+						posm+=colsub.GetMatch(0).length();
+					}
 					if (!comm.Cmp("#pwd"))
 					{
 						m_vmudlines.at(linenr).SetFull(true);
@@ -5984,8 +6002,8 @@ wxUint32 uiBytesRead;
 			}
 			gmcp[wxStrlen(gmcp)-3]='\0';
 			wxStrcat(gmcp, "]\xff\xf0\0");
-			wxString ss(gmcp);
-			Write8Bit(ss);
+			 
+			Write8Bit(wxString::From8BitData(gmcp));
 			
 			//m_sock->Write(gmcp, wxStrlen(gmcp));
 			m_atcp2 = false;

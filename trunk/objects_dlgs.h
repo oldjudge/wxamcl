@@ -114,6 +114,8 @@ class ObjDlg : public wxDialog
 		wxTextCtrl* m_butcommand;
 		wxStaticText* m_staticText39;
 		wxComboBox* m_parenttool;
+		wxStaticText* Bitmap;
+		wxTextCtrl* m_bitmap;
 		wxButton* m_addbutton;
 		wxButton* m_editbutton;
 		wxButton* m_delbutton;

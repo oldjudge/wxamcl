@@ -203,6 +203,7 @@ bool MudClientApp::OnInit()
 	frame->luaBuildalias();
 	//wxInfoMessageBox(frame);
 	frame->m_input->SetFocus();
+	wxInitAllImageHandlers();
 	wxFileName ff("defaultprofile.lua");
 	frame->LoadProfile(ff);
 	wxCmdLineParser p(g_cmddesc, wxGetApp().argc, wxGetApp().argv);
@@ -214,7 +215,7 @@ bool MudClientApp::OnInit()
 		wxFileName f(file);
 		frame->LoadProfile(f);
 	}
-	wxInitAllImageHandlers();
+	
 	
 	//wxString s1 = p.GetParam(1);
 	//wxString s("\u0419\u0634");
@@ -244,7 +245,7 @@ bool MudClientApp::OnInit()
 	frame->m_trigger.push_back(tr2);*/
 	//frame->m_child->Msg(frame->GetGlobalOptions()->GetWorkDir());
 	//frame->m_child->ParseNBuffer("                       Посетите наш сайт: www.mud.ru");
-	frame->m_child->ParseNBuffer("http://bit.ly", false);
+	//frame->m_child->ParseNBuffer("http://bit.ly", false);
 	//frame->m_child->ParseNBuffer("JThis \x1b[33;1;44mis a \x1b[32mtest!\r\nNExtline\r\n", false);
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
@@ -2228,7 +2229,10 @@ li_it itl;
 			ss << "[\"group\"] = [[" << bit->GetGroup() << "]], ";
 			file->Write(ss.c_str());
 			ss.clear();
-			ss << "[\"tb\"] = [[" << bit->GetTbName() << "]]},\n";
+			ss << "[\"tb\"] = [[" << bit->GetTbName() << "]], ";
+			file->Write(ss.c_str());
+			ss.clear();
+			ss << "[\"bitmap\"] = [[" << bit->GetBitmap() << "]]},\n";
 			file->Write(ss.c_str());
 			ss.clear();
 		}
@@ -2296,11 +2300,7 @@ li_it itl;
 bool MudMainFrame::LoadProfile(wxFileName s)
 {
 	s_it it;
-	/*if (m_toolbar)
-	{
-			m_mgr.DetachPane(m_toolbar);
-			m_toolbar->Destroy();
-	}*/
+	
 	for (it=m_panes.begin();it!=m_panes.end();it++)
 	{
 		MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*it, this);
@@ -2337,9 +2337,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	}
 	for (it=m_nbs.begin();it!=m_nbs.end();it++)
 	{
-		/*MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*it, this);
-		m_mgr.DetachPane(mw);
-		mw->Destroy();*/
+		
 		wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
 		m_mgr.DetachPane(nb);
 		nb->Destroy();
@@ -2354,6 +2352,18 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 				continue;
 			m_mgr.DetachPane(gw);
 			gw->Destroy();
+		}
+	}
+	if (!this->GetButtons()->empty())
+	{
+		for(int x=0;x<GetButtons()->size();x++)
+		{
+			wxString n = GetButtons()->at(x).GetTbName();
+			wxAuiToolBar *tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
+				if (!tb)
+					continue;
+			m_mgr.DetachPane(tb);
+			tb->Destroy();
 		}
 	}
 	m_mgr.Update();
@@ -2777,7 +2787,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	aL->GetGlobal("amc_buttons");
 	len = aL->GetObjectLen();
 	aL->Pop(1);
-	//GetPackages()->clear();
+	m_buttons.clear();
 	for (int i=0; i<len; i++)
 	{
 		amcButton b;
@@ -2795,6 +2805,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		b.SetGroup(aL->GetUTF8String(-1));
 		aL->GetField(-5, "tb");
 		b.SetTbName(aL->GetUTF8String(-1));
+		aL->GetField(-6, "bitmap");
+		b.SetBitmap(aL->GetUTF8String(-1));
 		b.SetActive(true);
 		aL->SetTop(0);
 		m_buttons.push_back(b);
@@ -2876,8 +2888,15 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		if (tb)
 		{
 			GetButtons()->at(i).SetParent(tb);
-			tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), script_xpm);
-			tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
+			if (GetButtons()->at(i).GetName()==_("seperator"))
+				tb->AddSeparator();
+			else
+			{
+				wxSetWorkingDirectory(GetGlobalOptions()->GetImagesDir());
+				wxBitmap bt(GetButtons()->at(i).GetBitmap(), wxBITMAP_TYPE_XPM);
+				tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), bt);//script_xpm);
+				tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
+			}
 			tb->Realize();
 			continue;
 		}
@@ -2889,7 +2908,14 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			m_mgr.AddPane(tb, wxAuiPaneInfo().Name(n).Caption(n).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
 			m_mgr.Update();
 			GetButtons()->at(i).SetParent(tb);
-			tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), script_xpm);
+			if (GetButtons()->at(i).GetName()==_("seperator"))
+				tb->AddSeparator();
+			else
+			{
+				wxSetWorkingDirectory(GetGlobalOptions()->GetImagesDir());
+				wxBitmap bt(GetButtons()->at(i).GetBitmap(), wxBITMAP_TYPE_XPM);
+				tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), bt);
+			}
 			tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 			tb->Realize();
 			//delete tb;
@@ -2999,6 +3025,12 @@ size_t i;
 		lua_setfield(L, -2, "prior");
 		lua_pushnumber(L, GetTrigger()->at(i).GetColMatch());
 		lua_setfield(L, -2, "colmatch");
+		lua_pushnumber(L, GetTrigger()->at(i).GetLines());
+		lua_setfield(L, -2, "lines");
+		lua_pushnumber(L, GetTrigger()->at(i).GetMatchCount());
+		lua_setfield(L, -2, "matchcount");
+		lua_pushboolean(L, GetTrigger()->at(i).GetSendScript());
+		lua_setfield(L, -2, "script");
 		lua_settable(L,-3);
 
 	}
@@ -3094,7 +3126,7 @@ size_t i;
 		lua_setfield(L, -2, "on");
 		lua_settable(L,-3);
 	}
-	//register this as table in global namespace amc
+	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amcvariables");
 	lua_getglobal(L, "wxamcl");
 	lua_getglobal(L, "_amcvariables");
