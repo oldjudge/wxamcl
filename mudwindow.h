@@ -234,7 +234,8 @@ private:
 	std::vector<long> m_capture;
 	std::vector<wxString> m_capwin;
 	std::vector<bool> m_capgag;
-	
+	//
+	std::map<wxString, wxString> m_replcol;//colors for substitute or echo
 	//map for capstart, capend
 	std::map<wxString, bool> m_capwindow;
 	

@@ -15,6 +15,7 @@ amcButton::amcButton()
 	m_label = wxEmptyString;
 	m_action = wxEmptyString;
 	m_tbname = wxEmptyString;
+	m_bitmap ="script.xpm";
 	m_on = false;
 	m_id = 0;
 	m_show = false;
@@ -34,6 +35,7 @@ amcButton::amcButton(wxAuiToolBar *tb, wxString label, wxString text, wxString a
 	m_text  = text;
 	m_action = action;
 	m_group = group;
+	m_bitmap = "script.xpm";
 	m_on = true;
 	m_show = true;
 	m_id = 0;
@@ -55,6 +57,7 @@ amcButton::amcButton(const amcButton& at)
 	m_on = at.m_on;
 	m_id = at.m_id;
 	m_show = at.m_show;
+	m_bitmap = at.m_bitmap;
 }
 
 /*!
@@ -82,5 +85,28 @@ amcButton& amcButton::operator =(const amcButton & at)
 	m_on = at.m_on;
 	m_show = at.m_show;
 	m_id = at.m_id;
+	m_bitmap = at.m_bitmap;
 	return *this;
+}
+
+void amcButton::SetBitmap(const wxString& m)
+{
+	m_bitmap = m;
+}
+
+void amcButton::SetAsSeparator(wxAuiToolBar *tb)
+{
+	m_parent = tb;
+	m_name = "seperator";
+	m_label = "seperator";
+	m_text  = "seperator";
+	m_action = wxEmptyString;
+	m_group = "default";
+	m_bitmap = wxEmptyString;
+	m_on = true;
+	m_show = true;
+	m_id = 0;
+	int ii = count(m_bgroup.begin(), m_bgroup.end(), m_group);
+	if (!ii)
+		m_bgroup.push_back("default");
 }

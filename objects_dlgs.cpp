@@ -268,10 +268,17 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_staticText39 = new wxStaticText( m_buttons, wxID_ANY, _("Parent toolbar:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText39->Wrap( -1 );
-	gbSizer10->Add( m_staticText39, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer10->Add( m_staticText39, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_parenttool = new wxComboBox( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
-	gbSizer10->Add( m_parenttool, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer10->Add( m_parenttool, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	
+	Bitmap = new wxStaticText( m_buttons, wxID_ANY, _("Bitmap: "), wxDefaultPosition, wxDefaultSize, 0 );
+	Bitmap->Wrap( -1 );
+	gbSizer10->Add( Bitmap, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	
+	m_bitmap = new wxTextCtrl( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer10->Add( m_bitmap, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	gbSizer10->AddGrowableCol( 1 );
 	sbSizer11->Add( gbSizer10, 1, wxALL|wxEXPAND, 5 );
 	

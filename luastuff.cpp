@@ -594,6 +594,33 @@ int luafunc_colorword(lua_State*L)
 	return 0;
 }
 
+int luafunc_replacetext(lua_State*L)
+{
+	const char* text;
+	const char* replace;
+	wxString a;
+	
+	text=luaL_checkstring(L, 1);
+	replace=luaL_checkstring(L, 2);
+	class MudWindow *frame = wxGetApp().GetChild();
+	if (!frame)	
+		return 0;
+	
+	wxString ansi = frame->GetLines()->at(frame->m_curline-1).GetAnsiLine();
+	ansi.Replace(text, replace, true);
+	frame->GetLines()->pop_back();
+	frame->m_curline--;
+	bool p = wxGetApp().GetFrame()->TriggersOn();
+	wxGetApp().GetFrame()->SetTriggersOn(false);
+	frame->SetParseState(0);//HAVE_TEXT
+	frame->ParseNBuffer(ansi.char_str());
+	wxGetApp().GetFrame()->SetTriggersOn(p);
+	
+	frame->Refresh();
+	frame->Update();
+	return 0;
+}
+
 int luafunc_getlinenr(lua_State *L)
 {
 	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(wxT("amcoutput"));
@@ -1831,6 +1858,10 @@ int luaopen_amc(lua_State *L)
 	luaL_register(L, NULL, amclib_h);
 	luaL_newmetatable(L, "wxamcl.mtt");//timer type
 	luaL_register(L, NULL, amclib_timers);
+	luaL_newmetatable(L, "wamcl.mtbtn");//button type
+	luaL_register(L, NULL, amclib_btn);
+	luaL_newmetatable(L, "wamcl.mtll");//list type
+	luaL_register(L, NULL, amclib_list);
 	lua_pushvalue (L, LUA_GLOBALSINDEX);
 	luaL_register(L, "wxamcl", amclib_f);
 	lua_pushliteral(L, "__index");
@@ -1980,6 +2011,36 @@ int index=1;
 	return 1;
 }
 
+int luafunc_gettruserdata(lua_State *L)
+{
+str_ac* t;
+const char* c;
+int i;
+
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	c = luaL_checkstring(L,1);
+	i = frame->GetTriggerIndexByLabel(c);
+	if (i==-1)
+	{
+		frame->m_child->Msg(_("Action not found!"));
+		lua_pushnil(L);
+		return 1;
+	}
+	t = (str_ac*)lua_newuserdata(L, sizeof(struct str_ac));
+	wxStrcpy(t->label, c);
+	wxStrcpy(t->pattern, frame->GetTrigger()->at(i).GetPattern().c_str());
+	wxStrcpy(t->action, frame->GetTrigger()->at(i).GetAction().c_str());
+	wxStrcpy(t->cla, frame->GetTrigger()->at(i).GetClass().c_str());
+	t->on = frame->GetTrigger()->at(i).IsActive();
+	t->prior = frame->GetTrigger()->at(i).GetPriority();
+	t->colmatch = frame->GetTrigger()->at(i).GetColMatch();
+	t->count = frame->GetTrigger()->at(i).GetMatchCount();
+	t->lines = frame->GetTrigger()->at(i).GetLines();
+	luaL_getmetatable(L, "wxamcl.mta");
+	lua_setmetatable(L, -2);
+	//frame->luaBuildtrigger();
+	return 1;
+}
 //! table = amc.getaction(action|userdatum)
 /*!
 	returns a table representing an wxAMC action in Lua
@@ -2049,10 +2110,11 @@ char* c;
 int index=1, i;
 str_ac *t;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
-		t = (str_ac*)lua_touserdata(L, index);
+		//t = (str_ac*)lua_touserdata(L, index);
+		t = checkaction(L);
 		i = frame->GetTriggerIndexByLabel(t->label);
 	}
 	else
@@ -2556,7 +2618,7 @@ int luafunc_actiontostring(lua_State *L)
 {
 str_ac* t;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	t = (str_ac*)checkaction(L);
 	lua_pushfstring(L, "type: wxamcl.action, label: \"%s\", pattern: \"%s\", action: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action);
 	return 1;
@@ -3822,7 +3884,7 @@ const char* c;
 int index=1, i;
 str_var* v;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_var*)lua_touserdata(L, index);
@@ -4035,8 +4097,8 @@ int index=1;
 	//l->name = list.GetName();
 	wxStrcpy(l->cla, list.GetGroup().c_str());
 	l->on = list.IsActive();
-	//luaL_getmetatable(L, wxT("amc.mtal"));
-	//lua_setmetatable(L, -2);
+	luaL_getmetatable(L, "wxamcl.mtll");
+	lua_setmetatable(L, -2);
 	return 1;
 }
 
@@ -4767,6 +4829,8 @@ struct str_btn *bb;
 	wxStrcpy(bb->tbar, b.GetTbName().mb_str());
 	bb->tb = tb;
 	bb->on = b.IsActive();
+	luaL_getmetatable(L, "wxamcl.mtbtn");
+	lua_setmetatable(L, -2);
 	return 1;
 }
 
@@ -4774,21 +4838,264 @@ int luafunc_delbtn(lua_State *L)
 {
 const char* cc;
 b_it it;
+int index=1;
+int i=0;
+str_btn* bt;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	cc = luaL_checkstring(L,1);
-	int index = frame->GetButtonIndexByLabel(cc);
-	if (index==-1)
-		return 0;
+	
+	if (lua_type(L,index)==LUA_TUSERDATA)
+	{
+		bt = checkbtn(L);
+		i = frame->GetVarIndexByLabel(bt->name);
+	}
 	else
 	{
-		it = frame->GetButtons()->begin()+index;
+		cc = luaL_checkstring(L,index);
+		i = frame->GetVarIndexByLabel(cc);
+	}
+	if (i==-1)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	else
+	{
+		it = frame->GetButtons()->begin()+i;
 		wxAuiToolBar* tb = (wxAuiToolBar*)it->GetParent();
 		tb->DeleteTool(it->GetId());
 		frame->GetButtons()->erase(it);
 		//stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
 		tb->Realize();
 		frame->m_mgr.Update();
+	}
+	return 0;
+}
+
+int luafunc_getbtn(lua_State *L)
+{
+const char* name;
+str_btn* bt;
+int idx;
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
+	if (lua_type(L,1)==LUA_TUSERDATA)
+	{
+		bt = checkbtn(L);
+		wxString s(bt->name);
+		idx = frame->GetButtonIndexByLabel(s);
+	}
+	else
+	{
+		name = luaL_checkstring(L, 1);
+		idx = frame->GetButtonIndexByLabel(name);
+	}
+	if (idx==-1)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_settop(L,0);
+	lua_newtable(L);
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetName().char_str());
+	lua_setfield(L, -2, "name");
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str());
+	lua_setfield(L, -2, "action");
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetGroup().mb_str());
+	lua_setfield(L, -2, "group");
+	lua_pushboolean(L, frame->GetButtons()->at(idx).IsActive());
+	lua_setfield(L, -2, "on");
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetTbName().mb_str());
+	lua_setfield(L, -2, "toolbar");
+	lua_pushnumber(L, frame->GetButtons()->at(idx).GetId());
+	lua_setfield(L, -2, "id");
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetText().mb_str());
+	lua_setfield(L, -2, "text");
+	return 1;	
+}
+
+int luafunc_setacbtn(lua_State *L)
+{
+const char* l;
+const char* c;
+str_btn* b;
+int i, index=1;
+	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (lua_type(L, index)==LUA_TUSERDATA)
+	{
+		//t = checkalias(L);
+		b = checkbtn(L);
+		c = luaL_checkstring(L, ++index);
+		i = frame->GetButtonIndexByLabel(b->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetAction(c);
+		wxStrcpy(b->action, c);
+		return 0;
+	}
+	else
+	{
+		l = luaL_checkstring(L,index++);
+		c = luaL_checkstring(L, index);
+		i = frame->GetButtonIndexByLabel(l);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetAction(c);
+	}
+	return 0;
+}
+
+int luafunc_getacbtn(lua_State *L)
+{
+const char* name;
+str_btn* bt;
+int idx;
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
+	if (lua_type(L,1)==LUA_TUSERDATA)
+	{
+		bt = checkbtn(L);
+		wxString s(bt->name);
+		idx = frame->GetButtonIndexByLabel(s);
+	}
+	else
+	{
+		name = luaL_checkstring(L, 1);
+		idx = frame->GetButtonIndexByLabel(name);
+	}
+	if (idx==-1)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str());
+	return 1;
+}
+
+int luafunc_sellabelbtn(lua_State *L)
+{
+const char* l;
+const char* c;
+str_btn* b;
+int i, index=1;
+	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (lua_type(L, index)==LUA_TUSERDATA)
+	{
+		//t = checkalias(L);
+		b = checkbtn(L);
+		c = luaL_checkstring(L, ++index);
+		i = frame->GetButtonIndexByLabel(b->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetText(c);
+		wxStrcpy(b->text, c);
+		return 0;
+	}
+	else
+	{
+		l = luaL_checkstring(L,index++);
+		c = luaL_checkstring(L, index);
+		i = frame->GetButtonIndexByLabel(l);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetText(c);
+		wxAuiToolBar* tb = (wxAuiToolBar*)frame->GetButtons()->at(i).GetParent();
+		tb->SetToolLabel(frame->GetButtons()->at(i).GetId(), c);
+		tb->Realize();
+		frame->m_mgr.Update();
+	}
+	return 0;
+}
+
+int luafunc_setbitmap(lua_State *L)
+{
+const char* l;
+const char* bmap;
+str_btn* b;
+int i, index=1;
+	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (lua_type(L, index)==LUA_TUSERDATA)
+	{
+		//t = checkalias(L);
+		b = checkbtn(L);
+		bmap = luaL_checkstring(L, ++index);
+		i = frame->GetButtonIndexByLabel(b->name);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetBitmap(bmap);
+		wxStrcpy(b->text, bmap);
+		return 0;
+	}
+	else
+	{
+		l = luaL_checkstring(L,index++);
+		bmap = luaL_checkstring(L, index);
+		i = frame->GetButtonIndexByLabel(l);
+		if (i==-1)
+		{
+			lua_pushnil(L);
+			return 1;
+		}
+		frame->GetButtons()->at(i).SetBitmap(bmap);
+		wxAuiToolBar* tb = (wxAuiToolBar*)frame->GetButtons()->at(i).GetParent();
+		wxBitmap bt;
+		wxSetWorkingDirectory(frame->GetGlobalOptions()->GetImagesDir());
+		bt.LoadFile(bmap, wxBITMAP_TYPE_XPM);
+		tb->SetToolBitmap(frame->GetButtons()->at(i).GetId(), bt);
+		tb->Realize();
+		frame->m_mgr.Update();
+	}
+	return 0;
+}
+
+int luafunc_pressbtn(lua_State *L)
+{
+const char* cc;
+b_it it;
+int index=1;
+int i=0;
+str_btn* bt;
+
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	//cc = luaL_checkstring(L,1);
+	if (lua_type(L,index)==LUA_TUSERDATA)
+	{
+		bt = checkbtn(L);
+		i = frame->GetButtonIndexByLabel(bt->name);
+	}
+	else
+	{
+		cc = luaL_checkstring(L,index);
+		i = frame->GetButtonIndexByLabel(cc);
+	}
+	if (i==-1)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	else
+	{
+		wxString command= frame->GetButtons()->at(i).GetAction();
+		int state = frame->m_child->GetParseState();
+		frame->m_child->SetParseState(0);//HAVE_TEXT
+		frame->m_input->Parse(command, false);
+		frame->m_child->SetParseState(state);
 	}
 	return 0;
 }
