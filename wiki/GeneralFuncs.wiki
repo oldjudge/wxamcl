@@ -4,7 +4,7 @@
 * [GeneralFuncs#Output_to_screen Print, color and output buffer functions]
  * [GeneralFuncs#wxamcl.echo wxamcl.echo]
  * [GeneralFuncs#wxamcl.echowin wxamcl.echowin]
- * [GeneralFuncs#wxamcl.substitue wxamcl.substitute]
+ * [GeneralFuncs#wxamcl.substitute wxamcl.substitute]
  * [GeneralFuncs#wxamcl.color wxamcl.color]
  * [GeneralFuncs#wxamcl.colorwin wxamcl.colorwin]
  * [GeneralFuncs#wxamcl.colorword wxamcl.colorword]

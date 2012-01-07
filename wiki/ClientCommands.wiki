@@ -1,7 +1,7 @@
 #summary Documentation for client commands
 
 = Client Commands =
- Default commands sign is #. Change it under Menu Extras->Preferences->Tab: General
+ Default commands sign is #. Change it under Menu Extras->Preferences->Tab: General.
  Type #help to get a list of all available commands.
  
  * [ClientCommands#Commands Commands]
@@ -32,7 +32,7 @@
   * [ClientCommands#tscript #tscript]
  
 == Commands ==
- === capend ==
+ == capend ==
   End capturing of text to an extra window. See #capstart.
  == capstart ==
   Start capturing text to an extra window, use in an action.
@@ -211,4 +211,4 @@
    #tscript(scriptfile)
    #tscript("test.lua")
    }}}
-   Loads the script and executes it. This will NOT block the client, see also script command. You need this command if you use wait or waitfor in yopur script!
+   Loads the script and executes it. This will NOT block the client, see also script command. You need this command if you use wait or waitfor in your script!

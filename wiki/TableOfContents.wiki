@@ -4,5 +4,5 @@
   * [Screenshots Screenshots]
   * [ClientCommands Client Commands]
   * [ScriptingDocs Scripting Documentation]
-     * [GeneralFuncs General functions]
-	 * [UserWindows User windows]
+    * [GeneralFuncs General functions]
+	* [UserWindows User windows]
