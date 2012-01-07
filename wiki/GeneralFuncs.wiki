@@ -3,7 +3,8 @@
 = General Functions =
 * [GeneralFuncs#Output_to_screen Print, color and output buffer functions]
  * [GeneralFuncs#wxamcl.echo wxamcl.echo]
- * [GeneralFuncs#wxamcl.echowin wxamcl.echowin] 
+ * [GeneralFuncs#wxamcl.echowin wxamcl.echowin]
+ * [GeneralFuncs#wxamcl.substitue wxamcl.substitute]
  * [GeneralFuncs#wxamcl.color wxamcl.color]
  * [GeneralFuncs#wxamcl.colorwin wxamcl.colorwin]
  * [GeneralFuncs#wxamcl.colorword wxamcl.colorword]
@@ -11,7 +12,8 @@
  * [GeneralFuncs#wxamcl.colorall wxamcl.colorall]
  * [GeneralFuncs#wxamcl.getlinenumber wxamcl.getlinenumber]
  * [GeneralFuncs#wxamcl.getline wxamcl.getline]
- * [GenerFuncs#wxamcl.scroll wxamcl.scroll]
+ * [GeneralFuncs#wxamcl.scroll wxamcl.scroll]
+ * [GeneralFuncs#wxamcl.gag wxamcl.gag]
 * [GeneralFuncs#Send_commands_to_the_MUD Send commands]
  * [GeneralFuncs#wxamcl.send wxamcl.send]
  * [GeneralFuncs#wxamcl.execute wxamcl.execute]
@@ -41,6 +43,17 @@
 		wxamcl.echo("window1", "Text", "#44cc00", "#000000")
        }}}
 	The function returns the text parameter.
+   === wxamcl.substitute ===
+	Replace text from mud and display the new line instead of the original one.
+	==== Usage: ====
+		`wxamcl.substitute(oldtext, newtext)`
+		Examples:
+		{{{
+		wxamcl.substitute("Tom", "Jerry")
+		wxamcl.substitute("Tom", "^x22J^x123e^x99r^x221r^x167y!")
+		
+       }}}
+	The function returns nothing. You can use all 256 xterm colors via ^x0 to ^x255 to color parts of the replacement text, this works only with substitute function.
    === wxamcl.color ===
 	Print colored text to the main mud window without creating a newline to create multicolored text lines.
     ==== Usage: ====
@@ -146,6 +159,15 @@
 		{{{
 		wxamcl.scroll(true) --normal scrolling
 		wxamcl.scroll(false) --do not scroll even if new text arrives from mud
+		}}}
+	The function returns nothing.
+   === wxamcl.gag ===
+	This function gags the current line from the main output window. Use in an action.
+    ==== Usage: ====
+		`wxamcl.gag(line)`
+		Examples:
+		{{{
+		wxamcl.gag(0) --gag current line
 		}}}
 	The function returns nothing.
 == Send commands to the MUD ==
