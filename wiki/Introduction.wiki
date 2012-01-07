@@ -1,6 +1,6 @@
 = Introduction =
 
-wxAmcl is a mud client using wxWidgets 2.9.1.
+wxAmcl is a mud client using wxWidgets 2.9.3.
 
 
 == Details ==
