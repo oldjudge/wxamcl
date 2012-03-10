@@ -1,8 +1,9 @@
 #ifndef amcLua_H
 #define amcLua_H
 
-#define luaL_doresume(L, fn) \
-	(luaL_loadfile(L, fn) || lua_resume(L, 0))
+//#define luaL_doresume(L, fn) \
+//	(luaL_loadfile(L, fn) || lua_resume(L, 0)) 5.1.4
+#define luaL_doresume(L, fn) (luaL_loadfile(L, fn) || lua_resume(L, NULL, 0))
 //amc namespace functions
 #define checkaction(L) (str_ac*)luaL_checkudata(L, 1, "wxamcl.mta")
 #define checkalias(L) (str_al*)luaL_checkudata(L, 1, "wxamcl.mtal")
@@ -58,6 +59,7 @@ int luafunc_seteventfile(lua_State *L);
 int luafunc_mouseevents(lua_State *L);
 int luafunc_setfont(lua_State *L);
 int luafunc_getline(lua_State *L);
+int luafunc_getscript(lua_State *L);
 //action
 int luafunc_newaction(lua_State *L);
 int luafunc_getaction(lua_State *L);
@@ -168,7 +170,7 @@ int luafunc_setmsp(lua_State *L);
 int luafunc_sendgmcp(lua_State *L);
 
 int luaopen_amc(lua_State *L);
-//int luaopen_amctest(lua_State *L);
+LUAMOD_API int luaopen2_amc(lua_State *L);
 
 static const struct luaL_Reg amclib_f [] = {
 	{"createwindow", luafunc_createwindow},
@@ -210,6 +212,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"seteventfile", luafunc_seteventfile},
 	{"mouseevents", luafunc_mouseevents},
 	{"getline", luafunc_getline},
+	{"getscriptsign", luafunc_getscript},
 	
 	//msp stuff
 	{"setmsp", luafunc_setmsp},
@@ -254,7 +257,7 @@ static const struct luaL_Reg amclib_db [] = {
 	{NULL, NULL}
 };
 
-static const struct luaL_Reg amclib_mxp [] = {
+const struct luaL_Reg amclib_mxp [] = {
 	{"enable", luafunc_setmxp},
 	{"echo", luafunc_parsemxp},
 	{"echowin", luafunc_parsemxpwin},

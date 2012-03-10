@@ -132,8 +132,8 @@ bool MudClientApp::OnInit()
     // create the main application window
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
-	
-    //Output window
+	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
+	//Output window
 	frame->m_child = new MudWindow(frame);
 	SetChild(frame->m_child);
 	
@@ -187,7 +187,7 @@ bool MudClientApp::OnInit()
     frame->Maximize();
 	frame->Show(true);
 	frame->Update();
-	frame->LoadGlobalOptions();
+	frame->LoadGlobalOptions(); //5.1.4
 	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
 	
 	
@@ -204,8 +204,8 @@ bool MudClientApp::OnInit()
 	//wxInfoMessageBox(frame);
 	frame->m_input->SetFocus();
 	wxInitAllImageHandlers();
-	wxFileName ff("defaultprofile.lua");
-	frame->LoadProfile(ff);
+	//wxFileName ff("defaultprofile.lua");
+	//frame->LoadProfile(ff);
 	wxCmdLineParser p(g_cmddesc, wxGetApp().argc, wxGetApp().argv);
 	p.Parse(false);
 	int i = p.GetParamCount();
@@ -1459,6 +1459,7 @@ bool MudMainFrame::LoadGlobalOptions()
 	wxString s;
 	const char* error;
 	wxSetWorkingDirectory(GetGlobalOptions()->GetWorkDir());
+	lua_checkstack(L, 40);
 	if ((err=m_child->GetLState()->DoFile("settings.lua")))
 	{
 		int top = lua_gettop(L);
@@ -1515,6 +1516,7 @@ bool MudMainFrame::LoadGlobalOptions()
 	m_splitter->SetNFont(&f);
 	m_splitter->SetUFont(&f);
 	m_splitter->SetIFont(&f);
+	
 	aL->GetField(-17, "mccp");
 	m_gopt->SetMCCP(aL->GetBoolean(-1));
 	aL->GetField(-18, "gaeor");
@@ -1544,12 +1546,15 @@ bool MudMainFrame::LoadGlobalOptions()
 	aL->GetField(-30, "splitter");
 	this->SetSplitter(aL->GetBoolean(-1));
 	aL->GetField(-31, "autoreconnect");
+	m_gopt->SetAutoConnect(aL->GetBoolean(-1));
 	aL->GetField(-32, "acdelay");
+	m_gopt->SetACDelay(aL->GetInt(-1));
 	aL->GetField(-33, "scriptfont");
 	wxFont ff;
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
+
 	aL->GetField(-34, "charencoding");
 	int ec = (int)aL->GetInt(-1);
 	wxMenuBar* bar = GetMenuBar();
@@ -2860,10 +2865,6 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_gopt->SetDatabaseDir(f);
 	aL->SetTop(0);
 	
-	aL->GetGlobal("amc_layout");
-	wxString p = aL->GetUTF8String(-1);
-	aL->Pop(1);
-	m_mgr.LoadPerspective(p);
 	//m_mgr.Update();
 	for(size_t i=0;i<GetPanes()->size();i++)
 	{
@@ -2989,6 +2990,11 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			item->Check();
 		break;
 	}
+	aL->GetGlobal("amc_layout");
+	wxString p = aL->GetUTF8String(-1);
+	aL->Pop(1);
+	m_mgr.LoadPerspective(p);
+	m_mgr.Update();
 	//delete view;
 	m_toolbar->Refresh();
 	m_toolbar->Update();
@@ -3034,11 +3040,12 @@ size_t i;
 		lua_settable(L,-3);
 
 	}
-	//register this as table in global namespace amc
+	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amctrigger");
-	lua_getglobal(L, "wxamcl");
+	lua_getglobal(L, "wxamcl"); //5.1.4
 	lua_getglobal(L, "_amctrigger");
-	lua_setfield(L, -2, "Action");
+	lua_setfield(L, -2, "Action"); //5.1.4
+	//lua_setfield(L, -1, "Action");
 	lua_settop(L,0);
 	
 	lua_getglobal(L, "_amctrigger");
@@ -3049,11 +3056,7 @@ size_t i;
 	lua_pushstring(L, "__newindex");
 	lua_pushcfunction(L, luafunc_newaction);
 	lua_settable(L, -3);
-	/*lua_getglobal(L, wxT("_amctrigger"));
-	lua_getmetatable(L,-1);
-	lua_pushstring(L, "__index");
-	lua_pushcfunction(L, luafunc_getac);
-	lua_settable(L, -3);*/
+	
 	lua_settop(L,0);
 	return;
 }
@@ -3082,9 +3085,9 @@ size_t i;
 	}
 	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amcalias");
-	lua_getglobal(L, "wxamcl");
+	lua_getglobal(L, "wxamcl"); //5.1.4
 	lua_getglobal(L, "_amcalias");
-	lua_setfield(L, -2, "Alias");
+	lua_setfield(L, -2, "Alias"); //5.1.4
 	lua_settop(L,0);
 	
 	lua_getglobal(L, "_amcalias");
@@ -3128,9 +3131,9 @@ size_t i;
 	}
 	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amcvariables");
-	lua_getglobal(L, "wxamcl");
+	lua_getglobal(L, "wxamcl"); //5.1.4
 	lua_getglobal(L, "_amcvariables");
-	lua_setfield(L, -2, "Vars");
+	lua_setfield(L, -2, "Vars"); // 5.2.0
 	lua_settop(L,0);
 	
 	lua_getglobal(L, "_amcvariables");
@@ -4170,7 +4173,7 @@ long line;
 	{
 		m_parent->m_child->GetNumCapture()->push_back(line);
 		m_parent->m_child->GetWinCapture()->push_back(GetFParam(1));
-		if (num==3 && GetFParam(3)==wxT("true"))
+		if (num==3 && GetFParam(3)=="true")
 			m_parent->m_child->GetGagCapture()->push_back(true);
 		else
 			m_parent->m_child->GetGagCapture()->push_back(false);
@@ -4527,9 +4530,8 @@ int InputTextCtrl::TScript(wxString *sPar)
 	
 	//int err = aL->DoFile(GetFParam(1).c_str());
 	luaL_loadfile(L1, GetFParam(1).char_str());
-	int err = lua_resume(L1, 0);
-	//int err = luaL_doresume(L1, GetFParam(1).char_str());
-	
+	//int err = lua_resume(L1, 0); 5.1.4
+	int err = lua_resume(L1, NULL, 0);
 	if (err && err!= LUA_YIELD)
 	{
 		wxString s = aL->GetwxString(aL->GetTop());
@@ -4736,7 +4738,8 @@ int ref;
 		m_parent->GetTimers()->erase(itt);
 	}
 	m_waiting = false;
-	int err = lua_resume(itm->second, 0);		
+	//int err = lua_resume(itm->second, 0); 5.1.4
+	int err = lua_resume(itm->second, NULL, 0);	
 	return 0;
 }
 

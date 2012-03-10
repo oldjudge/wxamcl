@@ -324,6 +324,7 @@ MudWindow *mw = m_parent;//wxGetApp().GetChild();
 static bool parsing = true;
 static bool element = false;
 static bool intagtext = false;
+static bool one = false;
 	//m_parsestate = MXP_TEXT;
 	
 	s.Replace("<br>", "\n");
@@ -374,6 +375,7 @@ static bool intagtext = false;
 			if (*it=='<')
 			{
 				m_parsestate = MXP_TAG_OPEN;
+				one = true;
 			}
 			else if (*it=='\x1b')
 			{
@@ -442,18 +444,22 @@ static bool intagtext = false;
 				mw->GetLineStyle(mw->m_curline-1)->back().SetFontStyle(0);
 				simpleText = wxEmptyString;
 			}
-			
+			if (*it=='/')
+			{
+				if (one==true)
+				{
+					m_parsestate = MXP_ENDTAG;
+					m_tagopen = false;
+				}
+			}
+			one = false;
 			if (*it=='!')
 			{
 				m_parsestate = MXP_ELEMENT;
 				break;
 			}
 			
-			if (*it=='/')
-			{
-				m_parsestate = MXP_ENDTAG;
-				m_tagopen = false;
-			}
+			
 			if (*it=='>')
 			{
 				m_parsestate = MXP_TEXTINTAG;
