@@ -2,12 +2,18 @@
 #include "script.xpm"
 amcLua::amcLua()
 {
+	
 	m_L = luaL_newstate();
 	luaL_openlibs(m_L);
-	luaopen_amc(m_L);
+	
+	//lua_pushvalue(m_L, -1);
+	//luaopen_amc(m_L);lua 5.1.4
+	luaopen2_amc(m_L);//lua 5.2.0
 	wxSetWorkingDirectory(wxGetApp().GetFrame()->GetGlobalOptions()->GetLuaDir());
-	luaL_dofile(m_L, "json.lua");
 	luaL_dofile(m_L, "printt.lua");
+	luaL_dofile(m_L, "json.lua");
+	luaL_dostring(m_L, "js = require('json')");
+	
 }
 
 amcLua::~amcLua()
@@ -27,7 +33,8 @@ void amcLua::GetGlobal(wxString s)
 
 int amcLua::GetObjectLen()
 {
-	return (int)lua_objlen(m_L, -1);
+	//return (int)lua_objlen(m_L, -1);lua5.1.4
+	return (int)lua_rawlen(m_L, -1); //lua 5.2.0
 }
 
 void amcLua::GetTable(int idx)
@@ -125,6 +132,7 @@ const char* amcLua::GetString(int idx)
 int amcLua::DoString(wxString s)
 {
 	return luaL_dostring(m_L, s.char_str(wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding())));
+	//return luaL_dostring(m_L, s.c_str());
 }
 
 int amcLua::DoFile(wxString s)
@@ -732,6 +740,14 @@ int luafunc_echowin(lua_State*L)
 		frame->Refresh();
 		frame->Update();
 	}
+	return 1;
+}
+
+int luafunc_getscript(lua_State *L)
+{
+	MudMainFrame *parent = wxGetApp().GetFrame();
+	wxString s(parent->GetGlobalOptions()->GetScript());
+	lua_pushstring(L, s.c_str());
 	return 1;
 }
 
@@ -1842,12 +1858,13 @@ int index=1;
 //! \brief open the amc Lua library
 /*!
 	register the amc lib in the lua namespace
-	set amc.mta metatable for wxAmc actions
-	override so we can do: amc.echo or echo only
+	set wxamcl.mta metatable for wxAmc actions
+	override so we can do: wxamcl.echo or echo only
 	\param lua_State *L: a valid lua_State
 */
+
 int luaopen_amc(lua_State *L)
-{
+{/*
 	luaL_newmetatable(L, "wxamcl.mta");//action type
 	luaL_register(L, NULL, amclib_m);
 	luaL_newmetatable(L, "wxamcl.mtal");//alias type
@@ -1869,9 +1886,7 @@ int luaopen_amc(lua_State *L)
 	lua_rawset(L, -3);
 	lua_setmetatable (L, -2);
 	//lua_pushvalue (L, LUA_GLOBALSINDEX);
-	/*lua_getglobal(L, "amc");
-	lua_newtable(L);
-	lua_setfield(L, -2, "gmcp");*/
+	
 	luaL_register(L, "wxamcl.action", amclib_trigger);
 	luaL_register(L, "wxamcl.alias", amclib_alias);
 	luaL_register(L, "wxamcl.gmcp", amclib_gmcp);
@@ -1884,6 +1899,74 @@ int luaopen_amc(lua_State *L)
 	luaL_register(L, "wxamcl.button", amclib_btn);
 	luaL_register(L, "wxamcl.db", amclib_db);
 	luaL_register(L, "wxamcl.draw", amclib_draw);
+	return 1;*/
+	return 0;
+}
+
+LUAMOD_API int luaopen2_amc(lua_State *L)
+{
+	
+	//lua_setglobal(L, "wxamcl");
+	//lua_pushliteral(L, "__index");
+	//lua_pushvalue(L, -2);         // push metatable
+	//lua_rawset(L, -3);
+	//lua_setmetatable (L, -2);
+	/*luaL_newmetatable(L, "wxamcl.mtal");//alias type
+	luaL_setfuncs(L, amclib_al, 0);
+	luaL_newmetatable(L, "wxamcl.mtv");//var type
+	luaL_setfuncs(L, amclib_v, 0);
+	luaL_newmetatable(L, "wxamcl.mthk");//hotkey type
+	luaL_setfuncs(L, amclib_h, 0);
+	luaL_newmetatable(L, "wxamcl.mtt");//timer type
+	luaL_setfuncs(L, amclib_timers, 0);
+	luaL_newmetatable(L, "wamcl.mtbtn");//button type
+	luaL_setfuncs(L, amclib_btn, 0);
+	luaL_newmetatable(L, "wamcl.mtll");//list type
+	luaL_setfuncs(L, amclib_list, 0);
+	lua_pushvalue (L, LUA_RIDX_GLOBALS);
+	//luaL_setfuncs(L, amclib_f, 0);
+	luaL_newlib(L, amclib_f);
+	lua_pushliteral(L, "__index");*/
+	
+	//lua_pushvalue (L, LUA_GLOBALSINDEX);
+	luaL_newlib(L, amclib_f);
+	lua_pushvalue(L, -1);
+	lua_setglobal(L, "wxamcl");
+	
+	lua_getglobal(L, "wxamcl");
+	luaL_newlib(L, amclib_mxp);
+	lua_setfield(L, -2, "mxp");
+	luaL_newlib(L, amclib_gmcp);
+	lua_setfield(L, -2, "gmcp");
+	luaL_newlib(L, amclib_draw);
+	lua_setfield(L, -2, "draw");
+	luaL_newlib(L, amclib_trigger);
+	lua_setfield(L, -2, "action");
+
+	luaL_newlib(L, amclib_vars);
+	lua_setfield(L, -2, "var");
+	luaL_newlib(L, amclib_gauge);
+	lua_setfield(L, -2, "gauge");
+	luaL_newlib(L, amclib_hk);
+	lua_setfield(L, -2, "hk");
+	luaL_newlib(L, amclib_alias);
+	lua_setfield(L, -2, "alias");
+
+	luaL_newlib(L, amclib_timers);
+	lua_setfield(L, -2, "timer");
+	luaL_newlib(L, amclib_list);
+	lua_setfield(L, -2, "list");
+	luaL_newlib(L, amclib_btn);
+	lua_setfield(L, -2, "button");
+	luaL_newlib(L, amclib_db);
+	lua_setfield(L, -2, "db");
+	
+	luaL_newmetatable(L, "wxamcl.mta");//action type
+	luaL_setfuncs(L, amclib_m, 0);
+	lua_pop(L, 1);
+	
+	//lua_pushvalue(L, -1);
+	//lua_setglobal(L, "wxamcl.mta");
 	return 1;
 }
 
@@ -2214,7 +2297,7 @@ const char* c;
 Trigger tr;
 str_ac* t;
 int i, index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{

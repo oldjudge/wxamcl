@@ -2583,13 +2583,16 @@ static bool colset = false;
 					s_it fit = find(m_gmcpmods.begin(), m_gmcpmods.end(), code);
 					if (fit==m_gmcpmods.end())
 						m_gmcpmods.push_back(code);
-					code<<" = json.decode([=["<<s<<"]=])";
+					code<<" = js.decode([=["<<s<<"]=])";
 					luaL_dostring(m_L->GetLuaState(), code.c_str());
 					
-					lua_getglobal(m_L->GetLuaState(), "GMCP");
+					
 					lua_getglobal(m_L->GetLuaState(), v.c_str());
-					if (lua_type(m_L->GetLuaState(),-2)==LUA_TTABLE)
+					if (lua_type(m_L->GetLuaState(),-1)==LUA_TTABLE)
 					{
+						lua_getglobal(m_L->GetLuaState(), "wxamcl");
+						lua_getfield(m_L->GetLuaState(), -1, "GMCP");
+						lua_getglobal(m_L->GetLuaState(), v.c_str());
 						lua_setfield(m_L->GetLuaState(), -2, v.c_str());
 					}
 					//lua_getfield(m_L->GetLuaState(), -1, "RoomNum");
