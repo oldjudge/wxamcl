@@ -132,7 +132,7 @@ bool MudClientApp::OnInit()
     // create the main application window
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
-	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
+	
 	//Output window
 	frame->m_child = new MudWindow(frame);
 	SetChild(frame->m_child);
@@ -189,7 +189,12 @@ bool MudClientApp::OnInit()
 	frame->Update();
 	frame->LoadGlobalOptions(); //5.1.4
 	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
-	
+#if defined __WXMSW__
+	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
+#endif
+#if defined __WXGTK__
+	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
+#endif
 	
 	if (frame->m_input->GetParse())
 			frame->m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));

@@ -61,9 +61,12 @@
 #if defined __WXGTK__
 extern "C"
 {
-	#include </usr/include/lua5.1/lua.h>
-	#include </usr/include/lua5.1/lauxlib.h>
-	#include </usr/include/lua5.1/lualib.h>
+	//#include </usr/include/lua5.1/lua.h>
+	//#include </usr/include/lua5.1/lauxlib.h>
+	//#include </usr/include/lua5.1/lualib.h>
+	#include </usr/local/include/lua.h>
+	#include </usr/local/include/lauxlib.h>
+	#include </usr/local/include/lualib.h>
 }
 #endif
 #if defined __WXMSW__
@@ -236,9 +239,8 @@ enum
 };
 
 #define OVECCOUNT 60
-//wxDECLARE_EVENT(wxEVENT_CMD_PAUSE2, wxThreadEvent);
 
-#define APP_VERSION "0.1.r70"
+#define APP_VERSION "0.1.r75"
 
 #include "mudwindow.h"
 #include "luadefs.h"
