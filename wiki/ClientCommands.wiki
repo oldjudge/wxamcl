@@ -50,7 +50,7 @@
    #capturenb("Test", "test1", "1", "true")
    }}}
    Capture text to 'windowname'-window, show in page 'pagename'.
-   Param 3 tells how many lines to capture. param 4 true gags the line from output.
+   Param 3 tells how many lines to capture. param 4 true gags the line/the lines from output.
    Windows are created as needed.
  == capturewin ==
    Capture a line of text to user window.
@@ -60,7 +60,7 @@
    #capturewin("test", "1", "false")
    }}}
    Capture text to 'windowname'-window.
-   Param 2 tells how many lines to capture. param 3 'true' gags the line from output.
+   Param 2 tells how many lines to capture. param 3 'true' gags the line/the lines from output.
    Windows are created as needed.
  == clearwin ==
    Clear the content of a user window.
