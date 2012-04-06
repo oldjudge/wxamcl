@@ -86,13 +86,14 @@ public:
 	void SetScroll(bool b) {m_noscroll=b;}
 	void SetFirstCaptured(bool b) {m_firstlinecaptured=b;}
 	void SetLastCaptured(bool b) {m_lastcaptured=b;}
-	void SetConnectionDT() {m_dtconnected = wxDateTime::UNow();}
+	void SetConnectionDT() {m_dtconnected = wxDateTime::Now();}
 	void SetFocusOnInput(bool b) {m_focusoninput=b;}
 	void SetSelectedStart(long l) {m_selline=l;}
 	void SetSelectedEnd(long l) {m_sellineend=l;}
 
 	//socket functions
 	void MyConnect(wxIPV4address addr);
+	void MyConnect(wxIPV6address addr);
 	void Write(wxString command);
 	void Write8Bit(wxString command);
 	void Close();
@@ -167,6 +168,7 @@ private:
 	class amcLua *m_L;
 	wxSocketClient *m_sock;
 	wxIPV4address m_addr;
+	wxIPV6address m_addr6;
 	bool m_connected;
 	wxDateTime m_dtconnected;
 	deque<class AnsiLine> m_vmudlines;

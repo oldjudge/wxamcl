@@ -59,6 +59,7 @@ BEGIN_EVENT_TABLE(MudMainFrame, wxFrame)
 	EVT_MENU_RANGE(ID_USERWINDOW, ID_USERWINDOW+100, MudMainFrame::OnUserWindow)
 	EVT_MENU_RANGE(ID_USERBUTTON, ID_USERBUTTON+1000, MudMainFrame::OnUserButton)
 	EVT_MENU_RANGE(ID_CHARENCODING, ID_CHARENCODING+20, MudMainFrame::OnCharEncoding)
+	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE1+9, MudMainFrame::OnFileHistory)
 	EVT_UPDATE_UI(wxID_COPY/*Amcl_CopyClipboard*/, MudMainFrame::OnMenuUi)
 	EVT_UPDATE_UI(Amcl_CopyClipboard, MudMainFrame::OnMenuUi)
 	//EVT_ERASE_BACKGROUND(MudMainFrame::OnEraseBackground)
@@ -380,6 +381,8 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxLocale::AddCatalogLookupPathPrefix(".");
 	#endif
 	m_locale = new wxLocale(wxLANGUAGE_GERMAN);
+	//wxDateTime::SetCountry(wxDateTime::USA);
+	
 	if (!m_locale->IsOk())
 	{
 		delete m_locale;
@@ -652,6 +655,15 @@ void MudMainFrame::OnLoadProfile(wxCommandEvent& event)
 		
 	}
 
+}
+
+void MudMainFrame::OnFileHistory(wxCommandEvent& event)
+{
+	int id = event.GetId();
+	wxString file = m_filehist->GetHistoryFile(id-wxID_FILE1);
+	//wxString dir = GetGlobalOptions()->GetProfileDir();
+	//wxSetWorkingDirectory(dir);
+	LoadProfile(wxFileName(file));
 }
 
 void MudMainFrame::OnCopyClipboard(wxCommandEvent& event)
@@ -3454,6 +3466,7 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
 	m_parent = (MudMainFrame*)parent;
 	m_sComm["raw"] = &InputTextCtrl::CommRaw;
 	m_sComm["connect"] = &InputTextCtrl::Connect;
+	m_sComm["connect6"] = &InputTextCtrl::Connect6;
 	m_sComm["pwd"] = &InputTextCtrl::Pwd;
 	m_sComm["capturewin"] = &InputTextCtrl::CaptureWin;
 	m_sComm["capturenb"] = &InputTextCtrl::CaptureNb;
@@ -4129,6 +4142,23 @@ int InputTextCtrl::Connect(wxString *sPar)
 {
 long iPort;
 wxIPV4address addr;
+int num;
+
+	num = ParseFParams(sPar);
+	if (num<2)
+		return -1;
+	addr.Hostname(GetFParam(1));
+	//sd->m_port->ToLong(&iPort);
+	GetFParam(2).ToLong(&iPort);
+	addr.Service(iPort);
+	m_parent->m_child->MyConnect(addr);
+	return 0;
+}
+
+int InputTextCtrl::Connect6(wxString *sPar)
+{
+long iPort;
+wxIPV6address addr;
 int num;
 
 	num = ParseFParams(sPar);
