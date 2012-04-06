@@ -56,6 +56,8 @@
 #include <wx/tipwin.h>
 #include <wx/fdrepdlg.h>
 #include <wx/buffer.h>
+#include <wx/dir.h>
+#include <wx/datetime.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
@@ -352,6 +354,7 @@ public:
 	void OnCreateNb(wxCommandEvent& event);
 	void OnCreateTB(wxCommandEvent& event);
 	void OnCreateGaugeWindow(wxCommandEvent& event);
+	void OnFileHistory(wxCommandEvent& event);
 	//stuff
 	bool UseSplitter() {return m_usesplitter;}
 	void SetSplitter(bool b) {m_usesplitter=b;}
@@ -500,6 +503,7 @@ private:
 	//functions mudcommands
 	int CommRaw(wxString *sPar);//#raw
 	int Connect(wxString *sPar);//#conncect
+	int Connect6(wxString *sPar);//#connect6
 	int Pwd(wxString *sPar);//#pwd
 	int CaptureWin(wxString *sPar);//#capturewin
 	int CaptureNb(wxString *sPar);//#capturenb

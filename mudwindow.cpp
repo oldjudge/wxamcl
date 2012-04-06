@@ -401,6 +401,40 @@ bool waitmore = true;
 	//m_sock->Peek(cBuffer, 1);
 }
 
+void MudWindow::MyConnect(wxIPV6address addr)
+{
+bool waitmore = true;
+	m_addr6 = addr;
+	wxIPV6address local;
+	//windows only?m_sock->Connect(m_addr, local, true);
+	//m_sock->SetFlags(wxSOCKET_WAITALL);
+	Msg(_("Trying to connect..."));
+	Refresh();
+	Update();
+	m_sock->Connect(m_addr6, local, false);
+	while ( !m_sock->WaitOnConnect(0, 200) && waitmore)
+    {
+		
+		// possibly give some feedback to the user,
+        // and update waitmore as needed.
+    }
+	m_sock->GetLocal(local);
+	
+	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
+	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+	//s = m_addr.IPAddress();
+	/*bool waitmore = true;
+	
+			 if (!m_sock->IsConnected())
+	{
+		Msg(_("Connection failed! No internet connection available?"));
+		return;
+	}*/
+	//m_sock->SetFlags(wxSOCKET_NOWAIT);
+	//m_sock->SetFlags(wxSOCKET_WAITALL);
+	//m_sock->Peek(cBuffer, 1);
+}
+
 void MudWindow::OnAutoReconnect(wxTimerEvent& event)
 {
 	MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP4());
@@ -531,6 +565,8 @@ AnsiLineElement style[2];
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();
+	line.SetDateTimeMS(d);
+	d = wxDateTime::Now();
 	line.SetDateTime(d);
 	line.SetFull(true);
 	line.SetLineText(msg);
@@ -1696,6 +1732,8 @@ static bool colset = false;
 				m_parent->GetDefVars()->at(idx).SetValue(l);
 				wxDateTime d;
 				d = wxDateTime::UNow();
+				line.SetDateTimeMS(d);
+				d = wxDateTime::Now();
 				line.SetDateTime(d);
 				line.SetAnsiLine(s.SubString(aoldpos, it-s.begin()-1));
 				aoldpos = it-s.begin()+1;
@@ -2812,10 +2850,10 @@ static bool colset = false;
 	wxString l;
 	l << line.GetLinenumber();
 	m_parent->GetDefVars()->at(idx).SetValue(l);
-	
-	wxDateTime d;
-	//d.SetToCurrent();
-	d = wxDateTime::UNow();
+	wxDateTime d, ddt;
+	ddt = wxDateTime::UNow();
+	line.SetDateTimeMS(ddt);
+	d = wxDateTime::Now();
 	line.SetDateTime(d);
 	line.SetAnsiLine(s.SubString(aoldpos, it-s.begin()-1));
 	aoldpos = it-s.begin();
@@ -3755,6 +3793,8 @@ size_t len;
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();
+	line.SetDateTimeMS(d);
+	d = wxDateTime::Now();
 	line.SetDateTime(d);
 	line.SetAnsiLine(*sLine);
 	m_vmudlines.push_back(line);
@@ -6033,7 +6073,7 @@ wxUint32 uiBytesRead;
     case wxSOCKET_LOST:
 		{
 		wxString msg;
-		wxDateTime end = wxDateTime::UNow();
+		wxDateTime end = wxDateTime::Now();
 		if (m_connected)
 		{
 			wxTimeSpan diff = end.Subtract(GetConnectionDT());
@@ -6144,11 +6184,12 @@ void MudWindow::WriteRaw(char* buf, int len, bool inc)
 	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
 	wxFile* file = new wxFile(RAW_FILE, wxFile::write_append);
 	wxString t, tt;
-	wxDateTime d;
+	wxDateTime d, dt;
 	//d.SetToCurrent();
-	d = wxDateTime::UNow();
+	d = wxDateTime::Now();
+	dt = wxDateTime::UNow();
 	wxString date;
-	date = wxString::Format("%02d:%02d:%02d:%03d", d.GetHour(), d.GetMinute(), d.GetSecond(), d.GetMillisecond());
+	date = wxString::Format("%02d:%02d:%02d:%03d", d.GetHour(), d.GetMinute(), d.GetSecond(), dt.GetMillisecond());
 	if (inc)
 		file->Write(t<<_("incoming packet: ")<< len <<_(" bytes (")<<date<<(")\n"));
 	else

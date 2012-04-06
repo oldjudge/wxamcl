@@ -891,7 +891,8 @@ MudWindow *mw = m_parent;
 		else
 		{
 			AnsiLine l;
-			l.SetDateTime(wxDateTime::UNow());
+			l.SetDateTime(wxDateTime::Now());
+			l.SetDateTimeMS(wxDateTime::UNow());
 			mw->GetLines()->push_back(l);
 			mw->m_curline++;
 			mw->GetLineStyle(mw->m_curline-1)->push_back(ale);
@@ -930,7 +931,8 @@ MudWindow *mw = m_parent;
 		else
 		{
 			AnsiLine l;
-			l.SetDateTime(wxDateTime::UNow());
+			l.SetDateTime(wxDateTime::Now());
+			l.SetDateTimeMS(wxDateTime::UNow());
 			mw->GetLines()->push_back(l);
 			mw->m_curline++;
 			mw->GetLineStyle(mw->m_curline-1)->push_back(ale);

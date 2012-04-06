@@ -310,6 +310,8 @@ int luafunc_echo(lua_State*L)
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();
+	line.SetDateTimeMS(d);
+	d = wxDateTime::Now();
 	line.SetDateTime(d);
 	frame->GetLines()->push_back(line);
 	frame->m_curline++;
@@ -698,6 +700,8 @@ int luafunc_echowin(lua_State*L)
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();
+	line.SetDateTimeMS(d);
+	d = wxDateTime::Now();
 	line.SetDateTime(d);
 	frame->GetLines()->push_back(line);
 	frame->m_curline++;

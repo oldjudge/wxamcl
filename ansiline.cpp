@@ -110,6 +110,8 @@ AnsiLine::AnsiLine()
 	m_ypos=0;
 	m_linetext = wxEmptyString;
 	m_ansiline = wxEmptyString;
+	m_cdt = wxDateTime::Now();
+	m_cdts = wxDateTime::UNow();
 }
 
 AnsiLine::AnsiLine(const AnsiLine& al)
@@ -129,6 +131,7 @@ AnsiLine::AnsiLine(const AnsiLine& al)
 	//for (i=0;i<al.m_vstyle.size();i++)
     //    m_vstyle.push_back(al.m_vstyle.at(i));//al.m_vstyle;
 	m_cdt = al.m_cdt;
+	m_cdts = al.m_cdts;
 }
 
 AnsiLine::~AnsiLine()

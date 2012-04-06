@@ -73,9 +73,10 @@ public:
 	void SetYPos(wxInt32 yp) {m_ypos = yp;}
 	wxInt32 GetYPos() {return m_ypos;}
 	void SetDateTime(wxDateTime d) {m_cdt = d;}
+	void SetDateTimeMS(wxDateTime d) {m_cdts = d;}
 	wxDateTime GetDateTime() {return m_cdt;}
-	wxString GetTime() {return m_cdt.FormatTime();}
-	wxString GetMilliSeconds() {return wxString::Format("%03d", m_cdt.GetMillisecond());}
+	wxString GetTime() {return m_cdt.Format("%X", wxDateTime::Local);}
+	wxString GetMilliSeconds() {return wxString::Format("%03d", m_cdts.GetMillisecond());}
 	bool IsTriggered() {return m_botriggered;}
 	void SetTriggered(bool b) {m_botriggered = b;}
 	int GetCharFColIndex(int idx);
@@ -99,6 +100,7 @@ private:
 	wxString m_ansiline;
 	wxInt32 m_ypos;
 	wxDateTime m_cdt;
+	wxDateTime m_cdts;
 	static wxString m_codes[20];
 	static wxString m_bcodes[16];
 
