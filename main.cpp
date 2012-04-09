@@ -336,7 +336,7 @@ bool MudClientApp::OnInit()
 	
 	//wxSetWorkingDirectory(wxGetApp().GetFrame()->GetGlobalOptions()->GetScriptDir());
 	//luaL_dofile(frame->m_child->GetLState()->GetLuaState(), "mapper.lua");
-
+	//frame->m_child->SetIPV6(true);
 	return true;
 }
 
@@ -607,6 +607,7 @@ void MudMainFrame::OnSimpleConnect(wxCommandEvent& WXUNUSED(event))
 //wxString ip, ports;
 long iPort;
 wxIPV4address addr;
+wxIPV6address addr6;
 	//wxXmlResource::Get()->LoadDialog(&sd, this, wxT("dialog_1"));
 	//DlgSimpleConn *sd = new DlgSimpleConn(this);
 	dlg_hostsimple *sd = new dlg_hostsimple(this);
@@ -621,11 +622,22 @@ wxIPV4address addr;
 			sd->Validate();
 			sd->TransferDataFromWindow();
 			//addr.Hostname(*sd->m_ip);
-			addr.Hostname(sd->m_server->GetValue());
+			if (!m_child->GetUseIPV6())
+				addr.Hostname(sd->m_server->GetValue());
+			else
+				addr6.Hostname(sd->m_server->GetValue());
 			wxString p = sd->m_port->GetValue();
 			p.ToLong(&iPort);
-			addr.Service(iPort);
-			m_child->MyConnect(addr);
+			if (!m_child->GetUseIPV6())
+			{
+				addr.Service(iPort);
+				m_child->MyConnect(addr);
+			}
+			else
+			{
+				addr6.Service(iPort);
+				m_child->MyConnect(addr6);
+			}
 			int i = count(m_lasthost.begin(), m_lasthost.end(), sd->m_server->GetValue());
 			if (!i)
 				m_lasthost.push_back(sd->m_server->GetValue());
@@ -983,6 +995,7 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 		SetSplitter(od->GetSplitter());
 		m_child->SetInclude(od->GetInclude());
 		m_child->SetDateLogging(od->GetTs());
+		m_child->SetIPV6(od->GetIPV6());
 		int i = od->GetLogOpt();
 		switch (i)
 		{
@@ -1335,7 +1348,7 @@ void MudMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxAboutDialogInfo info;
 	info.AddDeveloper("oldjudge64@gmail.com");
-	info.SetVersion(_("0.0.1"));
+	info.SetVersion(APP_VERSION);
 	info.SetName(_("wxAmcl"));
 	info.SetDescription(_("Mud client using wxWidgets!"));
 	info.SetWebSite("code.google.com/p/wxamcl");
@@ -1350,6 +1363,7 @@ void MudMainFrame::OnParseInput(wxCommandEvent& event)
 		m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
 	else
 		m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_CROSS_MARK, wxART_BUTTON));
+	SaveGlobalOptions();
 }
 
 void MudMainFrame::BuildEncodingMenu(wxMenu* view)
@@ -1558,21 +1572,23 @@ bool MudMainFrame::LoadGlobalOptions()
 	m_gopt->SetTriggerEcho(aL->GetBoolean(-1));
 	aL->GetField(-28, "utf8");
 	m_gopt->SetUTF8(aL->GetBoolean(-1));
-	aL->GetField(-29, "urls");
+	aL->GetField(-29, "ipv6");
+	m_child->SetIPV6(aL->GetBoolean(-1));
+	aL->GetField(-30, "urls");
 	m_child->SetClickURLs(aL->GetBoolean(-1));
-	aL->GetField(-30, "splitter");
+	aL->GetField(-31, "splitter");
 	this->SetSplitter(aL->GetBoolean(-1));
-	aL->GetField(-31, "autoreconnect");
+	aL->GetField(-32, "autoreconnect");
 	m_gopt->SetAutoConnect(aL->GetBoolean(-1));
-	aL->GetField(-32, "acdelay");
+	aL->GetField(-33, "acdelay");
 	m_gopt->SetACDelay(aL->GetInt(-1));
-	aL->GetField(-33, "scriptfont");
+	aL->GetField(-34, "scriptfont");
 	wxFont ff;
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
 
-	aL->GetField(-34, "charencoding");
+	aL->GetField(-35, "charencoding");
 	int ec = (int)aL->GetInt(-1);
 	wxMenuBar* bar = GetMenuBar();
 	wxMenuItem* item;
@@ -1944,6 +1960,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"echo\"] = %s,\n", m_gopt->GetEcho() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"techo\"] = %s,\n", m_gopt->GetTriggerEcho() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"utf8\"] = %s,\n", m_gopt->UseUTF8() ? "true" : "false"));
+	file->Write(wxString::Format("\t\t[\"ipv6\"] = %s,\n", m_child->GetUseIPV6() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"urls\"] = %s,\n", m_child->UseClickURLs() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"splitter\"] = %s,\n", this->UseSplitter() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"autoreconnect\"] = %s,\n", m_gopt->GetAutoConnect() ? "true" : "false"));
@@ -4878,7 +4895,10 @@ int InputTextCtrl::Info(wxString *sPar)
 	s << _("MSDP: ") << (m_parent->m_child->IsMSDPActive() ? _("active") : _("not active"));
 	m_parent->m_child->Msg(s);
 	s.clear();
-	s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress();
+	if (!m_parent->m_child->GetUseIPV6())
+		s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress()<<" "<<m_parent->m_child->GetIPAddr()->Hostname()<<" (IPV4)";
+	else
+		s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->IPAddress()<<" (IPV6)";
 	m_parent->m_child->Msg(s);
 	s.clear();
 	s << _("--- Information end----");

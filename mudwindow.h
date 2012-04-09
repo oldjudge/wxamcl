@@ -55,9 +55,11 @@ public:
 	bool IsGMCPActive() {return m_gmcp;}
 	bool IsMSDPActive() {return m_msdp;}
 	wxIPV4address *GetIPAddr() {return &m_addr;}
+	wxIPV6address *GetIP6Addr() {return &m_addr6;}
 	class amcMXP* GetMXPParser() {return m_MXP;}
 	bool GetFocusOnInput() {return m_focusoninput;}
 	wxSocketClient* GetSock() {return m_sock;}
+	bool GetUseIPV6() {return m_useipv6;}
 	//Setters
 	void SetColour(int idx, wxColour c) {m_colansi[idx] = c;}
 	void SetBackgroundCol(wxColour c) {m_background=c;}
@@ -90,6 +92,7 @@ public:
 	void SetFocusOnInput(bool b) {m_focusoninput=b;}
 	void SetSelectedStart(long l) {m_selline=l;}
 	void SetSelectedEnd(long l) {m_sellineend=l;}
+	void SetIPV6(bool b) {m_useipv6=b;}
 
 	//socket functions
 	void MyConnect(wxIPV4address addr);
@@ -217,6 +220,7 @@ private:
 	bool m_atcp2;/*!< atcp2 = gmcp negotiated? */
 	bool m_gmcp;/*!< are we using gmcp? */
 	bool m_debuggmcp;/*!<write gmcp messages to file */
+	bool m_useipv6;/*!use ipv6 protocol to connect */
 	std::vector<wxString> m_gmcpmods;
 	wxPoint m_selstart;
 	wxPoint m_selend;

@@ -152,13 +152,15 @@ void GlobalOptions::Init()
 			dest = GetWorkDir();
 			wxCopyFile(src, dest<<"/scripts/samples/gmcp_echo.lua");
 			wxString ff;
-			wxDir dir(GetWorkDir);
+			wxDir dir(s);
 			bool bb= dir.GetFirst(&ff, "*.xpm");
 			while (bb)
 			{
-				wxCopyFile(ff, dest<<"/images/"<<ff);
-				bb = dir.GetNext(&ff);
 				dest=GetWorkDir();
+				src = s;
+				wxCopyFile(src<<"/"<<ff, dest<<"/images/"<<ff);
+				ff.Empty();
+				bb = dir.GetNext(&ff);
 			}
 		}
 	#endif

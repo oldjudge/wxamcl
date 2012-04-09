@@ -209,6 +209,9 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_utf8 = new wxCheckBox( m_general, wxID_ANY, _("UTF8 connection"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer12->Add( m_utf8, 0, wxALL, 5 );
 	
+	m_ipv6 = new wxCheckBox( m_general, wxID_ANY, _("Use IPV6"), wxDefaultPosition, wxDefaultSize, 0 );
+	sbSizer12->Add( m_ipv6, 0, wxALL, 5 );
+	
 	gbSizer3->Add( sbSizer12, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer13;
