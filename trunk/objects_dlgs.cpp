@@ -158,7 +158,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_trigger->SetSizer( bSizer8 );
 	m_trigger->Layout();
 	bSizer8->Fit( m_trigger );
-	m_notebook->AddPage( m_trigger, _("Actions"), true );
+	m_notebook->AddPage( m_trigger, _("Actions"), false );
 	m_alias = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -189,27 +189,27 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer21->Add( m_staticText7, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_defaction = new wxTextCtrl( m_alias, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	gbSizer21->Add( m_defaction, wxGBPosition( 1, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
+	gbSizer21->Add( m_defaction, wxGBPosition( 1, 1 ), wxGBSpan( 2, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText101 = new wxStaticText( m_alias, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText101->Wrap( -1 );
-	gbSizer21->Add( m_staticText101, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_staticText101, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_groupcombo = new wxComboBox( m_alias, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
-	gbSizer21->Add( m_groupcombo, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer21->Add( m_groupcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_alfilter = new wxCheckBox( m_alias, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_alfilter->SetValue(true); 
-	gbSizer21->Add( m_alfilter, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_alfilter, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_groupon = new wxToggleButton( m_alias, wxID_ANY, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_groupon, wxGBPosition( 2, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	gbSizer21->Add( m_groupon, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_alon = new wxCheckBox( m_alias, wxID_ANY, _("Alias active"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_alon, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_alon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_delgroup = new wxButton( m_alias, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_delgroup, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_delgroup, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	gbSizer21->AddGrowableCol( 1 );
 	bSizer3->Add( gbSizer21, 1, wxALL|wxEXPAND, 5 );
 	
@@ -230,7 +230,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_alias->SetSizer( bSizer3 );
 	m_alias->Layout();
 	bSizer3->Fit( m_alias );
-	m_notebook->AddPage( m_alias, _("Alias"), false );
+	m_notebook->AddPage( m_alias, _("Alias"), true );
 	m_buttons = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxHORIZONTAL );
@@ -585,7 +585,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	wxGridBagSizer* gbSizer5;
 	gbSizer5 = new wxGridBagSizer( 2, 0 );
-	
+
 	gbSizer5->SetFlexibleDirection( wxBOTH );
 	gbSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	

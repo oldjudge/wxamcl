@@ -49,6 +49,7 @@ public:
 	bool GetATCP() {return m_atcp2;}
 	bool GetGMCP() {return m_gmcp2;}
 	bool GetUTF8() {return m_utf8_2;}
+	bool GetIPV6() {return m_ipv62;}
 	bool GetAard() {return m_aard2;}
 	bool GetMSDP() {return m_msdp2;}
 	bool GetEvents() {return m_events;}
@@ -154,6 +155,7 @@ private:
 	bool m_ac;
 	int m_acdel;
 	bool m_tabdlg2;
+	bool m_ipv62;
 
 	MudMainFrame *m_frame;
 

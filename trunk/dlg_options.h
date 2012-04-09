@@ -96,6 +96,7 @@ class DlgOptions : public wxDialog
 		wxCheckBox* m_autoreconnect;
 		wxSpinCtrl* m_acdelay;
 		wxCheckBox* m_utf8;
+		wxCheckBox* m_ipv6;
 		wxCheckBox* m_evall;
 		wxCheckBox* m_onconnect;
 		wxCheckBox* m_ondisconnect;

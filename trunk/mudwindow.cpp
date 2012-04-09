@@ -138,7 +138,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	m_kevtforwarded = false;
 	//wxSize ss = GetClientSize();
 	m_trigger = true;//triggers for main output on
-	
+	m_useipv6 = false;
 	m_firstlinecaptured = m_lastcaptured = false;
 	m_log = m_logansi = m_logdate = m_bohtml = m_include = false;
 	m_include = true;
@@ -269,6 +269,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 	//m_gopt = new GlobalOptions(this);
 	m_maxlines = 500;//default line buffer for the window
 	m_trigger = false; //triggers for user created windows off
+	m_useipv6 = false;
 	//m_dc = new Decompressor();//\\b
 	m_dc = NULL;
 	//m_mxp = NULL;
