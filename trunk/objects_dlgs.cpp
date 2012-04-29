@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -30,6 +30,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	bSizer4->Add( m_tree, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer8->Add( bSizer4, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer2;
@@ -37,7 +38,6 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	wxGridBagSizer* gbSizer2;
 	gbSizer2 = new wxGridBagSizer( 1, 1 );
-	
 	gbSizer2->SetFlexibleDirection( wxBOTH );
 	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -45,7 +45,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText6->Wrap( -1 );
 	gbSizer2->Add( m_staticText6, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_label = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxFULL_REPAINT_ON_RESIZE );
+	m_label = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxSUNKEN_BORDER );
 	m_label->SetToolTip( _("Name of the trigger") );
 	
 	gbSizer2->Add( m_label, wxGBPosition( 0, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
@@ -54,7 +54,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText10->Wrap( -1 );
 	gbSizer2->Add( m_staticText10, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_pattern = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_WORDWRAP|wxFULL_REPAINT_ON_RESIZE );
+	m_pattern = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_WORDWRAP|wxSUNKEN_BORDER );
 	m_pattern->SetToolTip( _("Regular expression pattern of mud text") );
 	m_pattern->SetMaxSize( wxSize( -1,24 ) );
 	
@@ -131,7 +131,10 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_sendscript = new wxCheckBox( m_trigger, wxID_ANY, _("Send to script"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_sendscript, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	
+	
 	gbSizer2->AddGrowableCol( 1 );
+	
 	sbSizer2->Add( gbSizer2, 1, wxEXPAND|wxALL, 5 );
 	
 	wxBoxSizer* bSizer10;
@@ -149,11 +152,15 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_btdel = new wxButton( m_trigger, ID_DELACTION, _("Delete action"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer6->Add( m_btdel, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer10->Add( gSizer6, 1, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	sbSizer2->Add( bSizer10, 0, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxTOP, 5 );
 	
+	
 	bSizer8->Add( sbSizer2, 3, wxALL|wxEXPAND, 5 );
+	
 	
 	m_trigger->SetSizer( bSizer8 );
 	m_trigger->Layout();
@@ -169,13 +176,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_listalias = new wxListCtrl( m_alias, ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
 	sbSizer7->Add( m_listalias, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer3->Add( sbSizer7, 2, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer21;
 	gbSizer21 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer21->SetFlexibleDirection( wxBOTH );
-	gbSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gbSizer21->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
 	
 	m_staticText61 = new wxStaticText( m_alias, wxID_ANY, _("Alias:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText61->Wrap( -1 );
@@ -210,7 +217,11 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_delgroup = new wxButton( m_alias, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer21->Add( m_delgroup, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
 	gbSizer21->AddGrowableCol( 1 );
+	gbSizer21->AddGrowableRow( 1 );
+	
 	bSizer3->Add( gbSizer21, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer2;
@@ -225,12 +236,14 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_delalias = new wxButton( m_alias, ID_DELALIAS, _("Delete alias"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer2->Add( m_delalias, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer3->Add( gSizer2, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	m_alias->SetSizer( bSizer3 );
 	m_alias->Layout();
 	bSizer3->Fit( m_alias );
-	m_notebook->AddPage( m_alias, _("Alias"), true );
+	m_notebook->AddPage( m_alias, _("Alias"), false );
 	m_buttons = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer131;
 	bSizer131 = new wxBoxSizer( wxHORIZONTAL );
@@ -241,6 +254,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_treeCtrl3 = new wxTreeCtrl( m_buttons, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE );
 	bSizer14->Add( m_treeCtrl3, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer131->Add( bSizer14, 1, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer11;
@@ -248,7 +262,6 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	wxGridBagSizer* gbSizer10;
 	gbSizer10 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer10->SetFlexibleDirection( wxBOTH );
 	gbSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -279,7 +292,10 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_bitmap = new wxTextCtrl( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer10->Add( m_bitmap, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	
+	
 	gbSizer10->AddGrowableCol( 1 );
+	
 	sbSizer11->Add( gbSizer10, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer7;
@@ -294,9 +310,12 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_delbutton = new wxButton( m_buttons, wxID_ANY, _("Delete button"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer7->Add( m_delbutton, 0, wxALL, 5 );
 	
+	
 	sbSizer11->Add( gSizer7, 0, wxALL, 5 );
 	
+	
 	bSizer131->Add( sbSizer11, 4, wxALL|wxEXPAND, 5 );
+	
 	
 	m_buttons->SetSizer( bSizer131 );
 	m_buttons->Layout();
@@ -312,6 +331,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_gaugew = new wxTreeCtrl( m_gauge, wxID_ANY, wxDefaultPosition, wxSize( 150,-1 ), wxTR_DEFAULT_STYLE );
 	bSizer11->Add( m_gaugew, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer102->Add( bSizer11, 0, wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer71;
@@ -319,7 +339,6 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	wxGridBagSizer* gbSizer9;
 	gbSizer9 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer9->SetFlexibleDirection( wxBOTH );
 	gbSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
@@ -363,6 +382,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_drawstyle->SetSelection( 0 );
 	sbSizer8->Add( m_drawstyle, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer9->Add( sbSizer8, wxGBPosition( 0, 4 ), wxGBSpan( 3, 1 ), wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer101;
@@ -393,7 +413,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_showvalue = new wxCheckBox( m_gauge, wxID_ANY, _("show value"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_showvalue, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	sbSizer101->Add( fgSizer2, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer9->Add( sbSizer101, wxGBPosition( 5, 0 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
@@ -433,7 +455,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_height = new wxSpinCtrl( m_gauge, wxID_ANY, wxT("200"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2000, 0 );
 	fgSizer1->Add( m_height, 0, wxALL, 5 );
 	
+	
 	sbSizer10->Add( fgSizer1, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer9->Add( sbSizer10, wxGBPosition( 5, 2 ), wxGBSpan( 1, 4 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -468,6 +492,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_alarm = new wxColourPickerCtrl( m_gauge, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	gSizer61->Add( m_alarm, 0, wxALL, 5 );
 	
+	
 	gbSizer9->Add( gSizer61, wxGBPosition( 3, 0 ), wxGBSpan( 1, 6 ), wxALL, 5 );
 	
 	m_alarmslider = new wxSlider( m_gauge, wxID_ANY, 30, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
@@ -476,7 +501,10 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText40 = new wxStaticText( m_gauge, wxID_ANY, _("Show alarm color %"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText40->Wrap( -1 );
 	gbSizer9->Add( m_staticText40, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
 	gbSizer9->AddGrowableCol( 1 );
+	
 	sbSizer71->Add( gbSizer9, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer5;
@@ -491,9 +519,12 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_delgauge = new wxButton( m_gauge, wxID_ANY, _("Delete gauge"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer5->Add( m_delgauge, 0, wxALL, 5 );
 	
+	
 	sbSizer71->Add( gSizer5, 0, wxALL, 5 );
 	
+	
 	bSizer102->Add( sbSizer71, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	m_gauge->SetSizer( bSizer102 );
 	m_gauge->Layout();
@@ -509,13 +540,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_listhkey = new wxListCtrl( m_hotkey, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_ALIGN_LEFT|wxLC_REPORT );
 	sbSizer21->Add( m_listhkey, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer7->Add( sbSizer21, 2, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer3;
 	gbSizer3 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer3->SetFlexibleDirection( wxBOTH );
-	gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
 	
 	m_text11 = new wxStaticText( m_hotkey, wxID_ANY, _("Press key:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_text11->Wrap( -1 );
@@ -525,32 +556,36 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer3->Add( m_hkey, wxGBPosition( 0, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_groupdel = new wxButton( m_hotkey, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer3->Add( m_groupdel, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer3->Add( m_groupdel, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_staticText12 = new wxStaticText( m_hotkey, wxID_ANY, _("Command:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText12->Wrap( -1 );
 	gbSizer3->Add( m_staticText12, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_hkeyaction = new wxTextCtrl( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	gbSizer3->Add( m_hkeyaction, wxGBPosition( 1, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
+	gbSizer3->Add( m_hkeyaction, wxGBPosition( 1, 1 ), wxGBSpan( 2, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_hkeyon = new wxCheckBox( m_hotkey, wxID_ANY, _("Hotkey active"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer3->Add( m_hkeyon, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer3->Add( m_hkeyon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_hkcombo = new wxComboBox( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
-	gbSizer3->Add( m_hkcombo, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer3->Add( m_hkcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText131 = new wxStaticText( m_hotkey, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText131->Wrap( -1 );
-	gbSizer3->Add( m_staticText131, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer3->Add( m_staticText131, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_hkgroupoff = new wxToggleButton( m_hotkey, wxID_ANY, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer3->Add( m_hkgroupoff, wxGBPosition( 2, 3 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer3->Add( m_hkgroupoff, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_hkfilter = new wxCheckBox( m_hotkey, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_hkfilter->SetValue(true); 
-	gbSizer3->Add( m_hkfilter, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer3->Add( m_hkfilter, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
 	gbSizer3->AddGrowableCol( 1 );
+	gbSizer3->AddGrowableRow( 1 );
+	
 	bSizer7->Add( gbSizer3, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer3;
@@ -565,7 +600,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_delkey = new wxButton( m_hotkey, wxID_ANY, _("Delete hotkey"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer3->Add( m_delkey, 0, wxALIGN_RIGHT|wxALL, 5 );
 	
+	
 	bSizer7->Add( gSizer3, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	m_hotkey->SetSizer( bSizer7 );
 	m_hotkey->Layout();
@@ -581,11 +618,11 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_listlist = new wxListCtrl( m_list, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
 	sbSizer3->Add( m_listlist, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer101->Add( sbSizer3, 2, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer5;
 	gbSizer5 = new wxGridBagSizer( 2, 0 );
-
 	gbSizer5->SetFlexibleDirection( wxBOTH );
 	gbSizer5->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -625,7 +662,10 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_lidelgroup = new wxButton( m_list, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer5->Add( m_lidelgroup, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	
+	
 	gbSizer5->AddGrowableCol( 1 );
+	
 	bSizer101->Add( gbSizer5, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer6;
@@ -642,7 +682,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_dellist = new wxButton( m_list, wxID_ANY, _("Delete list"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer6->Add( m_dellist, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
+	
 	bSizer101->Add( gbSizer6, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	m_list->SetSizer( bSizer101 );
 	m_list->Layout();
@@ -658,11 +700,11 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_timerlist = new wxListCtrl( m_timer, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
 	sbSizer31->Add( m_timerlist, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer1011->Add( sbSizer31, 2, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer51;
 	gbSizer51 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer51->SetFlexibleDirection( wxBOTH );
 	gbSizer51->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -678,7 +720,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer51->Add( m_staticText181, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_timeraction = new wxTextCtrl( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer51->Add( m_timeraction, wxGBPosition( 1, 1 ), wxGBSpan( 1, 3 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	gbSizer51->Add( m_timeraction, wxGBPosition( 1, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_sgroup1 = new wxStaticText( m_timer, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_sgroup1->Wrap( -1 );
@@ -709,7 +751,10 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_intervall = new wxTextCtrl( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer51->Add( m_intervall, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
 	gbSizer51->AddGrowableCol( 1 );
+	
 	bSizer1011->Add( gbSizer51, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer61;
@@ -729,7 +774,9 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_tstart = new wxButton( m_timer, wxID_ANY, _("Start timer"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer61->Add( m_tstart, wxGBPosition( 0, 3 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
+	
 	bSizer1011->Add( gbSizer61, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	m_timer->SetSizer( bSizer1011 );
 	m_timer->Layout();
@@ -745,13 +792,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_listvar = new wxListCtrl( m_var, ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
 	sbSizer4->Add( m_listvar, 1, wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer31->Add( sbSizer4, 2, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer211;
 	gbSizer211 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer211->SetFlexibleDirection( wxBOTH );
-	gbSizer211->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gbSizer211->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_NONE );
 	
 	m_staticText611 = new wxStaticText( m_var, wxID_ANY, _("Variable:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText611->Wrap( -1 );
@@ -765,28 +812,32 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer211->Add( m_staticText71, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_varvalue = new wxTextCtrl( m_var, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
-	gbSizer211->Add( m_varvalue, wxGBPosition( 1, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
+	gbSizer211->Add( m_varvalue, wxGBPosition( 1, 1 ), wxGBSpan( 2, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText1011 = new wxStaticText( m_var, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText1011->Wrap( -1 );
-	gbSizer211->Add( m_staticText1011, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer211->Add( m_staticText1011, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_vargroup = new wxComboBox( m_var, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
-	gbSizer211->Add( m_vargroup, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer211->Add( m_vargroup, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_vfilter = new wxCheckBox( m_var, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_vfilter->SetValue(true); 
-	gbSizer211->Add( m_vfilter, wxGBPosition( 2, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer211->Add( m_vfilter, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_vgroupoff = new wxToggleButton( m_var, wxID_ANY, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer211->Add( m_vgroupoff, wxGBPosition( 2, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	gbSizer211->Add( m_vgroupoff, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_von = new wxCheckBox( m_var, wxID_ANY, _("Variable active"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer211->Add( m_von, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer211->Add( m_von, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_vdelgroup = new wxButton( m_var, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer211->Add( m_vdelgroup, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer211->Add( m_vdelgroup, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
 	gbSizer211->AddGrowableCol( 1 );
+	gbSizer211->AddGrowableRow( 1 );
+	
 	bSizer31->Add( gbSizer211, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer21;
@@ -801,12 +852,14 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_delvar = new wxButton( m_var, ID_DELALIAS, _("Delete variable"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer21->Add( m_delvar, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
 	
+	
 	bSizer31->Add( gSizer21, 0, wxALIGN_RIGHT|wxALL, 5 );
+	
 	
 	m_var->SetSizer( bSizer31 );
 	m_var->Layout();
 	bSizer31->Fit( m_var );
-	m_notebook->AddPage( m_var, _("Variables"), false );
+	m_notebook->AddPage( m_var, _("Variables"), true );
 	
 	bSizer1->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -819,9 +872,12 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
 	m_sdbSizer1->Realize();
+	
 	bSizer13->Add( m_sdbSizer1, 1, wxALIGN_BOTTOM|wxALL, 5 );
 	
+	
 	bSizer1->Add( bSizer13, 0, wxALL|wxEXPAND, 5 );
+	
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();
