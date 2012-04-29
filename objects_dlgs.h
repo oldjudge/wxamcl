@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __objects_dlgs__
-#define __objects_dlgs__
+#ifndef __OBJECTS_DLGS_H__
+#define __OBJECTS_DLGS_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/treectrl.h>
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -60,7 +61,7 @@ class ObjDlg : public wxDialog
 			ID_LALIAS,
 			ID_ADDALIAS,
 			ID_EDITALIAS,
-			ID_DELALIAS,
+			ID_DELALIAS
 		};
 		
 		wxNotebook* m_notebook;
@@ -297,9 +298,9 @@ class ObjDlg : public wxDialog
 	public:
 		wxTreeCtrl* m_tree;
 		
-		ObjDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Define objects"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		ObjDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Define objects"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~ObjDlg();
 	
 };
 
-#endif //__objects_dlgs__
+#endif //__OBJECTS_DLGS_H__
