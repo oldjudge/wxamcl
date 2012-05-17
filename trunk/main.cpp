@@ -190,13 +190,14 @@ bool MudClientApp::OnInit()
 	frame->Update();
 	frame->LoadGlobalOptions(); //5.1.4
 	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
+
 #if defined __WXMSW__
 	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
 #endif
 #if defined __WXGTK__
 	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
-	
+
 	if (frame->m_input->GetParse())
 			frame->m_toggle->SetBitmapLabel(wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
 		else
@@ -2631,17 +2632,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		m_mgr.AddPane(aw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Show());
 		aL->SetTop(0);
 	}
-	//Build Menu
-	wxMenuBar* bar = GetMenuBar();
-	wxMenu* view = new wxMenu;
-	view->AppendCheckItem(ID_SPLITTER, _("Split Window\tF2"), _("Show the splitter window"));
-	if (m_splitter->IsShown())
-		view->Check(ID_SPLITTER, true);
-	for(size_t i=0;i<GetPanes()->size();i++)
-	{
-		view->AppendCheckItem(ID_USERWINDOW+i, GetPanes()->at(i));
-		
-	}
+	
 	//wxMenu* old = bar->Replace(2, view, _("View"));
 	
 	aL->GetGlobal("amc_nbs");
@@ -2696,9 +2687,6 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->SetTop(0);
 		//delete nb;
 	}
-	int items1 = view->GetMenuItemCount()-1;
-	for(size_t i=0;i<GetNbs()->size();i++)
-		view->AppendCheckItem(ID_USERWINDOW+items1+i, GetNbs()->at(i));
 	
 	aL->GetGlobal("amc_gaugepanes");
 	len = aL->GetObjectLen();
@@ -2795,12 +2783,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->SetTop(0);
 		//delete gw;
 	}
-	int items2 = view->GetMenuItemCount()-1;
-	for(size_t i=0;i<GetGaugePanes()->size();i++)
-		view->AppendCheckItem(ID_USERWINDOW+items2+i, GetGaugePanes()->at(i));
-	wxMenu* old = bar->Remove(2);
-	bar->Insert(2, view, _("View"));
-	delete old;
+	
 
 	aL->GetGlobal("amc_packages");
 	len = aL->GetObjectLen();
@@ -2899,6 +2882,28 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_gopt->SetDatabaseDir(f);
 	aL->SetTop(0);
 	
+	//Build Menu
+	wxMenuBar* bar = GetMenuBar();
+	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));//new wxMenu;
+	//bar->Insert(1, view, _("View1"));
+	//view->AppendCheckItem(ID_SPLITTER, _("Split Window\tF2"), _("Show the splitter window"));
+	if (m_splitter->IsShown())
+		view->Check(ID_SPLITTER, true);
+	for(size_t i=0;i<GetPanes()->size();i++)
+	{
+		view->InsertCheckItem(i+1, ID_USERWINDOW+i, GetPanes()->at(i));
+		
+	}
+	
+	int items1 = view->GetMenuItemCount()-1;
+	for(size_t i=0;i<GetNbs()->size();i++)
+		view->InsertCheckItem(i+items1-1, ID_USERWINDOW+items1+i, GetNbs()->at(i));
+	
+	int items2 = view->GetMenuItemCount()-1;
+	for(size_t i=0;i<GetGaugePanes()->size();i++)
+		view->InsertCheckItem(i+items2-1, ID_USERWINDOW+items2+i, GetGaugePanes()->at(i));
+	//wxMenu* old = bar->Remove(2);
+	//delete old;
 	//m_mgr.Update();
 	for(size_t i=0;i<GetPanes()->size();i++)
 	{
@@ -2956,7 +2961,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			//delete tb;
 		}
 	}
-	BuildEncodingMenu(view);
+	//BuildEncodingMenu(view);
 	int ec = (int)m_gopt->GetCurEncoding();
 	//wxMenuBar* bar1 = GetMenuBar();
 	wxMenuItem* item;
@@ -3024,6 +3029,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			item->Check();
 		break;
 	}
+	
+	
 	aL->GetGlobal("amc_layout");
 	wxString p = aL->GetUTF8String(-1);
 	aL->Pop(1);
@@ -3032,6 +3039,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	//delete view;
 	m_toolbar->Refresh();
 	m_toolbar->Update();
+	m_mgr.LoadPerspective(p);
+	m_mgr.Update();
 	m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
 	m_curprofile = s.GetFullPath();
 	
