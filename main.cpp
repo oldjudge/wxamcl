@@ -866,7 +866,7 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 	int id = event.GetId();
 	wxMenuBar* bar = GetMenuBar();
 	wxMenuItem* item;
-	for (int i=ID_CHARENCODING;i<ID_CHARENCODING+11;i++)
+	for (int i=ID_CHARENCODING;i<ID_CHARENCODING+14;i++)
 	{
 		item = bar->FindItem(i);
 		item->Check(false);
@@ -910,6 +910,7 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		break;
 	case ID_CHARENCODING+11:
 		ec = wxFONTENCODING_CP936;
+		break;
 	case ID_CHARENCODING+12:
 		ec = wxFONTENCODING_SHIFT_JIS;
 		break;
