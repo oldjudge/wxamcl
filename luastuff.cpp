@@ -99,6 +99,9 @@ wxString amcLua::GetwxString(int idx)
 		//return s;
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		#endif
+		#ifdef WXOSX
+		return wxString::FromUTF8Unchecked(string);
+		#endif
 		//s = wxString::Format("%c", string);
 		//return s;
 	}
@@ -1688,6 +1691,9 @@ int luafunc_convertprofile(lua_State *L)
 		#ifdef __WXGTK__
 			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_WIN);
 		#endif
+		#ifdef WXOSX
+			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_MAC);
+			#endif
 		s.clear();
 		s<<frame->GetGlobalOptions()->GetPackageDir()<<evf<<"."<<evx;
 		frame->GetPackages()->at(i).assign(s);
@@ -1698,6 +1704,9 @@ int luafunc_convertprofile(lua_State *L)
 	#endif
 	#ifdef __WXMSW__
 	wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_UNIX);
+	#endif
+	#ifdef WXOSX
+	wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_MAC);
 	#endif
 	wxFileName ev(frame->GetGlobalOptions()->GetScriptDir()+evf+"."+evx);
 	frame->GetGlobalOptions()->SetEventFile(ev.GetFullPath());

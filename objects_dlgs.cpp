@@ -77,7 +77,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText13->Wrap( -1 );
 	gbSizer2->Add( m_staticText13, wxGBPosition( 8, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_class = new wxComboBox( m_trigger, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT|wxSUNKEN_BORDER ); 
+	m_class = new wxComboBox( m_trigger, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxSUNKEN_BORDER ); 
 	gbSizer2->Add( m_class, wxGBPosition( 8, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_onoff = new wxToggleButton( m_trigger, ID_TOGGLECLASS, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -202,7 +202,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText101->Wrap( -1 );
 	gbSizer21->Add( m_staticText101, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_groupcombo = new wxComboBox( m_alias, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
+	m_groupcombo = new wxComboBox( m_alias, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL); 
 	gbSizer21->Add( m_groupcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_alfilter = new wxCheckBox( m_alias, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -568,7 +568,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_hkeyon = new wxCheckBox( m_hotkey, wxID_ANY, _("Hotkey active"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer3->Add( m_hkeyon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_hkcombo = new wxComboBox( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
+	m_hkcombo = new wxComboBox( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL); 
 	gbSizer3->Add( m_hkcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText131 = new wxStaticText( m_hotkey, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -647,7 +647,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sgroup->Wrap( -1 );
 	gbSizer5->Add( m_sgroup, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_ligroup = new wxComboBox( m_list, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
+	m_ligroup = new wxComboBox( m_list, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL ); 
 	gbSizer5->Add( m_ligroup, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_lifilter = new wxCheckBox( m_list, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -726,7 +726,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sgroup1->Wrap( -1 );
 	gbSizer51->Add( m_sgroup1, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_tigroup = new wxComboBox( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
+	m_tigroup = new wxComboBox( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL); 
 	gbSizer51->Add( m_tigroup, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_tifilter = new wxCheckBox( m_timer, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -818,7 +818,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText1011->Wrap( -1 );
 	gbSizer211->Add( m_staticText1011, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_vargroup = new wxComboBox( m_var, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxCB_SORT ); 
+	m_vargroup = new wxComboBox( m_var, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL); 
 	gbSizer211->Add( m_vargroup, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_vfilter = new wxCheckBox( m_var, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );

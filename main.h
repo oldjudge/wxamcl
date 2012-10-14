@@ -1,9 +1,9 @@
 #ifndef MainH
 #define MainH
 
-#if !defined __WXGTK__ && !defined __WXMSW__
-#define __WXGTK__
-#endif
+//#if !defined __WXGTK__ && !defined __WXMSW__
+//#define __WXGTK__
+//#endif
 // For compilers that support precompilation, includes "wx.h".
 #include <wx/wxprec.h>
 
@@ -82,6 +82,14 @@ extern "C"
 #endif
 #include "sqlite3.h"
 
+#if defined WXOSX
+extern "C"
+{
+	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lua.h"
+	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lauxlib.h"
+	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lualib.h"
+}
+#endif
 #if defined __WXDEBUG__
 #include <wx/log.h>
 #endif

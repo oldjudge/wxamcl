@@ -19,10 +19,10 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_nb = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_nbImageSize = wxSize( 16,16 );
 	int m_nbIndex = 0;
-	wxImageList* m_nbImages = new wxImageList( m_nbImageSize.GetWidth(), m_nbImageSize.GetHeight() );
+	wxImageList* m_nbImages = new wxImageList( 32, 32 );
 	m_nb->AssignImageList( m_nbImages );
-	wxBitmap m_nbBitmap;
-	wxImage m_nbImage;
+	//wxBitmap m_nbBitmap;
+	//wxImage m_nbImage;
 	m_general = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
