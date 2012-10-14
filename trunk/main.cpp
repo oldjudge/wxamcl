@@ -173,7 +173,7 @@ bool MudClientApp::OnInit()
 	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(wxT("amcprompt")).Bottom().CaptionVisible(false).Hide());
 	//frame->m_mgr.AddPane(new amcColorComboBox(frame), wxAuiPaneInfo().Top());
 	frame->m_mgr.AddPane(frame->m_toolbar, wxAuiPaneInfo().Name("amctoolbar").ToolbarPane().Caption(_("Main Toolbar")).Top().LeftDockable(false).RightDockable(false));
-	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Float().Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
+	//frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Float().Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
 	frame->m_mgr.Update();
 	
 	//splitter->Msg(wxT("Splitter"));
@@ -195,6 +195,9 @@ bool MudClientApp::OnInit()
 	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
 #endif
 #if defined __WXGTK__
+	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
+#endif
+#if defined __WXOSX__
 	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
 
@@ -359,8 +362,10 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	// set the frame icon
     //wxIcon aamud11(aamud11_xpm);
 	//SetIcon(aamud11);
-	SetIcon(wxICON(aamud11));
-	
+	#include "mud11.xpm"
+	wxIcon icon = wxICON(net);
+	//SetIcon(wxICON(aamud11));
+	SetIcon(icon);
 	//SetIcon(aamud11_xpm);
 	m_mgr.SetManagedWindow(this);
 	m_mgr.SetDockSizeConstraint(0.5, 0.5);
@@ -514,6 +519,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
 #if defined __WXGTK__
 	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
 #endif
+#if defined __WXOSX_
+	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
+#endif
 #if defined __WXMSW__
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, "Consolas");
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
@@ -522,7 +530,10 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Terminus");
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Terminus");
 #endif
-	
+#if defined __WXOSX__
+	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier");
+	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Courier");
+#endif	
 }
 
 MudMainFrame::MudMainFrame()
@@ -2585,6 +2596,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		int fs;
+		
 		f.SetPointSize(fs=aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
 		f.SetWeight(aL->GetInt(-1));
@@ -3042,7 +3054,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_toolbar->Update();
 	m_mgr.LoadPerspective(p);
 	m_mgr.Update();
-	m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
+	//m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
 	m_curprofile = s.GetFullPath();
 	
 	m_input->SetFocus();
@@ -3730,10 +3742,14 @@ static bool boFirst = true;
 			Clear();
 			ChangeValue(command);
 		}
-		SetSelection(GetLastPosition()+1, 0);
+		//SetSelection(GetLastPosition()+1, 0);
 		//SetInsertionPoint(GetLastPosition());
-		//SetSelection(0,GetLastPosition()+1);
-		
+		#ifndef WXOSX
+		SetSelection(0,GetLastPosition()+1);
+		#endif
+		#ifdef WXOSX
+		SetSelection(-1,-1);
+		#endif
 		if (!m_parent->m_child->GetScroll())
 		 	m_parent->Refresh();
 

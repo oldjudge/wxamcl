@@ -6,12 +6,14 @@ dlg_options::dlg_options( wxWindow* parent )
 DlgOptions( parent )
 {
 	
+	#ifndef WXOSX
 	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_FRAME_ICON));
 	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_FRAME_ICON));
 	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_FOLDER, wxART_FRAME_ICON));
 	m_nb->SetPageImage(0, 0);
 	m_nb->SetPageImage(1, 1);
 	m_nb->SetPageImage(2, 2);
+	#endif
 	m_nb->SetSelection(0);
 	m_frame = (MudMainFrame*)parent;
 	m_cs = m_frame->GetGlobalOptions()->GetCommand();

@@ -451,9 +451,8 @@ void MudWindow::Write(wxString command)
 	{
 		if (!m_parent->GetGlobalOptions()->UseUTF8())
 		{
-			
 			//m_sock->Write(s8.data(), (wxUint32)s8.length());
-		#ifdef __WXGTK__
+		#ifdef __WXGTK
 			wxString su = command.ToUTF8();
 			if (su.empty()&&!command.empty())
 				su = command;
@@ -462,6 +461,16 @@ void MudWindow::Write(wxString command)
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
+		#ifdef WXOSX
+			wxString su = command.ToUTF8();
+			if (su.empty()&&!command.empty())
+				su = command;
+			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
+			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(su.char_str(), su.char_str().length(), false);
+		#endif
+		
 		#ifdef __WXMSW__
 			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
 			if (m_parent->GetGlobalOptions()->DebugRaw())
@@ -487,8 +496,7 @@ void MudWindow::Write(wxString command)
 			m_sock->Write(f.c_str(), wxStrlen(f));
 			//m_sock->Write(command.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), wxStrlen(command));
 		}
-	
-	}	
+	}
 }
 
 void MudWindow::Write8Bit(wxString command)
@@ -506,6 +514,18 @@ void MudWindow::Write8Bit(wxString command)
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
+		#ifdef WXOSX
+			//wxString su = command.ToUTF8();
+			wxString su = command;
+			if (su.empty()&&!command.empty())
+				su = command;
+			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
+			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(su.char_str(), su.char_str().length(), false);
+		#endif
+		
+		
 		#ifdef __WXMSW__
 			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
 			wxUint32 x = m_sock->LastCount();
@@ -1499,6 +1519,13 @@ static bool colset = false;
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
+			#ifdef WXOSX__
+			s = wxString(cBuffer);
+			//s = wxString::From8BitData((const char*) cBuffer);
+			if (s.empty())
+				s = wxString::From8BitData((const char*)cBuffer);
+			#endif
+			
 			#ifdef __WXMSW__
 			s = wxString::From8BitData((const char*) cBuffer);
 			#endif
@@ -5158,6 +5185,9 @@ wxSize si;
 			#ifdef __WXGTK__
 				startx += si.GetWidth();
 			#endif
+			#ifdef WXOSX
+				startx += si.GetWidth();
+			#endif
 			if (stringpos+xx==m_wrap*lines)
 			{
 				startx=1;
@@ -5221,6 +5251,9 @@ wxCoord MudWindow::DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, w
 			startx += si.GetWidth();
 		#endif
 		#ifdef __WXGTK__
+			startx += si.GetWidth();
+		#endif
+		#ifdef WXOSX
 			startx += si.GetWidth();
 		#endif
 	}
@@ -5354,7 +5387,7 @@ WXTYPE evt;
 	//AdjustScrollPage();
 	#endif
 	
-	#if defined __WXGTK__
+	#if defined __WXGTK 
 	if (GetKEvtForwarded())//key evts have oldpos
 	{
         if (evt == wxEVT_SCROLLWIN_PAGEUP)
@@ -5384,6 +5417,37 @@ WXTYPE evt;
 	//Refresh();
 	//Update();
 	#endif
+	#if defined WXOSX 
+	if (GetKEvtForwarded())//key evts have oldpos
+	{
+        if (evt == wxEVT_SCROLLWIN_PAGEUP)
+            pos -= GetScrollThumb(wxVERTICAL);
+        else if (evt==wxEVT_SCROLLWIN_PAGEDOWN)
+            pos += GetScrollThumb(wxVERTICAL);
+        else if (evt==wxEVT_SCROLLWIN_TOP)
+            pos = 0;
+        else if (evt==wxEVT_SCROLLWIN_BOTTOM)
+            pos = m_curline-GetScrollThumb(wxVERTICAL);
+    SetKEvtForwarded(false);
+    }
+	
+	if (pos<0)
+		pos = 0;
+	if (pos>m_curline)
+		pos = m_curline;
+	//AdjustScrollPage();
+	//if (oldpos!=pos)
+	//{
+		//SetScrollPos(wxVERTICAL, pos);
+		SetScrollbar(wxVERTICAL, pos, m_scrollrange, m_curline);
+		Refresh();
+		Update();
+	//}
+	//SetScrollPos(wxVERTICAL, pos);
+	//Refresh();
+	//Update();
+	#endif
+	
 	event.Skip();
 }
 

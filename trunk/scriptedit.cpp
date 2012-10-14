@@ -78,14 +78,18 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	SetFoldFlags (wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED |
                   wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
 	MudMainFrame *f = wxGetApp().GetFrame();
-	#if defined __WXMSW__
+	//#if defined __WXMSW__
+	wxFont font (*f->GetScriptFont());
+	wxFont bfont (m_fontsize, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, font.GetFaceName());
+	//#endif
+	/*#if defined __WXGTK_
 	wxFont font (*f->GetScriptFont());
 	wxFont bfont (m_fontsize, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, font.GetFaceName());
 	#endif
-	#if defined __WXGTK__
+	#if defined __WXOSX
 	wxFont font (*f->GetScriptFont());
 	wxFont bfont (m_fontsize, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, font.GetFaceName());
-	#endif
+	#endif*/
 	m_font = font;
     StyleSetFont (wxSTC_STYLE_DEFAULT, m_font);
     StyleSetForeground (wxSTC_STYLE_DEFAULT, *wxBLACK);

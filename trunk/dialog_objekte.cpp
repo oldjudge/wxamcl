@@ -98,7 +98,10 @@ s_it it;
 tr_it iter;
 
 	m_tree->DeleteAllItems();
-	m_tree->AddRoot(wxString::Format(_("Actions (%d)"), m_frame->GetTrigger()->size()),0,0);
+	wxString msg;
+	msg<<"Actions ("<<m_frame->GetTrigger()->size()<<")";
+	//m_tree->AddRoot(wxString::Format(_("Actions (%d)"), m_frame->GetTrigger()->size()),0,0);
+	m_tree->AddRoot(msg,0,0);
 	m_class->Clear();
 	m_class->Append("default");
 
@@ -268,7 +271,9 @@ s_it sit;
 			}
 		}
 	}
+	#ifndef WXOSX
 	m_parentw->SetSelection(0);
+	#endif
 	m_gaugew->ExpandAll();
 	//Fill controls with vars
 	v_it iter;
