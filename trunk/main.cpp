@@ -171,9 +171,9 @@ bool MudClientApp::OnInit()
 	frame->m_mgr.AddPane(frame->m_child, wxAuiPaneInfo().Name("amcmain").Center().CenterPane().Dockable(false).Floatable(false));
 	frame->m_mgr.AddPane(frame->m_toggle, wxAuiPaneInfo().Name(wxT("amctoggle")).Bottom().Floatable(false).CaptionVisible(false).MaxSize(48,24).Fixed().Position(1));
 	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(wxT("amcprompt")).Bottom().CaptionVisible(false).Hide());
-	//frame->m_mgr.AddPane(new amcColorComboBox(frame), wxAuiPaneInfo().Top());
+
 	frame->m_mgr.AddPane(frame->m_toolbar, wxAuiPaneInfo().Name("amctoolbar").ToolbarPane().Caption(_("Main Toolbar")).Top().LeftDockable(false).RightDockable(false));
-	//frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Float().Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
+	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Float().Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
 	frame->m_mgr.Update();
 	
 	//splitter->Msg(wxT("Splitter"));
@@ -197,7 +197,7 @@ bool MudClientApp::OnInit()
 #if defined __WXGTK__
 	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
-#if defined __WXOSX__
+#if defined WXOSX
 	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
 
@@ -362,11 +362,14 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	// set the frame icon
     //wxIcon aamud11(aamud11_xpm);
 	//SetIcon(aamud11);
+	#if defined WXOSX
 	#include "mud11.xpm"
 	wxIcon icon = wxICON(net);
-	//SetIcon(wxICON(aamud11));
 	SetIcon(icon);
-	//SetIcon(aamud11_xpm);
+	#endif
+	#ifndef WXOSX
+		SetIcon(wxICON(aamud11));
+	#endif
 	m_mgr.SetManagedWindow(this);
 	m_mgr.SetDockSizeConstraint(0.5, 0.5);
 	unsigned int flags;// = m_mgr.GetFlags();
@@ -384,6 +387,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxLocale::AddCatalogLookupPathPrefix("/usr/local/share/locale");
 	#endif
 	#if defined __WXMSW__
+	wxLocale::AddCatalogLookupPathPrefix(".");
+	#endif
+	#if defined WXOSX
 	wxLocale::AddCatalogLookupPathPrefix(".");
 	#endif
 	m_locale = new wxLocale(wxLANGUAGE_GERMAN);
@@ -519,7 +525,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 #if defined __WXGTK__
 	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
 #endif
-#if defined __WXOSX_
+#if defined WXOSX
 	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
 #endif
 #if defined __WXMSW__
@@ -530,9 +536,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Terminus");
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Terminus");
 #endif
-#if defined __WXOSX__
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier");
-	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Courier");
+#if defined WXOSX
+	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier New");
+	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Courier New");
 #endif	
 }
 
@@ -792,8 +798,8 @@ static bool bodown = false;
 void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 {
 
-	if (event.IsChecked())
-	{
+	//if (event.IsChecked())
+	//{
 		if (UseSplitter() && !m_splitter->IsShown())
 		{
 			m_child->Freeze();
@@ -809,9 +815,6 @@ void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 			m_child->Thaw();
 			return;
 		}
-	}
-	else
-	{
 		if (m_splitter->IsShown())
 		{
 			m_child->Freeze();
@@ -822,7 +825,11 @@ void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 			m_child->Thaw();
 			return;
 		}
-	}
+	//}
+	//else
+	//{
+		
+	//}
 	//sendto->SetKEvtForwarded(true);
 	//sendto->GetEventHandler()->ProcessEvent(newevt);
 	return;

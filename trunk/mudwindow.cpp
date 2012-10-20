@@ -5179,15 +5179,8 @@ wxSize si;
 				dc->SetFont(*m_font);
 			//startx += (char_len);
 			//startx += 1;
-			#ifdef __WXMSW__
-				startx += si.GetWidth();	
-			#endif
-			#ifdef __WXGTK__
-				startx += si.GetWidth();
-			#endif
-			#ifdef WXOSX
-				startx += si.GetWidth();
-			#endif
+			startx += si.GetWidth();	
+			
 			if (stringpos+xx==m_wrap*lines)
 			{
 				startx=1;
@@ -5247,15 +5240,8 @@ wxCoord MudWindow::DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, w
 		dc->SetClippingRegion(startx, starty, si.GetWidth(), si.GetHeight());
 		dc->DrawText(text, startx, starty);
 		dc->DestroyClippingRegion();
-		#ifdef __WXMSW__
-			startx += si.GetWidth();
-		#endif
-		#ifdef __WXGTK__
-			startx += si.GetWidth();
-		#endif
-		#ifdef WXOSX
-			startx += si.GetWidth();
-		#endif
+		startx += si.GetWidth();
+		
 	}
 	//startx += (wxCoord)m_vmudlines.at(lnr).m_vstyle.at(snr).GetLen()*char_len;
 	
@@ -5387,7 +5373,7 @@ WXTYPE evt;
 	//AdjustScrollPage();
 	#endif
 	
-	#if defined __WXGTK 
+	#if defined __WXGTK__ 
 	if (GetKEvtForwarded())//key evts have oldpos
 	{
         if (evt == wxEVT_SCROLLWIN_PAGEUP)
@@ -5905,6 +5891,22 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 	}
     #endif
 	#if defined __WXGTK__
+	if (m_parent->UseSplitter() && !m_parent->m_splitter->IsShown() && event.GetWheelRotation()>0)
+	{
+		m_parent->m_child->Freeze();
+		m_parent->m_splitter->SetLineBuffer(m_parent->m_child->GetLines());
+		m_parent->m_splitter->m_curline = m_parent->m_child->m_curline;
+		m_parent->m_mgr.GetPane(wxT("amcsplitter")).Show();
+		m_parent->m_mgr.Update();
+		int line = m_parent->m_child->m_curline-m_parent->m_child->m_scrollrange;
+		m_parent->m_splitter->SetScrollPage();
+		m_parent->m_splitter->SetScrollPos(wxVERTICAL, line-m_parent->m_splitter->m_scrollrange);
+		m_parent->m_splitter->Refresh();
+		m_parent->m_splitter->Update();
+		m_parent->m_child->Thaw();
+	}
+	#endif
+	#if defined WXOSX
 	if (m_parent->UseSplitter() && !m_parent->m_splitter->IsShown() && event.GetWheelRotation()>0)
 	{
 		m_parent->m_child->Freeze();

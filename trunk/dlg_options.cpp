@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -19,17 +19,16 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_nb = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	wxSize m_nbImageSize = wxSize( 16,16 );
 	int m_nbIndex = 0;
-	wxImageList* m_nbImages = new wxImageList( 32, 32 );
+	wxImageList* m_nbImages = new wxImageList( m_nbImageSize.GetWidth(), m_nbImageSize.GetHeight() );
 	m_nb->AssignImageList( m_nbImages );
-	//wxBitmap m_nbBitmap;
-	//wxImage m_nbImage;
+	wxBitmap m_nbBitmap;
+	wxImage m_nbImage;
 	m_general = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
 	wxGridBagSizer* gbSizer3;
 	gbSizer3 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer3->SetFlexibleDirection( wxBOTH );
 	gbSizer3->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -109,7 +108,9 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	gSizer1->Add( m_listvar, 0, wxALL, 5 );
 	
+	
 	sbSizer1->Add( gSizer1, 0, wxALL, 5 );
+	
 	
 	gbSizer3->Add( sbSizer1, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -137,7 +138,9 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_histsize = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxSP_ARROW_KEYS, 0, 200, 200 );
 	gbSizer1->Add( m_histsize, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
+	
 	bSizer6->Add( gbSizer1, 1, wxALL, 5 );
+	
 	
 	sbSizer5->Add( bSizer6, 1, wxALL, 5 );
 	
@@ -146,6 +149,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_tablist = new wxButton( m_general, wxID_ANY, _("Edit tabcompletion list"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer5->Add( m_tablist, 0, wxALL, 5 );
+	
 	
 	gbSizer3->Add( sbSizer5, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -165,52 +169,64 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_promptpattern = new wxTextCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer10->Add( m_promptpattern, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer3->Add( sbSizer10, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer12;
 	sbSizer12 = new wxStaticBoxSizer( new wxStaticBox( m_general, wxID_ANY, _("Connection options") ), wxVERTICAL );
 	
-	m_mccp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MCCP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_mccp, 0, wxALL, 5 );
-	
-	m_mxp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MXP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_mxp, 0, wxALL, 5 );
-	
-	m_msp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MSP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_msp, 0, wxALL, 5 );
-	
-	m_useaardopts = new wxCheckBox( m_general, wxID_ANY, _("Use Aard Telopts"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_useaardopts, 0, wxALL, 5 );
-	
-	m_atcp = new wxCheckBox( m_general, wxID_ANY, _("Use ATCP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_atcp, 0, wxALL, 5 );
-	
-	m_useMSDP = new wxCheckBox( m_general, wxID_ANY, _("Use MSDP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_useMSDP, 0, wxALL, 5 );
+	wxFlexGridSizer* fgSizer1;
+	fgSizer1 = new wxFlexGridSizer( 0, 2, 0, 0 );
+	fgSizer1->AddGrowableCol( 0 );
+	fgSizer1->AddGrowableRow( 0 );
+	fgSizer1->SetFlexibleDirection( wxBOTH );
+	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
 	m_gmcp = new wxCheckBox( m_general, wxID_ANY, _("Use GMCP"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_gmcp, 0, wxALL, 5 );
+	fgSizer1->Add( m_gmcp, 0, wxALL, 5 );
 	
 	m_gmcpmodules = new wxTextCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL );
-	sbSizer12->Add( m_gmcpmodules, 1, wxALL|wxEXPAND, 5 );
+	fgSizer1->Add( m_gmcpmodules, 1, wxALL|wxEXPAND, 5 );
+	
+	m_mccp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MCCP"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_mccp, 0, wxALL, 5 );
+	
+	m_mxp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MXP"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_mxp, 0, wxALL, 5 );
+	
+	m_msp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MSP"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_msp, 0, wxALL, 5 );
+	
+	m_useMSDP = new wxCheckBox( m_general, wxID_ANY, _("Use MSDP"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_useMSDP, 0, wxALL, 5 );
+	
+	m_useaardopts = new wxCheckBox( m_general, wxID_ANY, _("Use Aard Telopts"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_useaardopts, 0, wxALL, 5 );
+	
+	m_atcp = new wxCheckBox( m_general, wxID_ANY, _("Use ATCP"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_atcp, 0, wxALL, 5 );
 	
 	m_iacgaeor = new wxCheckBox( m_general, wxID_ANY, _("GA EOR"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_iacgaeor, 0, wxALL, 5 );
+	fgSizer1->Add( m_iacgaeor, 0, wxALL, 5 );
 	
 	m_naws = new wxCheckBox( m_general, wxID_ANY, _("Negotiate NAWS"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_naws, 0, wxALL, 5 );
-	
-	m_autoreconnect = new wxCheckBox( m_general, wxID_ANY, _("Reconnect after disconnect"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_autoreconnect, 0, wxALL, 5 );
-	
-	m_acdelay = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 15 );
-	sbSizer12->Add( m_acdelay, 0, wxALL, 5 );
+	fgSizer1->Add( m_naws, 0, wxALL, 5 );
 	
 	m_utf8 = new wxCheckBox( m_general, wxID_ANY, _("UTF8 connection"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_utf8, 0, wxALL, 5 );
+	fgSizer1->Add( m_utf8, 0, wxALL, 5 );
 	
 	m_ipv6 = new wxCheckBox( m_general, wxID_ANY, _("Use IPV6"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer12->Add( m_ipv6, 0, wxALL, 5 );
+	fgSizer1->Add( m_ipv6, 0, wxALL, 5 );
+	
+	m_autoreconnect = new wxCheckBox( m_general, wxID_ANY, _("Reconnect after disconnect"), wxDefaultPosition, wxDefaultSize, 0 );
+	fgSizer1->Add( m_autoreconnect, 0, wxALL, 5 );
+	
+	m_acdelay = new wxSpinCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 100, 15 );
+	fgSizer1->Add( m_acdelay, 0, wxALL, 5 );
+	
+	
+	sbSizer12->Add( fgSizer1, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer3->Add( sbSizer12, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -245,18 +261,23 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_eventfile = new wxFilePickerCtrl( m_general, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Lua files|*.lua"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
 	sbSizer13->Add( m_eventfile, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer3->Add( sbSizer13, wxGBPosition( 1, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
+	
+	
 	gbSizer3->AddGrowableCol( 0 );
 	gbSizer3->AddGrowableCol( 1 );
 	gbSizer3->AddGrowableCol( 2 );
 	gbSizer3->AddGrowableRow( 0 );
 	gbSizer3->AddGrowableRow( 1 );
+	
 	bSizer2->Add( gbSizer3, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	m_general->SetSizer( bSizer2 );
 	m_general->Layout();
 	bSizer2->Fit( m_general );
-	m_nb->AddPage( m_general, _("General"), true );
+	m_nb->AddPage( m_general, _("General"), false );
 	m_telnet = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer51;
 	bSizer51 = new wxBoxSizer( wxVERTICAL );
@@ -277,9 +298,11 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	bSizer5->Add( m_staticText8, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_linebuf = new wxSpinCtrl( m_telnet, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 1, 100000, 3000 );
-	bSizer5->Add( m_linebuf, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	bSizer5->Add( m_linebuf, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
 	
 	sbSizer3->Add( bSizer5, 1, wxALL|wxTOP, 5 );
+	
 	
 	gbSizer2->Add( sbSizer3, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -289,6 +312,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_font = new wxFontPickerCtrl( m_telnet, wxID_ANY, wxFont( 10, 70, 90, 90, false, wxT("Consolas") ), wxDefaultPosition, wxDefaultSize, wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL );
 	m_font->SetMaxPointSize( 100 ); 
 	sbSizer6->Add( m_font, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer2->Add( sbSizer6, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
@@ -300,6 +324,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_milli = new wxCheckBox( m_telnet, wxID_ANY, _("Show milliseconds"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_milli, 0, wxALL, 5 );
+	
 	
 	gbSizer2->Add( sbSizer8, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
@@ -330,6 +355,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_col8 = new wxColourPickerCtrl( m_telnet, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	sbSizer9->Add( m_col8, 0, wxALL, 5 );
 	
+	
 	gbSizer2->Add( sbSizer9, wxGBPosition( 3, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer91;
@@ -359,6 +385,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_col16 = new wxColourPickerCtrl( m_telnet, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	sbSizer91->Add( m_col16, 0, wxALL, 5 );
 	
+	
 	gbSizer2->Add( sbSizer91, wxGBPosition( 4, 0 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer81;
@@ -375,6 +402,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_scriptverbose = new wxCheckBox( m_telnet, wxID_ANY, _("Script verbose on"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer81->Add( m_scriptverbose, 0, wxALL, 5 );
+	
 	
 	gbSizer2->Add( sbSizer81, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
@@ -405,7 +433,9 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText14->Wrap( -1 );
 	gSizer2->Add( m_staticText14, 0, wxALL, 5 );
 	
+	
 	sbSizer92->Add( gSizer2, 1, wxEXPAND, 5 );
+	
 	
 	gbSizer2->Add( sbSizer92, wxGBPosition( 5, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
@@ -429,6 +459,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_linewrap = new wxSpinCtrl( m_telnet, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 1000, 0 );
 	sbSizer11->Add( m_linewrap, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
+	
 	gbSizer2->Add( sbSizer11, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer14;
@@ -440,21 +471,33 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_usesplit = new wxCheckBox( m_telnet, wxID_ANY, _("Use splitwindow for scrollback"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer14->Add( m_usesplit, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer2->Add( sbSizer14, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
+	
+	gbSizer2->AddGrowableCol( 0 );
+	gbSizer2->AddGrowableCol( 1 );
+	gbSizer2->AddGrowableCol( 2 );
+	gbSizer2->AddGrowableRow( 0 );
+	gbSizer2->AddGrowableRow( 1 );
+	gbSizer2->AddGrowableRow( 2 );
+	gbSizer2->AddGrowableRow( 3 );
+	gbSizer2->AddGrowableRow( 4 );
+	gbSizer2->AddGrowableRow( 5 );
+	
 	bSizer51->Add( gbSizer2, 1, wxALL|wxEXPAND, 5 );
+	
 	
 	m_telnet->SetSizer( bSizer51 );
 	m_telnet->Layout();
 	bSizer51->Fit( m_telnet );
-	m_nb->AddPage( m_telnet, _("Output options"), false );
+	m_nb->AddPage( m_telnet, _("Output options"), true );
 	m_log = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer61;
 	bSizer61 = new wxBoxSizer( wxVERTICAL );
 	
 	wxGridBagSizer* gbSizer4;
 	gbSizer4 = new wxGridBagSizer( 0, 0 );
-	
 	gbSizer4->SetFlexibleDirection( wxBOTH );
 	gbSizer4->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
@@ -491,6 +534,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_startlog = new wxToggleButton( m_log, wxID_ANY, _("Start logging"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer16->Add( m_startlog, 0, wxALIGN_CENTER|wxALL, 5 );
 	
+	
 	gbSizer4->Add( sbSizer16, wxGBPosition( 0, 0 ), wxGBSpan( 5, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer22;
@@ -498,6 +542,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_workdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer22->Add( m_workdir, 0, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer4->Add( sbSizer22, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -507,6 +552,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_profdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer161->Add( m_profdir, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer4->Add( sbSizer161, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer18;
@@ -514,6 +560,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_scriptdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer18->Add( m_scriptdir, 0, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer4->Add( sbSizer18, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -523,6 +570,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_packdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer19->Add( m_packdir, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer4->Add( sbSizer19, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer21;
@@ -530,6 +578,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	m_dbdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer21->Add( m_dbdir, 0, wxALL|wxEXPAND, 5 );
+	
 	
 	gbSizer4->Add( sbSizer21, wxGBPosition( 4, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
@@ -539,6 +588,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_mspdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer211->Add( m_mspdir, 0, wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer4->Add( sbSizer211, wxGBPosition( 5, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer221;
@@ -547,14 +597,27 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_luadir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
 	sbSizer221->Add( m_luadir, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
+	
 	gbSizer4->Add( sbSizer221, wxGBPosition( 6, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	
+	
 	gbSizer4->AddGrowableCol( 1 );
+	
 	bSizer61->Add( gbSizer4, 1, wxEXPAND, 5 );
+	
 	
 	m_log->SetSizer( bSizer61 );
 	m_log->Layout();
 	bSizer61->Fit( m_log );
 	m_nb->AddPage( m_log, _("Logging && paths"), false );
+	m_nbBitmap = wxNullBitmap;
+	if ( m_nbBitmap.Ok() )
+	{
+		m_nbImage = m_nbBitmap.ConvertToImage();
+		m_nbImages->Add( m_nbImage.Scale( m_nbImageSize.GetWidth(), m_nbImageSize.GetHeight() ) );
+		m_nb->SetPageImage( m_nbIndex, m_nbIndex );
+		m_nbIndex++;
+	}
 	
 	bSizer1->Add( m_nb, 10, wxEXPAND | wxALL, 5 );
 	
@@ -564,7 +627,9 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
 	m_sdbSizer1->Realize();
+	
 	bSizer1->Add( m_sdbSizer1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
 	
 	this->SetSizer( bSizer1 );
 	this->Layout();

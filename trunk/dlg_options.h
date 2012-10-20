@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Sep  8 2010)
+// C++ code generated with wxFormBuilder (version Apr 10 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __dlg_options__
-#define __dlg_options__
+#ifndef __DLG_OPTIONS_H__
+#define __DLG_OPTIONS_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -54,7 +55,7 @@ class DlgOptions : public wxDialog
 			ID_CSCRIPT,
 			ID_CSP,
 			ID_CSPR,
-			ID_CV,
+			ID_CV
 		};
 		
 		wxNotebook* m_nb;
@@ -83,20 +84,20 @@ class DlgOptions : public wxDialog
 		wxCheckBox* m_gagprompt;
 		wxStaticText* m_staticText131;
 		wxTextCtrl* m_promptpattern;
+		wxCheckBox* m_gmcp;
+		wxTextCtrl* m_gmcpmodules;
 		wxCheckBox* m_mccp;
 		wxCheckBox* m_mxp;
 		wxCheckBox* m_msp;
+		wxCheckBox* m_useMSDP;
 		wxCheckBox* m_useaardopts;
 		wxCheckBox* m_atcp;
-		wxCheckBox* m_useMSDP;
-		wxCheckBox* m_gmcp;
-		wxTextCtrl* m_gmcpmodules;
 		wxCheckBox* m_iacgaeor;
 		wxCheckBox* m_naws;
-		wxCheckBox* m_autoreconnect;
-		wxSpinCtrl* m_acdelay;
 		wxCheckBox* m_utf8;
 		wxCheckBox* m_ipv6;
+		wxCheckBox* m_autoreconnect;
+		wxSpinCtrl* m_acdelay;
 		wxCheckBox* m_evall;
 		wxCheckBox* m_onconnect;
 		wxCheckBox* m_ondisconnect;
@@ -196,9 +197,9 @@ class DlgOptions : public wxDialog
 	
 	public:
 		
-		DlgOptions( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+		DlgOptions( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Options"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~DlgOptions();
 	
 };
 
-#endif //__dlg_options__
+#endif //__DLG_OPTIONS_H__
