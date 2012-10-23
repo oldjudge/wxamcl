@@ -5089,7 +5089,9 @@ wxCoord startx=1;
 	{
 		for (it = m_vmudlines.at(lnr).m_vstyle.begin(); it!=m_vmudlines.at(lnr).m_vstyle.end(); it++)
 		{
+			it->SetXPos(startx);
 			startx = DrawStyle(dc, lnr, x++, startx, starty, char_len);
+			it->SetDXPos(startx);
 		}
 	}
 	starty-=char_height;
@@ -5170,6 +5172,7 @@ wxSize si;
 			
 			si = dc->GetTextExtent(sub);
 			dc->SetClippingRegion(startx, starty, si.GetWidth(), char_height);
+			m_vmudlines.at(lnr).m_vstyle.at(x).SetXPos(startx);
 			dc->DrawText(sub, startx, starty);
 			dc->DestroyClippingRegion();
 			
@@ -5198,6 +5201,7 @@ wxSize si;
 				startx=1;
 				starty += char_height;
 			}
+			m_vmudlines.at(lnr).m_vstyle.at(x).SetDXPos(startx);
 		}
 		if (sublines && sublen==stringpos)
 			break;
@@ -5638,7 +5642,9 @@ bool multiline = false;
 		
 		if (!cur_subline || it== m_vmudlines.at(line).m_vstyle.end()-1)
 		{
-			if ((cxpos-stamp_offset) <= len )
+			//if ((cxpos-stamp_offset) <= len )
+				//break;
+			if (p.x>=it->GetXPos() && p.x<=it->GetDXPos())
 				break;
 		}
 		
@@ -5646,7 +5652,8 @@ bool multiline = false;
 	
 	if (x>=m_vmudlines.at(line).m_vstyle.size())
 		 it = m_vmudlines.at(line).m_vstyle.end()-1;
-	if ((cxpos-stamp_offset)<=len)
+	//if ((cxpos-stamp_offset)<=len)
+	if (p.x>=it->GetXPos() && p.x<=it->GetDXPos())
 	{
 		if ( (it->GetFontStyle()==4 && it->GetURL()) || (it->GetFontStyle()==4 && it->GetMXPSend()) )
 		{
@@ -5756,7 +5763,9 @@ int stamp_offset = 0;
 		
 		if (!cur_subline || it== m_vmudlines.at(line).m_vstyle.end()-1)
 		{
-			if ((cxpos-stamp_offset) <= len )
+			//if ((cxpos-stamp_offset) <= len )
+				//break;
+			if (p.x>=it->GetXPos() && p.x<=it->GetDXPos())
 				break;
 		}
 		
@@ -5779,7 +5788,8 @@ int stamp_offset = 0;
 		if ((cxpos-stamp_offset) <= len)
 			break;
 	}*/
-	if ((cxpos-stamp_offset)<=len)
+	//if ((cxpos-stamp_offset)<=len)
+	if (p.x>=it->GetXPos() && p.x<=it->GetDXPos())
 	{
 		/*if (it->GetFontStyle()==4 && it->GetURL())
 		{
@@ -5837,17 +5847,7 @@ int stamp_offset = 0;
 		
 	}
 	
-	/*if (!m_selected)
-	{
-		m_selstart = event.GetPosition();
-		m_selected = true;
-		m_selline = m_sellineend = CalcLine(m_selstart);
-	}
-	else
-	{
-		m_selected = false;
-		m_selline = m_sellineend = -1;
-	}*/
+	
 	Refresh();
 	Update();
 	event.Skip();

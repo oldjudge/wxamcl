@@ -250,7 +250,7 @@ enum
 
 #define OVECCOUNT 60
 
-#define APP_VERSION "0.1.r79"
+#define APP_VERSION "0.1.r81"
 
 #include "mudwindow.h"
 #include "luadefs.h"

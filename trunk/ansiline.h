@@ -34,6 +34,10 @@ public:
 	vector<wxString> *GetMXPCommand() {return &m_mxpcommand;}
 	vector<wxString> *GetMXPLabel() {return &m_mxplabel;}
 	wxString GetHint() {return m_hint;}
+	wxInt32 GetXPos() {return m_xpos;}
+	wxInt32 GetDXPos() {return m_dxpos;}
+	void SetXPos(wxInt32 x) {m_xpos=x;}
+	void SetDXPos(wxInt32 x) {m_dxpos=x;}
 private:
 	//wxString *m_text;
 	wxString m_text;
@@ -50,6 +54,8 @@ private:
 	vector<wxString> m_mxplabel;
 	wxString m_hint;
 	wxString m_url;
+	wxInt32 m_xpos;
+	wxInt32 m_dxpos;
 };
 
 //WX_DECLARE_LIST(AnsiLineElement, StyleList);

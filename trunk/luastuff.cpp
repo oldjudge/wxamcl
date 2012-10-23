@@ -1693,7 +1693,7 @@ int luafunc_convertprofile(lua_State *L)
 		#endif
 		#ifdef WXOSX
 			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_MAC);
-			#endif
+		#endif
 		s.clear();
 		s<<frame->GetGlobalOptions()->GetPackageDir()<<evf<<"."<<evx;
 		frame->GetPackages()->at(i).assign(s);
