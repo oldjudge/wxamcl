@@ -1,1 +1,18 @@
 #summary Documentation for user window Lua functions
+
+= User window Functions =
+* [UserWindows#UserWindow_Functions Functions for creating and manipulating user windows]
+ * [UserWindows#wxamcl.createwindow wxamcl.createwindow]
+ * [UserWindows#wxamcl.showwindow wxamcl.showwindow]
+ * [UserWindows#wxamcl.hidewindow wxamcl.hidewindow]
+ * [UserWindows#wxamcl.destroywindow wxamcl.destroywindow]
+ * [UserWindows#wxamcl.clearwindow wxamcl.clearwindow]
+ * [Userwindows#wxamcl.setbackground wxamcl.setbackground]
+ * [UserWindows#wxamcl.createnb wxamcl.createnb]
+ * [UserWindows#wxamcl.addpage wxamcl.addpage]
+ * [UserWindows#wxamcl.destroynb wxamcl.destroynb]
+ * [UserWindows#wxamcl.createtoolbar wxamcl.createtoolbar]
+ * [UserWindows#wxamcl.addbtn wxamcl.addbtn]
+* [UserWindows#Create_amc_window Create flexible user windows]
+ * [UserWindows#wxamcl.createamcwin wxamcl.createamcwin]
+ * [UserWindows#wxamcl.destroyamcwindow wxamcl.destroyamcwindow]

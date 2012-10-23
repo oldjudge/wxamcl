@@ -11,6 +11,7 @@
   * [ClientCommands#capturewin #capturewin]
   * [ClientCommands#clearwin #clearwin]
   * [ClientCommands#connect #connect]
+  * [ClientCommands#connect6 #connect6]
   * [ClientCommands#debugGMCP #debugGMCP]
   * [ClientCommands#func #func]
   * [ClientCommands#gag #gag]
@@ -81,6 +82,13 @@
   #connect(mudname, port)
   #connect("aardmud.org", "4000")
   }}}
+ == connect6 ==
+ Connect the client to a mud via IPv6 protocol.
+ Usage:
+ {{{
+ #connect6(mudname, port)
+ #connect6("aardmud.org", "4000")
+ }}}
  == debugGMCP ==
   Write gmcp messages to a file named "debuggmcp.txt". The file will be saved in the working directory.
   Usage:

@@ -23,7 +23,7 @@
 	Print text to the main mud window.
     ==== Usage: ====
 		`msg = wxamcl.echo(text, fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		msg = wxamcl.echo("This is a test", "black", "green")
 		wxamcl.echo("Text on screen")
@@ -35,7 +35,7 @@
 	Print text to a user created window.
 	==== Usage: ====
 		`msg = wxamcl.echo(window, text, fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		msg = wxamcl.echo("chat", "This is a test in a window named 'chat'!", "black", "green")
 		wxamcl.echo("userwin1", "Text on screen")
@@ -44,10 +44,10 @@
        }}}
 	The function returns the text parameter.
    === wxamcl.substitute ===
-	Replace text from mud and display the new line instead of the original one.
+	Replace text from mud and display the new line instead of the original one. Use this within a trigger (action).
 	==== Usage: ====
 		`wxamcl.substitute(oldtext, newtext)`
-		Examples:
+		
 		{{{
 		wxamcl.substitute("Tom", "Jerry")
 		wxamcl.substitute("Tom", "^x22J^x123e^x99r^x221r^x167y!")
@@ -58,7 +58,7 @@
 	Print colored text to the main mud window without creating a newline to create multicolored text lines.
     ==== Usage: ====
 		`wxamcl.color(text, fg-color (optional), bg-color (optional))`
-		Examples:
+	
 		{{{
 		wxamcl.color("This is a test", "black", "green")
 		wxamcl.color("Text on screen")
@@ -78,7 +78,7 @@
 	Print colored text to a user created window without creating a newline to create multicolored text lines.
     ==== Usage: ====
 		`wxamcl.colorwin(window, text, fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		wxamcl.colorwin("chat", "This is a test", "black", "green")
 		wxamcl.colorwin("window", "Text on screen")
@@ -98,7 +98,7 @@
 	This function colors all occurances of 'word' in the given color combination. Use this within an action.
     ==== Usage: ====
 		`wxamcl.colorword(word, fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		wxamcl.colorword("Tom", "lavender", "maroon")
 		wxamcl.colorword("Tom", "#ffffff")
@@ -110,7 +110,7 @@
     This function colors a line of text in the output buffer.
     ==== Usage: ====
 		`wxamcl.colorline(linenumber, fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		wxamcl.colorline(23, "lavender", "maroon")
 		wxamcl.colorline(wxamcl.getlinenumber(), "#ffffff")
@@ -121,7 +121,7 @@
 	This function colors the whole visible output buffer.
     ==== Usage: ====
 		`wxamcl.colorall(fg-color (optional), bg-color (optional))`
-		Examples:
+		
 		{{{
 		wxamcl.colorall("lavender", "maroon")
 		wxamcl.colorall("#ffffff")
@@ -133,7 +133,7 @@
 	This function retrieves the number of the last received line.
     ==== Usage: ====
 		`nr = wxamcl.getlinenumber()`
-		Examples:
+		
 		{{{
 		nr = wxamcl.getlinenumber()
 		}}}
@@ -142,7 +142,7 @@
 	This function retrieves the line and all the styles for it as a table.
     ==== Usage: ====
 		`t = wxamcl.getline(linenumber)`
-		Examples:
+		
 		{{{
 		t = wxamcl.getline(33)
 		wxamcl.echo("")
@@ -155,7 +155,7 @@
 	This function enables or disables scrolling of the main output window.
     ==== Usage: ====
 		`wxamcl.scroll(true|false)`
-		Examples:
+		
 		{{{
 		wxamcl.scroll(true) --normal scrolling
 		wxamcl.scroll(false) --do not scroll even if new text arrives from mud
@@ -165,7 +165,7 @@
 	This function gags the current line from the main output window. Use in an action.
     ==== Usage: ====
 		`wxamcl.gag(line)`
-		Examples:
+		
 		{{{
 		wxamcl.gag(0) --gag current line
 		}}}
@@ -175,7 +175,7 @@
     Sends text unparsed to the Mud.
 	==== Usage: ====
 		`wxamcl.send(command)`
-		Examples:
+		
 		{{{
 		wxamcl.send("say ;)")
 		wxamcl.send("quit")
@@ -184,10 +184,10 @@
    === wxamcl.execute ===
     Sends a command to the Mud. The command is parsed as if typed in the command line. You can therefore send aliases, variables and so on.
 	==== Usage: ====
-		`wxamcl.send(command)`
-		Examples:
+		`wxamcl.execute(command)`
+		
 		{{{
-		wxamcl.send("look at "..$target)
-		wxamcl.send("quit")
+		wxamcl.execute("look at "..$target)
+		wxamcl.execute("quit")
 		}}}
 	The function returns nothing.

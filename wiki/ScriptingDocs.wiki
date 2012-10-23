@@ -5,7 +5,7 @@ This section contains the documentation for the client Lua interface.
 == Details ==
  You will find here a documentation of all scripting functions.
  Some general stuff:
-  The global lua object is called 'wxamcl'. So all functions are called like wxaml.echo("Test"). You can leave the wxamcl-prefix and call the functions direct by their name.
+  The global lua object is called 'wxamcl'. So all functions are called like wxaml.echo("Test"). 
   You can call scriptfunctions directly from the command line:
    ?wxamcl.echo("Test text", "red")
   You can call a whole scriptfile from the command line:
