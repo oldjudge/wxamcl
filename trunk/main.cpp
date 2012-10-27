@@ -173,7 +173,7 @@ bool MudClientApp::OnInit()
 	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(wxT("amcprompt")).Bottom().CaptionVisible(false).Hide());
 
 	frame->m_mgr.AddPane(frame->m_toolbar, wxAuiPaneInfo().Name("amctoolbar").ToolbarPane().Caption(_("Main Toolbar")).Top().LeftDockable(false).RightDockable(false));
-	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Float().Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
+	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
 	frame->m_mgr.Update();
 	
 	//splitter->Msg(wxT("Splitter"));
@@ -259,7 +259,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("JThis \x1b[33;1;44mis a \x1b[32mtest!\r\nNExtline\r\n", false);
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	amcMXP am(frame->m_child);
+	//amcMXP am(frame->m_child);
 	//am.Parse("<VAR hp>100</VAR>");
 	//am.Parse("By what name shall we know thee?\xff\xfa\x5b\xff\xf0\xff\xfa\xc9\xff\xf0");
 	//am.Parse("\x1b[1z<send \"look leather satchel\" hint=\"Click to see menu|look|eat|wear|remove|drop\">a \x1b[1;30mleather\x1b[0m satchel</Send>");
@@ -298,7 +298,7 @@ bool MudClientApp::OnInit()
 	//am.Parse("<Cyan>Cony says: Welcome to the Disc! This is a really friendly place where you can meet and talk to all kinds of folk.\x1b[3z<BR>");
 	//<!EN ob \"Cony\" private>
 	
-	am.Parse("<send href=\"look sash|read sash\" hint=\"menu|look sash|eat sash\">sash</send><BR><Green>Carrying: a <send href=\"look small bucket|drop small bucket|weigh small bucket|give small bucket to |read small bucket|condition small bucket|hold small bucket|unhold small bucket|open small bucket|close small bucket\" hint=\"Right-click to see a menu|look small bucket|drop small bucket|weigh small bucket|give small bucket to |read small bucket|condition small bucket|hold small bucket|unhold small bucket|open small bucket|close small bucket\">small bucket</send>");
+	//am.Parse("<send href=\"look sash|read sash\" hint=\"menu|look sash|eat sash\">sash</send><BR><Green>Carrying: a <send href=\"look small bucket|drop small bucket|weigh small bucket|give small bucket to |read small bucket|condition small bucket|hold small bucket|unhold small bucket|open small bucket|close small bucket\" hint=\"Right-click to see a menu|look small bucket|drop small bucket|weigh small bucket|give small bucket to |read small bucket|condition small bucket|hold small bucket|unhold small bucket|open small bucket|close small bucket\">small bucket</send>");
 	//am.Parse("<send>look\r\nat me</send>");
 	//am.Parse("<!EN ob \"Bob\">");
 	//am.Parse("<RExits>You see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR>, <COLOR #00FF00><SEND HREF=\"northeast\">northeast</SEND></COLOR>, and <COLOR #00FF00><SEND HREF=\"south\">south</SEND></COLOR>.</RExits>");
@@ -390,7 +390,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxLocale::AddCatalogLookupPathPrefix(".");
 	#endif
 	#if defined WXOSX
-	wxLocale::AddCatalogLookupPathPrefix(".");
+	wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::GetRessourcesDir());
 	#endif
 	m_locale = new wxLocale(wxLANGUAGE_GERMAN);
 	//wxDateTime::SetCountry(wxDateTime::USA);

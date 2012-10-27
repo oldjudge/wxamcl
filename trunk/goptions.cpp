@@ -83,7 +83,7 @@ void GlobalOptions::Init()
 		m_workdir.Assign(wxStandardPaths::Get().GetAppDocumentsDir());
 	#endif
 	wxString s;
-	#if defined __WXGTK_
+	#if defined __WXGTK__
 		wxStandardPaths p;
 		m_workdir.Assign(p.GetUserDataDir());
 		s = m_workdir.GetFullPath();

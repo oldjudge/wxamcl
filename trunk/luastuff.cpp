@@ -90,17 +90,17 @@ wxString amcLua::GetwxString(int idx)
 		//wxString ss(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		//if (s.empty())
 		#ifdef __WXMSW__
-		wxString s= wxString::From8BitData(string);
-		return s;
+			wxString s= wxString::From8BitData(string);
+			return s;
 		#endif
 		#ifdef __WXGTK__
 		//wxString s(string, wxCSConv(wxFONTENCODING_ISO8859_1));
-		return wxString::FromUTF8Unchecked(string);
+			return wxString::FromUTF8Unchecked(string);
 		//return s;
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		#endif
 		#ifdef WXOSX
-		return wxString::FromUTF8Unchecked(string);
+			return wxString::From8BitData(string);
 		#endif
 		//s = wxString::Format("%c", string);
 		//return s;
@@ -1640,7 +1640,7 @@ amcButton b;
 int luafunc_loadprofile(lua_State *L)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-	char* l = (char*)luaL_checkstring(L,1);//filename
+	const char* l = (char*)luaL_checkstring(L,1);//filename
 	if (frame->LoadProfile(wxFileName(l)))
 	{
 		lua_pushnumber(L, frame->GetTrigger()->size());
@@ -1657,6 +1657,7 @@ int luafunc_convertprofile(lua_State *L)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	const char *file = luaL_checkstring(L, 1);
+	int id = luaL_checkinteger(L, 2);//source file 0=MSW, 1=UNIX, 2=OSX
 	//wxString s = frame->GetGlobalOptions()->GetWorkDir();
 	wxFileName fn(frame->GetGlobalOptions()->GetWorkDir());
 	frame->LoadProfile(wxFileName(file));
@@ -1685,29 +1686,40 @@ int luafunc_convertprofile(lua_State *L)
 	for (size_t i=0; i< frame->GetPackages()->size(); i++)
 	{
 		wxString s= frame->GetPackages()->at(i);
-		#ifdef __WXMSW__
-			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_UNIX);
-		#endif
-		#ifdef __WXGTK__
+		switch (id)
+		{
+		case 0://MSW
 			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_WIN);
-		#endif
-		#ifdef WXOSX
+			break;
+		case 1:
+			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_UNIX);
+			break;
+		case 2:
 			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_MAC);
-		#endif
+			break;
+		default:
+			wxFileName::SplitPath(s, NULL, &evf, &evx, wxPATH_WIN);
+			break;
+		}
 		s.clear();
 		s<<frame->GetGlobalOptions()->GetPackageDir()<<evf<<"."<<evx;
 		frame->GetPackages()->at(i).assign(s);
 	}
+	switch (id)
+	{
+	case 0://MSW
+		wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_WIN);
+		break;
+	case 1:
+		wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_UNIX);
+		break;
+	case 2:
+		wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_MAC);
+		break;
+	default:
+		wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_WIN);
+	}
 	
-	#ifdef __WXGTK__
-	wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_WIN);
-	#endif
-	#ifdef __WXMSW__
-	wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_UNIX);
-	#endif
-	#ifdef WXOSX
-	wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_MAC);
-	#endif
 	wxFileName ev(frame->GetGlobalOptions()->GetScriptDir()+evf+"."+evx);
 	frame->GetGlobalOptions()->SetEventFile(ev.GetFullPath());
 	/*
