@@ -1519,7 +1519,7 @@ static bool colset = false;
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
-			#ifdef WXOSX__
+			#ifdef WXOSX
 			s = wxString(cBuffer);
 			//s = wxString::From8BitData((const char*) cBuffer);
 			if (s.empty())
@@ -6010,13 +6010,15 @@ wxUint32 uiBytesRead;
 					{
 						//wxStrcpy(cBuf, sss.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())));
 						//if (cBuf[0]=='\0')
-						wxStrcpy(cBuf, sss.char_str());
+						//wxStrcpy(cBuf, sss.char_str());
+						wxStrcpy(cBuf, sss.To8BitData());//works in windows at least
+						//wxStrcpy(cBuf, sss.utf8_str());
 					}
 					else if (uiBytesRead)
 					{
 						//wxStrcpy(m_cBuffer, sss.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())));
 						//if (m_cBuffer[0]=='\0')
-							wxStrcpy(m_cBuffer, sss.char_str());
+							wxStrcpy(m_cBuffer, sss.To8BitData());
 					}
 				}
 			}
