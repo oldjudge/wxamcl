@@ -61,6 +61,7 @@
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
+/* lua 51
 extern "C"
 {
 	//#include </usr/include/lua5.1/lua.h>
@@ -69,7 +70,14 @@ extern "C"
 	#include </usr/local/include/lua.h>
 	#include </usr/local/include/lauxlib.h>
 	#include </usr/local/include/lualib.h>
+}*/
+extern "C"
+{
+	#include </usr/local/include/lua.h>
+	#include </usr/local/include/lauxlib.h>
+	#include </usr/local/include/lualib.h>
 }
+
 #endif
 #if defined __WXMSW__
 extern "C"

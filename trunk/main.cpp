@@ -166,6 +166,17 @@ bool MudClientApp::OnInit()
 	wxSize s(200,200);
 	frame->m_media->Create(frame, ID_MEDIACTRL,"",wxDefaultPosition, s);
 	*/
+	frame->m_media = new wxMediaCtrl();
+#if defined __WXMSW__
+	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_WMP10);
+#endif
+#if defined __WXGTK__
+	frame->m_media->Create(frame, ID_MEDIACTRL, wxEmptyString, wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
+#endif
+#if defined WXOSX
+	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
+#endif
+
 	frame->m_mgr.AddPane(frame->m_input, wxAuiPaneInfo().Name("amcinput").Bottom().Floatable(true).Gripper().CaptionVisible(false).BestSize(500,24).Position(0));
 	frame->m_mgr.AddPane(frame->m_splitter, wxAuiPaneInfo().Name("amcsplitter").Top().Dockable(false).CaptionVisible(false).MinSize(200,200).Hide());//.Hide());
 	frame->m_mgr.AddPane(frame->m_child, wxAuiPaneInfo().Name("amcmain").Center().CenterPane().Dockable(false).Floatable(false));
@@ -518,16 +529,6 @@ MudMainFrame::MudMainFrame(const wxString& title)
 #endif*/
 	CreateDefVars();
 	DefineKeys();
-	m_media = new wxMediaCtrl();
-#if defined __WXMSW__
-	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_WMP10);
-#endif
-#if defined __WXGTK__
-	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
-#endif
-#if defined WXOSX
-	m_media->Create(this, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
-#endif
 #if defined __WXMSW__
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, "Consolas");
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
@@ -4833,13 +4834,14 @@ int InputTextCtrl::Media(wxString *sPar)
 	if (ParseFParams(sPar) != 2)
 		return -1;
 	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-	if (!GetFParam(2).Cmp("true"))
+	
+	if (!m_parent->m_media->Load(GetFParam(1)))
+		return 3;
+	/*if (!GetFParam(2).Cmp("true"))
 	{
 		m_parent->m_mgr.GetPane("amcmedia").Show().Float();
 		m_parent->m_mgr.Update();
-	}
-	if (!m_parent->m_media->Load(GetFParam(1)))
-		return 3;
+	}*/
 	return 0;
 }
 

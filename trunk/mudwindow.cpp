@@ -510,7 +510,7 @@ void MudWindow::Write8Bit(wxString command)
 			if (su.empty()&&!command.empty())
 				su = command;
 			//m_sock->Write(command.To8BitData(), command.To8BitData().length());//works in linux
-			m_sock->Write(su.To8BitData(), wxStrlen(su.To8BitData()));
+			m_sock->Write(command.To8BitData(), wxStrlen(command.To8BitData()));
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
@@ -5999,9 +5999,9 @@ wxUint32 uiBytesRead;
 				{
 					if (m_mccp2 && cBuf!=NULL)
 					{
-						wxStrcpy(cBuf, GetLState()->GetString(-1));
+						wxStrncpy(cBuf, GetLState()->GetString(-1), m_dc->GetUCLen());
 					}
-					else wxStrcpy(m_cBuffer, GetLState()->GetString(-1));
+					else wxStrncpy(m_cBuffer, GetLState()->GetString(-1), uiBytesRead);
 				}
 				else
 				{
@@ -6091,8 +6091,8 @@ wxUint32 uiBytesRead;
 			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
 			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
 			s = wxString::From8BitData((const char*)test);
-			//m_sock->Write(test, (wxUint32)53);
-			Write8Bit(s);
+			m_sock->Write(test, (wxUint32)53);
+			//Write8Bit(s);
 			m_atcp = false;
 		}
 		if (m_atcp2)
@@ -6121,10 +6121,7 @@ wxUint32 uiBytesRead;
 			m_atcp2 = false;
 			m_gmcp = true;
 			gmcp[0]='\0';
-			/*char test1[] = {"\xff\xfa\xc9\x43ore.Supports.Set [\"Core 1\", \"Char 1\", \"Char.Skills 1\", \"Room 1\", \"Char.Items 1\", \"Comm.Channel 1\"]\xff\xf0"};
-			wxString ss = wxString::From8BitData((const char*)test1);
-			m_sock->Write(test1, (wxUint32)ss.length());*/
-				
+							
 		}
 		if (m_focusoninput)
 		{

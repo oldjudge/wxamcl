@@ -95,7 +95,8 @@ wxString amcLua::GetwxString(int idx)
 		#endif
 		#ifdef __WXGTK__
 		//wxString s(string, wxCSConv(wxFONTENCODING_ISO8859_1));
-			return wxString::FromUTF8Unchecked(string);
+			//return wxString::FromUTF8Unchecked(string);
+			return wxString::From8BitData(string);
 		//return s;
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		#endif
