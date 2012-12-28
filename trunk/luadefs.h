@@ -493,14 +493,17 @@ public:
 	void SetTop(int idx);
 	void PushString(wxString s);
 	void PushString(const char* s);
+	void PushLString(const char* s, int len);
 	void PushInt(int i);
 	void GetTable(int idx);
 	void Pop(int idx);
 	int GetTop();
 	int Call(int args);/*!< lua_pcall wrapper */
+	int GetStringLen() {return m_len;}
 	
 private:
 	struct lua_State* m_L; /*!< Lua state for amcLua */
+	int m_len; /*string len for pushed string*/
 };
 
 #endif
