@@ -452,7 +452,7 @@ void MudWindow::Write(wxString command)
 		if (!m_parent->GetGlobalOptions()->UseUTF8())
 		{
 			//m_sock->Write(s8.data(), (wxUint32)s8.length());
-		#ifdef __WXGTK
+		#ifdef __WXGTK__
 			wxString su = command.ToUTF8();
 			if (su.empty()&&!command.empty())
 				su = command;
@@ -5977,11 +5977,11 @@ wxUint32 uiBytesRead;
 		GetLState()->SetTop(0);
 		if (m_mccp2 && cBuf!=NULL)
 		{
-			GetLState()->PushString((const char*)cBuf);
+			GetLState()->PushLString((const char*)cBuf, m_dc->GetUCLen());
 		}
 		else if (uiBytesRead)
 		{
-			GetLState()->PushString((const char*)m_cBuffer);
+			GetLState()->PushLString((const char*)m_cBuffer, uiBytesRead);
 		
 		}
 		GetLState()->SetGlobal((const char*)"amcPacket");

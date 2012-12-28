@@ -401,7 +401,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxLocale::AddCatalogLookupPathPrefix(".");
 	#endif
 	#if defined WXOSX
-	wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::GetRessourcesDir());
+	wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::Get().GetRessourcesDir());
 	#endif
 	m_locale = new wxLocale(wxLANGUAGE_GERMAN);
 	//wxDateTime::SetCountry(wxDateTime::USA);

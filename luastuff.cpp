@@ -13,6 +13,7 @@ amcLua::amcLua()
 	luaL_dofile(m_L, "printt.lua");
 	luaL_dofile(m_L, "json.lua");
 	luaL_dostring(m_L, "js = require('json')");
+	m_len=0;
 	
 }
 
@@ -125,9 +126,11 @@ wxString amcLua::GetUTF8String(int idx)
 
 const char* amcLua::GetString(int idx)
 {
+	size_t len;
 	if (lua_isstring(m_L, idx))
 	{
-		const char *string = lua_tostring(m_L, idx);
+		const char *string = lua_tolstring(m_L, idx, &len);
+		m_len=len;
 		return string;
 	}
 	else return "";
@@ -173,6 +176,12 @@ void amcLua::PushString(const char* s)
 void amcLua::PushString(wxString s)
 {
 	lua_pushstring(m_L, (const char*)s.mb_str());
+}
+
+void amcLua::PushLString(const char *s, int len)
+{
+	lua_pushlstring(m_L, s, len);
+	m_len=len;
 }
 
 void amcLua::PushInt(int i)
