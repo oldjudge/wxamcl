@@ -1467,12 +1467,7 @@ void MudWindow::ParseBufferMXP(char *Buffer)
 		s = wxString::From8BitData((const char*) Buffer);
 	else
 	{
-		//wxString f(Buffer, wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
-		//s=f;
-		//if (f.empty()&& wxStrlen(Buffer)>0)
-		//{
 		s = wxString::From8BitData((const char*) Buffer);
-		//}
 	}
 	//wxString s;
 	//s = wxString::From8BitData((const char*)Buffer);
