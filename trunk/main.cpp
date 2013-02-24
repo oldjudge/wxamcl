@@ -267,10 +267,12 @@ bool MudClientApp::OnInit()
 	//frame->m_child->Msg(frame->GetGlobalOptions()->GetWorkDir());
 	//frame->m_child->ParseNBuffer("                       Посетите наш сайт: www.mud.ru");
 	//frame->m_child->ParseNBuffer("http://bit.ly", false);
-	//frame->m_child->ParseNBuffer("JThis \x1b[33;1;44mis a \x1b[32mtest!\r\nNExtline\r\n", false);
+	//frame->m_child->ParseNBuffer("\x1b[44;1m¡Ë¡Ë\x1b[37;0m¡¡ Ëü¸øÎÒ»¶ÀÖ£¬¶øÔÚÓÚËü¸øÁËÎÒ¿Õ¼ä£¬¾¡¹ÜÕâ¿Õ¼äÊÇÐéÄâµÄ£¬   \x1b[44;1m¡Ë¡Ë\x1b[37;0m\n\r\x1b[44;1m¡Ë¡Ë\x1b[37;0m¡¡ µ«¸ÐÇéÊÇÕæÊµµÄ£¬ÕâÇ¡Ç¡ÓëÏÖÊµÊÀ½çÏà·´¡ª¡ªÆñ²»¹ÖÔÕ£¿       \x1b[44;1m¡Ë¡Ë\x1b[37;0m\n\r\x1b[44;1m¡Ë¡Ë\x1b[37;0m                                                       \x1b[44;1m¡Ë¡Ë\x1b[37;0m");
+	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
 	//amcMXP am(frame->m_child);
+	//am.Parse("<IMAGE 'intro.jpg' URL='http://coffeemud.net:27744/images/mxp/' H=400 W=400>  Hallo");
 	//am.Parse("<VAR hp>100</VAR>");
 	//am.Parse("By what name shall we know thee?\xff\xfa\x5b\xff\xf0\xff\xfa\xc9\xff\xf0");
 	//am.Parse("\x1b[1z<send \"look leather satchel\" hint=\"Click to see menu|look|eat|wear|remove|drop\">a \x1b[1;30mleather\x1b[0m satchel</Send>");
@@ -925,7 +927,7 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		ec = wxFONTENCODING_CP1251;
 		break;
 	case ID_CHARENCODING+10:
-		ec = wxFONTENCODING_CP950;
+		ec = wxFONTENCODING_BIG5;
 		break;
 	case ID_CHARENCODING+11:
 		ec = wxFONTENCODING_CP936;
@@ -940,10 +942,35 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		ec = wxFONTENCODING_EUC_JP;
 		break;
 	}
+	wxFontEncoding cur = m_gopt->GetCurEncoding();
 	m_gopt->SetEncoding(ec);
 	if (id!=ID_CHARENCODING)
 		m_gopt->SetUTF8(true);
 	else	m_gopt->SetUTF8(false);
+	ale_it it;
+	int line=0;
+	
+	/*for (line=0;line<m_child->GetLines()->size();line++)
+	{
+		for (it = this->m_child->GetLines()->at(line).m_vstyle.begin(); it!=m_child->GetLines()->at(line).m_vstyle.end(); it++)
+		{
+			wxCSConv c(ec);
+			wxEncodingConverter enc;
+			enc.Init(cur, ec);
+			if (enc.CanConvert(cur, ec))
+				wxString fff = enc.Convert(it->GetText());
+			wxString ff(it->GetText().To8BitData(), c);
+			
+			if (ff.empty())
+			{
+				
+				ff = c.cWX2MB(it->GetText());
+			}
+			
+			it->SetTextConv(ff);
+		}
+	}*/
+
 	this->SaveGlobalOptions();
 	this->m_child->Refresh();
 	m_child->Update();
@@ -1409,7 +1436,8 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 	subMenu1->AppendSubMenu(subMenu2,_("Cyrillic"), _("Russian"));
 	wxMenu *subMenu3 = new wxMenu;
 	subMenu3->AppendCheckItem(ID_CHARENCODING+10, _("Big5"), _("Big5"));
-	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("GB2312"), ("GB2312"));
+	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("GBK"), ("CP936"));
+	//subMenu3->AppendCheckItem(ID_CHARENCODING+12, _("GB1232"), ("GB1232"));
 	subMenu1->AppendSubMenu(subMenu3,_("Chinese"), _("Chinese"));
 	wxMenu *subMenu4 = new wxMenu;
 	subMenu4->AppendCheckItem(ID_CHARENCODING+12, _("Shift-JIS"), _("JIS"));
@@ -1660,11 +1688,9 @@ bool MudMainFrame::LoadGlobalOptions()
 			item = bar->FindItem(ID_CHARENCODING+10);
 			item->Check();
 		break;
-		case wxFONTENCODING_GB2312:
+		case wxFONTENCODING_CP936:
 			item = bar->FindItem(ID_CHARENCODING+11);
 			item->Check();
-		break;
-		break;
 		case wxFONTENCODING_SHIFT_JIS:
 			item = bar->FindItem(ID_CHARENCODING+12);
 			item->Check();
@@ -3033,7 +3059,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			item = bar->FindItem(ID_CHARENCODING+10);
 			item->Check();
 		break;
-		case wxFONTENCODING_GB2312:
+		case wxFONTENCODING_CP936:
 			item = bar->FindItem(ID_CHARENCODING+11);
 			item->Check();
 		break;
