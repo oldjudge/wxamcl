@@ -90,12 +90,29 @@ void AnsiLineElement::SetText(wxString text)
 	//delete m_text;
 	//m_text = new wxString(text);
 	m_text.clear();
-	MudMainFrame *frame = wxGetApp().GetFrame();
-	wxString ff(text.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	/*MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
+
+	wxString ff(text.To8BitData(), c);
 	if (ff.empty())
 		ff=text;
-	m_text.append(ff);
+	m_text.append(ff);*/
+	m_text.append(text);
+	//m_text.append(text);
 	m_len = m_text.length();
+}
+
+
+wxString AnsiLineElement::GetConvText()
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	{
+		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
+		wxString ff(m_text.To8BitData(), c);
+		return ff;
+	}
+	else return m_text.wx_str();
 }
 
 //AnsiLine
@@ -139,6 +156,18 @@ AnsiLine::~AnsiLine()
 //	delete m_linetext;
 	//m_linetext=NULL;
 	m_vstyle.clear();
+}
+
+wxString AnsiLine::GetConvLineText()
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	{
+		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
+		wxString ff(m_linetext.To8BitData(), c);
+		return ff;
+	}
+	else return m_linetext;
 }
 
 size_t AnsiLine::Freq(wxString *st, wxChar ch)
@@ -193,17 +222,17 @@ int i;
 void AnsiLine::SetLineText(wxString st)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
-	if (ff.empty())
-		ff=st;
-	m_linetext.append(ff);
+	//wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	//if (ff.empty())
+	//	ff=st;
+	m_linetext.append(st);
 }
 
 void AnsiLine::AssignText(wxString st)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
-	if (ff.empty())
-		ff=st;
-	m_linetext = ff;
+	//wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
+	//if (ff.empty())
+	//	ff=st;
+	m_linetext = st;
 }

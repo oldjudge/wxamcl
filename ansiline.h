@@ -21,6 +21,7 @@ public:
 	void AddMXPLabel(wxString s) {m_mxplabel.push_back(s);}
 	void SetHint(wxString s) {m_hint=s;}
 	wxString GetText() {return m_text;}
+	wxString GetConvText();
 	wxString GetURLText() {return m_url;}
 	wxColour GetFCol() {return m_fcol;}
 	wxUint16 GetFColIndex() {return m_fcolindex;}
@@ -73,6 +74,7 @@ public:
 	void SetLineText(wxString st);
 	void AssignText(wxString st);
 	wxString GetLineText() {return m_linetext;}
+	wxString GetConvLineText();
 	void SetAnsiLine(wxString s) {m_ansiline.append(s);}
 	wxString GetAnsiLine() {return m_ansiline;}
 	size_t GetTextLength() {return m_linetext.length();}

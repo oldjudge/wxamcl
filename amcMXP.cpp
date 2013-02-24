@@ -987,7 +987,7 @@ MudWindow *mw = m_parent;
 	}
 	else if (!ss.Cmp("support"))
 	{
-		wxString sss = "\x1b[1z<SUPPORTS -image +send +user +password +version +color +b +bold +i +italic +u +underlined -s +br +sbr>\n";
+		wxString sss = "\x1b[1z<SUPPORTS -IMAGE -IMAGE.URL +send +user +password +version +color +b +bold +i +italic +u +underlined -s +br +sbr>\n";
 		f->m_child->Write(sss.To8BitData());
 		t->Reset();
 	}
@@ -1633,6 +1633,7 @@ amcMXPTag::amcMXPTag()
 	//m_mxptags["a"]=true;
 	m_mxptags["var"]=true;
 	m_mxptags["v"]=true;
+	m_mxptags["image"]=true;
 
 	m_mxpopentags["bold"]=true;
 	m_mxpopentags["b"]=true;

@@ -539,7 +539,9 @@ void MudWindow::Write8Bit(wxString command)
 
 void MudWindow::Close()
 {
+	m_sock->Discard();
 	m_sock->Close();
+	//m_sock->Destroy();
 	Msg(_("Connection closed by user!"));
 }
 
@@ -568,7 +570,7 @@ AnsiLineElement style[2];
 	style->SetText(msg);
 	style->SetFCol(fcol, m_colansi[fcol]);
 	style->SetBCol(bcol, m_colansi[bcol]);
-	style->SetText(msg);
+	//style->SetText(msg);
 	//line.SetLineText(msg);
 	line.m_vstyle.push_back(style[0]);
 	//line->m_style.DeleteContents(true);
@@ -1522,9 +1524,16 @@ static bool colset = false;
 			#endif
 			
 			#ifdef __WXMSW__
-			s = wxString::From8BitData((const char*) cBuffer);
+			//s = wxString::From8BitData((const char*) cBuffer);
+			
+			s = wxString (cBuffer);
+			
+			if (m_parent->GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
+				s = wxString (cBuffer, wxCSConv(wxFONTENCODING_UTF8));
+			if (s.empty())
+				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
-				//wxString ff(s.To8BitData(), wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+				
 				//s=ff;
 			//}
 		}
@@ -2815,7 +2824,7 @@ static bool colset = false;
 		if (m_url->Match(style[index].GetText(), false))
 			style[index].SetURL(true);
 	}
-	opos=pos;
+	//opos=pos;
 	if (!m_vmudlines.empty())
 		{
 			if (!m_vmudlines.back().m_vstyle.empty() && !m_vmudlines.back().IsFull() /*&& gotline*/ && !colset)
@@ -2830,7 +2839,7 @@ static bool colset = false;
 		}
 	
 	line.m_vstyle.push_back(style[index]);
-	colset = false;
+	//colset = false;
 	m_indexend=line.m_vstyle.size();
 	line.SetLineText(sLine);
 	if (!m_vmudlines.empty())
@@ -4971,7 +4980,10 @@ size_t sublines=0;
 		{
 			if (m_wrap)//calculate how many lines this line will need using the wrap column!
 			{
-				int l = m_vmudlines.at(i).GetTextLength();
+				int l;
+				wxString t = m_vmudlines.at(i).GetConvLineText();
+				l = t.length();
+					//l = m_vmudlines.at(i).GetTextLength();
 				if (m_timestamps)
 				{
 					l += m_vmudlines.at(i).GetTime().length();
@@ -5125,11 +5137,14 @@ wxSize si;
 	}
 	int len=0;
 	for (int i=0;i<m_vmudlines.at(lnr).m_vstyle.size();i++)
-		len += m_vmudlines.at(lnr).m_vstyle.at(i).GetLen();
+		//len += m_vmudlines.at(lnr).m_vstyle.at(i).GetLen();
+		len += m_vmudlines.at(lnr).m_vstyle.at(i).GetConvText().length();
 	while(sublines)
 	{
-
-		sublen = m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length();
+		
+		wxString t = m_vmudlines.at(lnr).m_vstyle.at(x).GetConvText();
+		sublen = t.length();
+		//sublen = m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length();
 		//if (sublines && sublen==stringpos)
 		//	break;
 			//continue;
@@ -5138,16 +5153,14 @@ wxSize si;
 			if (stringpos==sublen)
 			{
 				x++;
-				while (!m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length())
+				//while (t.length())
+				while (!m_vmudlines.at(lnr).m_vstyle.at(x).GetConvText().length())
 					x++;
-				/*if (!m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length())
-					x++;
-				if (!m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length())
-					x++;*/
+				
 				if (x>=m_vmudlines.at(lnr).m_vstyle.size())
 					x=m_vmudlines.at(lnr).m_vstyle.size()-1;
-				sublen += m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length();
-				
+				sublen += m_vmudlines.at(lnr).m_vstyle.at(x).GetConvText().length();
+				//sublen += t.length();
 			}
 			if ((lnr >= (int)m_selline && lnr <= (int)m_sellineend) || (lnr >= (int)m_sellineend && lnr <= (int)m_selline))
 			{
@@ -5159,7 +5172,7 @@ wxSize si;
 				dc->SetTextForeground(m_vmudlines.at(lnr).m_vstyle.at(x).GetFCol());
 				dc->SetTextBackground(m_vmudlines.at(lnr).m_vstyle.at(x).GetBCol());
 			}
-			wxString sub = m_vmudlines.at(lnr).GetLineText().at(stringpos);
+			wxString sub = m_vmudlines.at(lnr).GetConvLineText().at(stringpos);
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==4)//underlined
 				dc->SetFont(*m_ufont);
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==3)//italic
@@ -5168,6 +5181,7 @@ wxSize si;
 			si = dc->GetTextExtent(sub);
 			dc->SetClippingRegion(startx, starty, si.GetWidth(), char_height);
 			m_vmudlines.at(lnr).m_vstyle.at(x).SetXPos(startx);
+			
 			dc->DrawText(sub, startx, starty);
 			dc->DestroyClippingRegion();
 			
@@ -5224,7 +5238,8 @@ wxCoord MudWindow::DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, w
 	
 		//m_font->SetUnderlined(true);
 	wxString text;
-	text = m_vmudlines.at(lnr).m_vstyle.at(snr).GetText();
+	text = m_vmudlines.at(lnr).m_vstyle.at(snr).GetConvText();
+	
 	if (text.length())
 	{
 		/*for (s=text.begin();s!=text.end();s++)
@@ -6207,7 +6222,7 @@ wxUint32 uiBytesRead;
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
-		m_sock->Read(m_cBuffer, 3000);
+		m_sock->Read(m_cBuffer, 9999);
 		uiBytesRead = m_sock->LastCount();
 		m_cBuffer[uiBytesRead]=EOS;
 		
