@@ -48,7 +48,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	gSizer1->Add( m_textcomm, 0, wxALL, 5 );
 	
-	m_staticText5 = new wxStaticText( m_general, wxID_ANY, _("Seperator sign:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_general, wxID_ANY, _("Separator sign:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	gSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	

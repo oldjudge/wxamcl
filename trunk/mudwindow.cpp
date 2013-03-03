@@ -34,6 +34,7 @@
 #define HAVE_IACSBMSDP 25
 #define HAVE_LF 26
 #define HAVE_IACSBCHARSET 27
+#define HAVE_TEXT1 28
 
 BEGIN_EVENT_TABLE(MudWindow, wxWindow)
     //EVT_ERASE_BACKGROUND(MudWindow::OnEraseBackground)
@@ -551,20 +552,14 @@ AnsiLine line;
 AnsiLineElement style[2];
 //int index=0;
 
-	//line = new AnsiLine();
-	//style = new AnsiLineElement[2];
+	
 	if (!m_vmudlines.empty())
 	{
 		if (!m_vmudlines.back().IsFull())
 		{
 		m_curline--;
-		//line = new AnsiLine(m_vmudlines.back());
-		line = m_vmudlines.back();
+		//line = m_vmudlines.back();
 		m_vmudlines.pop_back();
-		//index = (int)m_vmudlines.back().m_vstyle.size();
-		//index = (int)line->m_vstyle.size();
-		//style = new AnsiLineElement[freq+index+5];
-		//delete l;
 		}
 	}
 	style->SetText(msg);
@@ -607,34 +602,6 @@ AnsiLineElement style[2];
 	m_curline++;
 	if (IsLogging())
 	{
-		/*if (m_vmudlines.at(m_curline-1).IsFull() && !m_vmudlines.at(m_curline-1).WasLogged())
-			if (!IsAnsiLogging() && !IsHtmlLogging())
-			{
-				if (IsDateLogging())
-					m_tlog->Write(m_vmudlines.at(m_curline-1).GetTime()+": ");
-				m_tlog->Write(m_vmudlines.at(m_curline-1).GetLineText()+(char)CR+(char)LF);
-			}
-			else if (!IsHtmlLogging())
-			{
-				m_tlog->Write(m_vmudlines.at(m_curline-1).GetAnsiLine()+(char)CR+(char)LF);
-				m_tlog->Write("\r\n");
-			}
-			else if (IsHtmlLogging())
-			{
-				wxString s;
-				ale_it it;
-				AnsiLine al = m_vmudlines.at(m_curline-1);
-				for (it = al.m_vstyle.begin();it!=al.m_vstyle.end();it++)
-				{
-					wxString t = it->GetText();
-					if (!t.Cmp(wxEmptyString))
-						t.Append(" ");
-					s = wxString::Format("<a class=\"%s\">%s</a>", m_css.at(it->GetFColIndex()-1), t);
-					m_htmllog->Write(s);
-				}
-				m_htmllog->Write("\r\n");
-			}
-		m_vmudlines.at(m_curline-1).SetLogged(true);*/
 		SendLineToLog(m_curline-1);
 	}
 	SetScrollPage();
@@ -1518,7 +1485,8 @@ static bool colset = false;
 			#endif
 			#ifdef WXOSX
 			s = wxString(cBuffer);
-			//s = wxString::From8BitData((const char*) cBuffer);
+			if (m_parent->GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
+				s = wxString (cBuffer, wxCSConv(wxFONTENCODING_UTF8));
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
@@ -1616,6 +1584,7 @@ static bool colset = false;
 		switch (m_parsestate)
 		{
 			case HAVE_TEXT:
+			case HAVE_TEXT1:
 				if (*it=='\n')
 				{
 					m_parsestate = HAVE_LINE;
@@ -2839,7 +2808,9 @@ static bool colset = false;
 		}
 	
 	line.m_vstyle.push_back(style[index]);
-	//colset = false;
+	if (m_mxp)
+		colset = false;
+	
 	m_indexend=line.m_vstyle.size();
 	line.SetLineText(sLine);
 	if (!m_vmudlines.empty())
@@ -2891,6 +2862,7 @@ static bool colset = false;
 	aoldpos = it-s.begin();
 	
 	//line.SetAnsiLine(*sLine);
+	
 	if (m_parsestate!=HAVE_LF)
 	{
 		if (!line.GetGagme())
@@ -2899,6 +2871,7 @@ static bool colset = false;
 			m_curline++;
 		}
 	}
+	
 	if (m_parsestate==HAVE_LF)
 	{
 		m_parsestate = HAVE_TEXT;
@@ -2970,7 +2943,8 @@ static int x=1;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
 					{
 						wxString ss;
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
+						lua_getglobal(m_L->GetLuaState(), "wxamcl");
+						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
 						lua_setfield(m_L->GetLuaState(), -2, "Data");
 						ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
@@ -2988,16 +2962,18 @@ static int x=1;
 						wxString ss;
 						if (x==1)
 						{
-							lua_getglobal(m_L->GetLuaState(), "MSDP");
+							lua_getglobal(m_L->GetLuaState(), "wxamcl");
+							lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 							lua_pushstring(m_L->GetLuaState(), val.c_str());
 							lua_setfield(m_L->GetLuaState(), -2, "Data");
 						}
 						else
 						{
-							lua_getglobal(m_L->GetLuaState(), "MSDP");
-							lua_getfield(m_L->GetLuaState(), -1, "Data");
+							lua_getglobal(m_L->GetLuaState(), "wxamcl");
+							lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+							lua_getfield(m_L->GetLuaState(), -2, "Data");
 							lua_pushstring(m_L->GetLuaState(), val.c_str());
-							lua_rawseti(m_L->GetLuaState(), -2, x++);
+							lua_rawseti(m_L->GetLuaState(), -3, x++);
 						}
 						ss = wxString::Format("%cfunc(\"%s\", \"OnMSDPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							m_parent->GetGlobalOptions()->GetEventFile(), var.c_str());
@@ -3011,21 +2987,24 @@ static int x=1;
 				{
 					if (x==1)
 					{
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
+						lua_getglobal(m_L->GetLuaState(), "wxamcl");
+						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 						lua_newtable(m_L->GetLuaState());
 						lua_setfield(m_L->GetLuaState(), -2, "Data");
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
-						lua_getfield(m_L->GetLuaState(), -1, "Data");
+						lua_getglobal(m_L->GetLuaState(), "wxamcl");
+						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+						lua_getfield(m_L->GetLuaState(), -2, "Data");
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawseti(m_L->GetLuaState(), -2, x++);
+						lua_rawseti(m_L->GetLuaState(), -3, x++);
 						val.Empty();
 					}
 					else
 					{
-						lua_getglobal(m_L->GetLuaState(), "MSDP");
-						lua_getfield(m_L->GetLuaState(), -1, "Data");
+						lua_getglobal(m_L->GetLuaState(), "wxamcl");
+						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+						lua_getfield(m_L->GetLuaState(), -2, "Data");
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawseti(m_L->GetLuaState(), -2, x++);
+						lua_rawseti(m_L->GetLuaState(), -3, x++);
 					}
 					val.Empty();
 				}
@@ -3040,7 +3019,8 @@ static int x=1;
 				if (*it==MSDP_VAR)
 				{
 					m_state = HAVE_OPENVAR;
-					lua_getglobal(m_L->GetLuaState(), "MSDP");
+					lua_getglobal(m_L->GetLuaState(), "wxamcl");
+					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 					lua_newtable(m_L->GetLuaState());
 					lua_setfield(m_L->GetLuaState(), -2, "Data");
 					arrvar=var;
@@ -3062,13 +3042,14 @@ static int x=1;
 				if (*it==MSDP_VAR)
 				{
 					m_state=HAVE_OPENVAR;
-					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_getfield(m_L->GetLuaState(), -1, "Data");
+					lua_getglobal(m_L->GetLuaState(), "wxamcl");
+					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+					lua_getfield(m_L->GetLuaState(), -2, "Data");
 					if (x==1)
 					{
 						lua_pushstring(m_L->GetLuaState(), var.c_str());
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawset(m_L->GetLuaState(), -3);
+						lua_rawset(m_L->GetLuaState(), -4);
 					}
 					else
 					{
@@ -3082,18 +3063,14 @@ static int x=1;
 				}
 				else if (*it==MSDP_VAL)
 				{
-					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_getfield(m_L->GetLuaState(), -1, "Data");
+					lua_getglobal(m_L->GetLuaState(), "wxamcl");
+					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+					lua_getfield(m_L->GetLuaState(), -2, "Data");
 					if (x==1)
 					{
 						lua_newtable(m_L->GetLuaState());
-						lua_setfield(m_L->GetLuaState(), -2, var.c_str());
-						/*lua_getglobal(m_L->GetLuaState(), "MSDP");
-						lua_getfield(m_L->GetLuaState(), -1, "Data");
-						lua_getfield(m_L->GetLuaState(), -2, var.mb_str());
-						lua_pushnumber(m_L->GetLuaState(), 1);
-						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawset(m_L->GetLuaState(), -3);*/
+						lua_setfield(m_L->GetLuaState(), -3, var.c_str());
+						
 										
 						wxString chunk;
 						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
@@ -3111,12 +3088,13 @@ static int x=1;
 				else if (*it==MSDP_CLOSE)
 				{
 					m_state = HAVE_CLOSE;
-					lua_getglobal(m_L->GetLuaState(), "MSDP");
-					lua_getfield(m_L->GetLuaState(), -1, "Data");
+					lua_getglobal(m_L->GetLuaState(), "wxamcl");
+					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+					lua_getfield(m_L->GetLuaState(), -2, "Data");
 					if (x==1)
 					{
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+						lua_setfield(m_L->GetLuaState(), -3, var.c_str());
 					}
 					else
 					{
@@ -3152,17 +3130,19 @@ static int x=1;
 	{
 		if (x==1)
 		{
-			lua_getglobal(m_L->GetLuaState(), "MSDP");
-			lua_pushstring(m_L->GetLuaState(), val.c_str());
+			lua_getglobal(m_L->GetLuaState(), "wxamcl");
+			lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+			lua_pushstring(m_L->GetLuaState(), val.To8BitData());
 			//lua_setfield(m_L->GetLuaState(), -2, "Data");
-			lua_setfield(m_L->GetLuaState(), -2, var.c_str());
+			lua_setfield(m_L->GetLuaState(), -2, var.Trim(false).To8BitData());
 		}
 		else
 		{
-			lua_getglobal(m_L->GetLuaState(), "MSDP");
-			lua_getfield(m_L->GetLuaState(), -1, "Data");
+			lua_getglobal(m_L->GetLuaState(), "wxamcl");
+			lua_getfield(m_L->GetLuaState(), -1, "MSDP");
+			lua_getfield(m_L->GetLuaState(), -2, "Data");
 			lua_pushstring(m_L->GetLuaState(), val.c_str());
-			lua_rawseti(m_L->GetLuaState(), -2, x++);
+			lua_rawseti(m_L->GetLuaState(), -3, x++);
 		}
 		if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
 		{
@@ -4831,8 +4811,6 @@ wxString sL = *sLine;
 	dir<<msp;
 	
 	m_parent->m_media->Load(dir);
-	
-	
 	return curpos;
 }
 
@@ -5845,6 +5823,9 @@ int stamp_offset = 0;
 		{
 			contextMenu->AppendSeparator();
 			contextMenu->Append(ID_MAKEACTION, _("Create action..."), _("Create an action using the linetext"));
+			contextMenu->AppendSeparator();
+			contextMenu->Append(wxID_COPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
+			contextMenu->Append(ID_COPY, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
 		}
 		wxPoint p = event.GetPosition();
 		//p = ScreenToClient(p);
@@ -6326,7 +6307,7 @@ wxString MudWindow::GetSelectedText()
 		return wxEmptyString;
 	for (long i=m_selline;i<=m_sellineend;i++)
 		//s.Append(m_vmudlines.at(i).GetAnsiLine());
-		s<<m_vmudlines.at(i).GetLineText()<<"\r\n";
+		s<<m_vmudlines.at(i).GetConvLineText()<<"\r\n";
 	return s;
 }
 
@@ -6337,7 +6318,7 @@ wxString MudWindow::GetSelectedAnsiText()
 		return wxEmptyString;
 	for (long i=m_selline;i<=m_sellineend;i++)
 	{
-		wxString ansi = m_vmudlines.at(i).GetAnsiLine();
+		wxString ansi = m_vmudlines.at(i).GetConvAnsiLine();
 		wxString sub;
 		if (!ansi.empty())
 		{

@@ -315,7 +315,7 @@ vector<wxTreeItemId> id;
 			int i=0;
 			for (s = list.begin();s != list.end();s++, i++)
 			{
-				if (iter->GetName()=="seperator")
+				if (iter->GetName()=="separator")
 					continue;
 				if (iter->GetTbName()==*s)
 					m_treeCtrl3->AppendItem(id.at(i), iter->GetName());
@@ -2010,7 +2010,7 @@ wxAuiToolBar *tb;
 			return;
 		}
 	}
-	if (s==_("seperator"))
+	if (s=="separator")
 	{
 		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(m_parenttool->GetValue(), m_frame);
 		if (tb)

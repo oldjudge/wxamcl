@@ -170,6 +170,18 @@ wxString AnsiLine::GetConvLineText()
 	else return m_linetext;
 }
 
+wxString AnsiLine::GetConvAnsiLine()
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	{
+		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
+		wxString ff(m_ansiline.To8BitData(), c);
+		return ff;
+	}
+	else return m_ansiline;
+}
+
 size_t AnsiLine::Freq(wxString *st, wxChar ch)
 {
 size_t t=0;
