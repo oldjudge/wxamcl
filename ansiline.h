@@ -77,6 +77,7 @@ public:
 	wxString GetConvLineText();
 	void SetAnsiLine(wxString s) {m_ansiline.append(s);}
 	wxString GetAnsiLine() {return m_ansiline;}
+	wxString GetConvAnsiLine();
 	size_t GetTextLength() {return m_linetext.length();}
 	void SetYPos(wxInt32 yp) {m_ypos = yp;}
 	wxInt32 GetYPos() {return m_ypos;}

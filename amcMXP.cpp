@@ -743,7 +743,9 @@ MudWindow *mw = m_parent;
 		t->Reset();
 		return false;
 	}
-	wxString ss = t->GetTag().BeforeFirst(' ').Lower();
+	wxString ss = t->GetTag().BeforeFirst('=').Lower();
+	if (ss==t->GetTag().Lower())
+		ss = t->GetTag().BeforeFirst(' ').Lower();
 	vector<wxString> v_parms;
 	v_parms = SplitString(" ", t->GetTag().AfterFirst(' '));
 	if (t->GetTag().Lower().StartsWith("send"))
@@ -1118,7 +1120,7 @@ bool amcMXP::ParseTag(amcMXPTag *t, int elnum)
 //RegExp comm("send href=('|\")([\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/\\[\\]]+)('|\")");
 RegExp comm("send (?:prompt |hint=.+ )?(?:prompt |hint=.+ )?(?:href=)?('|\")?([\\?|\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")?(?: PROMPT|prompt)?");
 RegExp hint("(?:HINT|hint)=(?:\"|')([\\w|&|;|\\s|\\||\\d|\\-|\\!|\\.\\[\\]\\>]+)(?:\"|')");
-RegExp color("(?:c(?:olor)? |C(?:OLOR)? )(?:fore=|FORE=)?([\\w|\\d|#]+)\\s?(?:back=|BACK=)?([\\w|\\d|#]+)?");
+RegExp color("(?:c(?:olor)?=? |C(?:OLOR)? )(?:fore=|FORE=)?([\\w|\\d|#]+)\\s?(?:back=|BACK=)?([\\w|\\d|#]+)?");
 MudMainFrame *f = wxGetApp().GetFrame();
 MudWindow *mw = m_parent;	
 	if (m_mxpmode==MXP_MODE_LOCKLOCKED || m_mxpmode==MXP_MODE_LOCKED)
@@ -1707,6 +1709,8 @@ bool amcMXPTag::IsMXPTag()
 {
 	
 	if (m_mxptags[m_tag.BeforeFirst(' ').Lower()])
+		return true;
+	if (m_mxptags[m_tag.BeforeFirst('=').Lower()])
 		return true;
 	else return false;
 	//look if this is literally sent by the mud

@@ -97,9 +97,9 @@ void amcButton::SetBitmap(const wxString& m)
 void amcButton::SetAsSeparator(wxAuiToolBar *tb)
 {
 	m_parent = tb;
-	m_name = "seperator";
-	m_label = "seperator";
-	m_text  = "seperator";
+	m_name = "separator";
+	m_label = "separator";
+	m_text  = "separator";
 	m_action = wxEmptyString;
 	m_group = "default";
 	m_bitmap = wxEmptyString;
