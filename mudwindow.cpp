@@ -2907,6 +2907,9 @@ int m_state = HAVE_TEXT;
 int pos=0;
 wxString var, val, arrvar;
 static int x=1;
+	wxString chunk1;
+	chunk1<<"wxamcl.MSDP.Data=nil";
+	luaL_dostring(m_L->GetLuaState(), chunk1.mb_str());
 	for(it=s.begin();it!=s.end();it++, pos++)
 	{
 		switch(m_state)
@@ -2965,13 +2968,13 @@ static int x=1;
 							lua_getglobal(m_L->GetLuaState(), "wxamcl");
 							lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 							lua_pushstring(m_L->GetLuaState(), val.c_str());
-							lua_setfield(m_L->GetLuaState(), -2, "Data");
+							lua_setfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 						}
 						else
 						{
 							lua_getglobal(m_L->GetLuaState(), "wxamcl");
 							lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-							lua_getfield(m_L->GetLuaState(), -2, "Data");
+							lua_getfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 							lua_pushstring(m_L->GetLuaState(), val.c_str());
 							lua_rawseti(m_L->GetLuaState(), -3, x++);
 						}
@@ -2990,10 +2993,10 @@ static int x=1;
 						lua_getglobal(m_L->GetLuaState(), "wxamcl");
 						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 						lua_newtable(m_L->GetLuaState());
-						lua_setfield(m_L->GetLuaState(), -2, "Data");
+						lua_setfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 						lua_getglobal(m_L->GetLuaState(), "wxamcl");
 						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-						lua_getfield(m_L->GetLuaState(), -2, "Data");
+						lua_getfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
 						lua_rawseti(m_L->GetLuaState(), -3, x++);
 						val.Empty();
@@ -3002,7 +3005,7 @@ static int x=1;
 					{
 						lua_getglobal(m_L->GetLuaState(), "wxamcl");
 						lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-						lua_getfield(m_L->GetLuaState(), -2, "Data");
+						lua_getfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
 						lua_rawseti(m_L->GetLuaState(), -3, x++);
 					}
@@ -3022,7 +3025,7 @@ static int x=1;
 					lua_getglobal(m_L->GetLuaState(), "wxamcl");
 					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
 					lua_newtable(m_L->GetLuaState());
-					lua_setfield(m_L->GetLuaState(), -2, "Data");
+					lua_setfield(m_L->GetLuaState(), -2, var.c_str());//"Data");
 					arrvar=var;
 					var.Empty();
 					break;
@@ -3044,17 +3047,18 @@ static int x=1;
 					m_state=HAVE_OPENVAR;
 					lua_getglobal(m_L->GetLuaState(), "wxamcl");
 					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-					lua_getfield(m_L->GetLuaState(), -2, "Data");
+					lua_getfield(m_L->GetLuaState(), -1, arrvar.c_str());//"Data");
 					if (x==1)
 					{
+						
 						lua_pushstring(m_L->GetLuaState(), var.c_str());
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_rawset(m_L->GetLuaState(), -4);
+						lua_rawset(m_L->GetLuaState(), -3);
 					}
 					else
 					{
 						wxString chunk;
-						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						chunk<<"wxamcl.MSDP."<<arrvar.mb_str()<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
 						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
 						x=1;
 					}
@@ -3065,22 +3069,22 @@ static int x=1;
 				{
 					lua_getglobal(m_L->GetLuaState(), "wxamcl");
 					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-					lua_getfield(m_L->GetLuaState(), -2, "Data");
+					lua_getfield(m_L->GetLuaState(), -1, arrvar.c_str());//"Data");
 					if (x==1)
 					{
 						lua_newtable(m_L->GetLuaState());
-						lua_setfield(m_L->GetLuaState(), -3, var.c_str());
+						lua_setfield(m_L->GetLuaState(), -2, var.c_str());
 						
 										
 						wxString chunk;
-						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						chunk<<"wxamcl.MSDP."<<arrvar.mb_str()<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
 						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
 						//arrvar=var;
 					}
 					else
 					{
 						wxString chunk;
-						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						chunk<<"wxamcl.MSDP."<<arrvar.mb_str()<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
 						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
 					}
 					val.Empty();
@@ -3090,16 +3094,17 @@ static int x=1;
 					m_state = HAVE_CLOSE;
 					lua_getglobal(m_L->GetLuaState(), "wxamcl");
 					lua_getfield(m_L->GetLuaState(), -1, "MSDP");
-					lua_getfield(m_L->GetLuaState(), -2, "Data");
+					lua_getfield(m_L->GetLuaState(), -1, arrvar.c_str());//"Data");
 					if (x==1)
 					{
+						lua_pushstring(m_L->GetLuaState(), var.c_str());
 						lua_pushstring(m_L->GetLuaState(), val.c_str());
-						lua_setfield(m_L->GetLuaState(), -3, var.c_str());
+						lua_rawset(m_L->GetLuaState(), -3);
 					}
 					else
 					{
 						wxString chunk;
-						chunk<<"MSDP.Data"<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
+						chunk<<"wxamcl.MSDP."<<arrvar.mb_str()<<"[\""<<var.mb_str()<<"\"]"<<"["<<x++<<"]=\""<<val.mb_str()<<"\"";
 						luaL_dostring(m_L->GetLuaState(), chunk.mb_str());
 					}
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvMSDPData())
