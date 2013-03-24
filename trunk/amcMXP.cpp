@@ -8,6 +8,12 @@ amcMXP::amcMXP(MudWindow *mw)
 	m_tagopen = false;
 	m_mxpmode = MXP_MODE_OPEN;
 	m_parent = mw;
+	for (size_t i=10;i<255;i++)
+	{
+		wxString en;
+		en<<"&#"<<i<<";";
+		m_entity.push_back(en);
+	}
 }
 
 amcMXP::~amcMXP()
@@ -327,6 +333,8 @@ static bool intagtext = false;
 static bool one = false;
 	//m_parsestate = MXP_TEXT;
 	
+if (!s.empty())
+{
 	s.Replace("<br>", "\n");
 	s.Replace("<BR>", "\n");
 	s.Replace("\r\n", "\n");
@@ -351,7 +359,7 @@ static bool one = false;
 		s.Replace("<p>", "");
 		s.Replace("</p>", "");
 	}
-	
+}
 	if (parsing)// && oldpos)
 	{
 		aTag = oldTag;
@@ -496,18 +504,27 @@ static bool one = false;
 				aTag.SetText(aTag.GetText().Append(escTag.GetText()));
 				escTag.Reset();
 				elemnum = FindElement(aTag.GetTag());
-				if (aTag.IsMXPTag())
+				if (elemnum>-1)
 				{
-					ParseSingleTag(&aTag);
-					//aTag.Reset();
-					break;
-				}
-				if (aTag.IsOpenTag())
-				{
-					ParseOpenTag(&aTag);
+					ParseTag(&aTag, elemnum);
 					aTag.Reset();
 					break;
 				}
+				
+					if (aTag.IsMXPTag())
+					{
+						ParseSingleTag(&aTag);
+						//aTag.Reset();
+						break;
+					}
+
+					if (aTag.IsOpenTag())
+					{
+						ParseOpenTag(&aTag);
+						aTag.Reset();
+						break;
+					}
+				
 				if (elemnum==-1)
 				{
 					mw->ParseNBuffer((char*)aTag.GetText().To8BitData().data(), false);
@@ -516,10 +533,10 @@ static bool one = false;
 				}
 				else
 				{
-					//ReplaceEntities(&simpleText);
 					
-					ParseTag(&aTag, elemnum);
-					aTag.Reset();
+					break;
+					//ParseTag(&aTag, elemnum);
+					//aTag.Reset();
 				}
 			}
 			else if (*it==ESC)
@@ -734,8 +751,14 @@ RegExp hint("(?:HINT|hint)=(?:\"|')([\\w|&|;|\\s|\\||\\d|\\-|\\!|\\.]+)(?:\"|')"
 RegExp color("(?:c(?:olor)? |C(?:OLOR)? )(?:fore=|FORE=)?((?!back=)[\\w|\\d|#]+)?\\s?(?:back=|BACK=)?([\\w|\\d|#]+)?");
 RegExp a("a href=('|\")([\\w|&|;|\\s|\\||#|\\d|\\-|\\.|\\/|\\(|\\)]+)('|\")");
 MudMainFrame *f = wxGetApp().GetFrame();
-MudWindow *mw = m_parent;	
-	t->ReplaceEntitys();
+MudWindow *mw = m_parent;
+	
+	if (t->GetTag().empty() && t->GetText().empty())
+	{
+		t->Reset();
+		return false;
+	}
+		t->ReplaceEntitys();
 	if (m_mxpmode==MXP_MODE_LOCKLOCKED || m_mxpmode==MXP_MODE_LOCKED)
 	{
 		wxString s ="<"+t->GetTag()+">";
@@ -1180,16 +1203,19 @@ MudWindow *mw = m_parent;
 			}
 			if (it->IsSendTag())
 			{
+				
 				wxString command;
 				//ale_it bit = f->m_child->GetLineStyle(f->m_child->m_curline-1)->end()-1;
 				if (t->GetText().empty())
 					return true;
 				int ii, i; //= f->m_child->GetLineStyle(f->m_child->m_curline-1)->size();		
 				int line = mw->m_curline-1;
-				//wxString send = "\x1b[4m"+t->GetText()+"\x1b[0m";
-				if (!f->GetGlobalOptions()->UseUTF8())
+				
+				/*if (!f->GetGlobalOptions()->UseUTF8())
 					mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
-				else mw->ParseNBuffer((char*)t->GetText().ToUTF8().data(), false);
+				else mw->ParseNBuffer((char*)t->GetText().ToUTF8().data(), false);*/
+				mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
+				
 				mw->GetLineIndices(&ii, &i);
 				if (line<mw->m_curline-1)
 				{
@@ -1229,10 +1255,10 @@ MudWindow *mw = m_parent;
 					s_it sit;
 					wxString hint = it->GetHint();
 					if (!hint.Cmp(""))
+					{
 						hint = t->GetText();
-					//ReplaceEntities(&hint);
-					hint.Replace("&text;", t->GetStrippedText());
-					
+					}
+					hint.Replace("&text;", t->GetStrippedText(), false);
 					if (it->GetSendCommands()->empty())
 					{
 						ait->AddMXPCommand(t->GetStrippedText());
@@ -1256,7 +1282,7 @@ MudWindow *mw = m_parent;
 								hint.Replace("&"+it->GetAttr(i)+";", *vit);
 							}
 						}
-						//command.Replace("&quot;", "\"");
+						command.Replace("&quot;", "\"");
 						ait->AddMXPCommand(command);
 					}
 					for (sit = it->GetLabels()->begin();sit!=it->GetLabels()->end();sit++)
@@ -1274,7 +1300,7 @@ MudWindow *mw = m_parent;
 								hint.Replace("&"+it->GetAttr(i)+";", *vit);
 							}
 						}
-						//command.Replace("&quot;", "\"");
+						command.Replace("&quot;", "\"");
 						ait->AddMXPLabel(command);
 					}
 					hint.Replace("|", "\n");
@@ -1558,13 +1584,7 @@ void amcMXP::ReplaceEntities(wxString* s)
 	}
 	//to do html entities replace
 	ReplaceHtmlEntities(s);
-	/*s->Replace("&gt;", ">");
-	s->Replace("&lt;", "<");
-	s->Replace("&amp;", "&");
-	s->Replace("&quot;", "\"");
-	s->Replace("&apos;", "'");
-	s->Replace("&nbsp;", " ");
-	s->Replace("&#39;", "'");*/
+	
 }
 
 void amcMXP::ReplaceHtmlEntities(wxString* s)
@@ -1578,9 +1598,7 @@ void amcMXP::ReplaceHtmlEntities(wxString* s)
 	s->Replace("&nbsp;", " ");
 	for (size_t i=10;i<255;i++)
 	{
-		wxString en;
-		en<<"&#"<<i<<";";
-		s->Replace(en, wxUniChar(i));
+		s->Replace(m_entity.at(i-10), wxUniChar(i));
 	}
 	//s->Replace("&#39;", "'");
 }
@@ -1708,9 +1726,11 @@ bool amcMXPTag::IsEmpty()
 bool amcMXPTag::IsMXPTag()
 {
 	
-	if (m_mxptags[m_tag.BeforeFirst(' ').Lower()])
+	wxString s = m_tag.BeforeFirst(' ').Lower();
+	if (m_mxptags[s])
 		return true;
-	if (m_mxptags[m_tag.BeforeFirst('=').Lower()])
+	s = m_tag.BeforeFirst('=').Lower();
+	if (m_mxptags[s])
 		return true;
 	else return false;
 	//look if this is literally sent by the mud

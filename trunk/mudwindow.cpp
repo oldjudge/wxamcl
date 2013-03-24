@@ -485,7 +485,8 @@ void MudWindow::Write(wxString command)
 			wxFontEncoding fe = m_parent->GetGlobalOptions()->GetCurEncoding();
 			if (fe != wxFONTENCODING_UTF8)
 				f = command.mb_str(wxCSConv(fe));
-			else f = command.ToUTF8();
+			//else f = command.ToUTF8();
+			else f=command.ToUTF8();
 			if (f.empty() && !command.empty())
 			{
 				f = command.ToUTF8();
@@ -495,6 +496,8 @@ void MudWindow::Write(wxString command)
 			}
 			//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
 			m_sock->Write(f.c_str(), wxStrlen(f));
+			if (m_parent->GetGlobalOptions()->DebugRaw())
+				WriteRaw(f.char_str(), f.char_str().length(), false);
 			//m_sock->Write(command.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), wxStrlen(command));
 		}
 	}
@@ -1464,7 +1467,7 @@ bool gotline = false;
 static bool ttsent = false;
 static bool colset = false;
 //static bool bol = false;
-	Freeze();
+	//********Freeze();
 	if (!m_parent->GetGlobalOptions()->UseUTF8())	
 		s = wxString::From8BitData((const char*) cBuffer);
 	else
@@ -2887,7 +2890,7 @@ static bool colset = false;
 	}
 	if (IsLogging())
 		SendLineToLog(m_curline-1);
-	Thaw();
+	//******Thaw();
 	CheckTrigger(m_curline-1, true);
 	RedirectWindow();
 	//Update();
