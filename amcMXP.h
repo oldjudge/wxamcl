@@ -163,6 +163,7 @@ private:
 	bool m_tagopen;
 	vector<class amcMXPElement> m_elems;
 	vector<class amcMXPEntity> m_entities;
+	vector<wxString> m_entity;
 	MudWindow* m_parent;
 };
 
