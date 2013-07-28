@@ -1827,6 +1827,8 @@ void dlg_obj::OnGaugeTreeSelChanged( wxTreeEvent& event )
 		if (!gw)
 			return;
 	}
+	if (!gw)
+		return;
 	int index = gw->GetGaugeIndexByName(m_gaugew->GetItemText(id));
 	if (index==-1)
 		return;
