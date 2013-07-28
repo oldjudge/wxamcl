@@ -35,6 +35,7 @@ GaugeWindow::GaugeWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPo
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
+	
 }
 /*! \brief constructor
 	\param wxFrame parent
@@ -119,6 +120,8 @@ int GaugeWindow::GetGaugeIndexByName(wxString s)
 g_it it;
 int i;
 
+	if (m_gauges.empty())
+		return -1;
 	for (it = m_gauges.begin(), i=0; it!=m_gauges.end(); it++, i++)
 	{
 		if (!s.compare(it->GetName()))

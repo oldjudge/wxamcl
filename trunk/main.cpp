@@ -271,10 +271,10 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	amcMXP am(frame->m_child);
+	//amcMXP am(frame->m_child);
 	//am.Parse("<IMAGE 'intro.jpg' URL='http://coffeemud.net:27744/images/mxp/' H=400 W=400>  Hallo");
-	am.Parse("<!ELEMENT HELP '<SEND HREF=\"HELP &text;\" hint=\"Click\">'>");
-	am.Parse("<HELP>ALIAS</HELP> <HELP>!</HELP>");
+	//am.Parse("<!ELEMENT HELP '<SEND HREF=\"HELP &text;\" hint=\"Click\">'>");
+	//am.Parse("<HELP>ALIAS</HELP> <HELP>!</HELP>");
 	//am.Parse("By what name shall we know thee?\xff\xfa\x5b\xff\xf0\xff\xfa\xc9\xff\xf0");
 	//am.Parse("\x1b[1z<send \"look leather satchel\" hint=\"Click to see menu|look|eat|wear|remove|drop\">a \x1b[1;30mleather\x1b[0m satchel</Send>");
 	//am.Parse("\x1b[1z<!ELEMENT RName '<FONT \"Comic Sans MS\" COLOR=CYAN> <B>' FLAG=\"RoomName\"><!ELEMENT RDesc FLAG='RoomDesc'><!ELEMENT RExits FLAG='RoomExit'><!ELEMENT Ex '<SEND>'><!ELEMENT List \"<send href='buy &#39;&name;&#39;' hint='Buy &desc;'>\" ATT='name desc'>\x1b[1z<SUPPORT image send frame state>");
