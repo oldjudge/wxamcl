@@ -1815,7 +1815,7 @@ void dlg_obj::OnRegExpTest(wxCommandEvent &event)
 
 void dlg_obj::OnGaugeTreeSelChanged( wxTreeEvent& event )
 {
-	class GaugeWindow *gw;
+	class GaugeWindow *gw = NULL;
 	wxTreeItemId id = event.GetItem();
 	if (m_gaugew->ItemHasChildren(id))
 		return;

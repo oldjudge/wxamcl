@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 10 2012)
+// C++ code generated with wxFormBuilder (version Oct  8 2012)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -48,7 +48,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	
 	gSizer1->Add( m_textcomm, 0, wxALL, 5 );
 	
-	m_staticText5 = new wxStaticText( m_general, wxID_ANY, _("Separator sign:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText5 = new wxStaticText( m_general, wxID_ANY, _("Seperator sign:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText5->Wrap( -1 );
 	gSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
@@ -167,6 +167,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer10->Add( m_staticText131, 0, wxALL, 5 );
 	
 	m_promptpattern = new wxTextCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_promptpattern->SetMaxLength( 0 ); 
 	sbSizer10->Add( m_promptpattern, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -186,6 +187,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fgSizer1->Add( m_gmcp, 0, wxALL, 5 );
 	
 	m_gmcpmodules = new wxTextCtrl( m_general, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL );
+	m_gmcpmodules->SetMaxLength( 0 ); 
 	fgSizer1->Add( m_gmcpmodules, 1, wxALL|wxEXPAND, 5 );
 	
 	m_mccp = new wxCheckBox( m_general, wxID_ANY, _("Negotiate MCCP"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -258,7 +260,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText141->Wrap( -1 );
 	sbSizer13->Add( m_staticText141, 0, wxALL, 5 );
 	
-	m_eventfile = new wxFilePickerCtrl( m_general, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Lua files|*.lua"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE );
+	m_eventfile = new wxFilePickerCtrl( m_general, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Lua files|*.lua"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_USE_TEXTCTRL|wxFLP_SMALL );
 	sbSizer13->Add( m_eventfile, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -491,7 +493,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_telnet->SetSizer( bSizer51 );
 	m_telnet->Layout();
 	bSizer51->Fit( m_telnet );
-	m_nb->AddPage( m_telnet, _("Output options"), true );
+	m_nb->AddPage( m_telnet, _("Output options"), false );
 	m_log = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer61;
 	bSizer61 = new wxBoxSizer( wxVERTICAL );
@@ -521,7 +523,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText15->Wrap( -1 );
 	sbSizer16->Add( m_staticText15, 0, wxALL, 5 );
 	
-	m_dirPicker1 = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_dirPicker1 = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_SMALL|wxDIRP_USE_TEXTCTRL );
 	sbSizer16->Add( m_dirPicker1, 0, wxALL|wxEXPAND, 5 );
 	
 	m_staticText16 = new wxStaticText( m_log, wxID_ANY, _("Filename:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -529,6 +531,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer16->Add( m_staticText16, 0, wxALL, 5 );
 	
 	m_logfile = new wxTextCtrl( m_log, wxID_ANY, _("log.txt"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_logfile->SetMaxLength( 0 ); 
 	sbSizer16->Add( m_logfile, 0, wxALL|wxEXPAND, 5 );
 	
 	m_startlog = new wxToggleButton( m_log, wxID_ANY, _("Start logging"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -540,7 +543,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer22;
 	sbSizer22 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Working directory") ), wxVERTICAL );
 	
-	m_workdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_workdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST|wxDIRP_USE_TEXTCTRL|wxDIRP_SMALL );
 	sbSizer22->Add( m_workdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -549,7 +552,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer161;
 	sbSizer161 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Profile directory") ), wxVERTICAL );
 	
-	m_profdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_profdir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer161->Add( m_profdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -558,7 +561,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer18;
 	sbSizer18 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Scripting directory") ), wxVERTICAL );
 	
-	m_scriptdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_scriptdir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer18->Add( m_scriptdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -567,7 +570,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer19;
 	sbSizer19 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Package directory") ), wxVERTICAL );
 	
-	m_packdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_packdir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer19->Add( m_packdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -576,7 +579,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer21;
 	sbSizer21 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Database directory") ), wxVERTICAL );
 	
-	m_dbdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_dbdir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer21->Add( m_dbdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -585,7 +588,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer211;
 	sbSizer211 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Sound (MSP) directory") ), wxVERTICAL );
 	
-	m_mspdir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_mspdir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer211->Add( m_mspdir, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -594,7 +597,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer221;
 	sbSizer221 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Lua directory") ), wxVERTICAL );
 	
-	m_luadir = new wxDirPickerCtrl( m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE );
+	m_luadir = new wxDirPickerCtrl(m_log, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST | wxDIRP_USE_TEXTCTRL | wxDIRP_SMALL);
 	sbSizer221->Add( m_luadir, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
 	
 	
@@ -609,7 +612,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_log->SetSizer( bSizer61 );
 	m_log->Layout();
 	bSizer61->Fit( m_log );
-	m_nb->AddPage( m_log, _("Logging && paths"), false );
+	m_nb->AddPage( m_log, _("Logging && paths"), true );
 	m_nbBitmap = wxNullBitmap;
 	if ( m_nbBitmap.Ok() )
 	{

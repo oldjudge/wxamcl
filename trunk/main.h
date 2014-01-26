@@ -84,8 +84,8 @@ extern "C"
 extern "C"
 {
 	#include <lua.h>
-	#include "lauxlib.h"
-	#include "lualib.h"
+	#include <lauxlib.h>
+	#include <lualib.h>
 	#include <Uxtheme.h>
 }
 #endif
@@ -116,6 +116,7 @@ extern "C"
 #include <utility>
 #include <string>
 #include <algorithm>
+#include <functional>
 
 using namespace std;
 
@@ -259,7 +260,7 @@ enum
 
 #define OVECCOUNT 60
 
-#define APP_VERSION "0.1.r90"
+#define APP_VERSION "0.1.r95"
 
 #include "mudwindow.h"
 #include "luadefs.h"

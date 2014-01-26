@@ -35,7 +35,7 @@ GaugeWindow::GaugeWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPo
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
-	
+
 }
 /*! \brief constructor
 	\param wxFrame parent

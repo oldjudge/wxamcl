@@ -423,7 +423,9 @@ bool waitmore = true;
 	m_sock->GetLocal(local);
 	
 	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
-	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+	wxString s = local.IPAddress();
+	//m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+	m_parent->GetDefVars()->at(idx).SetValue(s);
 	//s = m_addr.IPAddress();
 	/*bool waitmore = true;
 	
@@ -6151,7 +6153,10 @@ wxUint32 uiBytesRead;
 		Msg(msg);
 	
 		if (m_sock->Error())
-			wxSocketError err=m_sock->LastError();
+		{
+			wxSocketError err = m_sock->LastError();
+			err = wxSOCKET_NOERROR;
+		}
 		//Msg(_("Connection lost!!"));
 		m_sock->Close();
 		if (m_mccp2)
