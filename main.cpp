@@ -4960,7 +4960,7 @@ int InputTextCtrl::Info(wxString *sPar)
 	if (!m_parent->m_child->GetUseIPV6())
 		s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress()<<" "<<m_parent->m_child->GetIPAddr()->Hostname()<<" (IPV4)";
 	else
-		s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->IPAddress()<<" (IPV6)";
+		s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->IPAddress()<<" "<<m_parent->m_child->GetIP6Addr()->Hostname()<<" (IPV6)";
 	m_parent->m_child->Msg(s);
 	s.clear();
 	s << _("--- Information end----");

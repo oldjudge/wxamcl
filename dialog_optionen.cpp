@@ -7,9 +7,9 @@ DlgOptions( parent )
 {
 	
 	#ifndef WXOSX
-	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_FRAME_ICON));
-	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_FRAME_ICON));
-	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_FOLDER, wxART_FRAME_ICON));
+	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
+	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_NEW, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
+	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
 	m_nb->SetPageImage(0, 0);
 	m_nb->SetPageImage(1, 1);
 	m_nb->SetPageImage(2, 2);
