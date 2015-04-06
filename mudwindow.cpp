@@ -1501,8 +1501,36 @@ static bool colset = false;
 			
 			s = wxString (cBuffer);
 			
-			if (m_parent->GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
-				s = wxString (cBuffer, wxCSConv(wxFONTENCODING_UTF8));
+			if (m_parent->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
+			{
+				s = wxString(cBuffer, wxCSConv(wxFONTENCODING_UTF8));
+
+				/*if (s.empty())
+				{
+
+					wxStringOutputStream* astream = new wxStringOutputStream();
+					int xxx;
+					for (xxx = 0; xxx < m_dc->GetUCLen(); xxx++)
+					{
+						if (cBuffer[xxx] == (char)IAC)
+							break;
+						else
+							astream->PutC(cBuffer[xxx]);
+					}
+
+
+					s = astream->GetString();
+					delete astream;
+					int sss = s.size();
+					wxString satz;
+					if (xxx < m_dc->GetUCLen())
+					{
+						satz = wxString(cBuffer[xxx-1]);
+						s.Append(satz);
+					}
+
+				}*/
+			}
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
