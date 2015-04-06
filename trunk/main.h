@@ -59,6 +59,7 @@
 #include <wx/dir.h>
 #include <wx/datetime.h>
 #include <wx/encconv.h>
+#include <wx/sstream.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
