@@ -1,13 +1,13 @@
 # Introduction #
 
-wxAmcl is a mud client using wxWidgets 2.9.4.
+wxAmcl is a mud client using wxWidgets 3.0.2.
 
 
 ## Details ##
 
 At the moment there are alpha versions of the client for
 
-  * Windows 7
+  * Windows 8.1
   * Linux (Ubuntu and Debian)
   * Mac OSX (more unstable than the other versions)
 
