@@ -84,7 +84,7 @@ void GlobalOptions::Init()
 	#endif
 	wxString s;
 	#if defined __WXGTK__
-		wxStandardPaths p;
+		wxStandardPaths p = wxStandardPaths::Get();
 		m_workdir.Assign(p.GetUserDataDir());
 		s = m_workdir.GetFullPath();
 		if (!m_workdir.DirExists(s))//first time around?

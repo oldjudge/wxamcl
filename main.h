@@ -75,9 +75,9 @@ extern "C"
 }*/
 extern "C"
 {
-	#include </usr/local/include/lua.h>
-	#include </usr/local/include/lauxlib.h>
-	#include </usr/local/include/lualib.h>
+	#include </usr/include/lua5.2/lua.h>
+	#include </usr/include/lua5.2/lauxlib.h>
+	#include </usr/include/lua5.2/lualib.h>
 }
 
 #endif
