@@ -12,7 +12,8 @@
   * [wxamcl.getline](GeneralFuncs#wxamcl.getline.md)
   * [wxamcl.scroll](GeneralFuncs#wxamcl.scroll.md)
   * [wxamcl.gag](GeneralFuncs#wxamcl.gag.md)
-** [Send commands](GeneralFuncs#Send_commands_to_the_MUD.md)**
+  
+**[Send commands](GeneralFuncs#Send_commands_to_the_MUD.md)**
   * [wxamcl.send](GeneralFuncs#wxamcl.send.md)
   * [wxamcl.execute](GeneralFuncs#wxamcl.execute.md)
 
