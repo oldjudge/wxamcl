@@ -11,6 +11,7 @@
   * [wxamcl.destroynb](UserWindows#wxamcl.destroynb.md)
   * [wxamcl.createtoolbar](UserWindows#wxamcl.createtoolbar.md)
   * [wxamcl.addbtn](UserWindows#wxamcl.addbtn.md)
+  
 **[Create flexible user windows](UserWindows#Create_amc_window.md)**
   * [wxamcl.createamcwin](UserWindows#wxamcl.createamcwin.md)
   * [wxamcl.destroyamcwindow](UserWindows#wxamcl.destroyamcwindow.md)
