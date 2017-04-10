@@ -1,5 +1,5 @@
 # General Functions #
-**[Print, color and output buffer functions](GeneralFuncs#Output_to_screen.md)
+**[Print, color and output buffer functions](GeneralFuncs#Output_to_screen.md)**
   * [wxamcl.echo](GeneralFuncs#wxamcl.echo.md)
   * [wxamcl.echowin](GeneralFuncs#wxamcl.echowin.md)
   * [wxamcl.substitute](GeneralFuncs#wxamcl.substitute.md)
@@ -11,7 +11,8 @@
   * [wxamcl.getlinenumber](GeneralFuncs#wxamcl.getlinenumber.md)
   * [wxamcl.getline](GeneralFuncs#wxamcl.getline.md)
   * [wxamcl.scroll](GeneralFuncs#wxamcl.scroll.md)
-  * [wxamcl.gag](GeneralFuncs#wxamcl.gag.md)** [Send commands](GeneralFuncs#Send_commands_to_the_MUD.md)
+  * [wxamcl.gag](GeneralFuncs#wxamcl.gag.md)
+** [Send commands](GeneralFuncs#Send_commands_to_the_MUD.md)**
   * [wxamcl.send](GeneralFuncs#wxamcl.send.md)
   * [wxamcl.execute](GeneralFuncs#wxamcl.execute.md)
 
