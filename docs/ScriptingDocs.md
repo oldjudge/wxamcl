@@ -15,3 +15,8 @@ This section contains the documentation for the client Lua interface.
 
 > > You can call a single function from a file:
 > > > <pre>#func("functest.lua", "Test('green', 'red')")</pre>
+
+## Documentation ##
+
+[General Functions](GeneralFuncs.md)
+[User Windows](UserWindows.md)

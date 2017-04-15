@@ -19,6 +19,7 @@ Most of the data files the client uses are lua files and therefore easy to edit.
 Scripting allows you to do a lot of things, for example scripting a mapper using lua and GMCP (via the inbuilt event system) for [Aardwolf Mud](http://aardwolf.com).
 The event system supports also MSDP protocol, OnConnect, OnDisconnect and OnPacketReceived events.
 
-[General Functions](GeneralFuncs.md)
 
-[Scripting Documentation](ScriptingDocs.md)
+  * [Client Commands](ClientCommands.md)
+  * [Scripting Documentation](ScriptingDocs.md)
+
