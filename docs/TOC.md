@@ -9,7 +9,7 @@ wxAmcl is a mud client using wxWidgets 3.1.0.
 At the moment there are alpha versions of the client for
 
   * Windows 10
-  * Linux (teste on Linux Mint 18)
+  * Linux (Linux Mint 18)
   * Mac OSX (more unstable than the other versions)
 
 The client has all features you would expect from a mud client.
