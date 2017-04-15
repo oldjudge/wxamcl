@@ -1,6 +1,6 @@
 # wxamcl
 
-[Introduction](/wiki/ProjectIntroduction.md)
+[Introduction](ProjectIntroduction.md)
 
 Cross platform mud client using wxWidgets, hobbyist project.
 
