@@ -681,7 +681,7 @@ int luafunc_echowin(lua_State*L)
 		return 0;
 	//frame->Msg(wxString(text));
 	delete name;
-	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	AnsiLineElement ale;
 	wxColour c;
 	map<wxString, wxColour> m = wxGetApp().GetChild()->GetMXPParser()->GetMXPColorMap();
@@ -787,7 +787,7 @@ int luafunc_drawcircle(lua_State*L)
 	if (frame==NULL)
 		return 0;
 	delete name;
-	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	wxColour c, c1;
 	map<wxString, wxColour> m = wxGetApp().GetChild()->GetMXPParser()->GetMXPColorMap();
 	if (wxString(bcol).StartsWith('#'))
@@ -832,7 +832,7 @@ int luafunc_drawsquare(lua_State *L)
 	if (frame==NULL)
 		return 0;
 	delete name;
-	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	wxColour c, c1;
 	map<wxString, wxColour> m = wxGetApp().GetChild()->GetMXPParser()->GetMXPColorMap();
 	if (wxString(bcol).StartsWith('#'))
@@ -873,7 +873,7 @@ int luafunc_drawline(lua_State *L)
 	if (frame==NULL)
 		return 0;
 	delete name;
-	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	wxColour c, c1;
 	map<wxString, wxColour> m = wxGetApp().GetChild()->GetMXPParser()->GetMXPColorMap();
 	
@@ -911,7 +911,7 @@ int luafunc_drawtext(lua_State*L)
 	if (frame==NULL)
 		return 0;
 	delete name;
-	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	class MudMainFrame *parent = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	wxColour f, b;
 	map<wxString, wxColour> m = wxGetApp().GetChild()->GetMXPParser()->GetMXPColorMap();
 	if (wxString(fcol).StartsWith('#'))
@@ -2736,7 +2736,7 @@ int luafunc_actiontostring(lua_State *L)
 {
 str_ac* t;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();
+//	MudMainFrame *frame = wxGetApp().GetFrame();
 	t = (str_ac*)checkaction(L);
 	lua_pushfstring(L, "type: wxamcl.action, label: \"%s\", pattern: \"%s\", action: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action);
 	return 1;
@@ -3212,7 +3212,7 @@ int luafunc_aliastostring(lua_State *L)
 {
 str_al* t;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+//	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	t = (str_al*)checkalias(L);
 	lua_pushfstring(L, "type: amc.alias, alias: \"%s\", action: \"%s\"", t->alias, t->action);
 	return 1;
@@ -3227,7 +3227,7 @@ const char *cc;
 amcTimer timer;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	int x = sizeof(struct str_timer);
+//	int x = sizeof(struct str_timer);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
@@ -3428,7 +3428,7 @@ str_hk* hkey;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	int x = sizeof(struct str_hk);
+//	int x = sizeof(struct str_hk);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
@@ -3811,7 +3811,7 @@ str_var* a;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-	int x = sizeof(struct str_var);
+//	int x = sizeof(struct str_var);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
@@ -4639,7 +4639,7 @@ int luafunc_gauge(lua_State *L)
 		return 0;
 	}
 		//frame->Msg(wxString(text));
-	int idx = frame->GetGaugeIndexByName(gauge);
+//	int idx = frame->GetGaugeIndexByName(gauge);
 	delete name;
 	wxClientDC dc(frame);
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
@@ -4808,7 +4808,7 @@ int luafunc_setgaugelabel(lua_State *L)
 	gauge = luaL_checkstring(L, 2);
 	label = luaL_checkstring(L, 3);
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
-	class MudWindow *frame1 = wxGetApp().GetChild();
+//	class MudWindow *frame1 = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
 	int idx = frame->GetGaugeIndexByName(gauge);
@@ -4832,7 +4832,7 @@ const char* gauge;
 	winname = luaL_checkstring(L, 1);
 	gauge = luaL_checkstring(L, 2);
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
-	class MudWindow *frame1 = wxGetApp().GetChild();
+//	class MudWindow *frame1 = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
 	int idx = frame->GetGaugeIndexByName(gauge);
@@ -4859,7 +4859,7 @@ int index=1;
 struct str_btn *bb;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	int x = sizeof(struct str_btn);
+//	int x = sizeof(struct str_btn);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
@@ -5320,7 +5320,7 @@ int luafunc_columnsdb(lua_State *L)
 {
 	sqlite3* db;
 	sqlite3_stmt* stmt;
-	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+//	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	db = (sqlite3*)lua_touserdata(L, 1);
 	if (!db)
 		return 0;

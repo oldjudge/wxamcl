@@ -1,8 +1,7 @@
 #ifndef amcLua_H
 #define amcLua_H
 
-//#define luaL_doresume(L, fn) \
-//	(luaL_loadfile(L, fn) || lua_resume(L, 0)) 5.1.4
+//#define luaL_doresume(L, fn) (luaL_loadfile(L, fn) || lua_resume(L, 0)) 5.1.4
 #define luaL_doresume(L, fn) (luaL_loadfile(L, fn) || lua_resume(L, NULL, 0))
 //amc namespace functions
 #define checkaction(L) (str_ac*)luaL_checkudata(L, 1, "wxamcl.mta")

@@ -156,6 +156,10 @@ void GlobalOptions::Init()
 			wxCopyFile(src, dest<<"/scripts/samples/gmcp_echo.lua");
 			wxString ff;
 			wxDir dir(s);
+            if (!dir.IsOpened())
+            {
+                wxMkdir(s);
+            }
 			bool bb= dir.GetFirst(&ff, "*.xpm");
 			while (bb)
 			{

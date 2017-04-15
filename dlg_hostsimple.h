@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb 16 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __dlg_hostsimple__
-#define __dlg_hostsimple__
+#ifndef __DLG_HOSTSIMPLE_H__
+#define __DLG_HOSTSIMPLE_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>
@@ -42,9 +43,10 @@ class Connect : public wxDialog
 	public:
 		wxComboBox* m_server;
 		wxComboBox* m_port;
-		Connect( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connect"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE );
+		
+		Connect( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connect"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
 		~Connect();
 	
 };
 
-#endif //__dlg_hostsimple__
+#endif //__DLG_HOSTSIMPLE_H__

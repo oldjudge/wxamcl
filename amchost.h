@@ -23,9 +23,13 @@ public:
 	wxString GetProfileName() {return m_profile.GetFullName();}
 	wxFileName GetProfileFName() {return m_profile;}
 	wxString GetIPAddress() {return m_ip.IPAddress();}
-	wxString GetIP6Address() {return m_ip6.IPAddress();}
+    #if defined WXAMCL_USEIPV6 
+        wxString GetIP6Address() {return m_ip6.IPAddress();}
+    #endif
 	wxIPV4address GetIP4() {return m_ip;}
-	wxIPV6address GetIP6() {return m_ip6;}
+    #if defined WXAMCL_USEIPV6
+        wxIPV6address GetIP6() {return m_ip6;}
+    #endif
 	void SetIPAddr(wxString s) {m_ipaddr=s;}
 	wxString GetIPString() {return m_ipaddr;}
 private:
@@ -35,7 +39,9 @@ private:
 	wxString m_password;
 	long m_port;
 	wxIPV4address m_ip;
+#if defined WXAMCL_USEIPV6
 	wxIPV6address m_ip6;
+#endif
 	wxFileName m_profile;
 	wxString m_ipaddr;
 };

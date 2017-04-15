@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Jun 17 2015)
+// C++ code generated with wxFormBuilder (version Feb 16 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -12,6 +12,7 @@
 DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetExtraStyle( this->GetExtraStyle() | wxWS_EX_TRANSIENT );
 	
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxVERTICAL );
@@ -23,7 +24,11 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_nb->AssignImageList( m_nbImages );
 	wxBitmap m_nbBitmap;
 	wxImage m_nbImage;
+	m_nb->SetExtraStyle( wxWS_EX_TRANSIENT );
+	
 	m_general = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_general->SetExtraStyle( wxWS_EX_TRANSIENT );
+	
 	wxBoxSizer* bSizer2;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
 	
@@ -43,7 +48,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText4, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textcomm = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CS, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textcomm->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textcomm->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textcomm->SetMaxLength( 1 );
+	}
+	#else
+	m_textcomm->SetMaxLength( 1 );
+	#endif
 	m_textcomm->SetToolTip( _("Command sign (default: #)") );
 	
 	gSizer1->Add( m_textcomm, 0, wxALL, 5 );
@@ -53,7 +65,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText5, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textsep = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CSEP, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textsep->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textsep->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textsep->SetMaxLength( 1 );
+	}
+	#else
+	m_textsep->SetMaxLength( 1 );
+	#endif
 	m_textsep->SetToolTip( _("Command separator sign (default: ;)") );
 	
 	gSizer1->Add( m_textsep, 0, wxALL, 5 );
@@ -63,7 +82,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText6, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textscript = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CSCRIPT, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textscript->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textscript->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textscript->SetMaxLength( 1 );
+	}
+	#else
+	m_textscript->SetMaxLength( 1 );
+	#endif
 	m_textscript->SetToolTip( _("Script command sign (default: ?)") );
 	
 	gSizer1->Add( m_textscript, 0, wxALL, 5 );
@@ -73,7 +99,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText41, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textsw = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CSP, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textsw->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textsw->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textsw->SetMaxLength( 1 );
+	}
+	#else
+	m_textsw->SetMaxLength( 1 );
+	#endif
 	m_textsw->SetToolTip( _("Command sign for speedwalks (default: .)") );
 	
 	gSizer1->Add( m_textsw, 0, wxALL, 5 );
@@ -83,7 +116,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText51, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textswr = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CSPR, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textswr->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textswr->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textswr->SetMaxLength( 1 );
+	}
+	#else
+	m_textswr->SetMaxLength( 1 );
+	#endif
 	m_textswr->SetToolTip( _("Command sign for reverse speedwalks (default: *)") );
 	
 	gSizer1->Add( m_textswr, 0, wxALL, 5 );
@@ -93,7 +133,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText71, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_textvar = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CV, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_textvar->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_textvar->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_textvar->SetMaxLength( 1 );
+	}
+	#else
+	m_textvar->SetMaxLength( 1 );
+	#endif
 	m_textvar->SetToolTip( _("Variable sign (default: $)") );
 	
 	gSizer1->Add( m_textvar, 0, wxALL, 5 );
@@ -103,7 +150,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gSizer1->Add( m_staticText121, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	m_listvar = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CV, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
-	m_listvar->SetMaxLength( 1 ); 
+	#ifdef __WXGTK__
+	if ( !m_listvar->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_listvar->SetMaxLength( 1 );
+	}
+	#else
+	m_listvar->SetMaxLength( 1 );
+	#endif
 	m_listvar->SetToolTip( _("List sign (default: @)") );
 	
 	gSizer1->Add( m_listvar, 0, wxALL, 5 );
@@ -135,7 +189,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText11->Wrap( -1 );
 	gbSizer1->Add( m_staticText11, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_histsize = new wxSpinCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxSP_ARROW_KEYS, 0, 200, 199 );
+	m_histsize = new wxSpinCtrl( sbSizer5->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 150,-1 ), wxSP_ARROW_KEYS, 0, 200, 199 );
 	gbSizer1->Add( m_histsize, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	
@@ -167,7 +221,6 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer10->Add( m_staticText131, 0, wxALL, 5 );
 	
 	m_promptpattern = new wxTextCtrl( sbSizer10->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_promptpattern->SetMaxLength( 0 ); 
 	sbSizer10->Add( m_promptpattern, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -187,7 +240,6 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	fgSizer1->Add( m_gmcp, 0, wxALL, 5 );
 	
 	m_gmcpmodules = new wxTextCtrl( sbSizer12->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxVSCROLL );
-	m_gmcpmodules->SetMaxLength( 0 ); 
 	fgSizer1->Add( m_gmcpmodules, 1, wxALL|wxEXPAND, 5 );
 	
 	m_mccp = new wxCheckBox( sbSizer12->GetStaticBox(), wxID_ANY, _("Negotiate MCCP"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -273,14 +325,14 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	gbSizer3->AddGrowableRow( 0 );
 	gbSizer3->AddGrowableRow( 1 );
 	
-	bSizer2->Add( gbSizer3, 1, wxALL|wxEXPAND, 5 );
+	bSizer2->Add( gbSizer3, 1, 0, 5 );
 	
 	
 	m_general->SetSizer( bSizer2 );
 	m_general->Layout();
 	bSizer2->Fit( m_general );
 	m_nb->AddPage( m_general, _("General"), true );
-	m_nbBitmap = wxArtProvider::GetBitmap( wxART_NEW_DIR, wxART_FRAME_ICON );
+	m_nbBitmap = wxArtProvider::GetBitmap( wxART_NEW, wxART_FRAME_ICON );
 	if ( m_nbBitmap.Ok() )
 	{
 		m_nbImage = m_nbBitmap.ConvertToImage();
@@ -289,13 +341,15 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 		m_nbIndex++;
 	}
 	m_telnet = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_telnet->SetExtraStyle( wxWS_EX_TRANSIENT );
+	
 	wxBoxSizer* bSizer51;
 	bSizer51 = new wxBoxSizer( wxVERTICAL );
 	
 	wxGridBagSizer* gbSizer2;
 	gbSizer2 = new wxGridBagSizer( 0, 0 );
 	gbSizer2->SetFlexibleDirection( wxBOTH );
-	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Line buffer") ), wxVERTICAL );
@@ -311,32 +365,32 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	bSizer5->Add( m_linebuf, 1, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	
-	sbSizer3->Add( bSizer5, 1, wxALL|wxTOP, 5 );
+	sbSizer3->Add( bSizer5, 1, wxALL, 5 );
 	
 	
-	gbSizer2->Add( sbSizer3, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( sbSizer3, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Font") ), wxVERTICAL );
 	
 	m_font = new wxFontPickerCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxFont( 10, 70, 90, 90, false, wxT("Consolas") ), wxDefaultPosition, wxDefaultSize, wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL );
 	m_font->SetMaxPointSize( 100 ); 
-	sbSizer6->Add( m_font, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	sbSizer6->Add( m_font, 0, wxALL|wxEXPAND, 5 );
 	
 	
-	gbSizer2->Add( sbSizer6, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( sbSizer6, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Timestamps") ), wxVERTICAL );
 	
 	m_timestamp = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Show timestamps"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer8->Add( m_timestamp, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	sbSizer8->Add( m_timestamp, 0, wxALL|wxEXPAND, 5 );
 	
 	m_milli = new wxCheckBox( sbSizer8->GetStaticBox(), wxID_ANY, _("Show milliseconds"), wxDefaultPosition, wxDefaultSize, 0 );
 	sbSizer8->Add( m_milli, 0, wxALL, 5 );
 	
 	
-	gbSizer2->Add( sbSizer8, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( sbSizer8, wxGBPosition( 0, 2 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer9;
 	sbSizer9 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Dark colors") ), wxHORIZONTAL );
@@ -464,13 +518,13 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer11->Add( m_usewrap, 0, wxALL, 5 );
 	
 	m_autowrap = new wxCheckBox( sbSizer11->GetStaticBox(), wxID_ANY, _("Autowrap"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer11->Add( m_autowrap, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	sbSizer11->Add( m_autowrap, 0, wxALL, 5 );
 	
 	m_linewrap = new wxSpinCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS|wxSP_WRAP, 0, 1000, 0 );
-	sbSizer11->Add( m_linewrap, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	sbSizer11->Add( m_linewrap, 0, wxALL, 5 );
 	
 	
-	gbSizer2->Add( sbSizer11, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( sbSizer11, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer14;
 	sbSizer14 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Misc") ), wxVERTICAL );
@@ -502,7 +556,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_telnet->Layout();
 	bSizer51->Fit( m_telnet );
 	m_nb->AddPage( m_telnet, _("Output options"), false );
-	m_nbBitmap = wxArtProvider::GetBitmap( wxART_INFORMATION, wxART_FRAME_ICON );
+	m_nbBitmap = wxArtProvider::GetBitmap( wxART_EXECUTABLE_FILE, wxART_FRAME_ICON );
 	if ( m_nbBitmap.Ok() )
 	{
 		m_nbImage = m_nbBitmap.ConvertToImage();
@@ -511,6 +565,8 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 		m_nbIndex++;
 	}
 	m_log = new wxPanel( m_nb, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	m_log->SetExtraStyle( wxWS_EX_TRANSIENT );
+	
 	wxBoxSizer* bSizer61;
 	bSizer61 = new wxBoxSizer( wxVERTICAL );
 	
@@ -547,11 +603,10 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer16->Add( m_staticText16, 0, wxALL, 5 );
 	
 	m_logfile = new wxTextCtrl( sbSizer16->GetStaticBox(), wxID_ANY, _("log.txt"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_logfile->SetMaxLength( 0 ); 
 	sbSizer16->Add( m_logfile, 0, wxALL|wxEXPAND, 5 );
 	
 	m_startlog = new wxToggleButton( sbSizer16->GetStaticBox(), wxID_ANY, _("Start logging"), wxDefaultPosition, wxDefaultSize, 0 );
-	sbSizer16->Add( m_startlog, 0, wxALIGN_CENTER|wxALL, 5 );
+	sbSizer16->Add( m_startlog, 0, wxALL, 5 );
 	
 	
 	gbSizer4->Add( sbSizer16, wxGBPosition( 0, 0 ), wxGBSpan( 5, 1 ), wxALL|wxEXPAND, 5 );
@@ -614,7 +669,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer221 = new wxStaticBoxSizer( new wxStaticBox( m_log, wxID_ANY, _("Lua directory") ), wxVERTICAL );
 	
 	m_luadir = new wxDirPickerCtrl( sbSizer221->GetStaticBox(), wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DIR_MUST_EXIST|wxDIRP_USE_TEXTCTRL );
-	sbSizer221->Add( m_luadir, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	sbSizer221->Add( m_luadir, 0, wxALL|wxEXPAND, 5 );
 	
 	
 	gbSizer4->Add( sbSizer221, wxGBPosition( 6, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
@@ -647,7 +702,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
 	m_sdbSizer1->Realize();
 	
-	bSizer1->Add( m_sdbSizer1, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	bSizer1->Add( m_sdbSizer1, 0, wxALL, 5 );
 	
 	
 	this->SetSizer( bSizer1 );

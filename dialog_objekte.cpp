@@ -32,8 +32,8 @@ ObjDlg( parent )
 	#endif
 	wxIcon group(group1_xpm);
 	wxIcon action(action1_xpm);
-	int x = action.GetHeight();
-	int y = action.GetWidth();
+	//int x = action.GetHeight();
+	//int y = action.GetWidth();
 	//il->Add(wxArtProvider::GetBitmap(wxART_FOLDER));
 	//il->Add(wxArtProvider::GetBitmap(wxART_NORMAL_FILE));
 	//il->Add(wxArtProvider::GetBitmap(wxART_EXECUTABLE_FILE));
@@ -293,7 +293,7 @@ void dlg_obj::BuildButtons()
 {
 b_it iter;
 //s_it it;
-int index=0;
+//int index=0;
 vector<wxString> list;
 vector<wxTreeItemId> id;
 	
@@ -957,8 +957,9 @@ void dlg_obj::OnColourCheck( wxCommandEvent& event )
 		m_amccombo->Enable();
 	else
 	{
-		m_amccombo->Disable();
-		m_frame->GetTrigger()->at(index).SetColMatch(-1);
+        m_amccombo->Disable();
+		if (index>0)
+            m_frame->GetTrigger()->at(index).SetColMatch(-1);
 		m_amccombo->SetSelection(0);
 	}
 	m_amccombo->Refresh();

@@ -233,7 +233,7 @@ int i;
 
 void AnsiLine::SetLineText(wxString st)
 {
-	MudMainFrame *frame = wxGetApp().GetFrame();
+	//MudMainFrame *frame = wxGetApp().GetFrame();
 	//wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
 	//if (ff.empty())
 	//	ff=st;
@@ -242,7 +242,7 @@ void AnsiLine::SetLineText(wxString st)
 
 void AnsiLine::AssignText(wxString st)
 {
-	MudMainFrame *frame = wxGetApp().GetFrame();
+	//MudMainFrame *frame = wxGetApp().GetFrame();
 	//wxString ff(st.To8BitData(), wxCSConv(frame->GetGlobalOptions()->GetCurEncoding()));
 	//if (ff.empty())
 	//	ff=st;

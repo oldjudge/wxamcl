@@ -402,7 +402,7 @@ bool waitmore = true;
 	//m_sock->SetFlags(wxSOCKET_WAITALL);
 	//m_sock->Peek(cBuffer, 1);
 }
-
+#if defined WXAMCL_USEIPV6
 void MudWindow::MyConnect(wxIPV6address addr)
 {
 bool waitmore = true;
@@ -438,6 +438,7 @@ bool waitmore = true;
 	//m_sock->SetFlags(wxSOCKET_WAITALL);
 	//m_sock->Peek(cBuffer, 1);
 }
+#endif
 
 void MudWindow::OnAutoReconnect(wxTimerEvent& event)
 {
@@ -1461,7 +1462,7 @@ static wxString atcp = wxEmptyString;
 int pos=0;
 //int apos=0
 int aoldpos=0;
-static int opos=0;
+//static int opos=0;
 wxString s;
 static long col1=0, col2=0, col3=0;
 int offset=30;
@@ -6097,7 +6098,7 @@ wxUint32 uiBytesRead;
 		}
 		if (m_oddmccp2)
 		{
-			int err=m_dc->Decompress(&m_cBuffer[m_oddmccp2], uiBytesRead-m_oddmccp2);
+//			int err=m_dc->Decompress(&m_cBuffer[m_oddmccp2], uiBytesRead-m_oddmccp2);
 			//cBuf = new wxChar[m_dc->GetUCLen()];
 			m_dc->GetUCBuffer(cBuf);
 			//ParseBuffer(cBuf);

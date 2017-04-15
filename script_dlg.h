@@ -1,15 +1,16 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 16 2008)
+// C++ code generated with wxFormBuilder (version Feb 16 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
-#ifndef __script_dlg__
-#define __script_dlg__
+#ifndef __SCRIPT_DLG_H__
+#define __SCRIPT_DLG_H__
 
+#include <wx/artprov.h>
+#include <wx/xrc/xmlres.h>
 #include <wx/intl.h>
-
 #include "scriptedit.h"
 #include <wx/gdicmn.h>
 #include <wx/font.h>
@@ -43,18 +44,19 @@ class scriptedit : public wxDialog
 		wxButton* m_close;
 		
 		// Virtual event handlers, overide them in your derived class
-		virtual void OnLoadScript( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnSave( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnSaveAs( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnRunScript( wxCommandEvent& event ){ event.Skip(); }
-		virtual void OnFontChanged( wxFontPickerEvent& event ){ event.Skip(); }
-		virtual void OnOk( wxCommandEvent& event ){ event.Skip(); }
+		virtual void OnLoadScript( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnSave( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnSaveAs( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnRunScript( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnFontChanged( wxFontPickerEvent& event ) { event.Skip(); }
+		virtual void OnOk( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:
-		scriptedit( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Script"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER );
+		
+		scriptedit( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Script"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxCAPTION|wxRESIZE_BORDER ); 
 		~scriptedit();
 	
 };
 
-#endif //__script_dlg__
+#endif //__SCRIPT_DLG_H__

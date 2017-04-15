@@ -30,7 +30,7 @@ dlg_sscr::dlg_sscr( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	m_sdbSizer1Cancel = new wxButton( this, wxID_CANCEL );
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
 	m_sdbSizer1->Realize();
-	bSizer2->Add( m_sdbSizer1, 0, wxALIGN_CENTER|wxALIGN_CENTER_HORIZONTAL|wxALL|wxEXPAND, 5 );
+	bSizer2->Add( m_sdbSizer1, 0, wxALL|wxEXPAND, 5 );
 	
 	this->SetSizer( bSizer2 );
 	this->Layout();

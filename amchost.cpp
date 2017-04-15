@@ -4,8 +4,10 @@ amchost::amchost()
 {
 	m_ip.Hostname("localhost");
 	m_ip.Service(4000);
+    #if defined WXAMCL_USEIPV6
 	m_ip6.Hostname("localhost");
 	m_ip6.Service(4000);
+    #endif
 	m_hostname = "localhost";
 	m_mudname = wxEmptyString;
 	m_charname = wxEmptyString;

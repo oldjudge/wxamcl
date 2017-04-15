@@ -55,7 +55,9 @@ public:
 	bool IsGMCPActive() {return m_gmcp;}
 	bool IsMSDPActive() {return m_msdp;}
 	wxIPV4address *GetIPAddr() {return &m_addr;}
+    #if defined WXAMCL_USEIPV6
 	wxIPV6address *GetIP6Addr() {return &m_addr6;}
+    #endif
 	class amcMXP* GetMXPParser() {return m_MXP;}
 	bool GetFocusOnInput() {return m_focusoninput;}
 	wxSocketClient* GetSock() {return m_sock;}
@@ -96,7 +98,9 @@ public:
 
 	//socket functions
 	void MyConnect(wxIPV4address addr);
+    #if defined WXAMCL_USEIPV6
 	void MyConnect(wxIPV6address addr);
+    #endif
 	void Write(wxString command);
 	void Write8Bit(wxString command);
 	void Close();
@@ -171,7 +175,9 @@ private:
 	class amcLua *m_L;
 	wxSocketClient *m_sock;
 	wxIPV4address m_addr;
+    #if defined WXAMCL_USEIPV6
 	wxIPV6address m_addr6;
+    #endif
 	bool m_connected;
 	wxDateTime m_dtconnected;
 	deque<class AnsiLine> m_vmudlines;

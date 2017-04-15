@@ -186,7 +186,7 @@ wxString Trigger::BuildAction()
 amcColorComboBox::amcColorComboBox(wxWindow *parent) : wxOwnerDrawnComboBox()
 {
 	m_parent = parent;
-	m_cols[0] = _("Black (color 1)");
+    m_cols[0] = _("Black (color 1)");
 	m_cols[1] = _("Red (color 2)");
 	m_cols[2] = _("Green (color 3)");
 	m_cols[3] = _("Yellow (color 4)");
@@ -202,7 +202,8 @@ amcColorComboBox::amcColorComboBox(wxWindow *parent) : wxOwnerDrawnComboBox()
 	m_cols[13] = _("Bright magenta (color 14)");
 	m_cols[14] = _("Bright cyan (color 15)");
 	m_cols[15] = _("Bright white (color 16)");
-	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 16, m_cols, 0, wxDefaultValidator, wxT("amcColorComboBox"));
+	Create(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 16, m_cols, wxTE_PROCESS_ENTER, wxDefaultValidator, wxT("amcColorComboBox"));
+  
 }
 
 amcColorComboBox::~amcColorComboBox()
@@ -214,7 +215,7 @@ wxCoord amcColorComboBox::OnMeasureItem(size_t item) const
 {
 	//wxRect rc = GetRect();
 	//return (wxCoord)(rc.GetHeight()/16);
-	return 12;
+	return 8;
 }
 
 wxCoord amcColorComboBox::OnMeasureItemWidth(size_t item) const

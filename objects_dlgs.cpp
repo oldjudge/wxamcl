@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Apr 10 2012)
+// C++ code generated with wxFormBuilder (version Feb 16 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -37,103 +37,105 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	sbSizer2 = new wxStaticBoxSizer( new wxStaticBox( m_trigger, wxID_ANY, _("Define action") ), wxVERTICAL );
 	
 	wxGridBagSizer* gbSizer2;
-	gbSizer2 = new wxGridBagSizer( 1, 1 );
+	gbSizer2 = new wxGridBagSizer( 3, 3 );
 	gbSizer2->SetFlexibleDirection( wxBOTH );
 	gbSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
-	m_staticText6 = new wxStaticText( m_trigger, wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText6 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText6->Wrap( -1 );
 	gbSizer2->Add( m_staticText6, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_label = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxSUNKEN_BORDER );
+	m_label = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0|wxSUNKEN_BORDER );
 	m_label->SetToolTip( _("Name of the trigger") );
 	
 	gbSizer2->Add( m_label, wxGBPosition( 0, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText10 = new wxStaticText( m_trigger, wxID_ANY, _("Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText10 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText10->Wrap( -1 );
-	gbSizer2->Add( m_staticText10, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText10, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_pattern = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_WORDWRAP|wxSUNKEN_BORDER );
+	m_pattern = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_LEFT|wxTE_MULTILINE|wxTE_WORDWRAP|wxSUNKEN_BORDER );
 	m_pattern->SetToolTip( _("Regular expression pattern of mud text") );
 	m_pattern->SetMaxSize( wxSize( -1,24 ) );
 	
 	gbSizer2->Add( m_pattern, wxGBPosition( 1, 1 ), wxGBSpan( 2, 3 ), wxALL|wxEXPAND|wxFIXED_MINSIZE, 5 );
 	
-	m_patternedit = new wxButton( m_trigger, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_patternedit = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_patternedit, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_staticText11 = new wxStaticText( m_trigger, wxID_ANY, _("Action:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText11 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Action:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText11->Wrap( -1 );
-	gbSizer2->Add( m_staticText11, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText11, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_action= new amcScriptEdit(m_trigger, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
-	gbSizer2->Add( m_action, wxGBPosition( 3, 1 ), wxGBSpan( 5, 3 ), wxALL|wxEXPAND, 0 );
+	m_action= new amcScriptEdit(sbSizer2->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+	gbSizer2->Add( m_action, wxGBPosition( 3, 1 ), wxGBSpan( 5, 4 ), wxALL|wxEXPAND, 5 );
 	
-	m_sceditor = new wxButton( m_trigger, wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_sceditor = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("..."), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_sceditor, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_staticText13 = new wxStaticText( m_trigger, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText13 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText13->Wrap( -1 );
-	gbSizer2->Add( m_staticText13, wxGBPosition( 8, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText13, wxGBPosition( 8, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_class = new wxComboBox( m_trigger, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, wxSUNKEN_BORDER ); 
-	gbSizer2->Add( m_class, wxGBPosition( 8, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	m_class = new wxComboBox( sbSizer2->GetStaticBox(), wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0|wxSUNKEN_BORDER ); 
+	gbSizer2->Add( m_class, wxGBPosition( 8, 1 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_onoff = new wxToggleButton( m_trigger, ID_TOGGLECLASS, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_onoff = new wxToggleButton( sbSizer2->GetStaticBox(), ID_TOGGLECLASS, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_onoff->SetToolTip( _("Disable all actions in a class") );
 	
-	gbSizer2->Add( m_onoff, wxGBPosition( 8, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer2->Add( m_onoff, wxGBPosition( 8, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL, 5 );
 	
-	m_delclass = new wxButton( m_trigger, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer2->Add( m_delclass, wxGBPosition( 8, 3 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	m_delclass = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_delclass, wxGBPosition( 8, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER|wxALL, 5 );
 	
-	m_staticText14 = new wxStaticText( m_trigger, wxID_ANY, _("Priority:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText14 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Priority:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText14->Wrap( -1 );
-	gbSizer2->Add( m_staticText14, wxGBPosition( 9, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText14, wxGBPosition( 9, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_prior = new wxSpinCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), wxSP_ARROW_KEYS, 0, 100, 100 );
+	m_prior = new wxSpinCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), wxSP_ARROW_KEYS, 0, 100, 100 );
 	m_prior->SetToolTip( _("Priority of the action (highest evaluated first)") );
 	
-	gbSizer2->Add( m_prior, wxGBPosition( 9, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
+	gbSizer2->Add( m_prior, wxGBPosition( 9, 1 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_staticText9 = new wxStaticText( m_trigger, wxID_ANY, _("Lines:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText9 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Lines:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText9->Wrap( -1 );
-	gbSizer2->Add( m_staticText9, wxGBPosition( 9, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText9, wxGBPosition( 9, 2 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_lines = new wxSpinCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxSP_ARROW_KEYS, 1, 100, 1 );
-	gbSizer2->Add( m_lines, wxGBPosition( 9, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_lines = new wxSpinCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 90,-1 ), wxSP_ARROW_KEYS, 1, 100, 1 );
+	gbSizer2->Add( m_lines, wxGBPosition( 9, 3 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_oncolor = new wxCheckBox( m_trigger, wxID_ANY, _("Match on color"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer2->Add( m_oncolor, wxGBPosition( 10, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	m_oncolor = new wxCheckBox( sbSizer2->GetStaticBox(), wxID_ANY, _("Match on color"), wxDefaultPosition, wxDefaultSize, 0 );
+	gbSizer2->Add( m_oncolor, wxGBPosition( 10, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_amccombo = new amcColorComboBox(m_trigger);
+	m_amccombo = new amcColorComboBox(sbSizer2->GetStaticBox());
+	
 	m_amccombo->Enable( false );
 	
-	gbSizer2->Add( m_amccombo, wxGBPosition( 10, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer2->Add( m_amccombo, wxGBPosition( 10, 1 ), wxGBSpan( 1, 2 ), wxALL, 5 );
 	
-	m_staticText8 = new wxStaticText( m_trigger, wxID_ANY, _("Matched:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText8 = new wxStaticText( sbSizer2->GetStaticBox(), wxID_ANY, _("Matched:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText8->Wrap( -1 );
-	gbSizer2->Add( m_staticText8, wxGBPosition( 11, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_staticText8, wxGBPosition( 12, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_matched = new wxTextCtrl( m_trigger, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxTE_READONLY|wxSUNKEN_BORDER );
+	m_matched = new wxTextCtrl( sbSizer2->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 48,-1 ), wxTE_READONLY|wxSUNKEN_BORDER );
 	m_matched->SetToolTip( _("Show how often the trigger matched") );
 	
-	gbSizer2->Add( m_matched, wxGBPosition( 11, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_matched, wxGBPosition( 12, 1 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_tron = new wxCheckBox( m_trigger, wxID_ANY, _("Action active"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_tron = new wxCheckBox( sbSizer2->GetStaticBox(), wxID_ANY, _("Action active"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_tron->SetToolTip( _("Action active?") );
 	
-	gbSizer2->Add( m_tron, wxGBPosition( 12, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer2->Add( m_tron, wxGBPosition( 13, 0 ), wxGBSpan( 1, 1 ), wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 	
-	m_rextest = new wxButton( m_trigger, wxID_ANY, _("Test regular expression"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_rextest = new wxButton( sbSizer2->GetStaticBox(), wxID_ANY, _("Test regular expression"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_rextest, wxGBPosition( 14, 1 ), wxGBSpan( 1, 2 ), wxALL, 5 );
 	
-	m_sendscript = new wxCheckBox( m_trigger, wxID_ANY, _("Send to script"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_sendscript = new wxCheckBox( sbSizer2->GetStaticBox(), wxID_ANY, _("Send to script"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer2->Add( m_sendscript, wxGBPosition( 5, 0 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	
 	gbSizer2->AddGrowableCol( 1 );
+	gbSizer2->AddGrowableRow( 3 );
 	
 	sbSizer2->Add( gbSizer2, 1, wxEXPAND|wxALL, 5 );
 	
@@ -143,20 +145,20 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxGridSizer* gSizer6;
 	gSizer6 = new wxGridSizer( 1, 3, 0, 0 );
 	
-	m_btadd = new wxButton( m_trigger, ID_ADDACTION, _("Add action"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer6->Add( m_btadd, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	m_btadd = new wxButton( sbSizer2->GetStaticBox(), ID_ADDACTION, _("Add action"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer6->Add( m_btadd, 0, wxALL|wxEXPAND, 5 );
 	
-	m_btedit = new wxButton( m_trigger, ID_EDITACTION, _("Edit action"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer6->Add( m_btedit, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	m_btedit = new wxButton( sbSizer2->GetStaticBox(), ID_EDITACTION, _("Edit action"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer6->Add( m_btedit, 0, wxALL|wxEXPAND, 5 );
 	
-	m_btdel = new wxButton( m_trigger, ID_DELACTION, _("Delete action"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer6->Add( m_btdel, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
-	
-	
-	bSizer10->Add( gSizer6, 1, wxALIGN_RIGHT|wxALL, 5 );
+	m_btdel = new wxButton( sbSizer2->GetStaticBox(), ID_DELACTION, _("Delete action"), wxDefaultPosition, wxDefaultSize, 0 );
+	gSizer6->Add( m_btdel, 0, wxALL|wxEXPAND, 5 );
 	
 	
-	sbSizer2->Add( bSizer10, 0, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxTOP, 5 );
+	bSizer10->Add( gSizer6, 1, wxALL, 5 );
+	
+	
+	sbSizer2->Add( bSizer10, 0, 0, 5 );
 	
 	
 	bSizer8->Add( sbSizer2, 3, wxALL|wxEXPAND, 5 );
@@ -165,7 +167,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_trigger->SetSizer( bSizer8 );
 	m_trigger->Layout();
 	bSizer8->Fit( m_trigger );
-	m_notebook->AddPage( m_trigger, _("Actions"), false );
+	m_notebook->AddPage( m_trigger, _("Actions"), true );
 	m_alias = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -173,7 +175,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer7;
 	sbSizer7 = new wxStaticBoxSizer( new wxStaticBox( m_alias, wxID_ANY, _("Defined aliases") ), wxVERTICAL );
 	
-	m_listalias = new wxListCtrl( m_alias, ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
+	m_listalias = new wxListCtrl( sbSizer7->GetStaticBox(), ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
 	sbSizer7->Add( m_listalias, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -186,37 +188,37 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	m_staticText61 = new wxStaticText( m_alias, wxID_ANY, _("Alias:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText61->Wrap( -1 );
-	gbSizer21->Add( m_staticText61, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_staticText61, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_defalias = new wxTextCtrl( m_alias, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer21->Add( m_defalias, wxGBPosition( 0, 1 ), wxGBSpan( 1, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText7 = new wxStaticText( m_alias, wxID_ANY, _("Action:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText7->Wrap( -1 );
-	gbSizer21->Add( m_staticText7, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_staticText7, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_defaction = new wxTextCtrl( m_alias, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE );
 	gbSizer21->Add( m_defaction, wxGBPosition( 1, 1 ), wxGBSpan( 2, 3 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText101 = new wxStaticText( m_alias, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText101->Wrap( -1 );
-	gbSizer21->Add( m_staticText101, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_staticText101, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_groupcombo = new wxComboBox( m_alias, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL); 
+	m_groupcombo = new wxComboBox( m_alias, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer21->Add( m_groupcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_alfilter = new wxCheckBox( m_alias, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_alfilter->SetValue(true); 
-	gbSizer21->Add( m_alfilter, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_alfilter, wxGBPosition( 3, 2 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_groupon = new wxToggleButton( m_alias, wxID_ANY, _("Group off"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_groupon, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	gbSizer21->Add( m_groupon, wxGBPosition( 3, 3 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_alon = new wxCheckBox( m_alias, wxID_ANY, _("Alias active"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_alon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_alon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	m_delgroup = new wxButton( m_alias, wxID_ANY, _("Delete group"), wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer21->Add( m_delgroup, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer21->Add( m_delgroup, wxGBPosition( 4, 3 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	
 	gbSizer21->AddGrowableCol( 1 );
@@ -228,13 +230,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gSizer2 = new wxGridSizer( 1, 3, 0, 0 );
 	
 	m_addalias = new wxButton( m_alias, ID_ADDALIAS, _("Add alias"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_addalias, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	gSizer2->Add( m_addalias, 0, wxALL|wxEXPAND, 5 );
 	
 	m_editalias = new wxButton( m_alias, ID_EDITALIAS, _("Edit alias"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_editalias, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	gSizer2->Add( m_editalias, 0, wxALL|wxEXPAND, 5 );
 	
 	m_delalias = new wxButton( m_alias, ID_DELALIAS, _("Delete alias"), wxDefaultPosition, wxDefaultSize, 0 );
-	gSizer2->Add( m_delalias, 0, wxALIGN_RIGHT|wxALL|wxEXPAND, 5 );
+	gSizer2->Add( m_delalias, 0, wxALL|wxEXPAND, 5 );
 	
 	
 	bSizer3->Add( gSizer2, 0, wxALIGN_RIGHT|wxALL, 5 );
@@ -265,32 +267,32 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer10->SetFlexibleDirection( wxBOTH );
 	gbSizer10->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText371 = new wxStaticText( m_buttons, wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText371 = new wxStaticText( sbSizer11->GetStaticBox(), wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText371->Wrap( -1 );
-	gbSizer10->Add( m_staticText371, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer10->Add( m_staticText371, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_butlabel = new wxTextCtrl( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_butlabel = new wxTextCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer10->Add( m_butlabel, wxGBPosition( 0, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText38 = new wxStaticText( m_buttons, wxID_ANY, _("Command:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText38 = new wxStaticText( sbSizer11->GetStaticBox(), wxID_ANY, _("Command:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText38->Wrap( -1 );
-	gbSizer10->Add( m_staticText38, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer10->Add( m_staticText38, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_butcommand = new wxTextCtrl( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_butcommand = new wxTextCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer10->Add( m_butcommand, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText39 = new wxStaticText( m_buttons, wxID_ANY, _("Parent toolbar:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText39 = new wxStaticText( sbSizer11->GetStaticBox(), wxID_ANY, _("Parent toolbar:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText39->Wrap( -1 );
 	gbSizer10->Add( m_staticText39, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_parenttool = new wxComboBox( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_parenttool = new wxComboBox( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer10->Add( m_parenttool, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
-	Bitmap = new wxStaticText( m_buttons, wxID_ANY, _("Bitmap: "), wxDefaultPosition, wxDefaultSize, 0 );
+	Bitmap = new wxStaticText( sbSizer11->GetStaticBox(), wxID_ANY, _("Bitmap: "), wxDefaultPosition, wxDefaultSize, 0 );
 	Bitmap->Wrap( -1 );
 	gbSizer10->Add( Bitmap, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_bitmap = new wxTextCtrl( m_buttons, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_bitmap = new wxTextCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer10->Add( m_bitmap, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	
@@ -301,13 +303,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxGridSizer* gSizer7;
 	gSizer7 = new wxGridSizer( 1, 3, 0, 0 );
 	
-	m_addbutton = new wxButton( m_buttons, wxID_ANY, _("Add button"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_addbutton = new wxButton( sbSizer11->GetStaticBox(), wxID_ANY, _("Add button"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer7->Add( m_addbutton, 0, wxALL, 5 );
 	
-	m_editbutton = new wxButton( m_buttons, wxID_ANY, _("Edit button"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_editbutton = new wxButton( sbSizer11->GetStaticBox(), wxID_ANY, _("Edit button"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer7->Add( m_editbutton, 0, wxALL, 5 );
 	
-	m_delbutton = new wxButton( m_buttons, wxID_ANY, _("Delete button"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_delbutton = new wxButton( sbSizer11->GetStaticBox(), wxID_ANY, _("Delete button"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer7->Add( m_delbutton, 0, wxALL, 5 );
 	
 	
@@ -342,75 +344,75 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer9->SetFlexibleDirection( wxBOTH );
 	gbSizer9->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_ALL );
 	
-	m_staticText24 = new wxStaticText( m_gauge, wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText24 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Label:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText24->Wrap( -1 );
-	gbSizer9->Add( m_staticText24, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer9->Add( m_staticText24, wxGBPosition( 0, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_gaugelabel = new wxTextCtrl( m_gauge, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_gaugelabel = new wxTextCtrl( sbSizer71->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer9->Add( m_gaugelabel, wxGBPosition( 0, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText25 = new wxStaticText( m_gauge, wxID_ANY, _("Variable 1:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText25 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Variable 1:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText25->Wrap( -1 );
-	gbSizer9->Add( m_staticText25, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer9->Add( m_staticText25, wxGBPosition( 1, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	wxArrayString m_var1Choices;
-	m_var1 = new wxChoice( m_gauge, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_var1Choices, 0 );
+	m_var1 = new wxChoice( sbSizer71->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_var1Choices, 0 );
 	m_var1->SetSelection( 0 );
 	gbSizer9->Add( m_var1, wxGBPosition( 1, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText26 = new wxStaticText( m_gauge, wxID_ANY, _("Variable 2:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText26 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Variable 2:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText26->Wrap( -1 );
-	gbSizer9->Add( m_staticText26, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer9->Add( m_staticText26, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	wxArrayString m_var2Choices;
-	m_var2 = new wxChoice( m_gauge, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_var2Choices, 0 );
+	m_var2 = new wxChoice( sbSizer71->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_var2Choices, 0 );
 	m_var2->SetSelection( 0 );
 	gbSizer9->Add( m_var2, wxGBPosition( 2, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
 	wxString m_gaugedirChoices[] = { _("Vertical"), _("Horizontal") };
 	int m_gaugedirNChoices = sizeof( m_gaugedirChoices ) / sizeof( wxString );
-	m_gaugedir = new wxRadioBox( m_gauge, wxID_ANY, _("Direction"), wxDefaultPosition, wxDefaultSize, m_gaugedirNChoices, m_gaugedirChoices, 2, wxRA_SPECIFY_ROWS );
+	m_gaugedir = new wxRadioBox( sbSizer71->GetStaticBox(), wxID_ANY, _("Direction"), wxDefaultPosition, wxDefaultSize, m_gaugedirNChoices, m_gaugedirChoices, 2, wxRA_SPECIFY_ROWS );
 	m_gaugedir->SetSelection( 0 );
-	gbSizer9->Add( m_gaugedir, wxGBPosition( 0, 3 ), wxGBSpan( 3, 1 ), wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	gbSizer9->Add( m_gaugedir, wxGBPosition( 0, 3 ), wxGBSpan( 3, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer8;
-	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( m_gauge, wxID_ANY, _("Style") ), wxVERTICAL );
+	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( sbSizer71->GetStaticBox(), wxID_ANY, _("Style") ), wxVERTICAL );
 	
 	wxString m_drawstyleChoices[] = { _("Standard"), _("Lines"), _("Rounded"), _("Rounded with Lines") };
 	int m_drawstyleNChoices = sizeof( m_drawstyleChoices ) / sizeof( wxString );
-	m_drawstyle = new wxChoice( m_gauge, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_drawstyleNChoices, m_drawstyleChoices, 0 );
+	m_drawstyle = new wxChoice( sbSizer8->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_drawstyleNChoices, m_drawstyleChoices, 0 );
 	m_drawstyle->SetSelection( 0 );
-	sbSizer8->Add( m_drawstyle, 0, wxALIGN_CENTER|wxALL|wxEXPAND, 5 );
+	sbSizer8->Add( m_drawstyle, 0, wxALL|wxEXPAND, 5 );
 	
 	
 	gbSizer9->Add( sbSizer8, wxGBPosition( 0, 4 ), wxGBSpan( 3, 1 ), wxALL, 5 );
 	
 	wxStaticBoxSizer* sbSizer101;
-	sbSizer101 = new wxStaticBoxSizer( new wxStaticBox( m_gauge, wxID_ANY, _("Label properties") ), wxVERTICAL );
+	sbSizer101 = new wxStaticBoxSizer( new wxStaticBox( sbSizer71->GetStaticBox(), wxID_ANY, _("Label properties") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer2;
 	fgSizer2 = new wxFlexGridSizer( 3, 2, 0, 0 );
 	fgSizer2->SetFlexibleDirection( wxBOTH );
 	fgSizer2->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText36 = new wxStaticText( m_gauge, wxID_ANY, _("Position:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText36 = new wxStaticText( sbSizer101->GetStaticBox(), wxID_ANY, _("Position:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText36->Wrap( -1 );
-	fgSizer2->Add( m_staticText36, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer2->Add( m_staticText36, 0, wxALL, 5 );
 	
 	wxString m_textposChoices[] = { _("below gauge"), _("above gauge"), _("gauge") };
 	int m_textposNChoices = sizeof( m_textposChoices ) / sizeof( wxString );
-	m_textpos = new wxChoice( m_gauge, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_textposNChoices, m_textposChoices, 0 );
+	m_textpos = new wxChoice( sbSizer101->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_textposNChoices, m_textposChoices, 0 );
 	m_textpos->SetSelection( 0 );
 	fgSizer2->Add( m_textpos, 1, wxALL|wxEXPAND, 5 );
 	
-	m_staticText37 = new wxStaticText( m_gauge, wxID_ANY, _("Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText37 = new wxStaticText( sbSizer101->GetStaticBox(), wxID_ANY, _("Colour:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText37->Wrap( -1 );
-	fgSizer2->Add( m_staticText37, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer2->Add( m_staticText37, 0, wxALL, 5 );
 	
-	m_gaugetextcol = new wxColourPickerCtrl( m_gauge, wxID_ANY, wxColour( 255, 255, 255 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	m_gaugetextcol = new wxColourPickerCtrl( sbSizer101->GetStaticBox(), wxID_ANY, wxColour( 255, 255, 255 ), wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	fgSizer2->Add( m_gaugetextcol, 0, wxALL, 5 );
 	
-	m_showvalue = new wxCheckBox( m_gauge, wxID_ANY, _("show value"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_showvalue = new wxCheckBox( sbSizer101->GetStaticBox(), wxID_ANY, _("show value"), wxDefaultPosition, wxDefaultSize, 0 );
 	fgSizer2->Add( m_showvalue, 0, wxALL|wxEXPAND, 5 );
 	
 	
@@ -420,87 +422,87 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	gbSizer9->Add( sbSizer101, wxGBPosition( 5, 0 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
 	wxStaticBoxSizer* sbSizer10;
-	sbSizer10 = new wxStaticBoxSizer( new wxStaticBox( m_gauge, wxID_ANY, _("Position of gauge") ), wxVERTICAL );
+	sbSizer10 = new wxStaticBoxSizer( new wxStaticBox( sbSizer71->GetStaticBox(), wxID_ANY, _("Position of gauge") ), wxVERTICAL );
 	
 	wxFlexGridSizer* fgSizer1;
 	fgSizer1 = new wxFlexGridSizer( 2, 4, 0, 0 );
 	fgSizer1->SetFlexibleDirection( wxBOTH );
 	fgSizer1->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 	
-	m_staticText32 = new wxStaticText( m_gauge, wxID_ANY, _("X:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText32 = new wxStaticText( sbSizer10->GetStaticBox(), wxID_ANY, _("X:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText32->Wrap( -1 );
-	fgSizer1->Add( m_staticText32, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer1->Add( m_staticText32, 0, wxALL, 5 );
 	
-	m_posx = new wxSpinCtrl( m_gauge, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 5000, 0 );
+	m_posx = new wxSpinCtrl( sbSizer10->GetStaticBox(), wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 5000, 0 );
 	fgSizer1->Add( m_posx, 0, wxALL|wxEXPAND, 5 );
 	
-	m_staticText33 = new wxStaticText( m_gauge, wxID_ANY, _("Y:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText33 = new wxStaticText( sbSizer10->GetStaticBox(), wxID_ANY, _("Y:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText33->Wrap( -1 );
-	fgSizer1->Add( m_staticText33, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer1->Add( m_staticText33, 0, wxALL, 5 );
 	
-	m_posy = new wxSpinCtrl( m_gauge, wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 5000, 0 );
+	m_posy = new wxSpinCtrl( sbSizer10->GetStaticBox(), wxID_ANY, wxT("10"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 5000, 0 );
 	fgSizer1->Add( m_posy, 0, wxALL, 5 );
 	
-	m_staticText34 = new wxStaticText( m_gauge, wxID_ANY, _("Width:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText34 = new wxStaticText( sbSizer10->GetStaticBox(), wxID_ANY, _("Width:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText34->Wrap( -1 );
-	fgSizer1->Add( m_staticText34, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer1->Add( m_staticText34, 0, wxALL, 5 );
 	
-	m_width = new wxSpinCtrl( m_gauge, wxID_ANY, wxT("40"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2000, 0 );
+	m_width = new wxSpinCtrl( sbSizer10->GetStaticBox(), wxID_ANY, wxT("40"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2000, 0 );
 	fgSizer1->Add( m_width, 0, wxALL, 5 );
 	
-	m_staticText35 = new wxStaticText( m_gauge, wxID_ANY, _("Height:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText35 = new wxStaticText( sbSizer10->GetStaticBox(), wxID_ANY, _("Height:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText35->Wrap( -1 );
-	fgSizer1->Add( m_staticText35, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	fgSizer1->Add( m_staticText35, 0, wxALL, 5 );
 	
-	m_height = new wxSpinCtrl( m_gauge, wxID_ANY, wxT("200"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2000, 0 );
+	m_height = new wxSpinCtrl( sbSizer10->GetStaticBox(), wxID_ANY, wxT("200"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 2000, 0 );
 	fgSizer1->Add( m_height, 0, wxALL, 5 );
 	
 	
 	sbSizer10->Add( fgSizer1, 1, wxALL|wxEXPAND, 5 );
 	
 	
-	gbSizer9->Add( sbSizer10, wxGBPosition( 5, 2 ), wxGBSpan( 1, 4 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer9->Add( sbSizer10, wxGBPosition( 5, 2 ), wxGBSpan( 1, 4 ), wxALL, 5 );
 	
-	m_staticText351 = new wxStaticText( m_gauge, wxID_ANY, _("Parent window:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText351 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Parent window:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText351->Wrap( -1 );
-	gbSizer9->Add( m_staticText351, wxGBPosition( 6, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT, 5 );
+	gbSizer9->Add( m_staticText351, wxGBPosition( 6, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_parentw = new wxComboBox( m_gauge, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
+	m_parentw = new wxComboBox( sbSizer71->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer9->Add( m_parentw, wxGBPosition( 6, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	wxGridSizer* gSizer61;
 	gSizer61 = new wxGridSizer( 3, 2, 0, 5 );
 	
-	m_staticText27 = new wxStaticText( m_gauge, wxID_ANY, _("Foreground:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText27 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Foreground:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText27->Wrap( -1 );
-	gSizer61->Add( m_staticText27, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gSizer61->Add( m_staticText27, 0, wxALL, 5 );
 	
-	m_fore = new wxColourPickerCtrl( m_gauge, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL );
+	m_fore = new wxColourPickerCtrl( sbSizer71->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_SHOW_LABEL );
 	gSizer61->Add( m_fore, 0, wxALL, 5 );
 	
-	m_staticText28 = new wxStaticText( m_gauge, wxID_ANY, _("Background:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText28 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Background:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText28->Wrap( -1 );
-	gSizer61->Add( m_staticText28, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gSizer61->Add( m_staticText28, 0, wxALL, 5 );
 	
-	m_back = new wxColourPickerCtrl( m_gauge, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	m_back = new wxColourPickerCtrl( sbSizer71->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	gSizer61->Add( m_back, 0, wxALL, 5 );
 	
-	m_staticText29 = new wxStaticText( m_gauge, wxID_ANY, _("Alarm:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText29 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Alarm:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText29->Wrap( -1 );
-	gSizer61->Add( m_staticText29, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gSizer61->Add( m_staticText29, 0, wxALL, 5 );
 	
-	m_alarm = new wxColourPickerCtrl( m_gauge, wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
+	m_alarm = new wxColourPickerCtrl( sbSizer71->GetStaticBox(), wxID_ANY, *wxBLACK, wxDefaultPosition, wxDefaultSize, wxCLRP_DEFAULT_STYLE|wxCLRP_SHOW_LABEL );
 	gSizer61->Add( m_alarm, 0, wxALL, 5 );
 	
 	
 	gbSizer9->Add( gSizer61, wxGBPosition( 3, 0 ), wxGBSpan( 1, 6 ), wxALL, 5 );
 	
-	m_alarmslider = new wxSlider( m_gauge, wxID_ANY, 30, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+	m_alarmslider = new wxSlider( sbSizer71->GetStaticBox(), wxID_ANY, 30, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
 	gbSizer9->Add( m_alarmslider, wxGBPosition( 4, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	
-	m_staticText40 = new wxStaticText( m_gauge, wxID_ANY, _("Show alarm color %"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText40 = new wxStaticText( sbSizer71->GetStaticBox(), wxID_ANY, _("Show alarm color %"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText40->Wrap( -1 );
-	gbSizer9->Add( m_staticText40, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	gbSizer9->Add( m_staticText40, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	
 	gbSizer9->AddGrowableCol( 1 );
@@ -510,13 +512,13 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxGridSizer* gSizer5;
 	gSizer5 = new wxGridSizer( 1, 3, 0, 0 );
 	
-	m_addgauge = new wxButton( m_gauge, wxID_ANY, _("Add gauge"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_addgauge = new wxButton( sbSizer71->GetStaticBox(), wxID_ANY, _("Add gauge"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer5->Add( m_addgauge, 0, wxALL, 5 );
 	
-	m_editgauge = new wxButton( m_gauge, wxID_ANY, _("Edit gauge"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_editgauge = new wxButton( sbSizer71->GetStaticBox(), wxID_ANY, _("Edit gauge"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer5->Add( m_editgauge, 0, wxALL, 5 );
 	
-	m_delgauge = new wxButton( m_gauge, wxID_ANY, _("Delete gauge"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_delgauge = new wxButton( sbSizer71->GetStaticBox(), wxID_ANY, _("Delete gauge"), wxDefaultPosition, wxDefaultSize, 0 );
 	gSizer5->Add( m_delgauge, 0, wxALL, 5 );
 	
 	
@@ -537,7 +539,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer21;
 	sbSizer21 = new wxStaticBoxSizer( new wxStaticBox( m_hotkey, wxID_ANY, _("Defined hotkeys") ), wxVERTICAL );
 	
-	m_listhkey = new wxListCtrl( m_hotkey, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_ALIGN_LEFT|wxLC_REPORT );
+	m_listhkey = new wxListCtrl( sbSizer21->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_ALIGN_LEFT|wxLC_REPORT );
 	sbSizer21->Add( m_listhkey, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -568,7 +570,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_hkeyon = new wxCheckBox( m_hotkey, wxID_ANY, _("Hotkey active"), wxDefaultPosition, wxDefaultSize, 0 );
 	gbSizer3->Add( m_hkeyon, wxGBPosition( 4, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_hkcombo = new wxComboBox( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL); 
+	m_hkcombo = new wxComboBox( m_hotkey, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer3->Add( m_hkcombo, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_staticText131 = new wxStaticText( m_hotkey, wxID_ANY, _("Group:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -615,7 +617,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer3;
 	sbSizer3 = new wxStaticBoxSizer( new wxStaticBox( m_list, wxID_ANY, _("Defined lists") ), wxVERTICAL );
 	
-	m_listlist = new wxListCtrl( m_list, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	m_listlist = new wxListCtrl( sbSizer3->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
 	sbSizer3->Add( m_listlist, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -647,7 +649,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sgroup->Wrap( -1 );
 	gbSizer5->Add( m_sgroup, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_ligroup = new wxComboBox( m_list, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL ); 
+	m_ligroup = new wxComboBox( m_list, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer5->Add( m_ligroup, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_lifilter = new wxCheckBox( m_list, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -666,7 +668,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	
 	gbSizer5->AddGrowableCol( 1 );
 	
-	bSizer101->Add( gbSizer5, 1, wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
+	bSizer101->Add( gbSizer5, 1, wxALL|wxEXPAND, 5 );
 	
 	wxGridBagSizer* gbSizer6;
 	gbSizer6 = new wxGridBagSizer( 0, 0 );
@@ -697,7 +699,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer31;
 	sbSizer31 = new wxStaticBoxSizer( new wxStaticBox( m_timer, wxID_ANY, _("Defined timers") ), wxVERTICAL );
 	
-	m_timerlist = new wxListCtrl( m_timer, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
+	m_timerlist = new wxListCtrl( sbSizer31->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT );
 	sbSizer31->Add( m_timerlist, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -726,7 +728,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sgroup1->Wrap( -1 );
 	gbSizer51->Add( m_sgroup1, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_tigroup = new wxComboBox( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL); 
+	m_tigroup = new wxComboBox( m_timer, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer51->Add( m_tigroup, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND, 5 );
 	
 	m_tifilter = new wxCheckBox( m_timer, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -789,7 +791,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer4;
 	sbSizer4 = new wxStaticBoxSizer( new wxStaticBox( m_var, wxID_ANY, _("Defined variables") ), wxVERTICAL );
 	
-	m_listvar = new wxListCtrl( m_var, ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
+	m_listvar = new wxListCtrl( sbSizer4->GetStaticBox(), ID_LALIAS, wxDefaultPosition, wxSize( 500,-1 ), wxLC_REPORT|wxSUNKEN_BORDER );
 	sbSizer4->Add( m_listvar, 1, wxALL|wxEXPAND, 5 );
 	
 	
@@ -818,7 +820,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText1011->Wrap( -1 );
 	gbSizer211->Add( m_staticText1011, wxGBPosition( 3, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_vargroup = new wxComboBox( m_var, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL); 
+	m_vargroup = new wxComboBox( m_var, wxID_ANY, _("default"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 ); 
 	gbSizer211->Add( m_vargroup, wxGBPosition( 3, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	m_vfilter = new wxCheckBox( m_var, wxID_ANY, _("filter"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -859,7 +861,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_var->SetSizer( bSizer31 );
 	m_var->Layout();
 	bSizer31->Fit( m_var );
-	m_notebook->AddPage( m_var, _("Variables"), true );
+	m_notebook->AddPage( m_var, _("Variables"), false );
 	
 	bSizer1->Add( m_notebook, 1, wxEXPAND | wxALL, 5 );
 	
@@ -873,7 +875,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_sdbSizer1->AddButton( m_sdbSizer1Cancel );
 	m_sdbSizer1->Realize();
 	
-	bSizer13->Add( m_sdbSizer1, 1, wxALIGN_BOTTOM|wxALL, 5 );
+	bSizer13->Add( m_sdbSizer1, 1, wxALL, 5 );
 	
 	
 	bSizer1->Add( bSizer13, 0, wxALL|wxEXPAND, 5 );

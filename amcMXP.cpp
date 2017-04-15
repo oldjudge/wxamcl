@@ -328,7 +328,7 @@ wxString simpleText = wxEmptyString;
 int elemnum=0;
 MudWindow *mw = m_parent;//wxGetApp().GetChild();
 static bool parsing = true;
-static bool element = false;
+//static bool element = false;
 static bool intagtext = false;
 static bool one = false;
 	//m_parsestate = MXP_TEXT;
@@ -347,7 +347,7 @@ if (!s.empty())
 	if (alpha!=wxNOT_FOUND)
 	{
 		omega = s.Lower().Find("</p>");
-		if (omega==wxNOT_FOUND)
+		if (omega==(size_t)wxNOT_FOUND)
 			omega=s.length();
 		for (int i=alpha;i<omega;i++)
 		{
@@ -784,13 +784,13 @@ MudWindow *mw = m_parent;
 		int oldline = mw->m_curline-1;
 		if (oldline<0)
 			oldline = 0;
-		int oi = 0;
+		//int oi = 0;
 		//if (!mw->GetLines()->empty())
 			//mw->GetLineStyle(oldline)->size()-1;
 		wxString send = t->GetText();
 		mw->ParseNBuffer((char*)send.To8BitData().data(), false);
 		//f->m_child->ParseBuffer(send.char_str());
-		int on = 0;
+		//int on = 0;
 		//if (!mw->GetLines()->empty())
 			//mw->GetLineStyle(oldline)->size()-1;
 		int newline = mw->m_curline-1;
@@ -870,7 +870,7 @@ MudWindow *mw = m_parent;
 					it->SetHint(t->GetStrippedText());
 				else it->SetHint(el.GetHint());
 			}
-			ale_it tt = it;
+			//ale_it tt = it;
 			/*if (tt>= mw->GetLineStyle(oldline)->begin()+1)
 			{
 				tt--;
@@ -1040,7 +1040,7 @@ return false;
 bool amcMXP::ParseOpenTag(amcMXPTag *t)
 {
 wxString send;
-	MudMainFrame *f = wxGetApp().GetFrame();
+	//MudMainFrame *f = wxGetApp().GetFrame();
 	MudWindow *mw = m_parent;
 	t->ReplaceEntitys();
 	if (m_mxpmode==MXP_MODE_LOCKLOCKED || m_mxpmode==MXP_MODE_LOCKED)
@@ -1345,7 +1345,7 @@ return false;
 
 vector<wxString> amcMXP::SplitString(wxString c, wxString split)
 {
-size_t pos = 0;
+//size_t pos = 0;
 vector<wxString> v;
 wxString::iterator sit;
 int parse=0;
@@ -1406,13 +1406,13 @@ return v;
 bool amcMXP::ParseElementRex(wxString s, size_t *pos)
 {
 amcMXPElement el;
-size_t f=0;
+//size_t f=0;
 vector<wxString> find_elems;
 //size_t pos = 0;
 //RegExp r("(<!ELEMENT|<!EL|<!element|<!el)\\s*");
 //RegExp find("(?:>'>|>\">|\" >|' >|EMPTY>|OPEN>|DELETE>)");
 RegExp ent("^(<!ENTITY|<!EN|<!entity|<!en)\\s*");
-bool end = true;	
+//bool end = true;	
 	
 	wxString ss = s.substr(*pos);
 	wxString::iterator it;

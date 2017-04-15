@@ -136,7 +136,7 @@ void amcWindow::OnLeftDown(wxMouseEvent &event)
 
 void amcWindow::OnMouseWheel(wxMouseEvent &event)
 {
-	wxPoint p = event.GetPosition();
+	//wxPoint p = event.GetPosition();
 	m_wheelrot += event.GetWheelRotation();
 	int line = m_wheelrot/event.GetWheelDelta();
 	m_wheelrot -= line*event.GetWheelDelta();

@@ -171,7 +171,9 @@ bool MudClientApp::OnInit()
 	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_WMP10);
 #endif
 #if defined __WXGTK__
-	frame->m_media->Create(frame, ID_MEDIACTRL, wxEmptyString, wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
+	bool bOK = frame->m_media->Create(frame, ID_MEDIACTRL, wxEmptyString, wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
+    wxASSERT_MSG(bOK, wxT("Could not create media control!"));
+    wxUnusedVar(bOK);
 #endif
 #if defined WXOSX
 	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
@@ -219,7 +221,9 @@ bool MudClientApp::OnInit()
 	frame->LoadHosts();
 	frame->m_child->Msg(_("Welcome to wxAmcl!"));
 	//frame->m_child->Msg(_("Cross-platform mudclient using wxWidgets!"));
-	frame->m_child->Msg(wxString::Format(_("Cross platform mudclient using %s on %s"), wxVERSION_STRING, wxGetOsDescription().c_str()));
+    wxString os = wxGetOsDescription();
+    wxString version = wxVERSION_STRING;
+	frame->m_child->Msg(wxString::Format(_("Cross platform mudclient using %s on %s."), version, os));
 	frame->luaBuildtrigger();
 	frame->luaBuildalias();
 	//wxInfoMessageBox(frame);
@@ -398,7 +402,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
     wxString canname = m_locale->GetCanonicalName();*/
 	//frame->m_child->Msg(locale.c_str());
 	#if defined __WXGTK__
-	wxLocale::AddCatalogLookupPathPrefix("/usr/local/share/locale");
+	wxLocale::AddCatalogLookupPathPrefix("/usr/share/locale");
 	#endif
 	#if defined __WXMSW__
 	wxLocale::AddCatalogLookupPathPrefix(".");
@@ -414,7 +418,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 		delete m_locale;
 		m_locale = new wxLocale(wxLANGUAGE_ENGLISH);
 	}
-	m_locale->AddCatalog("default");
+	m_locale->AddCatalog("wxamcl");
 	m_usesplitter = true;
 	m_curhost = -1;
 	m_gopt = new GlobalOptions(this);
@@ -537,8 +541,8 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
 #endif
 #if defined __WXGTK__
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Terminus");
-	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Terminus");
+	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Monospace Regular");
+	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Monospace Regular");
 #endif
 #if defined WXOSX
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier New");
@@ -629,7 +633,9 @@ void MudMainFrame::OnSimpleConnect(wxCommandEvent& WXUNUSED(event))
 //wxString ip, ports;
 long iPort;
 wxIPV4address addr;
+#if defined WXAMCL_USEIPV6
 wxIPV6address addr6;
+#endif
 	//wxXmlResource::Get()->LoadDialog(&sd, this, wxT("dialog_1"));
 	//DlgSimpleConn *sd = new DlgSimpleConn(this);
 	dlg_hostsimple *sd = new dlg_hostsimple(this);
@@ -646,8 +652,10 @@ wxIPV6address addr6;
 			//addr.Hostname(*sd->m_ip);
 			if (!m_child->GetUseIPV6())
 				addr.Hostname(sd->m_server->GetValue());
+            #if defined WXAMCL_USEIPV6
 			else
 				addr6.Hostname(sd->m_server->GetValue());
+            #endif
 			wxString p = sd->m_port->GetValue();
 			p.ToLong(&iPort);
 			if (!m_child->GetUseIPV6())
@@ -657,8 +665,10 @@ wxIPV6address addr6;
 			}
 			else
 			{
-				addr6.Service(iPort);
+				#if defined WXAMCL_USEIPV6
+                addr6.Service(iPort);
 				m_child->MyConnect(addr6);
+                #endif
 			}
 			int i = count(m_lasthost.begin(), m_lasthost.end(), sd->m_server->GetValue());
 			if (!i)
@@ -943,13 +953,13 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		ec = wxFONTENCODING_EUC_JP;
 		break;
 	}
-	wxFontEncoding cur = m_gopt->GetCurEncoding();
+	//wxFontEncoding cur = m_gopt->GetCurEncoding();
 	m_gopt->SetEncoding(ec);
 	if (id!=ID_CHARENCODING)
 		m_gopt->SetUTF8(true);
 	else	m_gopt->SetUTF8(false);
 	ale_it it;
-	int line=0;
+	//int line=0;
 	
 	/*for (line=0;line<m_child->GetLines()->size();line++)
 	{
@@ -982,7 +992,7 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 {
 
 	dlg_options *od = new dlg_options(this);
-	od->GetGeneral()->InitDialog();
+    od->GetGeneral()->InitDialog();
 	od->GetTelnet()->InitDialog();
 	od->GetLog()->InitDialog();
 	if (od->ShowModal()==wxID_OK)
@@ -3540,7 +3550,9 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
 	m_parent = (MudMainFrame*)parent;
 	m_sComm["raw"] = &InputTextCtrl::CommRaw;
 	m_sComm["connect"] = &InputTextCtrl::Connect;
+    #if defined WXAMCL_USEIPV6
 	m_sComm["connect6"] = &InputTextCtrl::Connect6;
+    #endif
 	m_sComm["pwd"] = &InputTextCtrl::Pwd;
 	m_sComm["capturewin"] = &InputTextCtrl::CaptureWin;
 	m_sComm["capturenb"] = &InputTextCtrl::CaptureNb;
@@ -3652,7 +3664,7 @@ wxString command;
 int keycode;
 wxScrollWinEvent newevt;
 MudWindow *sendto;
-static bool boFirst = true;
+//static bool boFirst = true;
 
 	newevt.SetPosition(0);
 	newevt.SetOrientation(wxVERTICAL);
@@ -4233,6 +4245,7 @@ int num;
 	return 0;
 }
 
+#if defined WXAMCL_USEIPV6
 int InputTextCtrl::Connect6(wxString *sPar)
 {
 long iPort;
@@ -4249,7 +4262,7 @@ int num;
 	m_parent->m_child->MyConnect(addr);
 	return 0;
 }
-
+#endif
 int InputTextCtrl::Pwd(wxString *sPar)
 {
 	if (ParseFParams(sPar))
@@ -4852,13 +4865,13 @@ int ref;
 	}
 	m_waiting = false;
 	//int err = lua_resume(itm->second, 0); 5.1.4
-	int err = lua_resume(itm->second, NULL, 0);	
+//	int err = lua_resume(itm->second, NULL, 0);	
 	return 0;
 }
 
 int InputTextCtrl::Media(wxString *sPar)
 {
-	if (ParseFParams(sPar) != 2)
+	if (ParseFParams(sPar) != 1)
 		return -1;
 	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
 	
@@ -4959,8 +4972,10 @@ int InputTextCtrl::Info(wxString *sPar)
 	s.clear();
 	if (!m_parent->m_child->GetUseIPV6())
 		s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress()<<" "<<m_parent->m_child->GetIPAddr()->Hostname()<<" (IPV4)";
+    #if defined WXAMCL_USEIPV6
 	else
 		s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->IPAddress()<<" "<<m_parent->m_child->GetIP6Addr()->Hostname()<<" (IPV6)";
+    #endif
 	m_parent->m_child->Msg(s);
 	s.clear();
 	s << _("--- Information end----");

@@ -6,14 +6,24 @@ dlg_options::dlg_options( wxWindow* parent )
 DlgOptions( parent )
 {
 	
-	#ifndef WXOSX
-	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
+	
+	#ifdef __WXGTK__
+    /*wxBitmap bmp00 = wxArtProvider::GetBitmap(wxART_ERROR, wxART_MENU);
+    wxBitmap bmp01 = wxArtProvider::GetBitmap(wxART_NEW, wxART_MENU);
+    wxBitmap bmp02 = wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_MENU);    
+    m_nb->GetImageList()->Add(bmp00);
+    m_nb->GetImageList()->Add(bmp01);
+    m_nb->GetImageList()->Add(bmp02);*/
+    #endif
+    #ifdef _WXMSW__
+    m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_GO_HOME, wxART_MENU), wxArtProvider::GetNativeSizeHint(wxART_MENU));
 	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_NEW, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
 	m_nb->GetImageList()->Add(wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_FRAME_ICON), wxArtProvider::GetNativeSizeHint(wxART_FRAME_ICON));
-	m_nb->SetPageImage(0, 0);
+    #endif
+    /*m_nb->SetPageImage(0, 0);
 	m_nb->SetPageImage(1, 1);
-	m_nb->SetPageImage(2, 2);
-	#endif
+	m_nb->SetPageImage(2, 2);*/
+	
 	m_nb->SetSelection(0);
 	m_frame = (MudMainFrame*)parent;
 	m_cs = m_frame->GetGlobalOptions()->GetCommand();
