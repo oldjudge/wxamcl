@@ -1,5 +1,4 @@
-A client for playing mud text games. At the moment it is developed under Windows7
-and Linux (Ubuntu and Debian).
+ A client for playing mud text games. At the moment it is developed under Windows 10 and Linux (Linux Mint).
 
 ## Feature list ##
   * Actions (aka Triggers)
