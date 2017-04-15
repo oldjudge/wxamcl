@@ -1,3 +1,4 @@
+
 # Introduction #
 
 wxAmcl is a mud client using wxWidgets 3.1.0.
@@ -19,4 +20,5 @@ Scripting allows you to do a lot of things, for example scripting a mapper using
 The event system supports also MSDP protocol, OnConnect, OnDisconnect and OnPacketReceived events.
 
 [General Functions](GeneralFuncs.md)
+
 [Scripting Documentation](ScriptingDocs.md)
