@@ -505,4 +505,8 @@ private:
 	int m_len; /*string len for pushed string*/
 };
 
+//lua5.3
+#define luaL_optint luaL_optinteger
+#define luaL_checkint luaL_checkinteger
+
 #endif

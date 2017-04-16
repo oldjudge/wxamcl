@@ -60,6 +60,7 @@
 #include <wx/datetime.h>
 #include <wx/encconv.h>
 #include <wx/sstream.h>
+#include <wx/ipcbase.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
@@ -89,6 +90,7 @@ extern "C"
 	#include <lualib.h>
 	#include <Uxtheme.h>
 }
+
 #endif
 #include "sqlite3.h"
 

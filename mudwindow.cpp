@@ -72,8 +72,23 @@ MudWindow::MudWindow():wxWindow()
 /*! \brief standard constructor
 	\param wxFrame parent window
 */
-MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE)
+MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE)
 {
+	
+#if !defined __WXMSW__
+	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+	m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+	SetBackgroundColour(m_background);
+	ClearBackground();
+#else
+	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
+	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
+	m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
+#endif
+	
 	m_parent = (MudMainFrame*) parent;
 	m_sock = new wxSocketClient();
 	//m_sock->Initialize();
@@ -90,20 +105,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	SetDefaultColors();
 	SetCssClasses();
 	m_background = m_colansi[0];
-	m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
-	#if !defined __WXMSW__
-		m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
-		m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-		SetBackgroundColour(m_background);
-		ClearBackground();
-	#else
-		m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
-		m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
-		m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
-		SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-	#endif
+	//m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
 	
 	m_oldcolor = new wxString("");
 	m_curline = 0;
@@ -180,6 +182,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	m_tt = new wxToolTip("");
 	//m_tt->SetDelay(5);
 	this->SetToolTip(m_tt);
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE);
 	//wxString *text = new wxString("testinf");
 	//ParseLine(text);
 }
@@ -189,7 +192,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	\param wxString name of window
 	\param int fontsize for used font
 */
-MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE |wxTRANSPARENT_WINDOW)
+MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE |wxTRANSPARENT_WINDOW)
 {
 	m_parent = (MudMainFrame*) parent;
 	/*m_sock = new wxSocketClient();
@@ -217,7 +220,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 		m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier");
 		m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier");
 		m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier");
-		SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+		SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#endif
 	m_font->SetPointSize(fontsize);
 	m_oldcolor = new wxString("");
@@ -263,7 +266,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 	m_url = NULL;
 	//m_splitbuffer = false;
 	m_ansicode = NULL;
-	m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
+	//m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
 	//m_drawbmp.Create(100,100);
 	//RegisterLuaFuncs();
 
@@ -288,6 +291,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow(pare
 	SetLabel(name);
 	m_tt = new wxToolTip("");
 	this->SetToolTip(m_tt);
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE );
 	//m_tt = NULL;
 }
 
@@ -423,9 +427,11 @@ bool waitmore = true;
 	m_sock->GetLocal(local);
 	
 	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
-	wxString s = local.IPAddress();
-	//m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+	//wxString s = local.IPAddress();
+	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+#ifndef __WXMSW__
 	m_parent->GetDefVars()->at(idx).SetValue(s);
+#endif
 	//s = m_addr.IPAddress();
 	/*bool waitmore = true;
 	
@@ -4941,9 +4947,9 @@ int scrollpos;
 void MudWindow::OnSize(wxSizeEvent& event)
 {
 	wxSize ss=GetClientSize();
-	//wxBitmap bm(ss.x, ss.y);
-	m_drawbmp.SetWidth(ss.x);
-	m_drawbmp.SetHeight(ss.y);
+	
+	//m_drawbmp.SetWidth(ss.x);
+	//m_drawbmp.SetHeight(ss.y);
 	SetScrollPage();
 	Refresh();
 	//Update();
@@ -4960,13 +4966,12 @@ size_t sublines=0;
 
 	ss=GetClientSize();
 	wxBitmap bm(ss.x, ss.y);
-	//m_drawbmp.SetWidth(ss.x);
-	//m_drawbmp.SetHeight(ss.y);
+	
 	wxBufferedPaintDC dc(this, bm);
 	//wxAutoBufferedPaintDC dc(this);
 	//wxBufferedPaintDC dc (this);
 	//wxPaintDC dc(this);
-	dc.SetBackgroundMode(wxSOLID);
+	dc.SetBackgroundMode(wxPENSTYLE_SOLID);
 	wxBrush b(m_background);
 	dc.SetBackground(b);
 	dc.Clear();
@@ -4990,8 +4995,8 @@ size_t sublines=0;
 	//::wxLogDebug(wxT("start=%3d, end=%3d, m_curline=%3d, m_scrollrange=%3d"), start, end, m_curline, m_scrollrange);
 	m_start = start;
 	m_end = end;
-	//if (!m_vmudlines.empty())
-	//{
+	if (!m_vmudlines.empty())
+	{
 
 		for (long i=start-1; i>=(long)(end+sublines);i--)
 		{
@@ -5015,7 +5020,7 @@ size_t sublines=0;
 			else
 				starty = DrawMultiAnsi(&dc, starty, i, char_len, char_height, sublines);
 		}
-	//}
+	}
 }
 
 void MudWindow::OnContextMenu(wxContextMenuEvent &event)
@@ -5492,9 +5497,7 @@ wxScrollWinEvent newevt;
 
 void MudWindow::OnEraseBackground(wxEraseEvent& event)
 {
-	//SetBackgroundColour(m_colansi[0]);
-	//ClearBackground();
-	//event.Skip();
+	
 }
 
 void MudWindow::OnLeftDown(wxMouseEvent& event)
