@@ -1407,11 +1407,14 @@ void MudMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void MudMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxAboutDialogInfo info;
+    wxIcon const m(aamud11_xpm);
+    info.SetIcon(m);
 	info.AddDeveloper("oldjudge64@gmail.com");
 	info.SetVersion(APP_VERSION);
 	info.SetName(_("wxAmcl"));
 	info.SetDescription(_("Mud client using wxWidgets!"));
-	info.SetWebSite("code.google.com/p/wxamcl");
+	info.SetWebSite("https://github.com/oldjudge/wxamcl");
+    info.SetCopyright("(c) 2017");
 	
 	wxAboutBox(info);
 }
@@ -5002,14 +5005,16 @@ int InputTextCtrl::Info(wxString *sPar)
 	s.clear();
 	if (!m_parent->m_child->GetUseIPV6())
 		s << _("Connected to ") <<m_parent->m_child->GetIPAddr()->IPAddress()<<" "<<m_parent->m_child->GetIPAddr()->Hostname()<<" (IPV4)";
-    #if defined WXAMCL_USEIPV6
-		#ifndef __WXMSW__
-	else
-		s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->IPAddress()<<" "<<m_parent->m_child->GetIP6Addr()->Hostname()<<" (IPV6)";
+    #if defined WXAMCL_USEIPV6 
+        #ifndef __WXMSW__
+        else
+            s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->OrigHostname()<<" "<<m_parent->m_child->GetIP6Addr()->Hostname()<<" (IPV6)";
 		#endif
-	else
-		s << _("Connected to ") << m_parent->m_child->GetIP6Addr()->OrigHostname() << " " << m_parent->m_child->GetIP6Addr()->Hostname() << " (IPV6)";
-	#endif
+        #ifdef _WXMSW__
+        else
+            s << _("Connected to ") << m_parent->m_child->GetIP6Addr()->OrigHostname() << " " << m_parent->m_child->GetIP6Addr()->Hostname() << " (IPV6)";
+        #endif
+    #endif
 	m_parent->m_child->Msg(s);
 	s.clear();
 	s << _("--- Information end----");

@@ -79,9 +79,9 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
 	m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	SetBackgroundColour(m_background);
-	ClearBackground();
+	//ClearBackground();
 #else
 	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
 	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
@@ -177,12 +177,12 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	//m_capgag.reserve(100);
 	//m_url = new RegExp(wxT("((http:\\/\\/)?([A-Za-z0-9]+)?\\.[A-Za-z0-9\\-]+\\.[a-z]+[\\/?\\~?\\.\\-=\\?\\w+]+)\\b"));
 	//m_url = new RegExp("orf");
-	SetScrollbar(wxVERTICAL, 0, 0, 0);
+	
 	SetName("amcoutput");
 	m_tt = new wxToolTip("");
-	//m_tt->SetDelay(5);
-	this->SetToolTip(m_tt);
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE);
+    this->SetToolTip(m_tt);
+    SetScrollbar(wxVERTICAL, 0, 0, 0);
 	//wxString *text = new wxString("testinf");
 	//ParseLine(text);
 }
@@ -212,10 +212,9 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 		m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 		m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
 		m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		SetBackgroundStyle(wxBG_STYLE_SYSTEM);
-		//SetBackgroundStyle(wxBG_STYLE_PAINT);
+		SetBackgroundStyle(wxBG_STYLE_PAINT);
 		SetBackgroundColour(m_background);
-		ClearBackground();
+		//ClearBackground();
 	#else
 		m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier");
 		m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier");
@@ -285,14 +284,15 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	//m_botelnetparsed = false;
 	m_focusoninput = false;
 	m_curansicolor = m_colansi[DEF_FORECOL];
-	SetScrollbar(wxVERTICAL, 0, 0, 0);
-	SetScrollbar(wxHORIZONTAL, 0, 0, 0);
+	
 	SetName(name);
 	SetLabel(name);
-	m_tt = new wxToolTip("");
-	this->SetToolTip(m_tt);
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE );
-	//m_tt = NULL;
+    m_tt = new wxToolTip("");
+	this->SetToolTip(m_tt);
+    SetScrollbar(wxVERTICAL, 0, 0, 0);
+	SetScrollbar(wxHORIZONTAL, 0, 0, 0);
+	
 }
 
 MudWindow::~MudWindow()
@@ -427,22 +427,13 @@ bool waitmore = true;
 	m_sock->GetLocal(local);
 	
 	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
-	//wxString s = local.IPAddress();
+	//
 	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
 #ifndef __WXMSW__
+    wxString s = local.IPAddress();
 	m_parent->GetDefVars()->at(idx).SetValue(s);
 #endif
-	//s = m_addr.IPAddress();
-	/*bool waitmore = true;
-	
-			 if (!m_sock->IsConnected())
-	{
-		Msg(_("Connection failed! No internet connection available?"));
-		return;
-	}*/
-	//m_sock->SetFlags(wxSOCKET_NOWAIT);
-	//m_sock->SetFlags(wxSOCKET_WAITALL);
-	//m_sock->Peek(cBuffer, 1);
+
 }
 #endif
 
@@ -626,6 +617,7 @@ AnsiLineElement style[2];
 void MudWindow::SendLineToLog(wxUint64 i)
 {
 	if (m_vmudlines.at(i).IsFull() && !m_vmudlines.at(i).WasLogged())
+    {
 		if (!IsAnsiLogging() && !IsHtmlLogging())
 		{
 			if (IsDateLogging())
@@ -686,6 +678,8 @@ void MudWindow::SendLineToLog(wxUint64 i)
 		}
 	if (m_vmudlines.at(i).IsFull())
 		m_vmudlines.at(i).SetLogged(true);
+    }
+    
 }
 
 void MudWindow::WriteHtmlHeader(wxFile *f)
@@ -906,6 +900,8 @@ AnsiLineElement style;
 }
 
 //stream expected as char data
+//unused now
+/******
 void MudWindow::ParseBuffer(char* cBuffer)
 {
 //int* iArray;
@@ -1023,40 +1019,7 @@ map<wxString, bool>::iterator mit;
 		}
 		if (IsLogging())
 		{
-			/*if (m_vmudlines.at(m_curline-1).IsFull() && !m_vmudlines.at(m_curline-1).WasLogged())
-			{
-				if (!IsAnsiLogging() && !IsHtmlLogging())
-				{
-					
-					if (IsDateLogging())
-						m_tlog->Write(m_vmudlines.at(m_curline-1).GetTime()+": ");
-					m_tlog->Write(m_vmudlines.at(m_curline-1).GetLineText()+(char)CR+(char)LF);
-				}
-				else if (!IsHtmlLogging())
-				{
-					m_tlog->Write(sLine+(char)CR+(char)LF);
-					m_tlog->Write("\r\n");
-				}
-				else if (IsHtmlLogging())
-				{
-					wxString s;
-					ale_it it;
-					AnsiLine al = m_vmudlines.at(m_curline-1);
-					for (it = al.m_vstyle.begin();it!=al.m_vstyle.end();it++)
-					{
-						wxString t = it->GetText();
-						if (!t.Cmp(wxEmptyString))
-							t.Append(" ");
-						t.Replace("<", "&lt;");
-						t.Replace(">", "&gt;");
-						s = wxString::Format("<a class=\"%s\">%s</a>", m_css.at(it->GetFColIndex()-1), t);
-						m_htmllog->Write(s);
-					}
-					m_htmllog->Write("\r\n");
-				}
-				m_vmudlines.at(m_curline-1).SetLogged(true);
 			
-			}*/
 			SendLineToLog(m_curline-1);
 		}
 		//wxString s = m_vmudlines.at(m_curline-1).GetAnsiString();
@@ -1180,7 +1143,7 @@ map<wxString, bool>::iterator mit;
     //} while (pos<index-1);
 	}
 }
-
+*****/
 void MudWindow::ParseUTF8Buffer(wxString cBuffer)
 {
 //int* iArray;
@@ -3550,14 +3513,14 @@ AnsiLine line;
 AnsiLineElement style[500];
 int pos = -1;
 size_t stcpy = 0;
-size_t freq;
+//size_t freq = 0;
 int index=0;
 size_t len;
 	
 	wxString s = *sLine;
 	//wxStopWatch sw;
 	//sw.Start();
-	freq = line.Freq(sLine);
+	//size_t freq = line.Freq(sLine);
 	wxString empty = "";
 	boLast = false;
 	if (!m_vmudlines.empty())
@@ -3923,7 +3886,8 @@ wxUint16 col;
 		
 		for(int x=0;x<s_lines;x++)
 			//ParseBuffer("\r\n");
-			ParseUTF8Buffer("\r\n");
+			//ParseUTF8Buffer("\r\n");
+            ParseNBuffer("\r\n");
 		colCode = 37;
 	}
 	if (colCode>=3 && colCode<=5)
@@ -4946,7 +4910,7 @@ int scrollpos;
 //Event handlers
 void MudWindow::OnSize(wxSizeEvent& event)
 {
-	wxSize ss=GetClientSize();
+	//wxSize ss=GetClientSize();
 	
 	//m_drawbmp.SetWidth(ss.x);
 	//m_drawbmp.SetHeight(ss.y);
@@ -5158,7 +5122,7 @@ wxSize si;
 		xx = s.length();
 	}
 	int len=0;
-	for (int i=0;i<m_vmudlines.at(lnr).m_vstyle.size();i++)
+	for (size_t i=0;i<m_vmudlines.at(lnr).m_vstyle.size();i++)
 		//len += m_vmudlines.at(lnr).m_vstyle.at(i).GetLen();
 		len += m_vmudlines.at(lnr).m_vstyle.at(i).GetConvText().length();
 	while(sublines)
@@ -5655,7 +5619,7 @@ bool multiline = false;
 			cur_subline = (size_t)abs((int)(diff/dc.GetCharHeight()))+1;
 		}
 	}
-	int x=0;
+	size_t x=0;
 	for (it = m_vmudlines.at(line).m_vstyle.begin(); it!=m_vmudlines.at(line).m_vstyle.end(); it++, x++)
 	{
 		

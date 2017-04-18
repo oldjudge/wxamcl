@@ -106,7 +106,7 @@ public:
 	void Close();
 	
 	//functions to parse the mud packets
-	void ParseBuffer(char *cBuffer);
+	//void ParseBuffer(char *cBuffer);
 	void ParseNBuffer(char* cBuffer, bool b=true);
 	void ParseUTF8Buffer(wxString buffer);
 	void ParseLine(wxString *sLine);
