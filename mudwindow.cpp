@@ -37,7 +37,7 @@
 #define HAVE_TEXT1 28
 
 BEGIN_EVENT_TABLE(MudWindow, wxWindow)
-    //EVT_ERASE_BACKGROUND(MudWindow::OnEraseBackground)
+    EVT_ERASE_BACKGROUND(MudWindow::OnEraseBackground)
 	EVT_PAINT(MudWindow::OnPaint)
 	EVT_SIZE(MudWindow::OnSize)
 	EVT_SCROLLWIN(MudWindow::OnScroll)
@@ -74,18 +74,29 @@ MudWindow::MudWindow():wxWindow()
 */
 MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE)
 {
-	
+m_background = m_colansi[0];	
 #if !defined __WXMSW__
-	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
-	m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+	//m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+    //m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	m_font = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
+    //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+    m_ufont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
+	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	m_font = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
-	SetBackgroundColour(m_background);
-	//ClearBackground();
+	//SetBackgroundColour(m_background);
+//	ClearBackground();
 #else
-	m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
-	m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
-	m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
+    m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
+    //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+    m_ufont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
+	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+	m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
+	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
+	//m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 #endif
 	
@@ -104,7 +115,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	SetConnectionDT();
 	SetDefaultColors();
 	SetCssClasses();
-	m_background = m_colansi[0];
+	
 	//m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
 	
 	m_oldcolor = new wxString("");
@@ -195,13 +206,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE |wxTRANSPARENT_WINDOW)
 {
 	m_parent = (MudMainFrame*) parent;
-	/*m_sock = new wxSocketClient();
-	// Setup the event handler and subscribe to most events
-	m_sock->SetEventHandler(*this, SOCKET_ID);
-	m_sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
-                    wxSOCKET_INPUT_FLAG |
-                    wxSOCKET_LOST_FLAG);
-	m_sock->Notify(true);*/
+	
 	m_sock = NULL;
 	m_connected = false;
 	SetConnectionDT();
@@ -209,16 +214,25 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	SetCssClasses();
 	m_background = m_colansi[0];
 	#if !defined __WXMSW__
-		m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
-		m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		SetBackgroundStyle(wxBG_STYLE_PAINT);
+		//m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
+        //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+        m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
+		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
+        SetBackgroundStyle(wxBG_STYLE_PAINT);
 		SetBackgroundColour(m_background);
-		//ClearBackground();
+		ClearBackground();
 	#else
-		m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier");
-		m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier");
-		m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier");
+        //m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
+        //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
+        m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
+		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+		//m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier");
+		//m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier");
+		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier");
 		SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#endif
 	m_font->SetPointSize(fontsize);
@@ -287,7 +301,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	
 	SetName(name);
 	SetLabel(name);
-	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE );
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL| wxBORDER_NONE );
     m_tt = new wxToolTip("");
 	this->SetToolTip(m_tt);
     SetScrollbar(wxVERTICAL, 0, 0, 0);
@@ -948,7 +962,7 @@ map<wxString, bool>::iterator mit;
 					pos--;
 				}
 			}
-				//*(cBuffer + pos + 2) = EOS;
+				//(cBuffer + pos + 2) = EOS;
 			
 		}
 	}
@@ -4910,12 +4924,9 @@ int scrollpos;
 //Event handlers
 void MudWindow::OnSize(wxSizeEvent& event)
 {
-	//wxSize ss=GetClientSize();
 	
-	//m_drawbmp.SetWidth(ss.x);
-	//m_drawbmp.SetHeight(ss.y);
 	SetScrollPage();
-	Refresh();
+	//Refresh();
 	//Update();
 }
 void MudWindow::OnPaint(wxPaintEvent& event)
@@ -4927,7 +4938,7 @@ long end=0, start=0;
 wxSize s, ss;
 int pos;
 size_t sublines=0;
-
+    wxLogDebug("OnPaintMudWindow");
 	ss=GetClientSize();
 	wxBitmap bm(ss.x, ss.y);
 	
@@ -5315,7 +5326,8 @@ line_it lit;
 //Events
 void MudWindow::OnScroll(wxScrollWinEvent& event)
 {
-//wxEventType evt;
+
+    
 WXTYPE evt;
 	wxInt64 pos, oldpos;
 	if (event.GetOrientation()==wxHORIZONTAL)
@@ -5441,7 +5453,7 @@ void MudWindow::OnChar(wxKeyEvent& event)
 {
 int key = event.GetKeyCode();
 wxScrollWinEvent newevt;
-
+    
 	newevt.SetPosition(0);
 	newevt.SetOrientation(wxVERTICAL);
 	newevt.SetEventObject(this);
@@ -5461,7 +5473,7 @@ wxScrollWinEvent newevt;
 
 void MudWindow::OnEraseBackground(wxEraseEvent& event)
 {
-	
+	wxLogDebug("OnEraseBkgr");
 }
 
 void MudWindow::OnLeftDown(wxMouseEvent& event)

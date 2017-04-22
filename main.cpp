@@ -62,7 +62,8 @@ BEGIN_EVENT_TABLE(MudMainFrame, wxFrame)
 	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE1+9, MudMainFrame::OnFileHistory)
 	EVT_UPDATE_UI(wxID_COPY/*Amcl_CopyClipboard*/, MudMainFrame::OnMenuUi)
 	EVT_UPDATE_UI(Amcl_CopyClipboard, MudMainFrame::OnMenuUi)
-	//EVT_ERASE_BACKGROUND(MudMainFrame::OnEraseBackground)
+	EVT_ERASE_BACKGROUND(MudMainFrame::OnEraseBackground)
+    EVT_PAINT(MudMainFrame::OnPaint)
 	EVT_BUTTON(ID_PARSEINPUT, MudMainFrame::OnParseInput)
 	//EVT_COMMAND(wxID_ANY, wxEVENT_CMD_PAUSE, MudMainFrame::OnScriptPause)
 	//EVT_COMMAND(wxID_ANY, wxEVENT_CMD_RESUME, MudMainFrame::OnScriptResume)
@@ -133,12 +134,16 @@ bool MudClientApp::OnInit()
     // create the main application window
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
-	
+    
+    
+    
+
 	//Output window
 	frame->m_child = new MudWindow(frame);
 	SetChild(frame->m_child);
-	
-	//Input line
+    
+    
+   	//Input line
 	frame->m_input = new InputTextCtrl(frame, ID_INPUTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_TAB|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2);
 	//Bitmap Button
 	frame->m_toggle = new wxBitmapButton(frame, ID_PARSEINPUT, wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
@@ -161,11 +166,7 @@ bool MudClientApp::OnInit()
 	frame->m_prompt = new wxTextCtrl(frame, ID_PROMPT, "", wxDefaultPosition, wxDefaultSize, wxTE_READONLY|wxTE_CENTRE);
 	//Splitter Window...hidden
 	frame->m_splitter = new MudWindow(frame);
-	//media Ctrl
-	/*frame->m_media = new wxMediaCtrl();
-	wxSize s(200,200);
-	frame->m_media->Create(frame, ID_MEDIACTRL,"",wxDefaultPosition, s);
-	*/
+	
 	frame->m_media = new wxMediaCtrl();
 #if defined __WXMSW__
 	bool bOK = frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200, 200), 0 , wxMEDIABACKEND_WMP10);
@@ -179,17 +180,29 @@ bool MudClientApp::OnInit()
 #if defined WXOSX
 	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
 #endif
-
+    frame->Maximize();
+    frame->Show(true);
+    frame->Refresh();
+    frame->Update();
+    
 	frame->m_mgr.AddPane(frame->m_input, wxAuiPaneInfo().Name("amcinput").Bottom().Floatable(true).Gripper().CaptionVisible(false).BestSize(500,24).Position(0));
-	frame->m_mgr.AddPane(frame->m_splitter, wxAuiPaneInfo().Name("amcsplitter").Top().Dockable(false).CaptionVisible(false).MinSize(200,200).Hide());//.Hide());
+	frame->m_mgr.AddPane(frame->m_splitter, wxAuiPaneInfo().Name("amcsplitter").Top().Dockable(false).CaptionVisible(false).BestSize(100, 300).Hide());//.Hide());
 	frame->m_mgr.AddPane(frame->m_child, wxAuiPaneInfo().Name("amcmain").Center().CenterPane().Dockable(false).Floatable(false));
 	frame->m_mgr.AddPane(frame->m_toggle, wxAuiPaneInfo().Name(wxT("amctoggle")).Bottom().Floatable(false).CaptionVisible(false).MaxSize(48,24).Fixed().Position(1));
 	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(wxT("amcprompt")).Bottom().CaptionVisible(false).Hide());
 
 	frame->m_mgr.AddPane(frame->m_toolbar, wxAuiPaneInfo().Name("amctoolbar").ToolbarPane().Caption(_("Main Toolbar")).Top().LeftDockable(false).RightDockable(false));
 	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
-	frame->m_mgr.Update();
+	frame->m_mgr.SetManagedWindow(frame);
+	frame->m_mgr.SetDockSizeConstraint(0.5, 0.5);
+	unsigned int flags;// = m_mgr.GetFlags();
+	flags = wxAUI_MGR_RECTANGLE_HINT|wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_HINT_FADE|wxAUI_MGR_NO_VENETIAN_BLINDS_FADE;
+    frame->m_mgr.SetFlags(flags);
+    frame->m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, frame->m_child->GetAnsiColor(0));
+    frame->m_mgr.Update();
 	
+    
+    
 	//splitter->Msg(wxT("Splitter"));
 	//frame->m_child->Msg(_("Welcome to wxAMC!"));
 	//frame->m_child->Msg(_("Cross-platform mudclient using wxWidgets!"));
@@ -199,20 +212,23 @@ bool MudClientApp::OnInit()
 
 	// and show it (the frames, unlike simple controls, are not shown when
     // created initially)
-    frame->Maximize();
-	frame->Show(true);
-	frame->Update();
+    
+    
+    //frame->Refresh();
+    //frame->Update();
+    
+    
 	frame->LoadGlobalOptions(); //5.1.4
 	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
 
 #if defined __WXMSW__
-	wxSetEnv("LUA_PATH_5_2", "!\\scripts\\?.lua;!\\lua\\?.lua");
+	wxSetEnv("LUA_PATH_5_3", "!\\scripts\\?.lua;!\\lua\\?.lua");
 #endif
 #if defined __WXGTK__
-	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
+	wxSetEnv("LUA_PATH_5_3", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
 #if defined WXOSX
-	wxSetEnv("LUA_PATH_5_2", ".\\scripts\\?.lua;.\\lua\\?.lua");
+	wxSetEnv("LUA_PATH_5_3", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
 
 	if (frame->m_input->GetParse())
@@ -376,32 +392,33 @@ return 0;
 // ----------------------------------------------------------------------------
 // frame constructor
 MudMainFrame::MudMainFrame(const wxString& title)
-       : wxFrame(NULL, wxID_ANY, title)
+       :wxFrame()//: wxFrame(NULL, wxID_ANY, title)
 {
-	// set the frame icon
-    //wxIcon aamud11(aamud11_xpm);
-	//SetIcon(aamud11);
-	#if defined WXOSX
+	
+#if defined __WXGTK__
+    //SetBackgroundStyle(wxBG_STYLE_SYSTEM);
+    //ClearBackground();
+#endif
+#ifndef __WXGTK__
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
+#endif
+    Create(NULL, wxID_ANY, title);
+    //Create(NULL, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, wxCLIP_CHILDREN|wxFULL_REPAINT_ON_RESIZE);
+#if defined __WXOSX__
 	#include "mud11.xpm"
 	wxIcon icon = wxICON(net);
 	SetIcon(icon);
-	#endif
-	#ifndef WXOSX
-		SetIcon(wxICON(aamud11));
-	#endif
-	m_mgr.SetManagedWindow(this);
+#endif
+#ifndef WXOSX
+	SetIcon(wxICON(aamud11));
+#endif
+
+	/*m_mgr.SetManagedWindow(this);
 	m_mgr.SetDockSizeConstraint(0.5, 0.5);
 	unsigned int flags;// = m_mgr.GetFlags();
 	flags = wxAUI_MGR_RECTANGLE_HINT|wxAUI_MGR_ALLOW_FLOATING|wxAUI_MGR_HINT_FADE|wxAUI_MGR_NO_VENETIAN_BLINDS_FADE;
-    m_mgr.SetFlags(flags);
+    m_mgr.SetFlags(flags);*/
 
-	
-	/*m_locale.Init(wxLANGUAGE_GERMAN, wxLOCALE_LOAD_DEFAULT|wxLOCALE_CONV_ENCODING);
-	wxString localeInfo;
-    wxString locale = m_locale->GetLocale();
-    wxString sysname = m_locale->GetSysName();
-    wxString canname = m_locale->GetCanonicalName();*/
-	//frame->m_child->Msg(locale.c_str());
 	#if defined __WXGTK__
 	wxLocale::AddCatalogLookupPathPrefix("/usr/share/locale");
 	#endif
@@ -507,34 +524,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
     CreateStatusBar(3);
     SetStatusText(_("Welcome to wxAmcl!"));
     Center();
-#endif // wxUSE_STATUSBAR
-	/*wxToolBar* wxTB = CreateToolBar();
-	wxTB->AddTool(ID_CHARCONNECT, wxT("Connect"), net_xpm, wxNullBitmap);
-	wxTB->SetToolShortHelp(ID_CHARCONNECT, wxT("Connect char.."));
-	wxTB->AddSeparator();
-	wxTB->AddTool(ID_OBJS, wxT("Objects"), defs_xpm, wxNullBitmap);
-	wxTB->SetToolShortHelp(ID_OBJS, wxT("Define objects.."));
-	wxTB->AddTool(ID_PREFS, prefs_xpm, wxNullBitmap);
-	wxTB->SetToolShortHelp(ID_PREFS, wxT("Preferences"));
-	wxTB->Realize();*/
+#endif 
 	SetName("wxAMC");
-#if defined __WXGTK__
-	SetBackgroundStyle(wxBG_STYLE_SYSTEM);
-	SetBackgroundColour(RGB(0,0,0));
-	ClearBackground();
-	if (CanSetTransparent())
-		SetTransparent(230);
-#endif
-	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-//if (CanSetTransparent())
-//		SetTransparent(230);	
-/*#if defined __CODELITE__ && defined __WXMSW__
-	Connect(wxEVENT_CMD_PAUSE2, wxThreadEventHandler(MudMainFrame::OnScriptPause), NULL, this);
-	Connect(wxEVENT_CMD_RESUME, wxThreadEventHandler(MudMainFrame::OnScriptResume), NULL, this);
-#else
-	Bind(wxEVENT_CMD_PAUSE2, &MudMainFrame::OnScriptPause, this);
-	Bind(wxEVENT_CMD_RESUME2, &MudMainFrame::OnScriptResume, this);
-#endif*/
+
 	CreateDefVars();
 	DefineKeys();
 #if defined __WXMSW__
@@ -542,13 +534,17 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
 #endif
 #if defined __WXGTK__
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Monospace Regular");
-	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Monospace Regular");
+	//m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Monospace Regular");
+    wxFont ff(wxFontInfo(9).FaceName("Monospace Regular"));
+    m_scriptfont = new wxFont(ff);
+	//wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Monospace Regular");
+    wxFont bf(wxFontInfo(9).FaceName("Monospace Regular").Bold().Family(wxFONTFAMILY_MODERN));
 #endif
-#if defined WXOSX
+#if defined __WXOSX__
 	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier New");
 	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Courier New");
-#endif	
+#endif
+
 }
 
 MudMainFrame::MudMainFrame()
@@ -579,9 +575,23 @@ MudMainFrame::~MudMainFrame()
 // event handlers
 void MudMainFrame::OnEraseBackground(wxEraseEvent& event)
 {
-	//SetBackgroundColour(m_child->GetAnsiColor(0));
-	//ClearBackground();
-	//event.Skip();
+	wxLogDebug("OnEraseFrame");
+}
+
+void MudMainFrame::OnPaint(wxPaintEvent& event)
+{
+    /*wxSize ss=GetClientSize();
+	wxBitmap bm(ss.x, ss.y);
+    wxBufferedPaintDC dc(this, bm);
+	//wxAutoBufferedPaintDC dc(this);
+	//wxBufferedPaintDC dc (this);
+	//wxPaintDC dc(this);
+	dc.SetBackgroundMode(wxPENSTYLE_SOLID);
+	wxBrush b(m_child->GetAnsiColor(0));
+	dc.SetBackground(b);
+	dc.Clear();*/
+    wxLogDebug("OnPaintFrame");
+    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
 }
 
 void MudMainFrame::OnIdle(wxIdleEvent& event)
@@ -781,7 +791,7 @@ static bool bodown = false;
 		}
 		else
 		{
-			for (int i= line;i<m_child->m_curline;i++)
+			for (wxUint64 i= line;i<m_child->m_curline;i++)
 			{
 				if (m_child->GetLines()->at(i).GetLineText().Find(find)!=wxNOT_FOUND)
 				{
@@ -812,35 +822,40 @@ static bool bodown = false;
 
 void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 {
+#include <wx/wupdlock.h>
+        wxWindowUpdateLocker noUpdates(this);
 
-	//if (event.IsChecked())
-	//{
 		if (UseSplitter() && !m_splitter->IsShown())
 		{
 			m_child->Freeze();
+            m_splitter->Freeze();
 			m_splitter->SetLineBuffer(m_child->GetLines());
 			m_splitter->m_curline = m_child->m_curline;
-			m_mgr.GetPane("amcsplitter").Show();
-			m_mgr.Update();
+			
 			int line = m_child->m_curline-m_child->m_scrollrange;
 			m_splitter->SetScrollPage();
 			m_splitter->SetScrollPos(wxVERTICAL, line-m_splitter->m_scrollrange);
-			m_splitter->Refresh();
-			m_splitter->Update();
-			m_child->Thaw();
+            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
+            
+            m_mgr.GetPane("amcsplitter").Dock().Show().Row(0);
+            m_mgr.GetPane("amcmain").Show().Row(1);
+            m_mgr.Update();
+            m_child->Thaw();
+            m_splitter->Thaw();
 			return;
 		}
 		if (m_splitter->IsShown())
 		{
 			m_child->Freeze();
+            
 			m_mgr.GetPane("amcsplitter").Hide();
-			//m_parent->m_splitter->GetLineBuffer().empty();
-			//m_parent->m_mgr.GetPane(wxT("amcmain")).Hide();
-			m_mgr.Update();
-			m_child->Thaw();
+            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
+            //m_mgr.GetPane("amcmain").Show();
+            m_mgr.Update();
+            m_child->Thaw();
 			return;
 		}
-	//}
+    	//}
 	//else
 	//{
 		
@@ -1650,8 +1665,8 @@ bool MudMainFrame::LoadGlobalOptions()
 	wxFont ff;
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
-
+//	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
+    m_scriptfont = new wxFont(wxFontInfo(9).FaceName(s).Family(wxFONTFAMILY_MODERN));
 	aL->GetField(-35, "charencoding");
 	int ec = (int)aL->GetInt(-1);
 	wxMenuBar* bar = GetMenuBar();
@@ -2457,7 +2472,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	}
 	if (!this->GetButtons()->empty())
 	{
-		for (int x = 0; x < GetButtons()->size(); x++)
+		for (size_t x = 0; x < GetButtons()->size(); x++)
 		{
 			wxString n = GetButtons()->at(x).GetTbName();
 			wxAuiToolBar *tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
@@ -2502,7 +2517,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	int err = 0;
 	const char* error;
 	wxSetWorkingDirectory(GetGlobalOptions()->GetProfileDir());
-	if (err = m_child->GetLState()->DoFile(s.GetFullPath()))
+	if ((err = m_child->GetLState()->DoFile(s.GetFullPath())))
 	{
 		int top = lua_gettop(L);
 		error = luaL_checkstring(L, top);
@@ -2674,10 +2689,9 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		int fs;
-
 		f.SetPointSize(fs = aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
-		f.SetWeight(aL->GetInt(-1));
+        f.SetWeight(aL->GetInt(-1));
 		aL->GetField(-5, "fontstyle");
 		f.SetStyle(aL->GetInt(-1));
 		MudWindow * mw = new MudWindow(this, win, fs);
@@ -3390,7 +3404,7 @@ bool MudMainFrame::LoadHosts()
 	wxString s;
 	const char* error;
 	wxSetWorkingDirectory(GetGlobalOptions()->GetWorkDir());
-	if (err=m_child->GetLState()->DoFile("hosts.lua"))
+	if ((err=m_child->GetLState()->DoFile("hosts.lua")))
 	{
 		int top = lua_gettop(L);
 		error = luaL_checkstring(L, top);
@@ -3648,7 +3662,7 @@ void InputTextCtrl::OnMouseWheel(wxMouseEvent &event)
 		m_parent->m_splitter->SetScrollPage();
 		m_parent->m_splitter->SetScrollPos(wxVERTICAL, line-m_parent->m_splitter->m_scrollrange);
 		m_parent->m_splitter->Refresh();
-		m_parent->m_splitter->Update();
+		//m_parent->m_splitter->Update();
 		m_parent->m_child->Thaw();
 		return;
 		}
@@ -3738,7 +3752,7 @@ MudWindow *sendto;
 				m_parent->m_splitter->SetScrollPage();
 				m_parent->m_splitter->SetScrollPos(wxVERTICAL, line-m_parent->m_splitter->m_scrollrange);
 				m_parent->m_splitter->Refresh();
-				m_parent->m_splitter->Update();
+				//m_parent->m_splitter->Update();
 				m_parent->m_child->Thaw();
 				return;
 			}
@@ -3821,7 +3835,8 @@ MudWindow *sendto;
 		//SetSelection(GetLastPosition()+1, 0);
 		//SetInsertionPoint(GetLastPosition());
 		#ifndef WXOSX
-		SetSelection(0,GetLastPosition()+1);
+		//SetSelection(0,GetLastPosition()+1);
+        SetSelection(-1,-1);
 		#endif
 		#ifdef WXOSX
 		SetSelection(-1,-1);
@@ -4894,7 +4909,7 @@ int ref;
 	}
 	m_waiting = false;
 	//int err = lua_resume(itm->second, 0); 5.1.4
-	int err = lua_resume(itm->second, NULL, 0);	
+	lua_resume(itm->second, NULL, 0);	
 	return 0;
 }
 

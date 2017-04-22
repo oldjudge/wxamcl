@@ -26,6 +26,7 @@
 #include <wx/aui/aui.h>
 #include <wx/aui/auibar.h>
 #include <wx/tokenzr.h>
+
 #include <wx/dcbuffer.h>
 #include <wx/valtext.h>
 #include <wx/valgen.h>
@@ -265,7 +266,7 @@ enum
 
 #define APP_VERSION "0.1.r95"
 
-#define WXAMCL_USEIPV6 1
+//#define WXAMCL_USEIPV6 1
 
 #include "mudwindow.h"
 #include "luadefs.h"
@@ -331,6 +332,7 @@ public:
 
 	class MudWindow *m_child;
 	class MudWindow *m_splitter;
+    class MudWindow *m_managed;
 	class InputTextCtrl *m_input;
 	class wxAuiToolBar *m_toolbar;
 	class wxBitmapButton *m_toggle;
@@ -378,6 +380,7 @@ public:
 	void OnCreateTB(wxCommandEvent& event);
 	void OnCreateGaugeWindow(wxCommandEvent& event);
 	void OnFileHistory(wxCommandEvent& event);
+    void OnPaint(wxPaintEvent& event);
 	//stuff
 	bool UseSplitter() {return m_usesplitter;}
 	void SetSplitter(bool b) {m_usesplitter=b;}
@@ -468,6 +471,7 @@ private:
 	wxFont *m_scriptfont;
 	void DefineKeys();
     void OnEraseBackground(wxEraseEvent& event);
+    //void OnPaint(wxPaintEvent& event);
 	//void OnScriptPause(wxThreadEvent& event);
 	//void OnScriptResume(wxThreadEvent& event);
 	void OnIdle(wxIdleEvent& event);

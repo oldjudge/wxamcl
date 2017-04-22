@@ -70,8 +70,16 @@ DlgOptions( parent )
 	m_iacgaeor->SetValidator(wxGenericValidator(&m_iacgaeor2));
 	m_utf8_2 = m_frame->GetGlobalOptions()->UseUTF8();
 	m_utf8->SetValidator(wxGenericValidator(&m_utf8_2));
-	m_ipv62 = m_frame->m_child->GetUseIPV6();
-	m_ipv6->SetValidator(wxGenericValidator(&m_ipv62));
+    #ifndef WXAMCL_USEIPV6
+        m_ipv6->Disable();
+        m_ipv62 = false;
+        m_ipv6->SetValidator(wxGenericValidator(&m_ipv62));
+    #endif
+    #ifdef WXAMCL_USEIPV6
+        m_ipv62 = m_frame->m_child->GetUseIPV6();
+        m_ipv6->SetValidator(wxGenericValidator(&m_ipv62));
+        m_ipv6->Enable();
+    #endif
 	m_events = m_frame->GetGlobalOptions()->GetUseEvents();
 	m_evall->SetValidator(wxGenericValidator(&m_events));
 	m_evconn = m_frame->GetGlobalOptions()->GetUseEvConn();
