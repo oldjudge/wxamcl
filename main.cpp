@@ -293,6 +293,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
 	//amcMXP am(frame->m_child);
+    
 	//am.Parse("<IMAGE 'intro.jpg' URL='http://coffeemud.net:27744/images/mxp/' H=400 W=400>  Hallo");
 	//am.Parse("<!ELEMENT HELP '<SEND HREF=\"HELP &text;\" hint=\"Click\">'>");
 	//am.Parse("<HELP>ALIAS</HELP> <HELP>!</HELP>");
@@ -2470,17 +2471,20 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			gw->Destroy();
 		}
 	}
+    wxAuiToolBar *tb = 0;
 	if (!this->GetButtons()->empty())
 	{
 		for (size_t x = 0; x < GetButtons()->size(); x++)
 		{
 			wxString n = GetButtons()->at(x).GetTbName();
-			wxAuiToolBar *tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
+			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
 			if (!tb)
 				continue;
 
 			m_mgr.DetachPane(tb);
-			tb->Destroy();
+			bool b = tb->Destroy();
+            if (b)
+                tb = NULL;
 		}
 		GetButtons()->clear();
 	}
@@ -3020,11 +3024,11 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		if (m_mgr.GetPane(GetGaugePanes()->at(i)).IsShown())
 			view->Check(ID_USERWINDOW+items2+i, true);
 	}
-	wxAuiToolBar *tb;
+	
 	for(size_t i=0;i<GetButtons()->size();i++)
 	{
 		wxString n= GetButtons()->at(i).GetTbName();
-		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(n, this);
+		wxAuiToolBar *tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(n, this);
 		if (tb)
 		{
 			GetButtons()->at(i).SetParent(tb);

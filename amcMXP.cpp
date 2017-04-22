@@ -886,7 +886,7 @@ MudWindow *mw = m_parent;
 		AnsiLineElement ale;
 		wxColour c, b;
 		b.Set("BLACK");
-		//c.Set("GREY");
+		
 		c = mw->GetCurAnsiColour();
 		if (color.Match(t->GetTag()))
 		{

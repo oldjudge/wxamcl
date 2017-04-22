@@ -84,7 +84,7 @@ m_background = m_colansi[0];
     //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
 	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	m_font = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
+	m_ifont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	//SetBackgroundColour(m_background);
 //	ClearBackground();
@@ -93,7 +93,7 @@ m_background = m_colansi[0];
     //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
 	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+	m_ifont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
 	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
 	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
 	//m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
@@ -219,20 +219,18 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
         //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
         m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
 		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
+		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
         SetBackgroundStyle(wxBG_STYLE_PAINT);
-		SetBackgroundColour(m_background);
-		ClearBackground();
+		//SetBackgroundColour(m_background);
+		//ClearBackground();
 	#else
         //m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
         //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
         m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
 		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
-		//m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier");
-		//m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier");
-		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier");
+		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+		
 		SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#endif
 	m_font->SetPointSize(fontsize);

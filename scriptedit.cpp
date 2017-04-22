@@ -33,12 +33,14 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.draw.text wxamcl.draw.line wxamcl.draw.circle wxamcl.draw.square wxamcl.draw.winsize");
 	wxString amcwords =
 		wxT("clearwin capstart capend setvar gag help loadprofile func script bscript gagwin connect pwd refreshwin raw capturewin capturenb log htmllog resume test"); 
-	
+	wxString luawords3 =
+        ("wxamcl.Action wxamcl.Alias wxamcl.Vars wxamcl.ATCP wxamcl.GMCP wxamcl.MSDP");
+    
 	SetLexer(wxSTC_LEX_LUA);
 	
 	SetKeyWords(0, luawords);
 	SetKeyWords(1, luawords2);
-	//SetKeyWords(1, luawords3);
+	SetKeyWords(3, luawords3);
 	SetKeyWords(2, amcwords);
 	
 	SetMarginWidth (0, 0);
@@ -119,6 +121,9 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	StyleSetForeground(wxSTC_LUA_WORD3, wxColour ("MEDIUM BLUE"));
 	StyleSetFont(wxSTC_LUA_WORD3, bfont);
 	StyleSetBold(wxSTC_LUA_WORD3, true);
+    StyleSetForeground(wxSTC_LUA_WORD4, wxColour ("KHAKI"));
+    StyleSetFont(wxSTC_LUA_WORD4, bfont);
+    StyleSetBold(wxSTC_LUA_WORD4, true);
 	StyleSetFont(wxSTC_LUA_STRING, m_font);
 	StyleSetForeground(wxSTC_LUA_STRING, wxColour ("RED"));
 	StyleSetFont(wxSTC_LUA_CHARACTER, m_font);
