@@ -5420,7 +5420,10 @@ int luafunc_parsemxp(lua_State *L)
 	const char *msg;
 	msg = luaL_checkstring(L, 1);
 	MudWindow *mw = wxGetApp().GetChild();
+	bool mx = mw->IsMXPActive();
+	mw->SetMXP(true);
 	mw->ParseBufferMXP(wxString(msg).char_str());
+	mw->SetMXP(mx);
 	mw->Refresh();
 	mw->Update();
 	return 0;
@@ -5436,7 +5439,10 @@ int luafunc_parsemxpwin(lua_State *L)
 	
 	if (!mw)
 		return 0;
+	bool mx = mw->IsMXPActive();
+	mw->SetMXP(true);
 	mw->ParseBufferMXP(wxString(msg).char_str());
+	mw->SetMXP(mx);
 	mw->Refresh();
 	mw->Update();
 	return 0;

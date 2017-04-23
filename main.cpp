@@ -96,7 +96,7 @@ END_EVENT_TABLE()
 #if defined __WXGTK__ 
 #include "mud11.xpm"
 #endif
-//#include "mud11.xpm"
+#include "mud11.xpm"
 #include "defs.xpm"
 #include "prefs.xpm"
 #include "net.xpm"
@@ -2480,7 +2480,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
 			if (!tb)
 				continue;
-
+			m_mgr.GetPane(tb).Dock();
+			m_mgr.Update();
 			m_mgr.DetachPane(tb);
 			bool b = tb->Destroy();
             if (b)
@@ -3028,18 +3029,24 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	for(size_t i=0;i<GetButtons()->size();i++)
 	{
 		wxString n= GetButtons()->at(i).GetTbName();
-		wxAuiToolBar *tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(n, this);
-		if (tb)
+		//wxAuiToolBar *tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);//(wxAuiToolBar*)MudMainFrame::FindWindowByName(n, this);
+		wxAuiToolBar *tb = 0;
+		bool k = m_mgr.GetPane(n).IsOk();
+		if (k)
 		{
+			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
 			GetButtons()->at(i).SetParent(tb);
 			if (GetButtons()->at(i).GetName()=="separator")
 				tb->AddSeparator();
 			else
 			{
+				
+ 				m_mgr.Update();
 				wxSetWorkingDirectory(GetGlobalOptions()->GetImagesDir());
+				tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 				wxBitmap bt(GetButtons()->at(i).GetBitmap(), wxBITMAP_TYPE_XPM);
 				tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), bt);//script_xpm);
-				tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
+				
 			}
 			tb->Realize();
 			continue;
