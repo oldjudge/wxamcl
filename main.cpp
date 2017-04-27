@@ -93,9 +93,6 @@ BEGIN_EVENT_TABLE(InputTextCtrl, wxTextCtrl)
 	EVT_SET_FOCUS(InputTextCtrl::OnSetFocus)
 	EVT_TIMER(2222, InputTextCtrl::OnSWDelay)
 END_EVENT_TABLE()
-#if defined __WXGTK__ 
-#include "mud11.xpm"
-#endif
 #include "mud11.xpm"
 #include "defs.xpm"
 #include "prefs.xpm"
@@ -1798,7 +1795,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.action.new(\""<<GetTrigger()->at(idx).GetLabel()<<"\", [=["<<GetTrigger()->at(idx).GetPattern()<<"]=], "<<"[=["<<GetTrigger()->at(idx).GetAction()<<"]=], \""<<GetTrigger()->at(idx).GetClass()<<"\", true, "<<GetTrigger()->at(idx).GetPriority()
+		s<<"    wxamcl.action.new(\""<<GetTrigger()->at(idx).GetLabel()<<"\", [=["<<GetTrigger()->at(idx).GetPattern()<<"]=], "<<"[=["<<GetTrigger()->at(idx).GetAction()<<"]=], \""<<GetTrigger()->at(idx).GetClass()<<"\", true, "<<GetTrigger()->at(idx).GetPriority()
 		 <<", "<<GetTrigger()->at(idx).GetColMatch()<<", "<<GetTrigger()->at(idx).GetLines()<<")\n"; 
 		f->Write(s.c_str());
 	}
@@ -1810,7 +1807,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.alias.new(\""<<GetAlias()->at(idx).GetName()<<"\", [=["<<GetAlias()->at(idx).GetAction()<<"]=], \""<<GetAlias()->at(idx).GetGroup()<<"\", true)\n";
+		s<<"    wxamcl.alias.new(\""<<GetAlias()->at(idx).GetName()<<"\", [=["<<GetAlias()->at(idx).GetAction()<<"]=], \""<<GetAlias()->at(idx).GetGroup()<<"\", true)\n";
 		f->Write(s.c_str());
 	}
 	
@@ -1823,7 +1820,7 @@ s_it it;
 		wxString s;
 		
 		//long k = m[cc];
-		s<<"    amc.hk.new(\""<<GetHotkeys()->at(idx).GetName()<<"\", \""<<GetHotkeys()->at(idx).GetKeyName()<<"\", \""<<GetHotkeys()->at(idx).GetModName()<<"\", \""<<GetHotkeys()->at(idx).GetAction()<<"\", \""<<GetHotkeys()->at(idx).GetGroup()<<"\", true)\n";
+		s<<"    wxamcl.hk.new(\""<<GetHotkeys()->at(idx).GetName()<<"\", \""<<GetHotkeys()->at(idx).GetKeyName()<<"\", \""<<GetHotkeys()->at(idx).GetModName()<<"\", \""<<GetHotkeys()->at(idx).GetAction()<<"\", \""<<GetHotkeys()->at(idx).GetGroup()<<"\", true)\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section timers\n");
@@ -1833,7 +1830,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.timer.new(\""<<GetTimers()->at(idx).GetName()<<"\", \""<<GetTimers()->at(idx).GetAction()<<"\", \""<<GetTimers()->at(idx).GetGroup()<<"\", "<<GetTimers()->at(idx).GetInterval()<<", "<<GetTimers()->at(idx).GetRepeat()<<", true)\n";
+		s<<"    wxamcl.timer.new(\""<<GetTimers()->at(idx).GetName()<<"\", \""<<GetTimers()->at(idx).GetAction()<<"\", \""<<GetTimers()->at(idx).GetGroup()<<"\", "<<GetTimers()->at(idx).GetInterval()<<", "<<GetTimers()->at(idx).GetRepeat()<<", true)\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section lists\n");
@@ -1843,12 +1840,12 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.list.new(\""<<GetLists()->at(idx).GetName()<<"\", \""<<GetLists()->at(idx).GetGroup()<<"\", true)\n";
+		s<<"    wxamcl.list.new(\""<<GetLists()->at(idx).GetName()<<"\", \""<<GetLists()->at(idx).GetGroup()<<"\", true)\n";
 		f->Write(s.c_str());
 		for (int c=0;c<GetLists()->at(idx).GetSize();c++)
 		{
 			s.Clear();
-			s<<"        amc.list.additem(\""<<GetLists()->at(idx).GetName()<<"\", \""<<GetLists()->at(idx).GetItem(c)<<"\")\n";
+			s<<"        wxamcl.list.additem(\""<<GetLists()->at(idx).GetName()<<"\", \""<<GetLists()->at(idx).GetItem(c)<<"\")\n";
 			f->Write(s.c_str());
 		}
 	}
@@ -1859,7 +1856,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.var.new(\""<<GetVars()->at(idx).GetName()<<"\", [=["<<GetVars()->at(idx).GetValue()<<"]=], \""<<GetVars()->at(idx).GetGroup()<<"\", true)\n";
+		s<<"    wxamcl.var.new(\""<<GetVars()->at(idx).GetName()<<"\", [=["<<GetVars()->at(idx).GetValue()<<"]=], \""<<GetVars()->at(idx).GetGroup()<<"\", true)\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section buttons\n");
@@ -1869,7 +1866,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.button.new(\""<<GetButtons()->at(idx).GetName()<<"\", [=["<<GetButtons()->at(idx).GetTbName()<<"]=], [=["<<GetButtons()->at(idx).GetAction()<<"]=], \""<<GetButtons()->at(idx).GetGroup()<<"\", true)\n";
+		s<<"    wxamcl.button.new(\""<<GetButtons()->at(idx).GetName()<<"\", [=["<<GetButtons()->at(idx).GetTbName()<<"]=], [=["<<GetButtons()->at(idx).GetAction()<<"]=], \""<<GetButtons()->at(idx).GetGroup()<<"\", true)\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section gauges\n");
@@ -1888,12 +1885,12 @@ s_it it;
 				wxString s;
 		
 				//long k = m[cc];
-				s<<"    amc.gauge.new(\""<<gw->GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetVar1()<<"\", \""
+				s<<"    wxamcl.gauge.new(\""<<gw->GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetVar1()<<"\", \""
 				<<gw->GetGauges()->at(idx).GetVar2()<<"\", \""<<gw->GetGauges()->at(idx).GetFCol().GetAsString(wxC2S_HTML_SYNTAX)<<"\", \""<<gw->GetGauges()->at(idx).GetBCol().GetAsString(wxC2S_HTML_SYNTAX)<<"\", \""
 				<<(gw->GetGauges()->at(idx).GetVertical() ? "true":"false")<<"\")\n";
 				f->Write(s.c_str());
 				s.Empty();
-				s<<"    amc.gauge.setsize(\""<<gw->GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetName()<<"\", "<<gw->GetGauges()->at(idx).GetX()<<", "<<gw->GetGauges()->at(idx).GetY()<<", "<<gw->GetGauges()->at(idx).GetCx()<<
+				s<<"    wxamcl.gauge.setsize(\""<<gw->GetName()<<"\", \""<<gw->GetGauges()->at(idx).GetName()<<"\", "<<gw->GetGauges()->at(idx).GetX()<<", "<<gw->GetGauges()->at(idx).GetY()<<", "<<gw->GetGauges()->at(idx).GetCx()<<
 					", "<<gw->GetGauges()->at(idx).GetCy()<<")\n";
 				f->Write(s.c_str());
 			}
@@ -1908,7 +1905,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.action.delete(\""<<GetTrigger()->at(idx).GetLabel()<<"\")\n";
+		s<<"    wxamcl.action.delete(\""<<GetTrigger()->at(idx).GetLabel()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section alias\n");
@@ -1918,7 +1915,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.alias.delete(\""<<GetAlias()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.alias.delete(\""<<GetAlias()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section gauges\n");
@@ -1936,7 +1933,7 @@ s_it it;
 				wxString s;
 		
 				//long k = m[cc];
-				s<<"    amc.gauge.delete(\""<<gw->GetName()<<"\", "<<"\""<<gw->GetGauges()->at(idx).GetName()<<"\")\n";
+				s<<"    wxamcl.gauge.delete(\""<<gw->GetName()<<"\", "<<"\""<<gw->GetGauges()->at(idx).GetName()<<"\")\n";
 				f->Write(s.c_str());
 			}
 		}
@@ -1949,7 +1946,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.hk.delete(\""<<GetHotkeys()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.hk.delete(\""<<GetHotkeys()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section timers\n");
@@ -1959,7 +1956,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.timer.delete(\""<<GetTimers()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.timer.delete(\""<<GetTimers()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section lists\n");
@@ -1969,7 +1966,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.list.delete(\""<<GetLists()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.list.delete(\""<<GetLists()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section variables\n");
@@ -1979,7 +1976,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.var.delete(\""<<GetVars()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.var.delete(\""<<GetVars()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("\t--section buttons\n");
@@ -1989,7 +1986,7 @@ s_it it;
 		if (idx==-1)
 			continue;
 		wxString s;
-		s<<"    amc.button.delete(\""<<GetButtons()->at(idx).GetName()<<"\")\n";
+		s<<"    wxamcl.button.delete(\""<<GetButtons()->at(idx).GetName()<<"\")\n";
 		f->Write(s.c_str());
 	}
 	f->Write("end\n");

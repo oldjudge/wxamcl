@@ -5991,7 +5991,7 @@ wxUint32 uiBytesRead;
 			GetLState()->PushLString((const char*)m_cBuffer, uiBytesRead);
 		
 		}
-		GetLState()->SetGlobal((const char*)"amcPacket");
+		GetLState()->SetGlobal((const char*)"wxamclPacket");
 		GetLState()->SetTop(0);
 		if (m_parent->GetGlobalOptions()->GetUseEvents())
 		{
@@ -6001,7 +6001,7 @@ wxUint32 uiBytesRead;
 					m_parent->GetGlobalOptions()->GetEventFile());
 				m_parent->m_input->ParseCommandLine(&s);
 				GetLState()->SetTop(0);
-				GetLState()->GetGlobal("amcPacket");
+				GetLState()->GetGlobal("wxamclPacket");
 				if (!m_parent->GetGlobalOptions()->UseUTF8())
 				{
 					if (m_mccp2 && cBuf!=NULL)
@@ -6018,8 +6018,10 @@ wxUint32 uiBytesRead;
 						//wxStrcpy(cBuf, sss.char_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())));
 						//if (cBuf[0]=='\0')
 						//wxStrcpy(cBuf, sss.char_str());
-						wxStrcpy(cBuf, sss.To8BitData());//works in windows at least
-						//wxStrcpy(cBuf, sss.utf8_str());
+						
+						wxStrcpy(cBuf, sss.To8BitData());//works in windows at least somehow
+						
+						
 					}
 					else if (uiBytesRead)
 					{

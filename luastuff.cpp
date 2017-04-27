@@ -776,9 +776,9 @@ int luafunc_drawcircle(lua_State*L)
 	int x,y,rad;
 	bool full = false;
 	winname = luaL_checkstring(L, 1);
-	x = luaL_optint(L, 2, 100);
-	y = luaL_optint(L, 3, 100);
-	rad = luaL_optint(L, 4, 100);
+	x = (int)luaL_optnumber(L, 2, 100);
+	y = (int)luaL_optnumber(L, 3, 100);
+	rad = (int)luaL_optnumber(L, 4, 100);
 	full = lua_toboolean(L,5)!=0;
 	fcol = luaL_optstring(L, 6, "silver");
 	bcol = luaL_optstring(L, 7, "black");
@@ -818,12 +818,14 @@ int luafunc_drawsquare(lua_State *L)
 	const char* fcol;
 	const char* bcol;
 	int x,y,cx,cy;
+	int def = 100;
 	bool full = false;
 	winname = luaL_checkstring(L, 1);
-	x = luaL_optint(L, 2, 100);
-	y = luaL_optint(L, 3, 100);
-	cx = luaL_optint(L, 4, 100);
-	cy = luaL_optint(L, 5, 100);
+	x = (int)luaL_optnumber(L, 2, def);
+	//x = (int)luaL_optinteger(L, 2, def);
+	y = (int)luaL_optnumber(L, 3, def);
+	cx = (int)luaL_optnumber(L, 4, 100);
+	cy = (int)luaL_optnumber(L, 5, 100);
 	full = lua_toboolean(L,6)!=0;
 	fcol = luaL_optstring(L, 7, "silver");
 	bcol = luaL_optstring(L, 8, "black");
@@ -863,10 +865,10 @@ int luafunc_drawline(lua_State *L)
 	const char* fcol;
 	int x,y,cx,cy;
 	winname = luaL_checkstring(L, 1);
-	x = luaL_optint(L, 2, 100);
-	y = luaL_optint(L, 3, 100);
-	cx = luaL_optint(L, 4, 100);
-	cy = luaL_optint(L, 5, 100);
+	x = (int)luaL_optnumber(L, 2, 100);
+	y = (int)luaL_optnumber(L, 3, 100);
+	cx = (int)luaL_optnumber(L, 4, 100);
+	cy = (int)luaL_optnumber(L, 5, 100);
 	fcol = luaL_optstring(L, 6, "silver");
 	const wxString* name = new wxString(winname);
 	class amcWindow *frame = (amcWindow*)amcWindow::FindWindowByName(*name);
@@ -901,11 +903,11 @@ int luafunc_drawtext(lua_State*L)
 
 	winname = luaL_checkstring(L, 1);
 	text = luaL_optstring(L, 2, "");
-	x = luaL_optint(L, 3, 1);
-	y = luaL_optint(L, 4, 1);
+	x = (int)luaL_optnumber(L, 3, 1);
+	y = (int)luaL_optnumber(L, 4, 1);
 	fcol = luaL_optstring(L, 5, "silver");
 	bcol = luaL_optstring(L, 6, "black");
-	bb = luaL_optint(L,7,0);
+	bb = (int)luaL_optnumber(L,7,0);
 	const wxString* name = new wxString(winname);
 	class amcWindow *frame = (amcWindow*)amcWindow::FindWindowByName(*name);
 	if (frame==NULL)
@@ -963,11 +965,11 @@ int luafunc_drawbitmap(lua_State *L)
 		return 0;
 	delete name;
 	bmap = luaL_checkstring(L, 2);
-	int mode = luaL_optint(L, 3, 0);
-	int x = luaL_optint(L,4,0);
-	int y = luaL_optint(L,5, 0);
-	int cx = luaL_optint(L,6,0);
-	int cy = luaL_optint(L,7,0);
+	int mode = (int)luaL_optnumber(L, 3, 0);
+	int x = (int)luaL_optnumber(L,4,0);
+	int y = (int)luaL_optnumber(L,5, 0);
+	int cx = (int)luaL_optnumber(L,6,0);
+	int cy = (int)luaL_optnumber(L,7,0);
 	
 	class MudMainFrame *parent = wxGetApp().GetFrame();
 	wxSetWorkingDirectory(parent->GetGlobalOptions()->GetWorkDir());
@@ -1747,7 +1749,7 @@ int luafunc_waitfor(lua_State *L)
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	
 	const char* pattern = luaL_checkstring(L,1);
-	int waittime = luaL_optint(L, 2, -1);
+	int waittime = (int)luaL_optnumber(L, 2, -1);
 	//class amcScriptThread* th;
 	
 	//th->TestDestroy();
@@ -1814,7 +1816,8 @@ int luafunc_wait(lua_State *L)
 
 int luafunc_gag(lua_State *L)
 {
-	int line = luaL_checkint(L,1);
+	//int line = luaL_checkint(L,1);
+	int line = (int)luaL_checknumber(L, 1);
 	if (line>0)
 		return 1;
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
@@ -2072,11 +2075,11 @@ int index=1;
 			lua_getfield(L, -4, "on");
 			tr.SetActive(lua_toboolean(L,-1)!=0);
 			lua_getfield(L, -5, "priority");
-			tr.SetPriority(luaL_optint(L,-1,50));
+			tr.SetPriority((int)luaL_optnumber(L,-1,50));
 			lua_getfield(L, -6, "colmatch");
-			tr.SetColMatch(luaL_optint(L,-1,-1));
+			tr.SetColMatch((int)luaL_optnumber(L,-1,-1));
 			lua_getfield(L, -7, "lines");
-			tr.SetLines(luaL_optint(L,-1,1));
+			tr.SetLines((int)luaL_optnumber(L,-1,1));
 		}
 		else
 		{
@@ -2092,11 +2095,11 @@ int index=1;
 			lua_getfield(L, index, "on");
 			tr.SetActive(lua_toboolean(L,-1)!=0);
 			lua_getfield(L, index, "priority");
-			tr.SetPriority(luaL_optint(L,-1,50));
+			tr.SetPriority((int)luaL_optnumber(L,-1,50));
 			lua_getfield(L, index, "colmatch");
-			tr.SetColMatch(luaL_optint(L,-1,-1));
+			tr.SetColMatch((int)luaL_optnumber(L,-1,-1));
 			lua_getfield(L, index, "lines");
-			tr.SetLines(luaL_optint(L,-1,1));
+			tr.SetLines((int)luaL_optnumber(L,-1,1));
 		}
 	}
 	else
@@ -2107,9 +2110,9 @@ int index=1;
 		tr.SetAction(c);
 		tr.SetClass(luaL_optstring(L,index++, "default"));
 		tr.SetActive(lua_toboolean(L,index++)!=0);
-		tr.SetPriority(luaL_optint(L,index++,50));
-		tr.SetColMatch(luaL_optint(L,index++,-1));
-		tr.SetLines(luaL_optint(L, index++, 1));
+		tr.SetPriority((int)luaL_optnumber(L,index++,50));
+		tr.SetColMatch((int)luaL_optnumber(L,index++,-1));
+		tr.SetLines((int)luaL_optnumber(L, index++, 1));
 	}
 	frame->GetTrigger()->push_back(tr);
 	stable_sort(frame->GetTrigger()->begin(), frame->GetTrigger()->end(), greater<class Trigger>());
@@ -2485,7 +2488,7 @@ const char *l;
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
-		n = luaL_optint(L, ++index, 50);
+		n = (int)luaL_optnumber(L, ++index, 50);
 		i = frame->GetTriggerIndexByLabel(t->label);
 		if (i==-1)
 		{
@@ -2500,7 +2503,7 @@ const char *l;
 	else
 	{
 		l = luaL_checkstring(L,index++);
-		n = luaL_optint(L, index, 50);
+		n = (int)luaL_optnumber(L, index, 50);
 		i = frame->GetTriggerIndexByLabel(l);
 		if (i==-1)
 		{
@@ -2565,7 +2568,7 @@ const char* l;
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
-		n = luaL_optint(L, ++index, -1);
+		n = (int)luaL_optnumber(L, ++index, -1);
 		i = frame->GetTriggerIndexByLabel(t->label);
 		if (i==-1)
 		{
@@ -2579,7 +2582,7 @@ const char* l;
 	else
 	{
 		l = luaL_checkstring(L,index++);
-		n = luaL_optint(L, index, -1);
+		n = (int)luaL_optnumber(L, index, -1);
 		i = frame->GetTriggerIndexByLabel(l);
 		if (i==-1)
 		{
@@ -3255,7 +3258,7 @@ amcTimer timer;
 		timer.SetInterval(intv);
 		//hk.SetHotkey(luaL_checklong(L, -1));
 		lua_getfield(L, index, "rep");
-		int i = (int)luaL_optint(L,-1,-1);
+		int i = (int)(int)luaL_optnumber(L,-1,-1);
 		timer.SetRepeat(i);
 		timer.SetCurrepeat(i);
 	}
@@ -3275,8 +3278,8 @@ amcTimer timer;
 		timer.SetAction(cc);
 		timer.SetGroup(luaL_optstring(L,index++, "default"));
 		timer.SetInterval(luaL_checknumber(L,index++));
-		timer.SetRepeat(luaL_optint(L,index,-1));
-		timer.SetCurrepeat(luaL_optint(L,index++,-1));
+		timer.SetRepeat((int)luaL_optnumber(L,index,-1));
+		timer.SetCurrepeat((int)luaL_optnumber(L,index++,-1));
 		timer.SetActive(lua_toboolean(L,index++)!=0);
 	}
 	frame->GetTimers()->push_back(timer);
@@ -4428,7 +4431,8 @@ str_ll* l;
 		lua_pushnil(L);
 		return 1;
 	}
-	idx=luaL_checkint(L, index);
+	//idx=luaL_checkint(L, index);
+	idx = (int)luaL_checknumber(L, index);
 	if (idx>frame->GetLists()->at(i).GetSize())
 	{
 		lua_pushnil(L);
@@ -4707,10 +4711,10 @@ int luafunc_sizegauge(lua_State *L)
 	
 	winname = luaL_checkstring(L, 1);
 	gauge = luaL_checkstring(L, 2);
-	x = luaL_optint(L, 3, 10);
-	y = luaL_optint(L, 4, 10);
-	cx = luaL_optint(L, 5, 100);
-	cy = luaL_optint(L, 6, 40);
+	x = (int)luaL_optnumber(L, 3, 10);
+	y = (int)luaL_optnumber(L, 4, 10);
+	cx = (int)luaL_optnumber(L, 5, 100);
+	cy = (int)luaL_optnumber(L, 6, 40);
 	//class MudWindow *frame = wxGetApp().GetChild();
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
 	if (frame==NULL)

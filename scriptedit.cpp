@@ -14,7 +14,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 		wxT("function end if then do else for in return break while local repeat elseif and or not false true nil require");
 	wxString luawords2 =
 		wxT("wxamcl.echo wxamcl.echowin wxamcl.gag wxamcl.color wxamcl.colorwin wxamcl.colorline wxamcl.colorword wxamcl.colorall wxamcl.scroll \
-				wxamcl.getlinenumber wxamcl.execute wxamcl.wait wxamcl.waitfor wxamcl.loadprofile \
+				wxamcl.getlinenumber wxamcl.getline wxamcl.execute wxamcl.wait wxamcl.waitfor wxamcl.loadprofile \
 				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow wxamcl.destroywindow\
 				wxamcl.action.new wxamcl.action.get wxamcl.action.delete wxamcl.action.enable wxamcl.action.getpattern wxamcl.action.setpattern \
 				wxamcl.action.getact wxamcl.action.setact wxamcl.action.getpriority wxamcl.action.setpriority wxamcl.action.getcolmatch wxamcl.action.setcolmatch \
@@ -30,7 +30,10 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.list.new wxamcl.list.additem wxamcl.list.clear wxamcl.list.delete wxamcl.list.contains wxamcl.list.delitem wxamcl.list.delitemat \
 				wxamcl.gmcp.send \
 				wxamcl.db.open wxamcl.db.execute wxamcl.db.columns wxamcl.db.results wxamcl.db.close wxamcl.db.insert \
-				wxamcl.draw.text wxamcl.draw.line wxamcl.draw.circle wxamcl.draw.square wxamcl.draw.winsize");
+				wxamcl.draw.text wxamcl.draw.line wxamcl.draw.circle wxamcl.draw.square wxamcl.draw.winsize wxamcl.draw.bitmap wxamcl.draw.setfont wxamcl.draw.clear wxamcl.draw.refresh wxamcl.draw.settip \
+				wxamcl.setmsp wxamcl.getscriptsign wxamcl.createamcwin \
+				wxamcl.seteventfile wxamcl.mouseevents wxamcl.setlefthandler wxamcl.setrighthandler wxamcl.setwheelhandler wxamcl.setmovehandler \
+				wxamcl.mxp.enable wxamcl.mxp.link wxamcl.mxp.echo wxamcl.mxp.echowin");
 	wxString amcwords =
 		wxT("clearwin capstart capend setvar gag help loadprofile func script bscript gagwin connect pwd refreshwin raw capturewin capturenb log htmllog resume test"); 
 	wxString luawords3 =

@@ -264,9 +264,9 @@ enum
 
 #define OVECCOUNT 60
 
-#define APP_VERSION "0.1.r95"
+#define APP_VERSION "0.1.r96"
 
-//#define WXAMCL_USEIPV6 1
+#define WXAMCL_USEIPV6 1
 
 #include "mudwindow.h"
 #include "luadefs.h"
