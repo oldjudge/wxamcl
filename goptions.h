@@ -82,7 +82,7 @@ public:
 	void SetACDelay(int f) {m_acdelay=f;}
 	void SetSWDelay(int f) {m_swdelay=f;}
 	int GetSWDelay() {return m_swdelay;}
-
+    #ifndef __WXOSX__
 	wxString GetWorkDir() {return m_workdir.GetFullPath();}
 	wxString GetProfileDir() {return m_profiledir.GetFullPath();}
 	wxString GetScriptDir() {return m_scriptdir.GetFullPath();}
@@ -92,6 +92,18 @@ public:
 	wxString GetSoundDir() {return m_sounddir.GetFullPath();}
 	wxString GetLuaDir() {return m_luadir.GetFullPath();}
 	wxString GetImagesDir() {return m_imagesdir.GetFullPath();}
+    #endif
+    #ifdef __WXOSX__
+    wxString GetWorkDir() {return m_workdir.GetFullPath();}
+	wxString GetProfileDir() {return m_profiledir.GetFullPath().RemoveLast();}
+	wxString GetScriptDir() {return m_scriptdir.GetFullPath().RemoveLast();}
+	wxString GetLogDir() {return m_logdir.GetFullPath().RemoveLast();}
+	wxString GetPackageDir() {return m_packagedir.GetFullPath().RemoveLast();}
+	wxString GetDatabaseDir() {return m_databasedir.GetFullPath().RemoveLast();}
+	wxString GetSoundDir() {return m_sounddir.GetFullPath().RemoveLast();}
+	wxString GetLuaDir() {return m_luadir.GetFullPath().RemoveLast();}
+	wxString GetImagesDir() {return m_imagesdir.GetFullPath().RemoveLast();}
+    #endif
 	void SetWorkDir(wxString s) {m_workdir.AssignDir(s);}
 	void SetLogDir(wxString s) {m_logdir.AssignDir(s);}
 	void SetSoundDir(wxString s) {m_sounddir.AssignDir(s);}

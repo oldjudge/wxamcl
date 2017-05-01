@@ -73,8 +73,7 @@ MudWindow::MudWindow():wxWindow()
 	\param wxFrame parent window
 */
 MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE)
-{
-m_background = m_colansi[0];	
+{	
 #if !defined __WXMSW__
 	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
@@ -114,6 +113,7 @@ m_background = m_colansi[0];
 	m_connected = false;
 	SetConnectionDT();
 	SetDefaultColors();
+    m_background = m_colansi[0];
 	SetCssClasses();
 	
 	//m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
@@ -474,7 +474,7 @@ void MudWindow::Write(wxString command)
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
-		#ifdef WXOSX
+		#ifdef __WXOSX__
 			wxString su = command.ToUTF8();
 			if (su.empty()&&!command.empty())
 				su = command;
@@ -530,7 +530,7 @@ void MudWindow::Write8Bit(wxString command)
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(su.char_str(), su.char_str().length(), false);
 		#endif
-		#ifdef WXOSX
+		#ifdef __WXOSX__
 			//wxString su = command.ToUTF8();
 			wxString su = command;
 			if (su.empty()&&!command.empty())
@@ -1470,7 +1470,7 @@ static bool colset = false;
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
-			#ifdef WXOSX
+			#ifdef __WXOSX__
 			s = wxString(cBuffer);
 			if (m_parent->GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
 				s = wxString (cBuffer, wxCSConv(wxFONTENCODING_UTF8));
@@ -5413,7 +5413,7 @@ WXTYPE evt;
 	//Refresh();
 	//Update();
 	#endif
-	#if defined WXOSX 
+	#if defined __WXOSX__ 
 	if (GetKEvtForwarded())//key evts have oldpos
 	{
         if (evt == wxEVT_SCROLLWIN_PAGEUP)

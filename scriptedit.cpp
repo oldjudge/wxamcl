@@ -85,7 +85,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	MudMainFrame *f = wxGetApp().GetFrame();
 	//#if defined __WXMSW__
 	wxFont font (*f->GetScriptFont());
-	wxFont bfont (m_fontsize, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, font.GetFaceName());
+	wxFont bfont (wxFontInfo(m_fontsize).Bold().FaceName(font.GetFaceName()).Family(wxFONTFAMILY_MODERN));
 	//#endif
 	/*#if defined __WXGTK_
 	wxFont font (*f->GetScriptFont());
@@ -115,6 +115,9 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	StyleSetForeground(wxSTC_LUA_COMMENTLINE, wxColour (wxT("FOREST GREEN")));
 	StyleSetForeground(wxSTC_LUA_COMMENT, wxColour (wxT("FOREST GREEN")));
 	StyleSetForeground(wxSTC_LUA_COMMENTDOC, wxColour (wxT("FOREST GREEN")));
+    StyleSetFont(wxSTC_LUA_COMMENTLINE, m_font);
+    StyleSetFont(wxSTC_LUA_COMMENT, m_font);
+    StyleSetFont(wxSTC_LUA_COMMENTDOC, m_font);
 	StyleSetForeground(wxSTC_LUA_PREPROCESSOR, wxColour (wxT("BLUE")));
 	StyleSetFont(wxSTC_LUA_WORD, bfont);
 	StyleSetBold(wxSTC_LUA_WORD, true);

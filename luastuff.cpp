@@ -101,7 +101,7 @@ wxString amcLua::GetwxString(int idx)
 		//return s;
 		//wxString s(string, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()), wxStrlen(string));
 		#endif
-		#ifdef WXOSX
+		#ifdef __WXOSX__
 			return wxString::From8BitData(string);
 		#endif
 		//s = wxString::Format("%c", string);

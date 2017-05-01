@@ -79,7 +79,7 @@ void GlobalOptions::Init()
 		m_workdir.Assign(wxStandardPaths::Get().GetDataDir());
 		//m_workdir.AssignCwd();		
 	#endif
-	#if defined WXOSX
+	#if defined __WXOSX__
 		m_workdir.Assign(wxStandardPaths::Get().GetAppDocumentsDir());
 	#endif
 	wxString s;

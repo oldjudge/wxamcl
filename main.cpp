@@ -224,7 +224,7 @@ bool MudClientApp::OnInit()
 #if defined __WXGTK__
 	wxSetEnv("LUA_PATH_5_3", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
-#if defined WXOSX
+#if defined __WXOSX__
 	wxSetEnv("LUA_PATH_5_3", ".\\scripts\\?.lua;.\\lua\\?.lua");
 #endif
 
@@ -423,7 +423,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	#if defined __WXMSW__
 	wxLocale::AddCatalogLookupPathPrefix(".");
 	#endif
-	#if defined WXOSX
+	#if defined __WXOSX__
 	wxLocale::AddCatalogLookupPathPrefix(wxStandardPaths::Get().GetResourcesDir());
 	#endif
 	m_locale = new wxLocale(wxLANGUAGE_GERMAN);
@@ -539,8 +539,9 @@ MudMainFrame::MudMainFrame(const wxString& title)
     wxFont bf(wxFontInfo(9).FaceName("Monospace Regular").Bold().Family(wxFONTFAMILY_MODERN));
 #endif
 #if defined __WXOSX__
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Courier New");
-	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Courier New");
+    wxFont ff(wxFontInfo(9).FaceName("Courier New"));
+	m_scriptfont = new wxFont(ff);
+	wxFont bf (wxFontInfo(9).FaceName("Courier New").Family(wxFONTFAMILY_MODERN).Bold());
 #endif
 
 }
@@ -1605,17 +1606,20 @@ bool MudMainFrame::LoadGlobalOptions()
 	aL->GetField(-11, "list");
 	s = aL->GetwxString(-1);
 	m_gopt->SetListVar(s.data());
-	wxFont f;
+	//wxFont f;
 	aL->GetField(-12, "font");
-	f.SetFaceName(aL->GetwxString(-1));
+    s = aL->GetwxString(-1);
+    wxFont f(s);
+	/*f.SetFaceName(aL->GetwxString(-1));
 	aL->GetField(-13, "fontsize");
 	f.SetPointSize(aL->GetInt(-1));
 	aL->GetField(-14, "fontfamily");
 	//f.SetFamily(aL->GetInt(-1));
 	aL->GetField(-15, "fontweight");
 	f.SetWeight(aL->GetInt(-1));
+    
 	aL->GetField(-16, "fontstyle");
-	f.SetStyle(aL->GetInt(-1));
+	f.SetStyle(aL->GetInt(-1));*/
 	m_child->SetNFont(&f);
 	m_child->SetFont(f);
 	
@@ -1625,47 +1629,47 @@ bool MudMainFrame::LoadGlobalOptions()
 	m_splitter->SetUFont(&f);
 	m_splitter->SetIFont(&f);
 	
-	aL->GetField(-17, "mccp");
+	aL->GetField(-13, "mccp");
 	m_gopt->SetMCCP(aL->GetBoolean(-1));
-	aL->GetField(-18, "gaeor");
+	aL->GetField(-14, "gaeor");
 	m_gopt->SetGAEOR(aL->GetBoolean(-1));
-	aL->GetField(-19, "naws");
+	aL->GetField(-15, "naws");
 	m_gopt->SetNAWS(aL->GetBoolean(-1));
-	aL->GetField(-20, "mxp");
+	aL->GetField(-16, "mxp");
 	m_gopt->SetMXP(aL->GetBoolean(-1));
-	aL->GetField(-21, "msp");
+	aL->GetField(-17, "msp");
 	m_gopt->SetMSP(aL->GetBoolean(-1));
-	aL->GetField(-22, "atcp");
+	aL->GetField(-18, "atcp");
 	m_gopt->SetUseATCP(aL->GetBoolean(-1));
-	aL->GetField(-23, "gmcp");
+	aL->GetField(-19, "gmcp");
 	m_gopt->SetUseATCP2(aL->GetBoolean(-1));
-	aL->GetField(-24, "msdp");
+	aL->GetField(-20, "msdp");
 	m_gopt->SetUseMSDP(aL->GetBoolean(-1));
-	aL->GetField(-25, "ansi");
+	aL->GetField(-21, "ansi");
 	m_child->SetAnsi(aL->GetBoolean(-1));
-	aL->GetField(-26, "echo");
+	aL->GetField(-22, "echo");
 	m_gopt->SetEcho(aL->GetBoolean(-1));
-	aL->GetField(-27, "techo");
+	aL->GetField(-23, "techo");
 	m_gopt->SetTriggerEcho(aL->GetBoolean(-1));
-	aL->GetField(-28, "utf8");
+	aL->GetField(-24, "utf8");
 	m_gopt->SetUTF8(aL->GetBoolean(-1));
-	aL->GetField(-29, "ipv6");
+	aL->GetField(-25, "ipv6");
 	m_child->SetIPV6(aL->GetBoolean(-1));
-	aL->GetField(-30, "urls");
+	aL->GetField(-26, "urls");
 	m_child->SetClickURLs(aL->GetBoolean(-1));
-	aL->GetField(-31, "splitter");
+	aL->GetField(-27, "splitter");
 	this->SetSplitter(aL->GetBoolean(-1));
-	aL->GetField(-32, "autoreconnect");
+	aL->GetField(-28, "autoreconnect");
 	m_gopt->SetAutoConnect(aL->GetBoolean(-1));
-	aL->GetField(-33, "acdelay");
+	aL->GetField(-29, "acdelay");
 	m_gopt->SetACDelay(aL->GetInt(-1));
-	aL->GetField(-34, "scriptfont");
-	wxFont ff;
+	aL->GetField(-30, "scriptfont");
+	//wxFont ff;
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
 //	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
-    m_scriptfont = new wxFont(wxFontInfo(9).FaceName(s).Family(wxFONTFAMILY_MODERN));
-	aL->GetField(-35, "charencoding");
+    m_scriptfont = new wxFont(s);//(wxFontInfo(9).FaceName(s).Family(wxFONTFAMILY_MODERN));
+	aL->GetField(-31, "charencoding");
 	int ec = (int)aL->GetInt(-1);
 	wxMenuBar* bar = GetMenuBar();
 	wxMenuItem* item;
@@ -2018,11 +2022,13 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"backspeedwalk\"] = \"%c\",\n", m_gopt->GetRevSpeedwalk()));
 	file->Write(wxString::Format("\t\t[\"script\"] = \"%c\",\n", m_gopt->GetScript()));
 	file->Write(wxString::Format("\t\t[\"list\"] = \"%c\",\n", m_gopt->GetListVar()));
-	file->Write(wxString::Format("\t\t[\"font\"] = \"%s\",\n", m_child->GetFont()->GetFaceName().c_str()));
-	file->Write(wxString::Format("\t\t[\"fontsize\"] = %d,\n", m_child->GetFont()->GetPointSize()));
+	//file->Write(wxString::Format("\t\t[\"font\"] = \"%s\",\n", m_child->GetFont()->GetFaceName().c_str()));
+    file->Write(wxString::Format("\t\t[\"font\"] = \"%s\",\n", m_child->GetFont()->GetNativeFontInfoDesc().c_str()));
+    wxLogDebug(m_child->GetFont()->GetNativeFontInfoDesc());
+	/*file->Write(wxString::Format("\t\t[\"fontsize\"] = %d,\n", m_child->GetFont()->GetPointSize()));
 	file->Write(wxString::Format("\t\t[\"fontfamily\"] = %d,\n", m_child->GetFont()->GetFamily()));
 	file->Write(wxString::Format("\t\t[\"fontweight\"] = %d,\n", m_child->GetFont()->GetWeight()));
-	file->Write(wxString::Format("\t\t[\"fontstyle\"] = %d,\n", m_child->GetFont()->GetStyle()));
+	file->Write(wxString::Format("\t\t[\"fontstyle\"] = %d,\n", m_child->GetFont()->GetStyle()));*/
 	file->Write(wxString::Format("\t\t[\"mccp\"] = %s,\n", m_gopt->UseMCCP() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"gaeor\"] = %s,\n", m_gopt->UseGAEOR() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"naws\"] = %s,\n", m_gopt->UseNAWS() ? "true" : "false"));
@@ -2040,7 +2046,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"splitter\"] = %s,\n", this->UseSplitter() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"autoreconnect\"] = %s,\n", m_gopt->GetAutoConnect() ? "true" : "false"));
 	file->Write(wxString::Format("\t\t[\"acdelay\"] = %d,\n", m_gopt->GetACDelay()));
-	file->Write(wxString::Format("\t\t[\"scriptfont\"] = \"%s\", \n", this->GetScriptFont()->GetFaceName()));
+	file->Write(wxString::Format("\t\t[\"scriptfont\"] = \"%s\", \n", this->GetScriptFont()->GetNativeFontInfoDesc()));
 	file->Write(wxString::Format("\t\t[\"charencoding\"] = %d, \n", m_gopt->GetCurEncoding()));
 	file->Write("\t}\n\n");
 	file->Write(wxT("\tglobal_colors = {\n\t\t"));
@@ -3700,6 +3706,27 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	}
 	if (keycode==WXK_RETURN)
 		m_lastcommand = GetRange(0, GetLastPosition());
+    #ifdef __WXOSX__
+    if (keycode==WXK_UP)
+    {
+        if (m_hpos<=0)
+            m_hpos = 0;
+        Clear();
+        if (!m_history.empty())
+            WriteText(m_history.at(m_hpos));
+        m_hpos--;
+    }
+    if (keycode==WXK_DOWN)
+    {
+	
+		m_hpos++;
+        if (m_hpos>= (int)m_history.size()-1)
+            m_hpos = (int)m_history.size()-1;
+        Clear();
+        if (!m_history.empty())
+            WriteText(m_history.at(m_hpos));
+    }
+    #endif
 	event.Skip();
 }
 
@@ -3842,11 +3869,11 @@ MudWindow *sendto;
 		}
 		//SetSelection(GetLastPosition()+1, 0);
 		//SetInsertionPoint(GetLastPosition());
-		#ifndef WXOSX
+		#ifndef __WXOSX__
 		//SetSelection(0,GetLastPosition()+1);
         SetSelection(-1,-1);
 		#endif
-		#ifdef WXOSX
+		#ifdef __WXOSX__
 		SetSelection(-1,-1);
 		#endif
 		if (!m_parent->m_child->GetScroll())

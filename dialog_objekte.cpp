@@ -271,7 +271,7 @@ s_it sit;
 			}
 		}
 	}
-	#ifndef WXOSX
+	#ifndef __WXOSX__
 	m_parentw->SetSelection(0);
 	#endif
 	m_gaugew->ExpandAll();

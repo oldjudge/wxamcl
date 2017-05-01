@@ -95,12 +95,12 @@ extern "C"
 #endif
 #include "sqlite3.h"
 
-#if defined WXOSX
+#if defined __WXOSX__
 extern "C"
 {
-	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lua.h"
-	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lauxlib.h"
-	#include "/Users/Andreas/Downloads/lua-5.2.1/src/lualib.h"
+	#include "lua.h"
+	#include "lauxlib.h"
+	#include "lualib.h"
 }
 #endif
 #if defined __WXDEBUG__
