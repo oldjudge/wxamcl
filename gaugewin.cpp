@@ -30,9 +30,9 @@ GaugeWindow::GaugeWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPo
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	#if !defined __WXMSW__
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
+		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#else
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
+		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
 
@@ -50,9 +50,9 @@ GaugeWindow::GaugeWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_A
 	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
 	#if !defined __WXMSW__
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Fixed"));
+		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixed");
 	#else
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Courier New"));
+		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
 }

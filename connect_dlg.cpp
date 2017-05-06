@@ -80,7 +80,7 @@ connectdlg::connectdlg( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText7->Wrap( -1 );
 	gbSizer1->Add( m_staticText7, wxGBPosition( 6, 0 ), wxGBSpan( 1, 1 ), wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("Lua profile (*.lua)|*.lua|All files|*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
+	m_file = new wxFilePickerCtrl( this, wxID_ANY, wxEmptyString, _("Select a file"), ("Lua profile (*.lua)|*.lua|All files|*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_OPEN|wxFLP_USE_TEXTCTRL );
 	gbSizer1->Add( m_file, wxGBPosition( 6, 1 ), wxGBSpan( 1, 2 ), wxALL|wxEXPAND, 5 );
 	gbSizer1->AddGrowableCol( 2 );
 	sbSizer2->Add( gbSizer1, 0, wxALL|wxEXPAND, 1 );

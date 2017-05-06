@@ -5,7 +5,7 @@ class amcTimer : public wxTimer
 {
 public:
 	amcTimer(void);
-	amcTimer(wxString name, wxString action, wxString group = wxT("default"), float i = 1.0, int r = -1, bool s = true);
+	amcTimer(wxString name, wxString action, wxString group = "default", float i = 1.0, int r = -1, bool s = true);
 	amcTimer(const amcTimer& a);
 	amcTimer& operator=(const amcTimer& a);
 	friend bool operator<(const amcTimer& A, const amcTimer& B) {return A.m_name<B.m_name;}

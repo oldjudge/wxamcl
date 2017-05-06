@@ -9,7 +9,7 @@ class amcHotkey
 {
 public:
 	amcHotkey(); //!< standard constructor 
-	amcHotkey(long keycode, int mods, wxString action, wxString name, wxString group = wxT("default"), bool on=true); //!< create a real alias constructor
+	amcHotkey(long keycode, int mods, wxString action, wxString name, wxString group = "default", bool on=true); //!< create a real alias constructor
 	~amcHotkey(); //!< destructor
 	friend bool operator<(const amcHotkey& A, const amcHotkey& B) {return A.m_name<B.m_name;}
 	friend bool operator>(const amcHotkey& A, const amcHotkey& B) {return A.m_name>B.m_name;}

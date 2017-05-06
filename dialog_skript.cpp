@@ -44,7 +44,7 @@ void dlg_script::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 	MudMainFrame *frame = (MudMainFrame*)GetParent();
 	wxString dir = frame->GetGlobalOptions()->GetScriptDir();
 	wxSetWorkingDirectory(dir);
-	wxString file = wxFileSelector(_("Save script"), dir, wxEmptyString, wxT("lua"), wxT("lua files (*.lua)|*.lua|all files (*.*)|*.*"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT, this);
+	wxString file = wxFileSelector(_("Save script"), dir, wxEmptyString, "lua", _("lua files (*.lua)|*.lua|all files (*.*)|*.*"), wxFD_SAVE|wxFD_OVERWRITE_PROMPT, this);
 	if (!file.empty())
 	{
 		m_sce->SaveFile(file);

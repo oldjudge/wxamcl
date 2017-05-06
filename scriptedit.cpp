@@ -37,7 +37,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	wxString amcwords =
 		wxT("clearwin capstart capend setvar gag help loadprofile func script bscript gagwin connect pwd refreshwin raw capturewin capturenb log htmllog resume test"); 
 	wxString luawords3 =
-        ("wxamcl.Action wxamcl.Alias wxamcl.Vars wxamcl.ATCP wxamcl.GMCP wxamcl.MSDP");
+        ("wxamcl.Action wxamcl.Alias wxamcl.Vars wxamcl.ClientVars wxamcl.ATCP wxamcl.GMCP wxamcl.MSDP");
     
 	SetLexer(wxSTC_LEX_LUA);
 	

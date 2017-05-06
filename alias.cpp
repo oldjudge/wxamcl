@@ -7,10 +7,11 @@ std::vector<wxString> amcAlias::m_algroup;
 */
 amcAlias::amcAlias()
 {
-	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	//m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	m_parent = wxGetApp().GetFrame();
 	m_alias = wxEmptyString;
 	m_action = wxEmptyString;
-	m_group = wxT("default");
+	m_group = "default";
 	m_on = false;
 	m_match = wxEmptyString;
 	m_idx = 0;
@@ -21,7 +22,8 @@ amcAlias::amcAlias()
 */
 amcAlias::amcAlias(wxString alias, wxString action, wxString gr, bool on)
 {
-	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	//m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	m_parent = wxGetApp().GetFrame();
 	m_alias = alias;
 	m_action = action;
 	m_group = gr;

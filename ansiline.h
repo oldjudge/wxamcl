@@ -12,6 +12,7 @@ public:
 	void SetFCol(int index, wxColour col);
 	void SetBCol(int index, wxColour col);
 	void SetText(wxString text);
+	void SetCharText(char* t);
 	void SetURLText(wxString s) {m_url=s;}
 	void SetFontStyle(wxByte s) {m_bfontstyle=s;}
 	void SetURL(bool url) {m_bourl=url;}
@@ -42,6 +43,7 @@ public:
 private:
 	//wxString *m_text;
 	wxString m_text;
+	char m_ctext[1000];
 	size_t m_len;
 	wxColour m_fcol; //Foreground
 	wxColour m_bcol; //Background
@@ -72,12 +74,14 @@ public:
 	void SetLinenumber(wxUint32 ln) {m_linenumber=ln;}
 	wxUint32 GetLinenumber() {return m_linenumber;}
 	void SetLineText(wxString st);
+	void SetCharLineText(char *t);
 	void AssignText(wxString st);
 	wxString GetLineText() {return m_linetext;}
 	wxString GetConvLineText();
 	void SetAnsiLine(wxString s) {m_ansiline.append(s);}
 	wxString GetAnsiLine() {return m_ansiline;}
 	wxString GetConvAnsiLine();
+	void GetCharAnsiLine(char* c);
 	size_t GetTextLength() {return m_linetext.length();}
 	void SetYPos(wxInt32 yp) {m_ypos = yp;}
 	wxInt32 GetYPos() {return m_ypos;}
@@ -106,6 +110,7 @@ private:
 	bool m_bofull;
 	bool m_bogagme;
 	wxString m_linetext;
+	char m_clinetext[5000];
 	wxString m_ansiline;
 	wxInt32 m_ypos;
 	wxDateTime m_cdt;

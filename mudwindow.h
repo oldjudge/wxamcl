@@ -267,6 +267,7 @@ private:
 	wxTimer m_rc;
 
 	char m_cBuffer[30001];
+	//wxMemoryBuffer m_MemBuffer;
 	//private Functions
 	size_t ParseTelnet(wxString *sLine, size_t pos);
 	size_t ParseMSP(wxString *sLine, size_t pos);

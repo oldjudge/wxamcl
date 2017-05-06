@@ -217,7 +217,7 @@ int index=0;
 			m_listlist->SetItem(index++, 2, iter->GetGroup(), -1);
 		}
 	m_ligroup->Clear();
-	m_ligroup->Append(wxT("all"));
+	m_ligroup->Append(("all"));
 	for (it = amcList::GetListGroups()->begin();it != amcList::GetListGroups()->end();it++)
 	{
 		m_ligroup->Append(*it);
@@ -242,7 +242,7 @@ int index=0;
 			}
 		}
 	m_tigroup->Clear();
-	m_tigroup->Append(wxT("all"));
+	m_tigroup->Append("all");
 	for (it = amcTimer::GetTimerGroups()->begin();it != amcTimer::GetTimerGroups()->end();it++)
 	{
 		m_tigroup->Append(*it);
@@ -804,10 +804,10 @@ al_it it;
 		return;
 	wxString s = m_defalias->GetValue();
 	//s.insert(0, wxT('^'));
-	if (s.at(0)!=wxT('^'))
-		s = wxT('^') + s;
-	if (!s.EndsWith(wxT("$")))
-		s.append(wxT('$'));
+	if (s.at(0)!='^')
+		s = '^' + s;
+	if (!s.EndsWith("$"))
+		s.append('$');
 	
 	wxString l = m_defalias->GetValue();
 	for (it=m_frame->GetAlias()->begin();it!=m_frame->GetAlias()->end();it++)
@@ -1781,7 +1781,7 @@ int index=0;
 t_it iter;
 
 	wxString group = m_tigroup->GetValue();
-	if (group == wxT("all"))
+	if (group == "all")
 	{
 		BuildTimers();
 		return;

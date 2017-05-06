@@ -90,8 +90,11 @@ BEGIN_EVENT_TABLE(InputTextCtrl, wxTextCtrl)
 	EVT_CHAR(InputTextCtrl::OnChar)
 	EVT_KEY_DOWN(InputTextCtrl::OnKeyDown)
 	EVT_MOUSEWHEEL(InputTextCtrl::OnMouseWheel)
+	EVT_LEFT_UP(InputTextCtrl::OnMouseLeftUp)
+	EVT_LEFT_DOWN(InputTextCtrl::OnMouseLeftDown)
 	EVT_SET_FOCUS(InputTextCtrl::OnSetFocus)
 	EVT_TIMER(2222, InputTextCtrl::OnSWDelay)
+	EVT_IDLE(InputTextCtrl::OnIdle)
 END_EVENT_TABLE()
 #include "mud11.xpm"
 #include "defs.xpm"
@@ -167,15 +170,15 @@ bool MudClientApp::OnInit()
 	frame->m_media = new wxMediaCtrl();
 #if defined __WXMSW__
 	bool bOK = frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200, 200), 0 , wxMEDIABACKEND_WMP10);
-	wxASSERT_MSG(bOK, wxT("Could not create media control!"));
+	wxASSERT_MSG(bOK, ("Could not create media control!"));
 #endif
 #if defined __WXGTK__
 	bool bOK = frame->m_media->Create(frame, ID_MEDIACTRL, wxEmptyString, wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_GSTREAMER);
-    wxASSERT_MSG(bOK, wxT("Could not create media control!"));
+    wxASSERT_MSG(bOK, ("Could not create media control!"));
     wxUnusedVar(bOK);
 #endif
-#if defined WXOSX
-	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0, wxMEDIABACKEND_QUICKTIME);
+#if defined __WXOSX__
+	frame->m_media->Create(frame, ID_MEDIACTRL, "", wxDefaultPosition, wxSize(200,200), 0);
 #endif
     frame->Maximize();
     frame->Show(true);
@@ -185,8 +188,8 @@ bool MudClientApp::OnInit()
 	frame->m_mgr.AddPane(frame->m_input, wxAuiPaneInfo().Name("amcinput").Bottom().Floatable(true).Gripper().CaptionVisible(false).BestSize(500,24).Position(0));
 	frame->m_mgr.AddPane(frame->m_splitter, wxAuiPaneInfo().Name("amcsplitter").Top().Dockable(false).CaptionVisible(false).BestSize(100, 300).Hide());//.Hide());
 	frame->m_mgr.AddPane(frame->m_child, wxAuiPaneInfo().Name("amcmain").Center().CenterPane().Dockable(false).Floatable(false));
-	frame->m_mgr.AddPane(frame->m_toggle, wxAuiPaneInfo().Name(wxT("amctoggle")).Bottom().Floatable(false).CaptionVisible(false).MaxSize(48,24).Fixed().Position(1));
-	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(wxT("amcprompt")).Bottom().CaptionVisible(false).Hide());
+	frame->m_mgr.AddPane(frame->m_toggle, wxAuiPaneInfo().Name(("amctoggle")).Bottom().Floatable(false).CaptionVisible(false).MaxSize(48,24).Fixed().Position(1));
+	frame->m_mgr.AddPane(frame->m_prompt, wxAuiPaneInfo().Name(("amcprompt")).Bottom().CaptionVisible(false).Hide());
 
 	frame->m_mgr.AddPane(frame->m_toolbar, wxAuiPaneInfo().Name("amctoolbar").ToolbarPane().Caption(_("Main Toolbar")).Top().LeftDockable(false).RightDockable(false));
 	frame->m_mgr.AddPane(frame->m_media, wxAuiPaneInfo().Name("amcmedia").Floatable(true).Dockable(true).Caption(_("Media")).CaptionVisible(true).Right().BestSize(200,200).Hide());
@@ -240,6 +243,7 @@ bool MudClientApp::OnInit()
 	frame->m_child->Msg(wxString::Format(_("Cross platform mudclient using %s on %s."), version, os));
 	frame->luaBuildtrigger();
 	frame->luaBuildalias();
+	frame->luaBuilddefvar();
 	//wxInfoMessageBox(frame);
 	frame->m_input->SetFocus();
 	wxInitAllImageHandlers();
@@ -266,8 +270,30 @@ bool MudClientApp::OnInit()
 	//wxString s ="\x1b[33mSo Sheni barters:\x1b[0;37mhttp://frostblade.net/aardwolf/claneq/display.php?sort=level    Bookmark this page, it is the EQ bible ^^";
 	//wxString s = "\x1b[0;36;44m:\x1b[0;0m\x1b[0;37m \x1b[1;34m\x1b[1;36m()\x1b[1;34m Up in the sky\x1b[0;37m  via \x1b[1;36m(StdOpenDoorway)\x1b[0;37m \x1b[0;0m";
 	//wxString s="\xff\xfa\x45\x01variable\x02test\xff\xf0";
-	//frame->m_child->ParseNBuffer(s.char_str(), false);
+
+
+	//std::u32string input = U"řabcdě";
+	/*wxString ss(u8"          â•”â•â•â•â•â•â•â•â•â•â•â•â•—");
+	std::wstring_convert<std::codecvt_utf8<unsigned int>, unsigned int> converter;
+
+	for (unsigned int c : ss)
+	{
+		//std::cout << converter.to_bytes(c) << std::endl;
+		frame->m_child->Msg(converter.to_bytes(c));
+	}*/
+
+	//wxString ss("          â•”â•â•â•â•â•â•â•â•â•â•â•â•—");
+		
 	//frame->m_child->ParseNBuffer(ss.char_str(), false);
+	//wxString ss = "\x1b[0;33m           ---  \n";
+	/*ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m<\x1b[1;33m!\x1b[1;37m#\x1b[0;33m\x1b[0;33m|  \n";
+	frame->m_child->ParseNBuffer(ss.char_str(), false);
+	ss = "\x1b[0;33m          \x1b[0;33m|   \x1b[0;33m\x1b[0;33m|  \n";
+	frame->m_child->ParseNBuffer(ss.char_str(), false);
+	ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m#\x1b[1;35m#\x1b[1;37m>\x1b[0;33m\x1b[0;33m|  \n";
+	frame->m_child->ParseNBuffer(ss.char_str(), false);
+	ss = "\x1b[0;33m           ---  \n";
+	frame->m_child->ParseNBuffer(ss.char_str(), false);*/
 	//s.clear();
 	//wxString s = "\xff\xfb\x5b";
 	//frame->m_child->ParseBuffer(s.char_str());
@@ -374,6 +400,7 @@ bool MudClientApp::OnInit()
 	//wxSetWorkingDirectory(wxGetApp().GetFrame()->GetGlobalOptions()->GetScriptDir());
 	//luaL_dofile(frame->m_child->GetLState()->GetLuaState(), "mapper.lua");
 	//frame->m_child->SetIPV6(true);
+	
 	return true;
 }
 
@@ -407,7 +434,7 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	wxIcon icon = wxICON(net);
 	SetIcon(icon);
 #endif
-#ifndef WXOSX
+#ifndef __WXOSX__
 	SetIcon(wxICON(aamud11));
 #endif
 
@@ -528,8 +555,10 @@ MudMainFrame::MudMainFrame(const wxString& title)
 	CreateDefVars();
 	DefineKeys();
 #if defined __WXMSW__
-	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, "Consolas");
-	wxFont bf (9, wxMODERN, wxNORMAL, wxFONTWEIGHT_BOLD, false, "Consolas");
+	wxFont ff(wxFontInfo(9).FaceName("Consolas"));
+	m_scriptfont = new wxFont(ff);
+	//m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, "Consolas");
+	wxFont bf(wxFontInfo(9).FaceName("Consolas").Bold().Family(wxFONTFAMILY_MODERN));
 #endif
 #if defined __WXGTK__
 	//m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, "Monospace Regular");
@@ -589,7 +618,7 @@ void MudMainFrame::OnPaint(wxPaintEvent& event)
 	wxBrush b(m_child->GetAnsiColor(0));
 	dc.SetBackground(b);
 	dc.Clear();*/
-    wxLogDebug("OnPaintFrame");
+    //wxLogDebug("OnPaintFrame");
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
 }
 
@@ -623,12 +652,23 @@ void MudMainFrame::OnCharConnect(wxCommandEvent& event)
 		LoadProfile(GetHosts()->at(m_curhost).GetProfileFName());
 		GetHosts()->at(m_curhost).SetIPHost();
 		SaveHosts();
-		
-		m_child->MyConnect(GetHosts()->at(m_curhost).GetIP4());
-		int idx = GetDefVarIndexByLabel("amcChar");
+		if (!m_child->GetUseIPV6())
+			m_child->MyConnect(GetHosts()->at(m_curhost).GetIP4());
+#ifdef WXAMCL_USEIPV6
+		else
+			m_child->MyConnect(GetHosts()->at(m_curhost).GetIP6());
+#endif
+		int idx = GetDefVarIndexByLabel("wxamclChar");
 		GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetCharName());
-		idx = GetDefVarIndexByLabel("amcIP");
-		GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIPAddress());
+		idx = GetDefVarIndexByLabel("wxamclIP");
+		if (!m_child->GetUseIPV6())
+			GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIPAddress());
+#ifdef WXAMCL_USEIPV6
+		else
+			//GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIP6Address());
+			GetDefVars()->at(idx).SetValue(":::::");
+#endif
+		luaBuilddefvar();
 	}
 	cc->Destroy();
 	
@@ -1174,12 +1214,12 @@ void MudMainFrame::OnUninstallPackage(wxCommandEvent& event)
 {
 	wxString dir = GetGlobalOptions()->GetPackageDir();
 	wxSetWorkingDirectory(dir);
-	wxString file = wxFileSelector(_("Choose package to remove"), dir, wxEmptyString, wxT("lua"), wxT("lua files (*.lua)|*.lua|all files (*.*)|*.*"), wxFD_OPEN, this);
+	wxString file = wxFileSelector(_("Choose package to remove"), dir, wxEmptyString, ("lua"), ("lua files (*.lua)|*.lua|all files (*.*)|*.*"), wxFD_OPEN, this);
 	if (!file.empty())
 	{
 		wxString call;
-		call << GetGlobalOptions()->GetCommand() << wxT("func(\"") << file << wxT("\", \"UninstallPackage()\")");
-		//s = wxString::Format(wxT("%cfunc(\"events.lua\", \"OnConnected()\")"), m_parent->GetGlobalOptions()->GetCommand());
+		call << GetGlobalOptions()->GetCommand() << ("func(\"") << file << ("\", \"UninstallPackage()\")");
+		//s = wxString::Format(("%cfunc(\"events.lua\", \"OnConnected()\")"), m_parent->GetGlobalOptions()->GetCommand());
 		if (m_input->ParseCommandLine(&call))
 		{
 			s_it it = find(m_packages.begin(), m_packages.end(), file);
@@ -1478,10 +1518,10 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 
 void MudMainFrame::CreateDefVars()
 {
-	GetDefVars()->push_back(amcDefVar("amcChar", " "));
-	GetDefVars()->push_back(amcDefVar("amcIP", "0.0.0.0"));
-	GetDefVars()->push_back(amcDefVar("amcLocalIP", "0.0.0.0"));
-	GetDefVars()->push_back(amcDefVar("amcLines", "0"));
+	GetDefVars()->push_back(amcDefVar("wxamclChar", " "));
+	GetDefVars()->push_back(amcDefVar("wxamclIP", "0.0.0.0"));
+	GetDefVars()->push_back(amcDefVar("wxamclLocalIP", "0.0.0.0"));
+	GetDefVars()->push_back(amcDefVar("wxamclLines", "0"));
 
 }
 
@@ -2049,7 +2089,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"scriptfont\"] = \"%s\", \n", this->GetScriptFont()->GetNativeFontInfoDesc()));
 	file->Write(wxString::Format("\t\t[\"charencoding\"] = %d, \n", m_gopt->GetCurEncoding()));
 	file->Write("\t}\n\n");
-	file->Write(wxT("\tglobal_colors = {\n\t\t"));
+	file->Write(("\tglobal_colors = {\n\t\t"));
 	/*file->Write(wxString::Format("%i, %i, %i, %i, %i, %i, %i, %i,\n\t\t", m_child->GetAnsiColor(0).GetPixel(), m_child->GetAnsiColor(1).GetPixel(), m_child->GetAnsiColor(2).GetPixel(),
 		m_child->GetAnsiColor(3).GetPixel(), m_child->GetAnsiColor(4).GetPixel(), m_child->GetAnsiColor(5).GetPixel(),
 		m_child->GetAnsiColor(6).GetPixel(), m_child->GetAnsiColor(7).GetPixel()));
@@ -2102,7 +2142,7 @@ li_it itl;
 	wxFile* file = new wxFile(s, wxFile::write);
 	if (!file->IsOpened())
 		return false;
-	file->Write(wxT("\n\t-- profile file for wxAmcl\n\n\tamc_actions = {\n"));
+	file->Write(("\n\t-- profile file for wxAmcl\n\n\tamc_actions = {\n"));
 	for (it=GetTrigger()->begin();it!=GetTrigger()->end();it++)
 	{
 	    file->Write(wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
@@ -2121,91 +2161,91 @@ li_it itl;
 	wxString ss;
 	for (ita=GetAlias()->begin();ita!=GetAlias()->end();ita++)
 	{
-		ss<<wxT("\t\t{[\"alias\"] = [[") << ita->GetAlias().c_str() << wxT("]], ");
+		ss<<("\t\t{[\"alias\"] = [[") << ita->GetAlias().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
 		ss.clear();
-		ss<<wxT("[\"action\"] = [[") << ita->GetAction().c_str() << wxT("]], ");
+		ss<<("[\"action\"] = [[") << ita->GetAction().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"pattern\"] = [=[%s]=], ", it->GetPattern().c_str()));
 		ss.clear();
-		ss<<wxT("[\"group\"] = [[") << ita->GetGroup().c_str() << wxT("]], ");
+		ss<<("[\"group\"] = [[") << ita->GetGroup().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"action\"] = [=[%s]=], ", it->GetAction().c_str()));
 		ss.clear();
-		ss<<wxT("[\"on\"] = ") << (ita->IsActive() ? wxT("true"):wxT("false")) << wxT(" }, \n");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"on\"] = ") << (ita->IsActive() ? ("true"):("false")) << (" }, \n");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
 	}
-	file->Write(wxT("\t}"));
+	file->Write(("\t}"));
 	file->Write("\n\n\tamc_hotkey = {\n");
 	for (ith=GetHotkeys()->begin();ith!=GetHotkeys()->end();ith++)
 	{
-		ss<<wxT("\t\t{[\"name\"] = [[") << ith->GetName().c_str() << wxT("]], ");
+		ss<<("\t\t{[\"name\"] = [[") << ith->GetName().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
 		ss.clear();
-		ss<<wxT("[\"action\"] = [[") << ith->GetAction().c_str() << wxT("]], ");
+		ss<<("[\"action\"] = [[") << ith->GetAction().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"pattern\"] = [=[%s]=], ", it->GetPattern().c_str()));
 		ss.clear();
-		ss<<wxT("[\"group\"] = [[") << ith->GetGroup().c_str() << wxT("]], ");
+		ss<<("[\"group\"] = [[") << ith->GetGroup().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"action\"] = [=[%s]=], ", it->GetAction().c_str()));
 		ss.clear();
-		ss<<wxT("[\"on\"] = ") << (ith->IsActive() ? wxT("true"):wxT("false")) << wxT(", ");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"on\"] = ") << (ith->IsActive() ? ("true"):("false")) << (", ");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
-		ss<<wxT("[\"key\"] = ") << ith->GetHotkey() << wxT(", ");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"key\"] = ") << ith->GetHotkey() << (", ");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
-		ss<<wxT("[\"modifier\"] = ") << ith->GetModifier() << wxT(" }, \n");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"modifier\"] = ") << ith->GetModifier() << (" }, \n");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
 	}
-	file->Write(wxT("\t}"));
+	file->Write(("\t}"));
 	file->Write("\n\n\tamc_vars = {\n");
 	for (itv=GetVars()->begin();itv!=GetVars()->end();itv++)
 	{
-		ss<<wxT("\t\t{[\"name\"] = [[") << itv->GetName().c_str() << wxT("]], ");
+		ss<<("\t\t{[\"name\"] = [[") << itv->GetName().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
 		ss.clear();
-		ss<<wxT("[\"value\"] = [[") << itv->GetValue().c_str() << wxT("]], ");
+		ss<<("[\"value\"] = [[") << itv->GetValue().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"pattern\"] = [=[%s]=], ", it->GetPattern().c_str()));
 		ss.clear();
-		ss<<wxT("[\"group\"] = [[") << itv->GetGroup().c_str() << wxT("]], ");
+		ss<<("[\"group\"] = [[") << itv->GetGroup().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"action\"] = [=[%s]=], ", it->GetAction().c_str()));
 		ss.clear();
-		ss<<wxT("[\"on\"] = ") << (itv->IsActive() ? wxT("true"):wxT("false")) << wxT(" }, \n");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"on\"] = ") << (itv->IsActive() ? ("true"):("false")) << (" }, \n");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
 	}
-	file->Write(wxT("\t}"));
-	file->Write(wxT("\n\n\tamc_lists = {\n"));
+	file->Write(("\t}"));
+	file->Write(("\n\n\tamc_lists = {\n"));
 	for (itl=GetLists()->begin();itl!=GetLists()->end();itl++)
 	{
-		ss<<wxT("\t\t{[\"name\"] = [[") << itl->GetName().c_str() << wxT("]], ");
+		ss<<("\t\t{[\"name\"] = [[") << itl->GetName().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
 		ss.clear();
-		ss<<wxT("[\"group\"] = [[") << itl->GetGroup().c_str() << wxT("]], ");
+		ss<<("[\"group\"] = [[") << itl->GetGroup().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("[\"action\"] = [=[%s]=], ", it->GetAction().c_str()));
 		ss.clear();
-		ss<<wxT("[\"on\"] = ") << (itl->IsActive() ? wxT("true"):wxT("false")) << wxT(", ");
-		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? wxT("true"):wxT("false")));
+		ss<<("[\"on\"] = ") << (itl->IsActive() ? ("true"):("false")) << (", ");
+		file->Write(ss.c_str());//wxString::Format("[\"on\"] = %s, ", it->IsActive() ? ("true"):("false")));
 		ss.clear();
-		file->Write(wxT("[\"items\"] = { "));
+		file->Write(("[\"items\"] = { "));
 		for (int i=0;i<itl->GetSize();i++)
 		{
-			ss<<wxT("\"")<<itl->GetItem(i)<<wxT("\", ");
+			ss<<("\"")<<itl->GetItem(i)<<("\", ");
 			file->Write(ss.c_str());
 			ss.clear();
 		}
-		file->Write(wxT("}, }, \n"));
+		file->Write(("}, }, \n"));
 	}
 	file->Write("\t}");
 	
 	file->Write("\n\n\tamc_prompt = {\n");
-	ss<<wxT("\t\t[\"lockprompt\"] = ")<<(m_child->LockPrompt() ? wxT("true"):wxT("false")) << wxT(" , \n");
+	ss<<("\t\t[\"lockprompt\"] = ")<<(m_child->LockPrompt() ? ("true"):("false")) << (" , \n");
 	file->Write(ss.c_str());
 	ss.clear();
-	ss<<wxT("\t\t[\"gagprompt\"] = ")<<(m_child->GagPrompt() ? wxT("true"):wxT("false")) << wxT(" , \n");
+	ss<<("\t\t[\"gagprompt\"] = ")<<(m_child->GagPrompt() ? ("true"):("false")) << (" , \n");
 	file->Write(ss.c_str());
 	ss.clear();
-	ss<<wxT("\t\t[\"promptpattern\"] = [[") << m_child->GetPromptRegExp().c_str() << wxT("]], \n");
+	ss<<("\t\t[\"promptpattern\"] = [[") << m_child->GetPromptRegExp().c_str() << ("]], \n");
 	file->Write(ss.c_str());
 	file->Write("\t}");
 
@@ -2218,11 +2258,12 @@ li_it itl;
 		{
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*sit, this);
-			file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", mw->GetFont()->GetFaceName().c_str()));
+			/*file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", mw->GetFont()->GetFaceName().c_str()));
 			file->Write(wxString::Format("[\"fontsize\"] = %d, ", mw->GetFont()->GetPointSize()));
 			file->Write(wxString::Format("[\"fontweight\"] = %d, ", mw->GetFont()->GetWeight()));
 			file->Write(wxString::Format("[\"fontstyle\"] = %d, ", mw->GetFont()->GetStyle()));
-			file->Write(wxString::Format("[\"fontfamily\"] = %d, ", mw->GetFont()->GetFamily()));
+			file->Write(wxString::Format("[\"fontfamily\"] = %d, ", mw->GetFont()->GetFamily()));*/
+			file->Write(wxString::Format("[\"font\"] = [[%s]], ", mw->GetFont()->GetNativeFontInfoDesc().c_str()));
 			file->Write(wxString::Format("[\"timestamps\"] = %s},\n", mw->UseTimeStamps() ? "true" : "false"));
 		}
 	}
@@ -2242,35 +2283,37 @@ li_it itl;
 	{
 		for (vit=GetNbPanes()->begin();vit!=GetNbPanes()->end();vit++)
 		{
-			file->Write(wxT("\t\t{ "));
+			file->Write(("\t\t{ "));
 			for(size_t i=0; i<vit->size();i++)
 			{
 				file->Write(wxString::Format("{[\"name\"] = [[%s]], ", vit->at(i).c_str()));
 				MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(vit->at(i), this);
-				file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", mw->GetFont()->GetFaceName().c_str()));
-				file->Write(wxString::Format("[\"fontsize\"] = %d, ", mw->GetFont()->GetPointSize()));
-				file->Write(wxString::Format("[\"timestamps\"] = %s},", mw->UseTimeStamps() ? wxT("true") : wxT("false")));
+				file->Write(wxString::Format("[\"font\"] = [[%s]], ", mw->GetFont()->GetNativeFontInfoDesc().c_str()));
+				/*file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", mw->GetFont()->GetFaceName().c_str()));
+				file->Write(wxString::Format("[\"fontsize\"] = %d, ", mw->GetFont()->GetPointSize()));*/
+				file->Write(wxString::Format("[\"timestamps\"] = %s},", mw->UseTimeStamps() ? ("true") : ("false")));
 			}
-			file->Write(wxT("\t}, \n"));
+			file->Write(("\t}, \n"));
 		}
 	}
-	file->Write(wxT("\t}"));
-	file->Write(wxT("\n\n\tamc_gaugepanes = {\n"));
+	file->Write(("\t}"));
+	file->Write(("\n\n\tamc_gaugepanes = {\n"));
 	if (!GetGaugePanes()->empty())
 	{
 		for (sit=GetGaugePanes()->begin();sit!=GetGaugePanes()->end();sit++)
 		{
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			GaugeWindow* gw = (GaugeWindow*)GaugeWindow::FindWindowByName(*sit, this);
-			file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", gw->GetFont()->GetFaceName().c_str()));
+			file->Write(wxString::Format("[\"font\"] = [[%s]]}, \n", gw->GetFont()->GetNativeFontInfoDesc().c_str()));
+			/*file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", gw->GetFont()->GetFaceName().c_str()));
 			file->Write(wxString::Format("[\"fontsize\"] = %d, ", gw->GetFont()->GetPointSize()));
 			file->Write(wxString::Format("[\"fontweight\"] = %d, ", gw->GetFont()->GetWeight()));
-			file->Write(wxString::Format("[\"fontstyle\"] = %d}, \n", gw->GetFont()->GetStyle()));
-			//file->Write(wxString::Format(wxT("\t\t[[%s]],\n"), sit->c_str()));
+			file->Write(wxString::Format("[\"fontstyle\"] = %d}, \n", gw->GetFont()->GetStyle()));*/
+			//file->Write(wxString::Format(("\t\t[[%s]],\n"), sit->c_str()));
 		}
 	}
-	file->Write(wxT("\t}"));
-	file->Write(wxT("\n\n\tamc_gauges = {\n"));
+	file->Write(("\t}"));
+	file->Write(("\n\n\tamc_gauges = {\n"));
 	//vector<vector<wxString> >::iterator vit;
 	if (!GetGaugePanes()->empty())
 	{
@@ -2278,15 +2321,15 @@ li_it itl;
 		{
 			GaugeWindow* gw = (GaugeWindow*)GaugeWindow::FindWindowByName(sit->c_str(), this);
 			g_it git;
-			file->Write(wxT("\t\t{\n "));
+			file->Write(("\t\t{\n "));
 			for (git=gw->GetGauges()->begin();git!=gw->GetGauges()->end();git++)
 			{
 				ss.clear();
-				ss<<wxT("\t\t{[\"gaugename\"] = [[")<<git->GetName()<<wxT("]], ");
+				ss<<("\t\t{[\"gaugename\"] = [[")<<git->GetName()<<("]], ");
 				file->Write(ss.c_str());
 				//file->Write(wxString::Format("{[\"gaugename\"] = [[%s]], ", git->GetName()));
 				ss.clear();
-				ss<<wxT("[\"var1\"] = [[")<<git->GetVar1()<<wxT("]], ");
+				ss<<("[\"var1\"] = [[")<<git->GetVar1()<<("]], ");
 				file->Write(ss.c_str());
 				//file->Write(wxString::Format("[\"var1\"] = [[%s]], ", git->GetVar1()));
 				ss.clear();
@@ -2308,11 +2351,11 @@ li_it itl;
 				file->Write(wxString::Format("[\"textpos\"] = %d}, \n", git->GetTextPos()));
 				//file->Write(wxString::Format("[\"bcol\"] = \"%s\", ", git->GetBCol().GetAsString(wxC2S_HTML_SYNTAX).c_str()));
 			}
-			file->Write(wxT("\t\t}, \n"));
+			file->Write(("\t\t}, \n"));
 		}
 	}
 	file->Write("\t}");
-	file->Write(wxT("\n\n\tamc_amcwindows = {\n"));
+	file->Write(("\n\n\tamc_amcwindows = {\n"));
 	
 	//if (!m_panes.empty())
 	if (!GetAmcWindows()->empty())
@@ -2321,15 +2364,16 @@ li_it itl;
 		{
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			amcWindow* aw = (amcWindow*)amcWindow::FindWindowByName(*sit, this);
-			file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", aw->GetFont().GetFaceName().c_str()));
+			file->Write(wxString::Format("[\"fontname\"] = [[%s]]}, \n", aw->GetFont().GetNativeFontInfoDesc().c_str()));
+			/*file->Write(wxString::Format("[\"fontname\"] = [[%s]], ", aw->GetFont().GetFaceName().c_str()));
 			file->Write(wxString::Format("[\"fontsize\"] = %d, ", aw->GetFont().GetPointSize()));
 			file->Write(wxString::Format("[\"fontweight\"] = %d, ", aw->GetFont().GetWeight()));
 			file->Write(wxString::Format("[\"fontstyle\"] = %d, ", aw->GetFont().GetStyle()));
-			file->Write(wxString::Format("[\"fontfamily\"] = %d, }\n", aw->GetFont().GetFamily()));
+			file->Write(wxString::Format("[\"fontfamily\"] = %d, }\n", aw->GetFont().GetFamily()));*/
 			
 		}
 	}
-	file->Write(wxT("\t}"));
+	file->Write(("\t}"));
 	file->Write("\n\n\tamc_buttons = {\n");
 	if (!GetButtons()->empty())
 	{
@@ -2407,11 +2451,11 @@ li_it itl;
 	file->Write(ss.c_str());
 	file->Write("\t}");
 	wxString p = m_mgr.SavePerspective();
-	file->Write(wxT("\n\n\tamc_layout = "));
+	file->Write(("\n\n\tamc_layout = "));
 	file->Write(wxString::Format("[=[%s]=]\n", p.c_str()));
 	wxDateTime dt;
 	dt.SetToCurrent();
-	file->Write(wxString::Format(wxT("\n\t-- written on %s, %s\n"), dt.FormatDate().c_str(), dt.FormatTime().c_str()));
+	file->Write(wxString::Format(("\n\t-- written on %s, %s\n"), dt.FormatDate().c_str(), dt.FormatTime().c_str()));
 	file->Close();
 	delete file;
 	return true;
@@ -2646,7 +2690,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	}
 	stable_sort(m_vars.begin(), m_vars.end(), less<class amcVar>());
 	luaBuildvar();
-	aL->GetGlobal(wxT("amc_lists"));
+	aL->GetGlobal(("amc_lists"));
 	len = aL->GetObjectLen();
 	m_lists.clear();
 	amcList::GetListGroups()->clear();
@@ -2692,24 +2736,25 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		wxString win = aL->GetUTF8String(-1);
 		GetPanes()->push_back(win);
 
-		wxFont f;
-		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetUTF8String(-1));
+		
+		aL->GetField(-2, "font");
+		wxFont f(aL->GetUTF8String(-1));
+		/*f.SetFaceName(aL->GetUTF8String(-1));
 		aL->GetField(-3, "fontsize");
 		int fs;
 		f.SetPointSize(fs = aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
         f.SetWeight(aL->GetInt(-1));
 		aL->GetField(-5, "fontstyle");
-		f.SetStyle(aL->GetInt(-1));
-		MudWindow * mw = new MudWindow(this, win, fs);
+		f.SetStyle(aL->GetInt(-1));*/
+		MudWindow * mw = new MudWindow(this, win, f.GetPointSize());
 		//MudWindow mw(this, win, 9);
 		mw->SetName(win);
 		//aL->GetField(-6, "fontfamily");
 		//f.SetFamily(aL->GetInt(-1));
 		mw->SetNFont(&f);
 		mw->SetUFont(&f);
-		aL->GetField(-7, "timestamps");
+		aL->GetField(-3, "timestamps");
 		mw->SetTimeStamps(aL->GetBoolean(-1));
 		m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 		aL->SetTop(0);
@@ -2727,16 +2772,15 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		wxString win = aL->GetUTF8String(-1);
 		GetAmcWindows()->push_back(win);
 
-		wxFont f;
 		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetUTF8String(-1));
-		aL->GetField(-3, "fontsize");
+		wxFont f(aL->GetUTF8String(-1));
+		/*aL->GetField(-3, "fontsize");
 		int fs;
 		f.SetPointSize(fs = aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
 		f.SetWeight(aL->GetInt(-1));
 		aL->GetField(-5, "fontstyle");
-		f.SetStyle(aL->GetInt(-1));
+		f.SetStyle(aL->GetInt(-1));*/
 		amcWindow * aw = new amcWindow(this, win);
 		//MudWindow mw(this, win, 9);
 		aw->SetName(win);
@@ -2782,14 +2826,14 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			MudWindow * mw = new MudWindow(this, win1, 9);
 			mw->SetName(win1);
 			GetNbPanes()->at(i).push_back(win1);
-			aL->GetField(-2, "fontname");
-			wxFont f;
-			f.SetFaceName(aL->GetUTF8String(-1));
-			aL->GetField(-3, "fontsize");
-			f.SetPointSize(aL->GetInt(-1));
+			aL->GetField(-2, "font");
+			
+			wxFont f(aL->GetUTF8String(-1));
+			/*aL->GetField(-3, "fontsize");
+			f.SetPointSize(aL->GetInt(-1));*/
 			mw->SetNFont(&f);
 			mw->SetUFont(&f);
-			aL->GetField(-4, "timestamps");
+			aL->GetField(-3, "timestamps");
 			mw->SetTimeStamps(aL->GetBoolean(-1));
 			nb->AddPage(mw, win1);
 			//aL->Pop(1);
@@ -2819,17 +2863,17 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		class GaugeWindow * gw = new GaugeWindow(this, win);
 		gw->SetName(win);
 		gw->SetLabel(win);
-		wxFont f;
-		aL->GetField(-2, "fontname");
-		f.SetFaceName(aL->GetUTF8String(-1));
-		aL->GetField(-3, "fontsize");
+		//wxFont f;
+		aL->GetField(-2, "font");
+		wxFont f(aL->GetUTF8String(-1));
+		/*aL->GetField(-3, "fontsize");
 		f.SetPointSize(aL->GetInt(-1));
 		aL->GetField(-4, "fontweight");
 		f.SetWeight(aL->GetInt(-1));
 		aL->GetField(-5, "fontstyle");
-		f.SetStyle(aL->GetInt(-1));
+		f.SetStyle(aL->GetInt(-1));*/
 		gw->SetFont(&f);
-		aL->GetGlobal(wxT("amc_gauges"));
+		aL->GetGlobal(("amc_gauges"));
 		aL->PushInt(i + 1);
 		aL->GetTable(-2);
 		int len1 = aL->GetObjectLen();
@@ -3311,6 +3355,48 @@ size_t i;
 	return;
 }
 
+void MudMainFrame::luaBuilddefvar()
+{
+size_t i;
+	amcLua *aL = m_child->GetLState();
+	struct lua_State *L = aL->GetLuaState();
+
+	lua_settop(L, 0);
+	lua_newtable(L);
+
+	for (i = 0; i<GetDefVars()->size(); i++)
+	{
+		lua_pushstring(L, GetDefVars()->at(i).GetName().mb_str());
+		lua_newtable(L);
+		lua_pushstring(L, GetDefVars()->at(i).GetValue().mb_str());
+		lua_setfield(L, -2, "value");
+		lua_settable(L, -3);
+	}
+	//register this as table in global namespace wxamcl
+	lua_setglobal(L, "_amcdefvariables");
+	lua_getglobal(L, "wxamcl"); //5.1.4
+	lua_getglobal(L, "_amcdefvariables");
+	lua_setfield(L, -2, "ClientVars"); // 5.2.0
+	lua_settop(L, 0);
+
+	/*lua_getglobal(L, "_amcdefvariables");
+	lua_newtable(L);
+	lua_setmetatable(L, -2);
+	lua_getglobal(L, "_amcdefvariables");
+	lua_getmetatable(L, -1);
+	lua_pushstring(L, "__newindex");
+	lua_pushcfunction(L, luafunc_newvar);
+	lua_settable(L, -3);
+	lua_settop(L, 0);
+	lua_getglobal(L, "_amcdefvariables");
+	lua_getmetatable(L, -1);
+	lua_pushstring(L, "__index");
+	lua_pushcfunction(L, luafunc_getvar);
+	lua_settable(L, -3);
+	lua_settop(L, 0);*/
+	return;
+}
+
 void MudMainFrame::luaCreateATCPTable()
 {
 	amcLua *aL = m_child->GetLState();
@@ -3381,11 +3467,11 @@ bool MudMainFrame::SaveHosts()
 host_it it;
 
 	wxSetWorkingDirectory(GetGlobalOptions()->GetWorkDir());
-	::wxRemoveFile(wxT("hosts.lua"));
-	wxFile *file = new wxFile(wxT("hosts.lua"), wxFile::write);
+	::wxRemoveFile(("hosts.lua"));
+	wxFile *file = new wxFile(("hosts.lua"), wxFile::write);
     if (!file->IsOpened())
 		return false;
-	file->Write(wxT("\n\t-- hosts file for wxAmcl\n\n\tamc_hosts = {\n"));
+	file->Write(("\n\t-- hosts file for wxAmcl\n\n\tamc_hosts = {\n"));
 	for (it=GetHosts()->begin(); it!=GetHosts()->end();it++)
 	{
 		file->Write(wxString::Format("\t\t{[\"char\"] = [[%s]], ", it->GetCharName().c_str()));
@@ -3480,10 +3566,10 @@ int MudMainFrame::GetAliasIndexByLabel(wxString s)
 {
 al_it it;
 int i;
-	if (s.at(0)!=wxT('^'))
-		s = wxT('^') + s;
-	//if (!s.EndsWith(wxT("$")))
-	//	s.append(wxT('$'));
+	if (s.at(0)!=('^'))
+		s = ('^') + s;
+	//if (!s.EndsWith(("$")))
+	//	s.append(('$'));
 	for (it = m_alias.begin(), i=0; it!=m_alias.end(); it++, i++)
 	{
 		if (!s.compare(0,s.length(), it->GetAlias(), 0, s.length()))
@@ -3645,7 +3731,8 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
 	m_lastcommand = wxEmptyString;
 	m_waiting = false;
 	m_sw.SetOwner(this->GetEventHandler(),2222);
-	m_swsend = wxEmptyString;			
+	m_swsend = wxEmptyString;
+	m_gotfocus = false;
 }
 
 void InputTextCtrl::OnTextEnter(wxCommandEvent &event)
@@ -3653,11 +3740,27 @@ void InputTextCtrl::OnTextEnter(wxCommandEvent &event)
  
 }
 
+void InputTextCtrl::OnIdle(wxIdleEvent &event)
+{
+	
+		/*if (m_gotfocus)
+		{
+			SetSelection(-1, -1);
+			m_gotfocus = false;
+		}*/
+	
+	event.Skip();
+}
+
 void InputTextCtrl::OnSetFocus(wxFocusEvent &event)
 {
 #if defined __WXMSW__
+	wxLogDebug("OnSetFocus..Input Text");
 	
+	//SetSelection(-1, -1);
 #endif
+	if (m_keepinput)
+		m_gotfocus = true;
 	event.Skip();
 }
 
@@ -3685,6 +3788,19 @@ void InputTextCtrl::OnMouseWheel(wxMouseEvent &event)
 	sendto->GetEventHandler()->ProcessEvent(event);
 }
 
+void InputTextCtrl::OnMouseLeftUp(wxMouseEvent &event)
+{
+	if (m_keepinput)
+		m_gotfocus = true;
+	event.Skip();
+}
+
+void InputTextCtrl::OnMouseLeftDown(wxMouseEvent &event)
+{
+	//m_gotfocus = true;
+	event.Skip();
+}
+
 void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 {
 	long keycode = event.GetKeyCode();
@@ -3706,7 +3822,7 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	}
 	if (keycode==WXK_RETURN)
 		m_lastcommand = GetRange(0, GetLastPosition());
-    #ifdef __WXOSX__
+#ifndef __WXGTK__
     if (keycode==WXK_UP)
     {
         if (m_hpos<=0)
@@ -3871,7 +3987,8 @@ MudWindow *sendto;
 		//SetInsertionPoint(GetLastPosition());
 		#ifndef __WXOSX__
 		//SetSelection(0,GetLastPosition()+1);
-        SetSelection(-1,-1);
+		SelectAll();
+        //SetSelection(-1,-1);
 		#endif
 		#ifdef __WXOSX__
 		SetSelection(-1,-1);
@@ -4364,7 +4481,7 @@ long line;
 		return -1;
 	amcLua *aL = m_parent->m_child->GetLState();
 	//struct lua_State *L = aL->GetLuaState();
-	wxString s = wxString::Format(wxT("amc.createwindow(\"%s\")"), GetFParam(1).c_str());
+	wxString s = wxString::Format(("amc.createwindow(\"%s\")"), GetFParam(1).c_str());
 	aL->DoString(s); //Create the window
 	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(GetFParam(1).c_str());
 	if (mw==NULL)
@@ -4457,7 +4574,7 @@ int InputTextCtrl::CapStart(wxString *sPar)
 	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(ss.c_str(), m_parent);
 	if (mw==NULL)
 	{
-		wxString s = wxString::Format("amc.createwindow(\"%s\")", ss.c_str());
+		wxString s = wxString::Format("wxamcl.createwindow(\"%s\")", ss.c_str());
 		aL->DoString(s); //Create the window
 		mw = (MudWindow*)MudWindow::FindWindowByName(ss);
 	}
@@ -4779,7 +4896,7 @@ int InputTextCtrl::Log(wxString *sPar)
 	wxDateTime d;
 	d.SetToCurrent();
 	wxString s;
-	s<<_("Logging started: ")<<d.FormatDate()<<wxT(", ")<<d.FormatTime();
+	s<<_("Logging started: ")<<d.FormatDate()<<(", ")<<d.FormatTime();
 	m_parent->m_child->GetTextLog()->Write(s+(char)CR+(char)LF+(char)CR+(char)LF);
 	return 0;
 }
@@ -5060,7 +5177,7 @@ int InputTextCtrl::Info(wxString *sPar)
         else
             s << _("Connected to ") <<m_parent->m_child->GetIP6Addr()->OrigHostname()<<" "<<m_parent->m_child->GetIP6Addr()->Hostname()<<" (IPV6)";
 		#endif
-        #ifdef _WXMSW__
+        #ifdef __WXMSW__
         else
             s << _("Connected to ") << m_parent->m_child->GetIP6Addr()->OrigHostname() << " " << m_parent->m_child->GetIP6Addr()->Hostname() << " (IPV6)";
         #endif

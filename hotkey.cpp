@@ -7,11 +7,12 @@ std::vector<wxString> amcHotkey::m_hgroup;
 */
 amcHotkey::amcHotkey()
 {
-	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	//m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	m_parent = wxGetApp().GetFrame();
 	m_hotkey = 0;
 	m_mods = wxMOD_NONE;
 	m_action = wxEmptyString;
-	m_group = wxT("default");
+	m_group = "default";
 	m_on = false;
 }
 
@@ -20,7 +21,8 @@ amcHotkey::amcHotkey()
 */
 amcHotkey::amcHotkey(long keycode, int mods, wxString name, wxString action, wxString gr, bool on)
 {
-	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	//m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	m_parent = wxGetApp().GetFrame();
 	m_hotkey = keycode;
 	m_mods = mods;
 	m_action = action;

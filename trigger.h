@@ -7,7 +7,7 @@ class Trigger
 {
 public:
 	Trigger();
-	Trigger(wxString pattern, wxString action, wxString label, wxString cl = wxT("default"), wxUint32 prior = 50, bool on = true, int m_colmatch = -1, int lines = 1, bool show = true);
+	Trigger(wxString pattern, wxString action, wxString label, wxString cl = "default", wxUint32 prior = 50, bool on = true, int m_colmatch = -1, int lines = 1, bool show = true);
 	~Trigger();
 	bool Match(wxString match);
 	wxString BuildAction();

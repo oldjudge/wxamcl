@@ -40,7 +40,7 @@ AnsiLineElement::AnsiLineElement(wxString text, int f, int b)
 	m_bfontstyle=0;
 	m_fcolindex=f;
 	m_bcolindex=b;
-	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	m_fcol=frame->m_child->GetAnsiColor(f);
 	m_bcol=frame->m_child->GetAnsiColor(b);
 	m_hint = wxEmptyString;
@@ -59,6 +59,8 @@ AnsiLineElement::AnsiLineElement(const AnsiLineElement& ale)
 	m_promptsend = ale.m_promptsend;
 	//m_text = new wxString(*ale.m_text);
 	m_text = ale.m_text;
+	m_len = m_text.length();
+	wxStrncpy(m_ctext, ale.m_ctext, 1000);
 	m_len = m_text.length();
 	m_mxpcommand = ale.m_mxpcommand;
 	m_mxplabel = ale.m_mxplabel;
@@ -86,22 +88,27 @@ void AnsiLineElement::SetBCol(int index, wxColour col)
 
 void AnsiLineElement::SetText(wxString text)
 {
-	//wxASSERT_MSG((m_text->CompareTo(".")!=0), wxT("Falsch"));
-	//delete m_text;
-	//m_text = new wxString(text);
+	
 	m_text.clear();
-	/*MudMainFrame *frame = wxGetApp().GetFrame();
-	wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
-
-	wxString ff(text.To8BitData(), c);
-	if (ff.empty())
-		ff=text;
-	m_text.append(ff);*/
 	m_text.append(text);
-	//m_text.append(text);
 	m_len = m_text.length();
 }
 
+void AnsiLineElement::SetCharText(char* t)
+{
+	wxStrncpy(m_ctext, t, wxStrlen(t));
+	m_ctext[wxStrlen(t)] = EOS;
+	m_text.Clear();
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (frame->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
+	{
+		m_text = wxString(m_ctext, wxCSConv(wxFONTENCODING_UTF8));
+	}
+	else
+		m_text = wxString::From8BitData(m_ctext);
+	m_text.Replace("\t", "    ");
+	m_len = m_text.length();
+}
 
 wxString AnsiLineElement::GetConvText()
 {
@@ -111,8 +118,14 @@ wxString AnsiLineElement::GetConvText()
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_text.To8BitData(), c);
 		return ff;
+		
 	}
-	else return m_text.wx_str();
+	else
+	{
+
+		//return wxString::From8BitData(m_ctext);
+		return m_text;// .wx_str();
+	}
 }
 
 //AnsiLine
@@ -141,6 +154,7 @@ AnsiLine::AnsiLine(const AnsiLine& al)
 	m_ypos= al.m_ypos;
 	//m_linetext = new wxString(*al.m_linetext);
 	m_linetext = al.m_linetext;
+	wxStrncpy(m_clinetext, al.m_clinetext, 5000);
 	m_ansiline = al.m_ansiline;
 	//m_vstyle.assign(al.m_vstyle.begin(), al.m_vstyle.end());
 	//m_vstyle.reserve(200);
@@ -168,6 +182,12 @@ wxString AnsiLine::GetConvLineText()
 		return ff;
 	}
 	else return m_linetext;
+}
+
+void AnsiLine::GetCharAnsiLine(char * c)
+{
+	wxStrncpy(c, m_clinetext, wxStrlen(m_clinetext));
+	c[wxStrlen(m_clinetext)] = EOS;
 }
 
 wxString AnsiLine::GetConvAnsiLine()
@@ -238,6 +258,21 @@ void AnsiLine::SetLineText(wxString st)
 	//if (ff.empty())
 	//	ff=st;
 	m_linetext.append(st);
+}
+
+void AnsiLine::SetCharLineText(char *t)
+{
+	wxStrncpy(m_clinetext+wxStrlen(m_clinetext), t, wxStrlen(t));
+	//m_clinetext[wxStrlen(t)] = EOS;
+	m_linetext.Clear();
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	if (frame->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
+	{
+		m_linetext = wxString(m_clinetext, wxConvUTF8);
+	}
+	else
+		m_linetext = wxString::From8BitData(m_clinetext);
+	m_linetext.Replace("\t", "    ");
 }
 
 void AnsiLine::AssignText(wxString st)

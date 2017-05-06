@@ -646,7 +646,8 @@ int luafunc_replacetext(lua_State*L)
 
 int luafunc_getlinenr(lua_State *L)
 {
-	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(wxT("amcoutput"));
+	//class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName("amcoutput");
+	class MudWindow *frame = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
 	lua_pushnumber(L, frame->GetLines()->at(frame->GetStartLine()-1).GetLinenumber());
@@ -655,7 +656,8 @@ int luafunc_getlinenr(lua_State *L)
 
 int luafunc_scroll(lua_State *L)
 {
-	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(wxT("amcoutput"));
+	//class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName("amcoutput");
+	class MudWindow *frame = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
 	bool b = (lua_toboolean(L,1)!=0);
@@ -2023,7 +2025,8 @@ const char* c;
 Trigger tr;
 str_ac* t;
 int index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	//MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	class MudMainFrame *frame = wxGetApp().GetFrame();
 	//int x= sizeof(struct str_ac);
 
 	//called from amc.newaction
@@ -2176,7 +2179,8 @@ str_ac* t;
 const char* c;
 int i, index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	//MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	class MudMainFrame *frame = wxGetApp().GetFrame();
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);

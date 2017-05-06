@@ -121,6 +121,9 @@ extern "C"
 #include <string>
 #include <algorithm>
 #include <functional>
+#include <codecvt>
+#include <locale>
+#include <iostream>
 
 using namespace std;
 
@@ -433,6 +436,7 @@ public:
 	void luaBuildtrigger();
 	void luaBuildalias();
 	void luaBuildvar();
+	void luaBuilddefvar();
 	void luaCreateATCPTable();
 	void luaCreateGMCPTable();
 	void luaCreateMSDPTable();
@@ -525,6 +529,7 @@ private:
 	bool m_waiting;
 	wxTimer m_sw;
 	wxString m_swsend;
+	bool m_gotfocus;
 	//functions
 	bool ParseCommand(wxString *sCommand);
 	//functions mudcommands
@@ -556,7 +561,7 @@ private:
 	int Info(wxString *sPar);//#info
 	int DebugGMCP(wxString *sPar);//#debuggmcp
 
-	int ParseFParams(wxString *sPar, wxChar delim = wxT('\"'));
+	int ParseFParams(wxString *sPar, wxChar delim = ('\"'));
 	wxString GetFParam(int index) {return m_fparams.at(index-1);}
 	wxString Complete();
 	//events
@@ -565,8 +570,11 @@ private:
 	void OnChar(wxKeyEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
+	void OnMouseLeftUp(wxMouseEvent& event);
+	void OnMouseLeftDown(wxMouseEvent& event);
 	void OnSetFocus(wxFocusEvent& event);
 	void OnSWDelay(wxTimerEvent& event);
+	void OnIdle(wxIdleEvent& event);
 	DECLARE_EVENT_TABLE()
 };
 

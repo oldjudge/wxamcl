@@ -15,7 +15,7 @@ Trigger::Trigger()
 	m_priority = 50;
 	//m_rexp = new RegExp();
 	m_on = false;
-	m_match = wxT("");
+	m_match = "";
 	m_matchcount = 0;
 	m_colmatch = -1;
 	m_lines = m_curlines = 1;
@@ -100,7 +100,8 @@ wxString Trigger::ParsePattern()
 	do
 	{
 		//replace the vars $
-		class MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+		MudMainFrame *frame = wxGetApp().GetFrame();
+		//class MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 		idx = pattern.find(frame->GetGlobalOptions()->GetVar());
 		if (idx != string::npos)
 		{

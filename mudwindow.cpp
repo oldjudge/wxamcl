@@ -75,27 +75,14 @@ MudWindow::MudWindow():wxWindow()
 MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL| wxBORDER_NONE)
 {	
 #if !defined __WXMSW__
-	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
-	//m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-    //m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	m_font = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
-    //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
-	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	m_ifont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
-	//SetBackgroundColour(m_background);
-//	ClearBackground();
 #else
     m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
-    //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
-	//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	m_ifont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
-	//m_font = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
-	//m_ufont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Fixedsys");
-	//m_ifont = new wxFont(12, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Fixedsys");
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 #endif
 	
@@ -160,8 +147,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_tlog = NULL;
 	m_htmllog = NULL;
 	m_L = new amcLua();
-	//RegisterLuaFuncs();
-
+	
 	//m_gopt = new GlobalOptions(this);
 	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
 	m_dc = new Decompressor();//\\b
@@ -174,7 +160,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_bourl = true;
 	//m_splitbuffer = true;
 	m_ansicode = new RegExp("\\e\\[[0-1]?;?3?[0-9]?;?5?[0-9]?m");
-	 //m_prompt = new RegExp(wxT(".*>"));
+	 //m_prompt = new RegExp((".*>"));
 	m_prompt = new RegExp("");             
 	m_boprompt = false;
 	m_gagprompt = false;
@@ -183,11 +169,8 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_focusoninput = true;
 
 	m_curansicolor = m_colansi[DEF_FORECOL];
-	//m_capture.reserve(100);
-	//m_capwin.reserve(100);
-	//m_capgag.reserve(100);
-	//m_url = new RegExp(wxT("((http:\\/\\/)?([A-Za-z0-9]+)?\\.[A-Za-z0-9\\-]+\\.[a-z]+[\\/?\\~?\\.\\-=\\?\\w+]+)\\b"));
-	//m_url = new RegExp("orf");
+	
+	//m_MemBuffer.SetBufSize(30001);
 	
 	SetName("amcoutput");
 	m_tt = new wxToolTip("");
@@ -288,7 +271,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	//m_dc = new Decompressor();//\\b
 	m_dc = NULL;
 	//m_mxp = NULL;
-	//m_url = new RegExp(wxT("((http:\\/\\/)?([A-Za-z0-9]+)?\\.[A-Za-z0-9\\-]+\\.[a-z]+[\\/?\\~?\\.\\-=\\?\\w+]+)\\b"));
+	//m_url = new RegExp(("((http:\\/\\/)?([A-Za-z0-9]+)?\\.[A-Za-z0-9\\-]+\\.[a-z]+[\\/?\\~?\\.\\-=\\?\\w+]+)\\b"));
 	//m_url = NULL;
 	m_prompt = NULL;
 	m_boprompt = false;
@@ -404,8 +387,9 @@ bool waitmore = true;
     }
 	m_sock->GetLocal(local);
 	wxString s = local.IPAddress();
-	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
+	int idx = m_parent->GetDefVarIndexByLabel("wxamclLocalIP");
 	m_parent->GetDefVars()->at(idx).SetValue(s);
+	m_parent->luaBuilddefvar();
 	//s = m_addr.IPAddress();
 	/*bool waitmore = true;
 	
@@ -438,20 +422,23 @@ bool waitmore = true;
     }
 	m_sock->GetLocal(local);
 	
-	int idx = m_parent->GetDefVarIndexByLabel("amcLocalIP");
+	int idx = m_parent->GetDefVarIndexByLabel("wxamclLocalIP");
 	//
 	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
 #ifndef __WXMSW__
     wxString s = local.IPAddress();
 	m_parent->GetDefVars()->at(idx).SetValue(s);
 #endif
-
+	m_parent->luaBuilddefvar();
 }
 #endif
 
 void MudWindow::OnAutoReconnect(wxTimerEvent& event)
 {
-	MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP4());
+	if (!this->GetUseIPV6())
+		MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP4());
+	else
+		MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP6());
 }
 
 void MudWindow::Write(wxString command)
@@ -555,10 +542,62 @@ void MudWindow::Write8Bit(wxString command)
 
 void MudWindow::Close()
 {
-	m_sock->Discard();
-	m_sock->Close();
+	//m_sock->Discard();
+	//m_sock->Close();
 	//m_sock->Destroy();
 	Msg(_("Connection closed by user!"));
+	wxString msg;
+	wxString s;
+	wxDateTime end = wxDateTime::Now();
+	if (m_connected)
+	{
+		wxTimeSpan diff = end.Subtract(GetConnectionDT());
+		wxString form = diff.Format(_("%D days, %H hours, %M minutes and %S seconds."));
+
+		msg << _("Your connection lasted: ") << form;
+	}
+	else
+		msg = _("Connection failed!");
+	Msg(msg);
+
+	if (m_sock->Error())
+	{
+		wxSocketError err = m_sock->LastError();
+		err = wxSOCKET_NOERROR;
+	}
+	m_sock->Discard();
+	m_sock->Close();
+	if (m_mccp2)
+	{
+		m_mccp2 = false;
+		m_dc->EndDecompress();
+		m_dc->Init();
+	}
+	if (m_parent->GetGlobalOptions()->GetUseEvents())
+	{
+		if (m_parent->GetGlobalOptions()->GetUseEvDisco())
+		{
+			s = wxString::Format("%cfunc(\"%s\", \"OnDisconnected()\")", m_parent->GetGlobalOptions()->GetCommand(),
+				m_parent->GetGlobalOptions()->GetEventFile());
+			m_parent->m_input->ParseCommandLine(&s);
+		}
+	}
+	m_connected = false;
+	m_parent->SetStatusText(_("Not Connected!"), 1);
+	if (m_parent->GetGlobalOptions()->GetAutoConnect())
+	{
+		if (m_parent->GetCurHost() != -1)
+		{
+			m_rc.SetOwner(this->GetEventHandler(), 1111);
+			m_rc.Start(m_parent->GetGlobalOptions()->GetACDelay() * 1000);
+			Msg(_("Auto reconnecting.."));
+		}
+	}
+
+	SetScrollPage();
+	Refresh();
+	Update();
+	
 }
 
 void MudWindow::Msg(wxString msg, int fcol, int bcol)
@@ -798,47 +837,47 @@ void MudWindow::SetDefaultColors()
 	m_colansi[19].Set("PINK");//custom1
 
 	//maps
-	m_bcols[wxT("black")] = 40;
-	m_bcols[wxT("red")] = 41;
-	m_bcols[wxT("green")] = 42;
-	m_bcols[wxT("yellow")] = 43;
-	m_bcols[wxT("blue")] = 44;
-	m_bcols[wxT("magenta")] = 45;
-	m_bcols[wxT("cyan")] = 46;
-	m_bcols[wxT("white")] = 47;
-	m_bcols[wxT("gray")] = 48;
-	m_bcols[wxT("bred")] = 49;
-	m_bcols[wxT("bgreen")] = 50;
-	m_bcols[wxT("byellow")] = 51;
-	m_bcols[wxT("bblue")] = 52;
-	m_bcols[wxT("bmagenta")] = 53;
-	m_bcols[wxT("bcyan")] = 54;
-	m_bcols[wxT("bwhite")] = 55;
-	m_bcols[wxT("custom")] = 58;
-	m_bcols[wxT("bcustom")] = 59;//customcolor1 for background
+	m_bcols[("black")] = 40;
+	m_bcols[("red")] = 41;
+	m_bcols[("green")] = 42;
+	m_bcols[("yellow")] = 43;
+	m_bcols[("blue")] = 44;
+	m_bcols[("magenta")] = 45;
+	m_bcols[("cyan")] = 46;
+	m_bcols[("white")] = 47;
+	m_bcols[("gray")] = 48;
+	m_bcols[("bred")] = 49;
+	m_bcols[("bgreen")] = 50;
+	m_bcols[("byellow")] = 51;
+	m_bcols[("bblue")] = 52;
+	m_bcols[("bmagenta")] = 53;
+	m_bcols[("bcyan")] = 54;
+	m_bcols[("bwhite")] = 55;
+	m_bcols[("custom")] = 58;
+	m_bcols[("bcustom")] = 59;//customcolor1 for background
 
-	m_colcodes[wxT("black")] = wxT("0;30;");
-	m_colcodes[wxT("red")] = wxT("0;31;");
-	m_colcodes[wxT("green")] = wxT("0;32;");
-	m_colcodes[wxT("yellow")] = wxT("0;33;");
-	m_colcodes[wxT("blue")] = wxT("0;34;");
-	m_colcodes[wxT("magenta")] = wxT("0;35;");
-	m_colcodes[wxT("cyan")] = wxT("0;36;");
-	m_colcodes[wxT("white")] = wxT("0;37;");
-	m_colcodes[wxT("gray")] = wxT("1;30;");
-	m_colcodes[wxT("bred")] = wxT("1;31;");
-	m_colcodes[wxT("bgreen")] = wxT("1;32;");
-	m_colcodes[wxT("byellow")] = wxT("1;33;");
-	m_colcodes[wxT("bblue")] = wxT("1;34;");
-	m_colcodes[wxT("bmagenta")] = wxT("1;35;");;
-	m_colcodes[wxT("bcyan")] = wxT("1;36;");
-	m_colcodes[wxT("bwhite")] = wxT("1;37;");
-	m_colcodes[wxT("client")] = wxT("1;36;");
-	m_colcodes[wxT("send")] = wxT("1;32;");
-	m_colcodes[wxT("italic")] = wxT("3;");
-	m_colcodes[wxT("underlined")] = wxT("4;");
-	m_colcodes[wxT("custom")] = wxT("1;58;");
-	m_colcodes[wxT("custom1")] = wxT("1;59;");
+	m_colcodes[("black")] = ("0;30;");
+	m_colcodes[("red")] = ("0;31;");
+	m_colcodes[("green")] = ("0;32;");
+	m_colcodes[("yellow")] = ("0;33;");
+	m_colcodes[("blue")] = ("0;34;");
+	m_colcodes[("magenta")] = ("0;35;");
+	m_colcodes[("cyan")] = ("0;36;");
+	m_colcodes[("white")] = ("0;37;");
+	m_colcodes[("gray")] = ("1;30;");
+	m_colcodes[("bred")] = ("1;31;");
+	m_colcodes[("bgreen")] = ("1;32;");
+	m_colcodes[("byellow")] = ("1;33;");
+	m_colcodes[("bblue")] = ("1;34;");
+	m_colcodes[("bmagenta")] = ("1;35;");;
+	m_colcodes[("bcyan")] = ("1;36;");
+	m_colcodes[("bwhite")] = ("1;37;");
+	m_colcodes[("client")] = ("1;36;");
+	m_colcodes[("send")] = ("1;32;");
+	m_colcodes[("italic")] = ("3;");
+	m_colcodes[("underlined")] = ("4;");
+	m_colcodes[("custom")] = ("1;58;");
+	m_colcodes[("custom1")] = ("1;59;");
 
 	//xterm colours
 	m_xterm[0].Set(RGB(0, 0, 0));         // (black)       
@@ -911,251 +950,7 @@ AnsiLineElement style;
 	//SetScrollPage();
 }
 
-//stream expected as char data
-//unused now
-/******
-void MudWindow::ParseBuffer(char* cBuffer)
-{
-//int* iArray;
-int iArray[1000];
-int pos = -1;
-int index = 1;
-int len=0;
-static int oldline = 0;
-//int count1 = 0;
-//wxChar *cLine;
-//wxString *sLine=NULL;
-wxString sLine;
-//wxString s;
-//tr_it trit;
-map<wxString, bool>::iterator mit;
-	if (!cBuffer)
-	{
-		wxLogDebug("Nullpointer in ParseBuffer passed!! m_curline: %d", m_curline);
-		return;
-	}
-	//iArray = NULL;
-	//iArray = (int*)calloc(2,sizeof(int));
-	iArray[0]=0;
-	while (*(cBuffer + ++pos))
-	{
-		if (*(cBuffer + pos)== (char)CR || *(cBuffer + pos)== (char)LF)
-		{
-			index++;
-			//iArray = (int*)realloc(iArray, (index+1)*sizeof(int));
-			if (*(cBuffer+pos)== LF && *(cBuffer+pos+1)== CR)
-				iArray[index-1]=(++pos+1);
-			else if (*(cBuffer+pos)== CR && *(cBuffer+pos+1)== LF)
-				iArray[index-1]=(++pos+1);
-			else iArray[index-1]=pos+1;
-		}
-		if (m_parent->GetGlobalOptions()->UseGAEOR())
-		{
-			if (*(cBuffer + pos)== (char)IAC)
-			{
-				if (*(cBuffer + pos + 1)== (char)GA || *(cBuffer+pos+1)==(char)EOR)
-				{
-					*(cBuffer + pos) = (char)CR;
-					*(cBuffer + pos + 1) = (char)LF;
-					pos--;
-				}
-			}
-				//(cBuffer + pos + 2) = EOS;
-			
-		}
-	}
-	//iArray = (int*)realloc(iArray, (index+1)*sizeof(int));
-	iArray[index]= (int)wxStrlen(cBuffer);
-	//::wxLogDebug(wxT("index=%3d"), index);
-	pos=-1;
-	//curline = lines;
-	//wxStopWatch sw;
-	//do
-    for (pos=0;pos<index;pos++)
-	{
-		//sw.Start();
-		//pos++;
-		oldline = m_curline;
-		if ((iArray[pos+1])>64000)
-			break;
-		len = iArray[pos+1] - iArray[pos];
-		if (!len)
-			continue;
-		//sLine = new wxString(&cBuffer[iArray[pos]], len);
-		//sLine.clear();
-		//sLine.assign(&cBuffer[iArray[pos]], len);
-		sLine = wxString::From8BitData(&cBuffer[iArray[pos]], len);
-				
-		//sLine.Append((char)EOS);
-		//sLine.append((char*)'\0');
-		//wxASSERT_MSG((sLine==NULL), "String creation failed!");
-		if (sLine.GetChar(len-1)!=CR && sLine.GetChar(len-1)!=LF)
-			m_bonewline = false;
-		else m_bonewline = true;
-		if (m_bonewline)
-			sLine.Trim();
-		sLine.Append('\x0');
-		//test for one!! URL in line
-		if (m_bourl)
-		{
-			
-			if (m_url->Match(sLine, false))
-			{//yes .. underlined font
-				int sub = m_url->GetMatchStart()-8;//some stuff cause ansicodes can mess regexp detection of URL
-				if (sub<0)
-					sub=0;
-				bool b = m_ansicode->Match(sLine.substr(sub, m_url->GetMatchLen()), false);
-				if (!b)
-					sub=0;
-				int start=0;
-				if (m_url->GetMatchStart()<m_ansicode->GetMatchEnd()+sub+1)
-					start = m_ansicode->GetMatchEnd();
-				else start = m_url->GetMatchStart();
-				if (!sub && !m_url->GetMatchStart())
-					start=0;
-				sLine.insert(start+sub, "\x1b[4m");
-				//sLine.insert(m_url->GetMatchStart(), "\x1b[4m");
-				sLine.insert(m_url->GetMatchEnd()+4, "\x1b[0m");
-			}
-		}
-		if (m_curline<m_vmudlines.size())
-			m_curline=m_vmudlines.size();
-		ParseLine(&sLine);
-		if (m_curline>m_vmudlines.size())
-			m_curline=m_vmudlines.size();
-		
-		if (m_curline>=GetMaxLines())
-		{
-			m_curline--;
-			m_vmudlines.pop_front();
-		}
-		if (IsLogging())
-		{
-			
-			SendLineToLog(m_curline-1);
-		}
-		//wxString s = m_vmudlines.at(m_curline-1).GetAnsiString();
-		//test trigger
-		//trigger check
-		
-		CheckTrigger(m_curline-1, true);
-		
-		//capturing with capstart, capend
-		if (!m_capwindow.empty())
-		{
-			//vector<wxString>::iterator it;
-			//AnsiLine al;
-			MudWindow *mw;
-			//int i;
-			for (mit = m_capwindow.begin(); mit!=m_capwindow.end(); mit++)
-			{
-				mw = (MudWindow*)MudWindow::FindWindowByName(mit->first, m_parent);
-				if (mw==NULL)
-					continue;
-				if (!mw->GetFirstCaptured())
-				{
-					mw->AddLine(m_vmudlines.at(m_curline-1));
-					//mw->ParseLine(&sLine);
-				}
-				else mw->SetFirstCaptured(false);
-				//mw->Freeze();
 
-				//mw->ParseLine(sLine);
-				if (mit->second)
-				{
-					m_vmudlines.pop_back();
-					m_curline--;
-				}
-				//mw->Thaw();
-			}
-
-		}
-		//still to capture to another window?
-		if (!m_capwin.empty())
-		{
-			s_it it;
-			//AnsiLine al;
-			size_t i=0;
-			MudWindow *mw;
-			vector<long>::iterator lit;
-			vector<bool>::iterator bit;
-			for (i=0, it=m_capwin.begin(), lit=m_capture.begin(), bit=m_capgag.begin();i<m_capwin.size();i++, it++, lit++, bit++)
-			{
-				mw = (MudWindow*)MudWindow::FindWindowByName(it->c_str(), m_parent);
-				if (mw==NULL)
-					continue;
-
-				if (*lit>0)
-				{
-					mw->AddLine(m_vmudlines.at(m_curline-1));
-					if (*bit)
-					{
-						m_vmudlines.pop_back();
-						m_curline--;
-					}
-					m_capture.at(i)--;
-					mw->SetScrollPage();
-					mw->Refresh();
-					mw->Update();
-				}
-			}
-			for (i=0, it=m_capwin.begin(), lit=m_capture.begin(), bit=m_capgag.begin(); it!=m_capwin.end(); it++, lit++, bit++, i++)
-			{
-				if (*lit<=0)
-				{
-					m_capwin.erase(it);
-					m_capture.erase(lit);
-					m_capgag.erase(bit);
-					it = m_capwin.begin()+i;
-					lit = m_capture.begin()+i;
-					bit = m_capgag.begin()+i;
-					if (it==m_capwin.end())
-						break;
-				}
-			}
-		}
-
-		//should we lock the prompt?
-		if (m_boprompt)
-		{
-			int x, y;
-			wxString s = wxEmptyString;
-			s += m_vmudlines.at(m_curline-1).GetLineText();
-			m_parent->m_prompt->GetTextExtent(s, &x, &y);
-			if (m_prompt->Match(s, false))
-			{
-				if (m_gagprompt) //should we gag the original prompt?
-				{
-					m_vmudlines.pop_back();
-					m_curline--;
-				}
-				m_parent->m_mgr.GetPane(wxT("amcprompt")).Position(0).BestSize(x+10,24).Fixed();
-				if (!m_parent->m_mgr.GetPane(wxT("amcprompt")).IsShown())
-				{
-					
-					m_parent->m_mgr.GetPane(wxT("amcinput")).Position(1);
-					m_parent->m_mgr.GetPane(wxT("amctoggle")).Position(2);
-					m_parent->m_mgr.GetPane(wxT("amcprompt")).Show();	
-				}
-				m_parent->m_mgr.Update();
-				m_parent->m_prompt->Clear();
-				m_parent->m_prompt->AppendText(s);
-				
-				
-			}
-		}
-	
-		if (m_vmudlines.at(m_curline-1).GetGagme())
-		{
-			m_vmudlines.pop_back();
-			m_curline--;
-			this->SetScrollPage();
-		}
-		//::wxLogDebug(wxT("time: %ld ms, %s"), sw.Time(), sLine.c_str());
-    //} while (pos<index-1);
-	}
-}
-*****/
 void MudWindow::ParseUTF8Buffer(wxString cBuffer)
 {
 //int* iArray;
@@ -1200,7 +995,7 @@ map<wxString, bool>::iterator mit;
 	}
 	//iArray = (int*)realloc(iArray, (index+1)*sizeof(int));
 	iArray[index]= (int)wxStrlen(cBuffer);
-	//::wxLogDebug(wxT("index=%3d"), index);
+	//::wxLogDebug(("index=%3d"), index);
 	pos=-1;
 	//curline = lines;
 	//wxStopWatch sw;
@@ -1389,13 +1184,13 @@ map<wxString, bool>::iterator mit;
 					m_vmudlines.pop_back();
 					m_curline--;
 				}
-				m_parent->m_mgr.GetPane(wxT("amcprompt")).Position(0).BestSize(x+10,24).Fixed();
-				if (!m_parent->m_mgr.GetPane(wxT("amcprompt")).IsShown())
+				m_parent->m_mgr.GetPane(("amcprompt")).Position(0).BestSize(x+10,24).Fixed();
+				if (!m_parent->m_mgr.GetPane(("amcprompt")).IsShown())
 				{
 					
-					m_parent->m_mgr.GetPane(wxT("amcinput")).Position(1);
-					m_parent->m_mgr.GetPane(wxT("amctoggle")).Position(2);
-					m_parent->m_mgr.GetPane(wxT("amcprompt")).Show();	
+					m_parent->m_mgr.GetPane(("amcinput")).Position(1);
+					m_parent->m_mgr.GetPane(("amctoggle")).Position(2);
+					m_parent->m_mgr.GetPane(("amcprompt")).Show();	
 				}
 				m_parent->m_mgr.Update();
 				m_parent->m_prompt->Clear();
@@ -1408,7 +1203,7 @@ map<wxString, bool>::iterator mit;
 			m_curline--;
 		}
 
-		//::wxLogDebug(wxT("time: %ld ms, %s"), sw.Time(), sLine.c_str());
+		//::wxLogDebug(("time: %ld ms, %s"), sw.Time(), sLine.c_str());
     //} while (pos<index-1);
 	}
 }
@@ -1479,50 +1274,32 @@ static bool colset = false;
 			#endif
 			
 			#ifdef __WXMSW__
-			//s = wxString::From8BitData((const char*) cBuffer);
+			s = wxString::From8BitData((const char*) cBuffer);
 			
-			s = wxString (cBuffer);
 			
-			if (m_parent->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
+			
+			/*if (m_parent->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
 			{
 				s = wxString(cBuffer, wxCSConv(wxFONTENCODING_UTF8));
+				
 
-				/*if (s.empty())
-				{
-
-					wxStringOutputStream* astream = new wxStringOutputStream();
-					int xxx;
-					for (xxx = 0; xxx < m_dc->GetUCLen(); xxx++)
-					{
-						if (cBuffer[xxx] == (char)IAC)
-							break;
-						else
-							astream->PutC(cBuffer[xxx]);
-					}
-
-
-					s = astream->GetString();
-					delete astream;
-					int sss = s.size();
-					wxString satz;
-					if (xxx < m_dc->GetUCLen())
-					{
-						satz = wxString(cBuffer[xxx-1]);
-						s.Append(satz);
-					}
-
-				}*/
 			}
+			else
+				s = wxString(cBuffer);*/
 			if (s.empty())
-				s = wxString::From8BitData((const char*)cBuffer);
+			{
+				s = wxString(cBuffer);
+				
+			}
+			s = wxString(cBuffer);
 			#endif
 				
-				//s=ff;
-			//}
+			
 		}
 	}
 	//s = wxString::FromAscii(cBuffer);	
 	wxString::iterator it;
+	
 		
 	if (m_vmudlines.empty())
 		m_parsestate = HAVE_TEXT;
@@ -1594,6 +1371,7 @@ static bool colset = false;
 	}
 	m_indexstart = line.m_vstyle.size();
 	
+	char cc[30000];
 	for (it=s.begin()+pos;it!=s.end();it++, pos++)
 	{
 		switch (m_parsestate)
@@ -1613,7 +1391,9 @@ static bool colset = false;
 				if (*it=='!' && m_msp)
 				{				
 					m_parsestate = HAVE_MSP1;
+					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
+					cc[sLine.length()] = *it;
 					break;
 				}
 				if (*it==BELL)
@@ -1638,8 +1418,10 @@ static bool colset = false;
 							//sLine.Empty();
 						}
 					}
+					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					style[index].SetText(sLine);
+					//style[index].SetText(sLine);
+					style[index].SetCharText(cc);
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -1649,6 +1431,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+					line.SetCharLineText(cc);
 					sLine.Empty();
 					//}
 				break;
@@ -1670,8 +1453,10 @@ static bool colset = false;
 					}
 					//if (pos>opos)
 					//{	
+					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");	
-					style[index].SetText(sLine);
+					//style[index].SetText(sLine);
+					style[index].SetCharText(cc);
 					//opos=pos;
 					if (m_bourl)
 					{	
@@ -1681,11 +1466,14 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+					line.SetCharLineText(cc);
 					sLine.Empty();
 					//}
 				break;
 				}
+				//sLine.Append(cBuffer[pos]);
 				sLine.Append(*it);
+				cc[sLine.length()-1] = *it;
 				break;
 			case HAVE_LF:
 				m_parsestate = HAVE_TEXT;
@@ -1701,9 +1489,10 @@ static bool colset = false;
 				//sLine.Trim();
 				//if (pos>opos)
 				//{
-					
+					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					style[index].SetText(sLine);
+					//style[index].SetText(sLine);
+					style[index].SetCharText(cc);
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -1723,8 +1512,8 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
-				
-				line.SetFull(true);
+					//line.SetCharLineText(cc);
+					line.SetFull(true);
 				if (!m_vmudlines.empty())
 				{
 					if (!m_vmudlines.back().IsFull())
@@ -1742,10 +1531,11 @@ static bool colset = false;
 					m_curline = m_vmudlines.size();
 					line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 				}
-				int idx = m_parent->GetDefVarIndexByLabel("amcLines");
+				int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
 				wxString l;
 				l << line.GetLinenumber();
 				m_parent->GetDefVars()->at(idx).SetValue(l);
+				m_parent->luaBuilddefvar();
 				wxDateTime d;
 				d = wxDateTime::UNow();
 				line.SetDateTimeMS(d);
@@ -1769,7 +1559,8 @@ static bool colset = false;
 				{
 					style[i].SetFontStyle(0);
 					style[i].SetURL(false);
-					style[i].SetText("");
+					//style[i].SetText("");
+					style[i].SetCharText("");
 					style[i].SetFCol(7, m_colansi[7]);
 					style[i].SetBCol(0, m_colansi[0]);
 				}
@@ -1810,6 +1601,9 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
+					cc[sLine.length()-1] = *it;
+
+					//sLine.Append(cBuffer[pos]);
 					m_parsestate = HAVE_TEXT;
 				}
 				break;
@@ -2003,7 +1797,9 @@ static bool colset = false;
 				if (*it==IAC)//IAC IAC
 				{
 					m_parsestate = HAVE_TEXT;
+					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
+					cc[sLine.length()-1] = *it;
 					break;
 				}
 				if (*it==GA || *it==EOR)
@@ -2752,14 +2548,18 @@ static bool colset = false;
 				if (*it=='!')
 				{
 					m_parsestate = HAVE_MSP;
+					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
+					cc[sLine.length()-1] = *it;
 					//sLine.RemoveLast();
 				}
 				else if (*it==ESC)
 				{
 					m_parsestate = HAVE_ESC;
+					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					style[index].SetText(sLine);
+					//style[index].SetText(sLine);
+					style[index].SetCharText(cc);
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -2769,6 +2569,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+					line.SetCharLineText(cc);
 					sLine.Empty();
 				}
 				else if (*it=='\n')
@@ -2776,6 +2577,8 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
+					cc[sLine.length()-1] = *it;
+					//sLine.Append(cBuffer[pos]);
 					m_parsestate = HAVE_TEXT;
 				}
 				break;
@@ -2792,7 +2595,9 @@ static bool colset = false;
 					else
 					{
 						m_parsestate = HAVE_TEXT;
+						//sLine.Append(cBuffer[pos]);
 						sLine.Append(*it);
+						cc[sLine.length()-1] = *it;
 					}
 				}
 				break;
@@ -2800,9 +2605,10 @@ static bool colset = false;
 				break;
 		}
 	}
-		
+	cc[sLine.length()] = EOS;
 	sLine.Replace("\t", "    ");
-	style[index].SetText(sLine);
+	//style[index].SetText(sLine);
+	style[index].SetCharText(cc);
 	if (m_bourl)
 	{	
 		if (m_url->Match(style[index].GetText(), false))
@@ -2828,6 +2634,7 @@ static bool colset = false;
 	
 	m_indexend=line.m_vstyle.size();
 	line.SetLineText(sLine);
+	line.SetCharLineText(cc);
 	if (!m_vmudlines.empty())
 	{
 		if (!m_vmudlines.back().IsFull())
@@ -2847,7 +2654,8 @@ static bool colset = false;
 		{
 			style[i].SetFontStyle(0);
 			style[i].SetURL(false);
-			style[i].SetText("");
+			//style[i].SetText("");
+			style[i].SetCharText("");
 			style[i].SetFCol(7, m_colansi[7]);
 			style[i].SetBCol(0, m_colansi[0]);
 		}
@@ -2864,10 +2672,11 @@ static bool colset = false;
 		//line.SetLinenumber(m_vmudlines.at(m_curline-1).GetLinenumber()+1);
 		line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 	}
-	int idx = m_parent->GetDefVarIndexByLabel("amcLines");
+	int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
 	wxString l;
 	l << line.GetLinenumber();
 	m_parent->GetDefVars()->at(idx).SetValue(l);
+	m_parent->luaBuilddefvar();
 	wxDateTime d, ddt;
 	ddt = wxDateTime::UNow();
 	line.SetDateTimeMS(ddt);
@@ -3396,7 +3205,7 @@ map<wxString, bool>::iterator mit;
 		m_curline--;
 		this->SetScrollPage();
 	}
-	//::wxLogDebug(wxT("time: %ld ms, %s"), sw.Time(), sLine.c_str());
+	//::wxLogDebug(("time: %ld ms, %s"), sw.Time(), sLine.c_str());
     //} while (pos<index-1);
 }
 
@@ -3423,7 +3232,7 @@ wxStringTokenizer tkz;
 					continue;
 				for (int x=linenr-m_parent->m_trigger.at(i).GetLines()+1;x<linenr+1;x++)
 				{
-					s += m_vmudlines.at(x).GetLineText() + "\n";
+					s += m_vmudlines.at(x).GetConvLineText() + "\n";
 				}
 			}
 			else
@@ -3432,9 +3241,9 @@ wxStringTokenizer tkz;
 				//	linenr=m_vmudlines.size();
 				if (linenr>=(int)m_vmudlines.size())
 					linenr=m_curline-1;
-				s = m_vmudlines.at(linenr).GetLineText();
+				s = m_vmudlines.at(linenr).GetConvLineText();
 			}
-			if (m_parent->m_trigger.at(i).Match(s))//trit->Match(s))
+			if (m_parent->m_trigger.at(i).Match(s.To8BitData()))//trit->Match(s))
 			{
 				wxString ac = m_parent->m_trigger.at(i).BuildAction();//trit->BuildAction();
 				if (m_parent->m_trigger.at(i).GetSendScript())
@@ -3480,9 +3289,13 @@ wxStringTokenizer tkz;
 							out.append("\x1b[0m");
 							//ParseBuffer((wxChar*)Out(ac).data());
 							//ParseLine(&out);
+							
 							int temp = m_parsestate;
 							m_parsestate = HAVE_TEXT;
+							bool on = m_parent->TriggersOn();
+							m_parent->SetTriggersOn(false);
 							ParseNBuffer(out.char_str(),false);
+							m_parent->SetTriggersOn(on);
 							m_parsestate = temp;
 							if (!m_vmudlines.at(linenr).IsFull())
 							{
@@ -3494,9 +3307,11 @@ wxStringTokenizer tkz;
 							linenr=m_curline-1;
 						if (!m_vmudlines.at(linenr).IsFull())
 						{
+							bool on = m_parent->TriggersOn();
+							m_parent->SetTriggersOn(false);
 							ParseNBuffer((char*)" \n", false);
 							m_vmudlines.at(linenr).SetFull(true);
-							
+							m_parent->SetTriggersOn(on);
 							//m_vmudlines.at(linenr).SetTriggered(true);
 						}
 					}
@@ -3675,7 +3490,7 @@ size_t len;
 		}
 		if (s.GetChar(pos)==IAC)//(sLine->GetChar(pos)==IAC)
 		{
-			//ParseBuffer(wxT("IAC found"));
+			//ParseBuffer(("IAC found"));
 			
 			if (pos>(int)stcpy)//&& !boLast)
 			{
@@ -3817,11 +3632,11 @@ size_t len;
 		//line.SetLinenumber(m_vmudlines.at(m_curline-1).GetLinenumber()+1);
 		line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 	}
-	int idx = m_parent->GetDefVarIndexByLabel("amcLines");
+	int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
 	wxString l;
 	l << line.GetLinenumber();
 	m_parent->GetDefVars()->at(idx).SetValue(l);
-	
+	m_parent->luaBuilddefvar();
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();
@@ -3847,7 +3662,7 @@ size_t len;
 		}
 		m_vmudlines.at(m_curline-1).SetLogged(true);
 	}*/
-	//::wxLogDebug(wxT("pline: %ld"), sw.Time());
+	//::wxLogDebug(("pline: %ld"), sw.Time());
 	//delete empty;
 	//delete[] style;
 	//delete line;
@@ -4901,7 +4716,7 @@ int pos, start, end, diff=0;
 	//if (pos<0)
 	//	pos=0;
 	//SetScrollbar(wxVERTICAL, pos, m_scrollrange, m_curline);
-	//::wxLogDebug(wxT("start = %d, end=%d, diff=%d, scrollrange=%d"), start, end, diff, m_scrollrange);
+	//::wxLogDebug(("start = %d, end=%d, diff=%d, scrollrange=%d"), start, end, diff, m_scrollrange);
 return m_scrollrange;
 //return diff;
 }
@@ -4924,7 +4739,7 @@ void MudWindow::OnSize(wxSizeEvent& event)
 {
 	
 	SetScrollPage();
-	//Refresh();
+	Refresh();
 	//Update();
 }
 void MudWindow::OnPaint(wxPaintEvent& event)
@@ -4965,7 +4780,7 @@ size_t sublines=0;
 	end = start-m_scrollrange-1;
 	if (end<0)
 		end=0;
-	//::wxLogDebug(wxT("start=%3d, end=%3d, m_curline=%3d, m_scrollrange=%3d"), start, end, m_curline, m_scrollrange);
+	//::wxLogDebug(("start=%3d, end=%3d, m_curline=%3d, m_scrollrange=%3d"), start, end, m_curline, m_scrollrange);
 	m_start = start;
 	m_end = end;
 	if (!m_vmudlines.empty())
@@ -5109,6 +4924,7 @@ wxCoord startx=1;
 //int out=0;
 int x=0;
 size_t sublen=0;
+wxString::const_iterator sit;
 size_t stringpos = 0;
 AnsiLineElement style;
 size_t lines=1;
@@ -5139,16 +4955,13 @@ wxSize si;
 		
 		wxString t = m_vmudlines.at(lnr).m_vstyle.at(x).GetConvText();
 		sublen = t.length();
-		//sublen = m_vmudlines.at(lnr).m_vstyle.at(x).GetText().length();
-		//if (sublines && sublen==stringpos)
-		//	break;
-			//continue;
-		while (stringpos < len)//m_vmudlines.at(lnr).GetLineText().length())
+		
+		while (stringpos < len)
 		{
 			if (stringpos==sublen)
 			{
 				x++;
-				//while (t.length())
+				
 				while (!m_vmudlines.at(lnr).m_vstyle.at(x).GetConvText().length())
 					x++;
 				
@@ -5167,7 +4980,9 @@ wxSize si;
 				dc->SetTextForeground(m_vmudlines.at(lnr).m_vstyle.at(x).GetFCol());
 				dc->SetTextBackground(m_vmudlines.at(lnr).m_vstyle.at(x).GetBCol());
 			}
+			
 			wxString sub = m_vmudlines.at(lnr).GetConvLineText().at(stringpos);
+						
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==4)//underlined
 				dc->SetFont(*m_ufont);
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==3)//italic
@@ -5184,8 +4999,6 @@ wxSize si;
 				dc->SetFont(*m_font);
 			if (m_vmudlines.at(lnr).m_vstyle.at(x).GetFontStyle()==3)//italic
 				dc->SetFont(*m_font);
-			//startx += (char_len);
-			//startx += 1;
 			startx += si.GetWidth();	
 			
 			if (stringpos+xx==m_wrap*lines)
@@ -5196,6 +5009,7 @@ wxSize si;
 				lines++;
 			}
 			stringpos++;
+			
 			if (stringpos+xx==m_wrap*lines)
 			{
 				sublines--;
@@ -5903,7 +5717,7 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 		m_parent->m_child->Freeze();
 		m_parent->m_splitter->SetLineBuffer(m_parent->m_child->GetLines());
 		m_parent->m_splitter->m_curline = m_parent->m_child->m_curline;
-		m_parent->m_mgr.GetPane(wxT("amcsplitter")).Show();
+		m_parent->m_mgr.GetPane(("amcsplitter")).Show();
 		m_parent->m_mgr.Update();
 		int line = m_parent->m_child->m_curline-m_parent->m_child->m_scrollrange;
 		m_parent->m_splitter->SetScrollPage();
@@ -5919,7 +5733,7 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 		m_parent->m_child->Freeze();
 		m_parent->m_splitter->SetLineBuffer(m_parent->m_child->GetLines());
 		m_parent->m_splitter->m_curline = m_parent->m_child->m_curline;
-		m_parent->m_mgr.GetPane(wxT("amcsplitter")).Show();
+		m_parent->m_mgr.GetPane(("amcsplitter")).Show();
 		m_parent->m_mgr.Update();
 		int line = m_parent->m_child->m_curline-m_parent->m_child->m_scrollrange;
 		m_parent->m_splitter->SetScrollPage();
@@ -5937,6 +5751,7 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 void MudWindow::OnSocketEvent(wxSocketEvent& event)
 {
 char cBuf[64000];
+wxMemoryBuffer cMemBuf(64000);
 //wxCharTypeBuffer<char> cBuf(64000);
 wxString s, buffer;
 wxUint32 uiBytesRead;
@@ -5956,7 +5771,7 @@ wxUint32 uiBytesRead;
 		//wxString ss = t.ToUTF8();
 		
 		m_cBuffer[uiBytesRead]=EOS;
-		
+		//m_MemBuffer.Clear();
 		if (m_mccp2 && uiBytesRead && !m_oddmccp2)
 		{
 			int err=m_dc->Decompress(m_cBuffer, (size_t)uiBytesRead);
@@ -5971,7 +5786,9 @@ wxUint32 uiBytesRead;
 			//cBuf = new wxChar[m_dc->GetUCLen()+10];
 			//cBuf=new wxChar[30000];
 			m_dc->GetUCBuffer(cBuf);
+			//m_MemBuffer.AppendData(cBuf, m_dc->GetUCLen());
 		}
+
 		if (m_parent->GetGlobalOptions()->DebugRaw())
 		{
 			if (m_mccp2 && cBuf!=NULL)
@@ -6040,6 +5857,7 @@ wxUint32 uiBytesRead;
 			{
 				if (!m_mxp)
 					ParseNBuffer(cBuf, false);
+					//ParseNBuffer((char*)m_MemBuffer.GetData());
 				else ParseBufferMXP(cBuf);
 			}
 			else
@@ -6050,6 +5868,7 @@ wxUint32 uiBytesRead;
 				}
 				else
 					ParseNBuffer(cBuf, false);
+					//ParseNBuffer((char*)m_MemBuffer.GetData(), false);
 			}
 		}
 		else
@@ -6225,9 +6044,12 @@ wxUint32 uiBytesRead;
 			}
 		}
 		m_sock->Read(m_cBuffer, 9999);
+		//m_MemBuffer.Clear();
+				
 		uiBytesRead = m_sock->LastCount();
-		m_cBuffer[uiBytesRead]=EOS;
 		
+		m_cBuffer[uiBytesRead]=EOS;
+		//m_MemBuffer.AppendData(m_cBuffer, uiBytesRead+1);
 		if (m_parent->GetGlobalOptions()->DebugRaw())
 			WriteRaw(m_cBuffer, uiBytesRead);
 		
@@ -6239,6 +6061,7 @@ wxUint32 uiBytesRead;
 		}
 		else
 			ParseNBuffer(m_cBuffer);
+			//ParseNBuffer((char*)m_MemBuffer.GetData());
 
 		
 		SetScrollPage();

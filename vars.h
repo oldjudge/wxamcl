@@ -10,7 +10,7 @@ class amcVar
 {
 public:
 	amcVar(); //!< standard constructor 
-	amcVar(wxString name, wxString content, wxString group = wxT("default"), bool on=true); //!< create a variable constructor
+	amcVar(wxString name, wxString content, wxString group = "default", bool on=true); //!< create a variable constructor
 	~amcVar(); //!< destructor
 	friend bool operator<(const amcVar& A, const amcVar& B) {return A.m_name<B.m_name;}
 	friend bool operator>(const amcVar& A, const amcVar& B) {return A.m_name>B.m_name;}
@@ -60,7 +60,7 @@ class amcList
 {
 public:
 	amcList(); //!< standard constructor 
-	amcList(wxString name, vector<wxString> content, wxString group = wxT("default"), bool on=true); //!< create a variable constructor
+	amcList(wxString name, vector<wxString> content, wxString group = "default", bool on=true); //!< create a variable constructor
 	~amcList(); //!< destructor
 	friend bool operator<(const amcList& A, const amcList& B) {return A.m_name<B.m_name;}
 	friend bool operator>(const amcList& A, const amcList& B) {return A.m_name>B.m_name;}

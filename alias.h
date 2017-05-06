@@ -10,7 +10,7 @@ class amcAlias
 {
 public:
 	amcAlias(); //!< standard constructor 
-	amcAlias(wxString alias, wxString action, wxString group = wxT("default"), bool on=true); //!< create a real alias constructor
+	amcAlias(wxString alias, wxString action, wxString group = "default", bool on=true); //!< create a real alias constructor
 	~amcAlias(); //!< destructor
 	friend bool operator<(const amcAlias& A, const amcAlias& B) {return A.m_alias<B.m_alias;}
 	friend bool operator>(const amcAlias& A, const amcAlias& B) {return A.m_alias>B.m_alias;}
