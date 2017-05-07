@@ -96,7 +96,9 @@ void AnsiLineElement::SetText(wxString text)
 
 void AnsiLineElement::SetCharText(char* t)
 {
-	wxStrncpy(m_ctext, t, wxStrlen(t));
+	
+    
+    wxStrncpy(m_ctext, t, wxStrlen(t));
 	m_ctext[wxStrlen(t)] = EOS;
 	m_text.Clear();
 	MudMainFrame *frame = wxGetApp().GetFrame();
@@ -108,6 +110,7 @@ void AnsiLineElement::SetCharText(char* t)
 		m_text = wxString::From8BitData(m_ctext);
 	m_text.Replace("\t", "    ");
 	m_len = m_text.length();
+    
 }
 
 wxString AnsiLineElement::GetConvText()

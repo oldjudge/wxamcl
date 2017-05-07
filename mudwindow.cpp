@@ -1261,7 +1261,7 @@ static bool colset = false;
 			//{
 			#ifdef __WXGTK__
 			s = wxString(cBuffer);
-			//s = wxString::From8BitData((const char*) cBuffer);
+			s = wxString::From8BitData((const char*) cBuffer);
 			if (s.empty())
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
@@ -1420,8 +1420,10 @@ static bool colset = false;
 					}
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					//style[index].SetText(sLine);
-					style[index].SetCharText(cc);
+					style[index].SetText(sLine);
+					#ifdef __WXMSW__
+                    style[index].SetCharText(cc);
+                    #endif
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -1431,7 +1433,9 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+                    #ifdef __WXMSW__
 					line.SetCharLineText(cc);
+                    #endif
 					sLine.Empty();
 					//}
 				break;
@@ -1455,8 +1459,10 @@ static bool colset = false;
 					//{	
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");	
-					//style[index].SetText(sLine);
-					style[index].SetCharText(cc);
+					style[index].SetText(sLine);
+					#ifdef __WXMSW__
+                    style[index].SetCharText(cc);
+                    #endif
 					//opos=pos;
 					if (m_bourl)
 					{	
@@ -1466,14 +1472,18 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+                    #ifdef __WXMSW__
 					line.SetCharLineText(cc);
+                    #endif
 					sLine.Empty();
 					//}
 				break;
 				}
 				//sLine.Append(cBuffer[pos]);
 				sLine.Append(*it);
+                #ifdef __WXMSW__
 				cc[sLine.length()-1] = *it;
+                #endif
 				break;
 			case HAVE_LF:
 				m_parsestate = HAVE_TEXT;
@@ -1491,8 +1501,10 @@ static bool colset = false;
 				//{
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					//style[index].SetText(sLine);
-					style[index].SetCharText(cc);
+					style[index].SetText(sLine);
+					#ifdef __WXMSW__
+                    style[index].SetCharText(cc);
+                    #endif
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -1559,7 +1571,7 @@ static bool colset = false;
 				{
 					style[i].SetFontStyle(0);
 					style[i].SetURL(false);
-					//style[i].SetText("");
+					style[i].SetText("");
 					style[i].SetCharText("");
 					style[i].SetFCol(7, m_colansi[7]);
 					style[i].SetBCol(0, m_colansi[0]);
@@ -1601,8 +1613,9 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
+                    #ifdef __WXMSW__
 					cc[sLine.length()-1] = *it;
-
+                    #endif
 					//sLine.Append(cBuffer[pos]);
 					m_parsestate = HAVE_TEXT;
 				}
@@ -1799,7 +1812,10 @@ static bool colset = false;
 					m_parsestate = HAVE_TEXT;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
+                    #ifdef __WXMSW__
 					cc[sLine.length()-1] = *it;
+                    #endif
+					
 					break;
 				}
 				if (*it==GA || *it==EOR)
@@ -2550,7 +2566,10 @@ static bool colset = false;
 					m_parsestate = HAVE_MSP;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
+                    #ifdef __WXMSW__
 					cc[sLine.length()-1] = *it;
+                    #endif
+					
 					//sLine.RemoveLast();
 				}
 				else if (*it==ESC)
@@ -2558,8 +2577,10 @@ static bool colset = false;
 					m_parsestate = HAVE_ESC;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
-					//style[index].SetText(sLine);
-					style[index].SetCharText(cc);
+					style[index].SetText(sLine);
+					#ifdef _WXMSW__
+                    style[index].SetCharText(cc);
+                    #endif
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -2569,7 +2590,9 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
+                    #ifdef __WXMSW__
 					line.SetCharLineText(cc);
+                    #endif
 					sLine.Empty();
 				}
 				else if (*it=='\n')
@@ -2577,7 +2600,10 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
+                    #ifdef __WXMSW__
 					cc[sLine.length()-1] = *it;
+                    #endif
+					
 					//sLine.Append(cBuffer[pos]);
 					m_parsestate = HAVE_TEXT;
 				}
@@ -2597,7 +2623,10 @@ static bool colset = false;
 						m_parsestate = HAVE_TEXT;
 						//sLine.Append(cBuffer[pos]);
 						sLine.Append(*it);
-						cc[sLine.length()-1] = *it;
+                        #ifdef __WXMSW__
+                        cc[sLine.length()-1] = *it;
+                        #endif
+						
 					}
 				}
 				break;
@@ -2607,8 +2636,10 @@ static bool colset = false;
 	}
 	cc[sLine.length()] = EOS;
 	sLine.Replace("\t", "    ");
-	//style[index].SetText(sLine);
+	style[index].SetText(sLine);
+    #ifdef __WXMSW__
 	style[index].SetCharText(cc);
+    #endif
 	if (m_bourl)
 	{	
 		if (m_url->Match(style[index].GetText(), false))
@@ -2634,7 +2665,10 @@ static bool colset = false;
 	
 	m_indexend=line.m_vstyle.size();
 	line.SetLineText(sLine);
+    #ifdef __WXMSW__
 	line.SetCharLineText(cc);
+    #endif
+	
 	if (!m_vmudlines.empty())
 	{
 		if (!m_vmudlines.back().IsFull())
@@ -2654,7 +2688,7 @@ static bool colset = false;
 		{
 			style[i].SetFontStyle(0);
 			style[i].SetURL(false);
-			//style[i].SetText("");
+			style[i].SetText("");
 			style[i].SetCharText("");
 			style[i].SetFCol(7, m_colansi[7]);
 			style[i].SetBCol(0, m_colansi[0]);
