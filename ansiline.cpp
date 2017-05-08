@@ -45,6 +45,7 @@ AnsiLineElement::AnsiLineElement(wxString text, int f, int b)
 	m_bcol=frame->m_child->GetAnsiColor(b);
 	m_hint = wxEmptyString;
 	m_url = wxEmptyString;
+    m_ctext[0]=EOS;
 }
 
 AnsiLineElement::AnsiLineElement(const AnsiLineElement& ale)
@@ -116,19 +117,19 @@ void AnsiLineElement::SetCharText(char* t)
 wxString AnsiLineElement::GetConvText()
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
-	{
+	//if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_text.To8BitData(), c);
 		return ff;
 		
-	}
-	else
-	{
+	//}
+	//else
+	//{
 
 		//return wxString::From8BitData(m_ctext);
-		return m_text;// .wx_str();
-	}
+		//return m_text;// .wx_str();
+	//}
 }
 
 //AnsiLine
@@ -178,13 +179,13 @@ AnsiLine::~AnsiLine()
 wxString AnsiLine::GetConvLineText()
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
-	{
+	//if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_linetext.To8BitData(), c);
 		return ff;
-	}
-	else return m_linetext;
+	//}
+	//else return m_linetext;
 }
 
 void AnsiLine::GetCharAnsiLine(char * c)

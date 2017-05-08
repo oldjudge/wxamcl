@@ -282,9 +282,9 @@ bool MudClientApp::OnInit()
 		frame->m_child->Msg(converter.to_bytes(c));
 	}*/
 
-	//wxString ss("          â•”â•â•â•â•â•â•â•â•â•â•â•â•—");
+	//wxString ss("          â•”â•â•â•â•â•â•â•â•â•â•â•â•—", wxConvUTF8);
 		
-	//frame->m_child->ParseNBuffer(ss.char_str(), false);
+	//frame->m_child->ParseNBuffer(ss, false);
 	//wxString ss = "\x1b[0;33m           ---  \n";
 	/*ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m<\x1b[1;33m!\x1b[1;37m#\x1b[0;33m\x1b[0;33m|  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);

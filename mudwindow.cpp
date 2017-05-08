@@ -1247,14 +1247,14 @@ static bool ttsent = false;
 static bool colset = false;
 //static bool bol = false;
 	//********Freeze();
-	if (!m_parent->GetGlobalOptions()->UseUTF8())	
+	/*if (!m_parent->GetGlobalOptions()->UseUTF8())	
 		s = wxString::From8BitData((const char*) cBuffer);
 	else
-	{
+	{*/
 		//if (cBuffer[0]==(char)IAC)
 		//	s = wxString::From8BitData((const char*) cBuffer);
 		//else
-		{
+		//{
 			//wxString f(cBuffer, wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 			//s=f;
 			//if (f.empty()&& wxStrlen(cBuffer)>0)
@@ -1266,17 +1266,12 @@ static bool colset = false;
 				s = wxString::From8BitData((const char*)cBuffer);
 			#endif
 			#ifdef __WXOSX__
-			s = wxString(cBuffer);
-			if (m_parent->GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
-				s = wxString (cBuffer, wxCSConv(wxFONTENCODING_UTF8));
-			if (s.empty())
-				s = wxString::From8BitData((const char*)cBuffer);
+            
+			s = wxString::From8BitData((const char*)cBuffer);
 			#endif
 			
 			#ifdef __WXMSW__
 			s = wxString::From8BitData((const char*) cBuffer);
-			
-			
 			
 			/*if (m_parent->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
 			{
@@ -1295,8 +1290,8 @@ static bool colset = false;
 			#endif
 				
 			
-		}
-	}
+		//}
+	//}
 	//s = wxString::FromAscii(cBuffer);	
 	wxString::iterator it;
 	
@@ -2578,7 +2573,7 @@ static bool colset = false;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
-					#ifdef _WXMSW__
+					#ifndef _WXGTK__
                     style[index].SetCharText(cc);
                     #endif
 					if (m_bourl)
