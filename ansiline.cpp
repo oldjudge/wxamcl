@@ -92,13 +92,12 @@ void AnsiLineElement::SetText(wxString text)
 	
 	m_text.clear();
 	m_text.append(text);
+	m_text.Replace("\t", "    ");
 	m_len = m_text.length();
 }
 
 void AnsiLineElement::SetCharText(char* t)
 {
-	
-    
     wxStrncpy(m_ctext, t, wxStrlen(t));
 	m_ctext[wxStrlen(t)] = EOS;
 	m_text.Clear();
@@ -262,6 +261,7 @@ void AnsiLine::SetLineText(wxString st)
 	//if (ff.empty())
 	//	ff=st;
 	m_linetext.append(st);
+	m_linetext.Replace("\t", "    ");
 }
 
 void AnsiLine::SetCharLineText(char *t)

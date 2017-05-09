@@ -91,7 +91,7 @@ BEGIN_EVENT_TABLE(InputTextCtrl, wxTextCtrl)
 	EVT_KEY_DOWN(InputTextCtrl::OnKeyDown)
 	EVT_MOUSEWHEEL(InputTextCtrl::OnMouseWheel)
 	EVT_LEFT_UP(InputTextCtrl::OnMouseLeftUp)
-	EVT_LEFT_DOWN(InputTextCtrl::OnMouseLeftDown)
+	EVT_LEFT_DCLICK(InputTextCtrl::OnMouseLeftDClick)
 	EVT_SET_FOCUS(InputTextCtrl::OnSetFocus)
 	EVT_TIMER(2222, InputTextCtrl::OnSWDelay)
 	EVT_IDLE(InputTextCtrl::OnIdle)
@@ -2750,6 +2750,10 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		MudWindow * mw = new MudWindow(this, win, f.GetPointSize());
 		//MudWindow mw(this, win, 9);
 		mw->SetName(win);
+#ifdef __WXMSW__
+		if (GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
+			mw->SetWrapping(false); //workaround under windows UTF8
+#endif
 		//aL->GetField(-6, "fontfamily");
 		//f.SetFamily(aL->GetInt(-1));
 		mw->SetNFont(&f);
@@ -3732,7 +3736,7 @@ InputTextCtrl::InputTextCtrl(wxWindow *parent, wxWindowID id, const wxString &va
 	m_waiting = false;
 	m_sw.SetOwner(this->GetEventHandler(),2222);
 	m_swsend = wxEmptyString;
-	m_gotfocus = false;
+	m_dclick = false;
 }
 
 void InputTextCtrl::OnTextEnter(wxCommandEvent &event)
@@ -3759,8 +3763,8 @@ void InputTextCtrl::OnSetFocus(wxFocusEvent &event)
 	
 	//SetSelection(-1, -1);
 #endif
-	if (m_keepinput)
-		m_gotfocus = true;
+	/*if (m_keepinput)
+		m_gotfocus = true;*/
 	event.Skip();
 }
 
@@ -3790,14 +3794,16 @@ void InputTextCtrl::OnMouseWheel(wxMouseEvent &event)
 
 void InputTextCtrl::OnMouseLeftUp(wxMouseEvent &event)
 {
-	if (m_keepinput)
-		m_gotfocus = true;
+	
 	event.Skip();
 }
 
-void InputTextCtrl::OnMouseLeftDown(wxMouseEvent &event)
+void InputTextCtrl::OnMouseLeftDClick(wxMouseEvent &event)
 {
-	//m_gotfocus = true;
+	SetSelection(-1, -1);
+	SelectAll();
+	
+	m_dclick = true;
 	event.Skip();
 }
 
@@ -3807,6 +3813,11 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	int mods = event.GetModifiers();
 	hk_it iter;
 
+	if (m_dclick)
+	{
+		Clear();
+		m_dclick = false;
+	}
 	//MudMainFrame* frame = (MudMainFrame*)GetParent();
 	//check if this is an hotkey combo
 	for (iter = m_parent->GetHotkeys()->begin(); iter!= m_parent->GetHotkeys()->end(); iter++)

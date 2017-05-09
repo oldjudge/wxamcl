@@ -529,7 +529,7 @@ private:
 	bool m_waiting;
 	wxTimer m_sw;
 	wxString m_swsend;
-	bool m_gotfocus;
+	bool m_dclick;
 	//functions
 	bool ParseCommand(wxString *sCommand);
 	//functions mudcommands
@@ -571,7 +571,7 @@ private:
 	void OnKeyDown(wxKeyEvent& event);
 	void OnMouseWheel(wxMouseEvent& event);
 	void OnMouseLeftUp(wxMouseEvent& event);
-	void OnMouseLeftDown(wxMouseEvent& event);
+	void OnMouseLeftDClick(wxMouseEvent& event);
 	void OnSetFocus(wxFocusEvent& event);
 	void OnSWDelay(wxTimerEvent& event);
 	void OnIdle(wxIdleEvent& event);

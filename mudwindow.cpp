@@ -126,6 +126,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_charset=wxEmptyString;
 	m_oddmccp2 = 0;
 	m_wrap = 150;//means autowrap at window width
+	m_wrapping = true;
 	m_password = false;
 	m_noscroll = false;
 	m_selstart.x = -1;
@@ -238,6 +239,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	m_atcpstring = wxEmptyString;
 	m_charset = wxEmptyString;
 	m_wrap = 150;
+	m_wrapping = true;
 	m_noscroll = false;
 	m_selstart.x = -1;
 	m_selstart.y = -1;
@@ -1273,20 +1275,12 @@ static bool colset = false;
 			#ifdef __WXMSW__
 			s = wxString::From8BitData((const char*) cBuffer);
 			
-			/*if (m_parent->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
-			{
-				s = wxString(cBuffer, wxCSConv(wxFONTENCODING_UTF8));
-				
-
-			}
-			else
-				s = wxString(cBuffer);*/
-			if (s.empty())
+			/*if (s.empty())
 			{
 				s = wxString(cBuffer);
 				
-			}
-			s = wxString(cBuffer);
+			}*/
+			//s = wxString(cBuffer);
 			#endif
 				
 			
@@ -1416,7 +1410,7 @@ static bool colset = false;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
-					#ifdef __WXMSW__
+					#ifdef _WXMSW__
                     style[index].SetCharText(cc);
                     #endif
 					if (m_bourl)
@@ -1428,7 +1422,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					line.SetCharLineText(cc);
                     #endif
 					sLine.Empty();
@@ -1455,7 +1449,7 @@ static bool colset = false;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");	
 					style[index].SetText(sLine);
-					#ifdef __WXMSW__
+					#ifdef _WXMSW__
                     style[index].SetCharText(cc);
                     #endif
 					//opos=pos;
@@ -1467,7 +1461,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					line.SetCharLineText(cc);
                     #endif
 					sLine.Empty();
@@ -1476,7 +1470,7 @@ static bool colset = false;
 				}
 				//sLine.Append(cBuffer[pos]);
 				sLine.Append(*it);
-                #ifdef __WXMSW__
+                #ifdef _WXMSW__
 				cc[sLine.length()-1] = *it;
                 #endif
 				break;
@@ -1497,7 +1491,7 @@ static bool colset = false;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
-					#ifdef __WXMSW__
+					#ifdef _WXMSW__
                     style[index].SetCharText(cc);
                     #endif
 					if (m_bourl)
@@ -1608,7 +1602,7 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					cc[sLine.length()-1] = *it;
                     #endif
 					//sLine.Append(cBuffer[pos]);
@@ -1807,7 +1801,7 @@ static bool colset = false;
 					m_parsestate = HAVE_TEXT;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					cc[sLine.length()-1] = *it;
                     #endif
 					
@@ -2561,7 +2555,7 @@ static bool colset = false;
 					m_parsestate = HAVE_MSP;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					cc[sLine.length()-1] = *it;
                     #endif
 					
@@ -2573,7 +2567,7 @@ static bool colset = false;
 					cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
-					#ifndef _WXGTK__
+					#ifdef _WXMSW__
                     style[index].SetCharText(cc);
                     #endif
 					if (m_bourl)
@@ -2585,7 +2579,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					line.SetCharLineText(cc);
                     #endif
 					sLine.Empty();
@@ -2595,7 +2589,7 @@ static bool colset = false;
 				else
 				{
 					sLine.Append(*it);
-                    #ifdef __WXMSW__
+                    #ifdef _WXMSW__
 					cc[sLine.length()-1] = *it;
                     #endif
 					
@@ -2618,7 +2612,7 @@ static bool colset = false;
 						m_parsestate = HAVE_TEXT;
 						//sLine.Append(cBuffer[pos]);
 						sLine.Append(*it);
-                        #ifdef __WXMSW__
+                        #ifdef _WXMSW__
                         cc[sLine.length()-1] = *it;
                         #endif
 						
@@ -2632,7 +2626,7 @@ static bool colset = false;
 	cc[sLine.length()] = EOS;
 	sLine.Replace("\t", "    ");
 	style[index].SetText(sLine);
-    #ifdef __WXMSW__
+    #ifdef _WXMSW__
 	style[index].SetCharText(cc);
     #endif
 	if (m_bourl)
@@ -2660,7 +2654,7 @@ static bool colset = false;
 	
 	m_indexend=line.m_vstyle.size();
 	line.SetLineText(sLine);
-    #ifdef __WXMSW__
+    #ifdef _WXMSW__
 	line.SetCharLineText(cc);
     #endif
 	
@@ -4835,7 +4829,17 @@ size_t sublines=0;
 			if (!m_parent->GetGlobalOptions()->UseWrap() || !sublines)//only one...draw it
 				starty = DrawAnsi(&dc, starty, i, char_len, char_height);
 			else
+			{
+#ifdef __WXMSW__
+				if (!GetWrapping())
+					starty = DrawAnsi(&dc, starty, i, char_len, char_height);
+				else
+					starty = DrawMultiAnsi(&dc, starty, i, char_len, char_height, sublines);
+#endif // __WXMSW__
+#ifndef __WXMSW__
 				starty = DrawMultiAnsi(&dc, starty, i, char_len, char_height, sublines);
+#endif
+			}
 		}
 	}
 }

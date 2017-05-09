@@ -62,6 +62,7 @@ public:
 	bool GetFocusOnInput() {return m_focusoninput;}
 	wxSocketClient* GetSock() {return m_sock;}
 	bool GetUseIPV6() {return m_useipv6;}
+	bool GetWrapping() { return m_wrapping; }
 	//Setters
 	void SetColour(int idx, wxColour c) {m_colansi[idx] = c;}
 	void SetBackgroundCol(wxColour c) {m_background=c;}
@@ -95,6 +96,7 @@ public:
 	void SetSelectedStart(long l) {m_selline=l;}
 	void SetSelectedEnd(long l) {m_sellineend=l;}
 	void SetIPV6(bool b) {m_useipv6=b;}
+	void SetWrapping(bool b) { m_wrapping = b; }
 
 	//socket functions
 	void MyConnect(wxIPV4address addr);
@@ -267,6 +269,7 @@ private:
 	wxTimer m_rc;
 
 	char m_cBuffer[30001];
+	bool m_wrapping;
 	//wxMemoryBuffer m_MemBuffer;
 	//private Functions
 	size_t ParseTelnet(wxString *sLine, size_t pos);
