@@ -603,7 +603,8 @@ MudMainFrame::~MudMainFrame()
 // event handlers
 void MudMainFrame::OnEraseBackground(wxEraseEvent& event)
 {
-	wxLogDebug("OnEraseFrame");
+	//wxLogDebug("OnEraseFrame");
+    event.Skip();
 }
 
 void MudMainFrame::OnPaint(wxPaintEvent& event)
@@ -635,6 +636,7 @@ void MudMainFrame::OnIdle(wxIdleEvent& event)
 		if (!c->IsOk())
 			return;
 		c->Show();*/
+        event.Skip();
 }
 
 void MudMainFrame::OnCharConnect(wxCommandEvent& event)
@@ -762,12 +764,24 @@ void MudMainFrame::OnFileHistory(wxCommandEvent& event)
 
 void MudMainFrame::OnCopyClipboard(wxCommandEvent& event)
 {
-	wxString text = m_child->GetSelectedText();
-	if (wxTheClipboard->Open())
-	{
-		wxTheClipboard->SetData( new wxTextDataObject(text));
-        wxTheClipboard->Close();
-	}
+	if (m_child->IsTextSelected())
+    {
+        wxString text = m_child->GetSelectedText();
+        if (wxTheClipboard->Open())
+        {
+            wxTheClipboard->SetData( new wxTextDataObject(text));
+            wxTheClipboard->Close();
+        }
+    }
+    else if (m_splitter->IsTextSelected())
+    {
+        wxString text = m_splitter->GetSelectedText();
+        if (wxTheClipboard->Open())
+        {
+            wxTheClipboard->SetData( new wxTextDataObject(text));
+            wxTheClipboard->Close();
+        }
+    }
 }
 
 void MudMainFrame::OnAnsiCopyClipboard(wxCommandEvent& event)
@@ -861,7 +875,7 @@ static bool bodown = false;
 
 void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 {
-#include <wx/wupdlock.h>
+
         wxWindowUpdateLocker noUpdates(this);
 
 		if (UseSplitter() && !m_splitter->IsShown())
@@ -1443,10 +1457,15 @@ unsigned int x;
 
 void MudMainFrame::OnMenuUi(wxUpdateUIEvent& event)
 {
-	if (m_child->IsTextSelected())
+	//if (m_child->IsTextSelected() || m_splitter->IsTextSelected())
+    MudWindow *mw = (MudWindow*)event.GetEventObject();
+    if (mw->IsTextSelected())
 		event.Enable(true);
 	else
 		event.Enable(false);
+    
+    if (mw->IsLogging())
+        event.Enable(false);
 		
 }
 
@@ -3108,7 +3127,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			tb->SetName(n);
 			tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 			m_mgr.AddPane(tb, wxAuiPaneInfo().Name(n).Caption(n).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
-			m_mgr.Update();
+			//m_mgr.Update();
 			GetButtons()->at(i).SetParent(tb);
 			if (GetButtons()->at(i).GetName()=="separator")
 				tb->AddSeparator();
@@ -3197,10 +3216,10 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	wxString p = aL->GetUTF8String(-1);
 	aL->Pop(1);
 	m_mgr.LoadPerspective(p);
-	m_mgr.Update();
+	//m_mgr.Update();
 	//delete view;
-	m_toolbar->Refresh();
-	m_toolbar->Update();
+	//m_toolbar->Refresh();
+	//m_toolbar->Update();
 	m_mgr.LoadPerspective(p);
 	m_mgr.Update();
 	//m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
@@ -3901,21 +3920,24 @@ MudWindow *sendto;
 				WriteText(m_history.at(m_hpos));
 			break;
 		case WXK_PAGEUP:
+            
 			newevt.SetEventType(wxEVT_SCROLLWIN_PAGEUP);
 			if (m_parent->UseSplitter() && !m_parent->m_splitter->IsShown())
 			{
-
+                wxWindowUpdateLocker noUpdates(m_parent);
 				m_parent->m_child->Freeze();
+                m_parent->m_splitter->Freeze();
 				m_parent->m_splitter->SetLineBuffer(m_parent->m_child->GetLines());
 				m_parent->m_splitter->m_curline = m_parent->m_child->m_curline;
 				m_parent->m_mgr.GetPane("amcsplitter").Show();
-				m_parent->m_mgr.Update();
+				
 				int line = m_parent->m_child->m_curline-m_parent->m_child->m_scrollrange;
 				m_parent->m_splitter->SetScrollPage();
 				m_parent->m_splitter->SetScrollPos(wxVERTICAL, line-m_parent->m_splitter->m_scrollrange);
 				m_parent->m_splitter->Refresh();
-				//m_parent->m_splitter->Update();
+				m_parent->m_splitter->Thaw();
 				m_parent->m_child->Thaw();
+                m_parent->m_mgr.Update();
 				return;
 			}
 			sendto->SetKEvtForwarded(true);
@@ -3934,12 +3956,16 @@ MudWindow *sendto;
 		case WXK_END:
 			if (m_parent->m_splitter->IsShown())
 			{
-				m_parent->m_child->Freeze();
+				wxWindowUpdateLocker noUpdates(m_parent);
+                m_parent->m_child->Freeze();
+                m_parent->m_splitter->Freeze();
 				m_parent->m_mgr.GetPane("amcsplitter").Hide();
 				//m_parent->m_splitter->GetLineBuffer().empty();
 				//m_parent->m_mgr.GetPane(wxT("amcmain")).Hide();
-				m_parent->m_mgr.Update();
+				
 				m_parent->m_child->Thaw();
+                m_parent->m_splitter->Thaw();
+                m_parent->m_mgr.Update();
 				return;
 			}
 			sendto->SetKEvtForwarded(true);

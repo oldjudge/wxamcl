@@ -15,7 +15,7 @@ BEGIN_EVENT_TABLE(amcWindow, wxWindow)
 	EVT_MOUSEWHEEL(amcWindow::OnMouseWheel)
 	EVT_ENTER_WINDOW(amcWindow::OnEnterWindow)
 	EVT_LEAVE_WINDOW(amcWindow::OnLeaveWindow)
-	//EVT_CONTEXT_MENU(amcWindow::OnContextMenu)
+	EVT_CONTEXT_MENU(amcWindow::OnContextMenu)
 	//EVT_MENU(ID_OUTFONTGAUGE, amcWindow::OnOutputFont)
 END_EVENT_TABLE()
 
@@ -84,7 +84,7 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 	#if !defined __WXMSW__
 		m_font = new wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixed");
 	#else
-		m_font = new wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(10).Family(wxFONTFAMILY_MODERN).FaceName("Courier New"));
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
 	m_dc->SetBackgroundMode(wxTRANSPARENT);
@@ -119,6 +119,7 @@ void amcWindow::OnSize(wxSizeEvent& event)
 
 void amcWindow::OnRightDown(wxMouseEvent &event)
 {
+    event.Skip();
 }
 
 void amcWindow::OnLeftDown(wxMouseEvent &event)
@@ -172,4 +173,23 @@ void amcWindow::OnLeaveWindow(wxMouseEvent &event)
 {
 	//m_parent->m_child->Msg("Left");
 	m_parent->m_input->SetFocus();
+}
+
+void amcWindow::OnContextMenu(wxContextMenuEvent &event)
+{
+    wxMenu *contextMenu = new wxMenu;
+		contextMenu->Append(ID_OUTFONTAMCWIN, _("Font"), _("Set the output font"));
+		contextMenu->AppendCheckItem(ID_STAMPS, _("Timestamps"), _("Show timestamps in this window"));
+		contextMenu->Check(ID_STAMPS, m_parent->m_child->UseTimeStamps());
+		
+		contextMenu->AppendSeparator();
+		contextMenu->Append(ID_MAKEACTION, _("Create action..."), _("Create an action using the linetext"));
+		contextMenu->AppendSeparator();
+		contextMenu->Append(wxID_COPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
+		contextMenu->Append(ID_COPY, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
+		
+		wxPoint p = event.GetPosition();
+		p = ScreenToClient(p);
+		PopupMenu(contextMenu, p.x, p.y);
+		delete contextMenu;
 }

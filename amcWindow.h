@@ -55,7 +55,7 @@ private:
 	void OnMouseMove(wxMouseEvent& event);
 	void OnEnterWindow(wxMouseEvent& event);
 	void OnLeaveWindow(wxMouseEvent& event);
-	//void OnContextMenu(wxContextMenuEvent& event);
+	void OnContextMenu(wxContextMenuEvent& event);
 	//void OnOutputFont(wxCommandEvent& event);
 	DECLARE_EVENT_TABLE()
 };

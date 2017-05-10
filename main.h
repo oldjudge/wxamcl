@@ -62,6 +62,7 @@
 #include <wx/encconv.h>
 #include <wx/sstream.h>
 #include <wx/ipcbase.h>
+#include <wx/wupdlock.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
@@ -145,6 +146,7 @@ using namespace std;
 #define ID_OUTFONT 1101
 #define ID_STAMPS 1102
 #define ID_OUTFONTGAUGE 1103
+#define ID_OUTFONTAMCWIN 1104
 #define ID_OBJS 1200
 #define ID_INSTALL 1201
 #define ID_UNINSTALL 1202
@@ -153,6 +155,7 @@ using namespace std;
 #define ID_EDITSCRIPT 1400
 #define ID_COPY 1500
 #define ID_MAKEACTION 1510
+#define ID_LOGWINDOW 1520
 #define ID_SPLITTER 1600
 #define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000

@@ -298,6 +298,7 @@ private:
 	void OnOutputFont(wxCommandEvent& event);
 	void OnTimeStamps(wxCommandEvent& event);
 	void OnMakeAction(wxCommandEvent& event);
+    void OnLogThisWindow(wxCommandEvent& event);
 	void OnMxpMenu(wxCommandEvent& event);
 	void OnMxpPromptMenu(wxCommandEvent& event);
 	void OnAutoReconnect(wxTimerEvent& event);

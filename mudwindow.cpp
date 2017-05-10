@@ -52,6 +52,7 @@ BEGIN_EVENT_TABLE(MudWindow, wxWindow)
 	EVT_MENU(ID_OUTFONT, MudWindow::OnOutputFont)
 	EVT_MENU(ID_STAMPS, MudWindow::OnTimeStamps)
 	EVT_MENU(ID_MAKEACTION, MudWindow::OnMakeAction)
+    EVT_MENU(ID_LOGWINDOW, MudWindow::OnLogThisWindow)
 	EVT_MENU_RANGE(ID_MXPMENU, ID_MXPMENU+100, MudWindow::OnMxpMenu)
 	EVT_MENU_RANGE(ID_MXPMENUPROMPT, ID_MXPMENUPROMPT+100, MudWindow::OnMxpPromptMenu)
 	EVT_TIMER(1111, MudWindow::OnAutoReconnect)
@@ -156,7 +157,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	//m_mxp = new amcMXP();
 	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
 	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -949,6 +950,8 @@ AnsiLineElement style;
 		}
 	}
 	m_vmudlines.push_back(al);
+    if (IsLogging())
+        SendLineToLog(m_curline-1);
 	//SetScrollPage();
 }
 
@@ -4901,6 +4904,25 @@ void MudWindow::OnMakeAction(wxCommandEvent& event)
 	wxPostEvent(m_parent, ev);
 }
 
+void MudWindow::OnLogThisWindow(wxCommandEvent& event)
+{
+wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
+wxString logfile = this->GetName() << ".log";
+if (::wxFileExists(logfile))
+    ::wxRemoveFile(logfile);
+SetTextLog(new wxFile(logfile, wxFile::write));
+if (!GetTextLog()->IsOpened())
+	return;
+wxDateTime d;
+d.SetToCurrent();
+wxString s;
+s<<_("Logging started: ")<<d.FormatDate()<<(", ")<<d.FormatTime();
+GetTextLog()->Write(s+(char)CR+(char)LF+(char)CR+(char)LF);
+SetLogging(true);
+SetDateLogging(true);
+}
+
 void MudWindow::OnMxpMenu(wxCommandEvent& event)
 {
 	//wxMenu *m = (wxMenu*)event.GetEventObject();
@@ -5319,6 +5341,7 @@ wxScrollWinEvent newevt;
 void MudWindow::OnEraseBackground(wxEraseEvent& event)
 {
 	wxLogDebug("OnEraseBkgr");
+    event.Skip();
 }
 
 void MudWindow::OnLeftDown(wxMouseEvent& event)
@@ -5690,6 +5713,16 @@ int stamp_offset = 0;
 			contextMenu->Append(wxID_COPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
 			contextMenu->Append(ID_COPY, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
 		}
+        if (this!=m_parent->m_child)
+        {
+            contextMenu->AppendSeparator();
+            contextMenu->Append(ID_LOGWINDOW, _("Log this window"), _("Log the content of this window"));
+            contextMenu->Check(ID_LOGWINDOW, m_log);
+            if (m_log)
+            {
+                
+            }
+        }
 		wxPoint p = event.GetPosition();
 		//p = ScreenToClient(p);
 		PopupMenu(contextMenu, p.x, p.y);
