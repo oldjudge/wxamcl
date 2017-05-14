@@ -1987,7 +1987,8 @@ void dlg_obj::OnButtonSelChanged( wxTreeEvent& event )
 		return;
 	m_butlabel->SetValue(m_frame->GetButtons()->at(index).GetText());
 	m_butcommand->SetValue(m_frame->GetButtons()->at(index).GetAction());
-	m_bitmap->SetValue(m_frame->GetButtons()->at(index).GetBitmap());
+	m_bmfilepicker->SetInitialDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
+	m_bmfilepicker->SetPath(m_frame->GetButtons()->at(index).GetBitmap());
 	int found = m_parenttool->FindString(m_frame->GetButtons()->at(index).GetTbName());
 	if (found==wxNOT_FOUND)
 	{
@@ -2049,7 +2050,7 @@ wxAuiToolBar *tb;
 	}
 	b.SetTbName(s);
 	b.SetParent(tb);
-	b.SetBitmap(m_bitmap->GetValue());
+	b.SetBitmap(m_bmfilepicker->GetPath());
 	//tb->AddTool(b.GetId(), b.GetName(), script_xpm);
 	wxBitmap bt;
 	wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
@@ -2112,13 +2113,19 @@ b_it it;
 		m_frame->GetButtons()->at(index).SetText(s);
 		m_frame->GetButtons()->at(index).SetAction(m_butcommand->GetValue());
 		m_frame->GetButtons()->at(index).SetTbName(m_parenttool->GetValue());
-		m_frame->GetButtons()->at(index).SetBitmap(m_bitmap->GetValue());
+		m_frame->GetButtons()->at(index).SetBitmap(m_bmfilepicker->GetPath());
 		//BuildButtons();
 		wxAuiToolBar* tb = (wxAuiToolBar*)m_frame->GetButtons()->at(index).GetParent();
 		tb->SetToolLabel(m_frame->GetButtons()->at(index).GetId(), s);
 		wxBitmap bt;
 		wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
-		bt.LoadFile(m_bitmap->GetValue(), wxBITMAP_TYPE_XPM);
+		wxString f = m_bmfilepicker->GetPath();
+		if (f.EndsWith("xpm"))
+			bt.LoadFile(f, wxBITMAP_TYPE_XPM);
+		else if (f.EndsWith("bmp"))
+			bt.LoadFile(f, wxBITMAP_TYPE_BMP);
+		else
+			bt.LoadFile(f, wxBITMAP_TYPE_ANY);
 		tb->SetToolBitmap(m_frame->GetButtons()->at(index).GetId(), bt);
 		tb->Realize();
 		//m_frame->m_mgr.Update();

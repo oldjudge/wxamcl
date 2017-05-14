@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 16 2016)
+// C++ code generated with wxFormBuilder (version Dec 21 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -167,7 +167,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_trigger->SetSizer( bSizer8 );
 	m_trigger->Layout();
 	bSizer8->Fit( m_trigger );
-	m_notebook->AddPage( m_trigger, _("Actions"), true );
+	m_notebook->AddPage( m_trigger, _("Actions"), false );
 	m_alias = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -292,8 +292,8 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	Bitmap->Wrap( -1 );
 	gbSizer10->Add( Bitmap, wxGBPosition( 2, 0 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
-	m_bitmap = new wxTextCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	gbSizer10->Add( m_bitmap, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	m_bmfilepicker = new wxFilePickerCtrl( sbSizer11->GetStaticBox(), wxID_ANY, wxEmptyString, _("Select a file"), wxT("XPM files (*.xpm)|*.xpm|\nBitmap files (*.bmp)|*.bmp|\nAll files (*.*)|*.*"), wxDefaultPosition, wxDefaultSize, wxFLP_DEFAULT_STYLE|wxFLP_FILE_MUST_EXIST|wxFLP_OPEN );
+	gbSizer10->Add( m_bmfilepicker, wxGBPosition( 2, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
 	
 	
 	gbSizer10->AddGrowableCol( 1 );
@@ -322,7 +322,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_buttons->SetSizer( bSizer131 );
 	m_buttons->Layout();
 	bSizer131->Fit( m_buttons );
-	m_notebook->AddPage( m_buttons, _("Buttons"), false );
+	m_notebook->AddPage( m_buttons, _("Buttons"), true );
 	m_gauge = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer102;
 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );

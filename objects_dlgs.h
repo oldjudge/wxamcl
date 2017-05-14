@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 16 2016)
+// C++ code generated with wxFormBuilder (version Dec 21 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -34,6 +34,7 @@
 #include <wx/image.h>
 #include <wx/icon.h>
 #include <wx/listctrl.h>
+#include <wx/filepicker.h>
 #include <wx/choice.h>
 #include <wx/radiobox.h>
 #include <wx/clrpicker.h>
@@ -116,7 +117,7 @@ class ObjDlg : public wxDialog
 		wxStaticText* m_staticText39;
 		wxComboBox* m_parenttool;
 		wxStaticText* Bitmap;
-		wxTextCtrl* m_bitmap;
+		wxFilePickerCtrl* m_bmfilepicker;
 		wxButton* m_addbutton;
 		wxButton* m_editbutton;
 		wxButton* m_delbutton;
