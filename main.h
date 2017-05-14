@@ -155,7 +155,9 @@ using namespace std;
 #define ID_EDITSCRIPT 1400
 #define ID_COPY 1500
 #define ID_MAKEACTION 1510
+#define ID_MCOPY 1511
 #define ID_LOGWINDOW 1520
+#define ID_STOPLOGGING 1521
 #define ID_SPLITTER 1600
 #define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000

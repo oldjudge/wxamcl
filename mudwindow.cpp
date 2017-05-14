@@ -52,7 +52,10 @@ BEGIN_EVENT_TABLE(MudWindow, wxWindow)
 	EVT_MENU(ID_OUTFONT, MudWindow::OnOutputFont)
 	EVT_MENU(ID_STAMPS, MudWindow::OnTimeStamps)
 	EVT_MENU(ID_MAKEACTION, MudWindow::OnMakeAction)
+	EVT_MENU(ID_MCOPY, MudWindow::OnCopy)
     EVT_MENU(ID_LOGWINDOW, MudWindow::OnLogThisWindow)
+	EVT_MENU(ID_STOPLOGGING, MudWindow::OnStopLogging)
+	EVT_UPDATE_UI(ID_LOGWINDOW, MudWindow::OnMenuUi)
 	EVT_MENU_RANGE(ID_MXPMENU, ID_MXPMENU+100, MudWindow::OnMxpMenu)
 	EVT_MENU_RANGE(ID_MXPMENUPROMPT, ID_MXPMENUPROMPT+100, MudWindow::OnMxpPromptMenu)
 	EVT_TIMER(1111, MudWindow::OnAutoReconnect)
@@ -676,7 +679,7 @@ void MudWindow::SendLineToLog(wxUint64 i)
 		{
 			if (IsDateLogging())
 				m_tlog->Write(m_vmudlines.at(i).GetTime()+": ");
-			m_tlog->Write(m_vmudlines.at(i).GetLineText()+(char)CR+(char)LF);
+			m_tlog->Write(m_vmudlines.at(i).GetConvLineText()+(char)CR+(char)LF);
 		}
 		else if (!IsHtmlLogging())
 		{
@@ -4888,6 +4891,21 @@ void MudWindow::OnTimeStamps(wxCommandEvent& event)
 	Update();
 }
 
+void MudWindow::OnCopy(wxCommandEvent& event)
+{
+
+	if (IsTextSelected())
+	{
+		wxString text = GetSelectedText();
+		if (wxTheClipboard->Open())
+		{
+			wxTheClipboard->SetData(new wxTextDataObject(text));
+			wxTheClipboard->Close();
+		}
+	}
+	
+}
+
 void MudWindow::OnMakeAction(wxCommandEvent& event)
 {
 	//wxCommandEvent ev;// = new wxCommandEvent();
@@ -4906,21 +4924,39 @@ void MudWindow::OnMakeAction(wxCommandEvent& event)
 
 void MudWindow::OnLogThisWindow(wxCommandEvent& event)
 {
-wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
-wxString logfile = this->GetName() << ".log";
-if (::wxFileExists(logfile))
-    ::wxRemoveFile(logfile);
-SetTextLog(new wxFile(logfile, wxFile::write));
-if (!GetTextLog()->IsOpened())
-	return;
-wxDateTime d;
-d.SetToCurrent();
-wxString s;
-s<<_("Logging started: ")<<d.FormatDate()<<(", ")<<d.FormatTime();
-GetTextLog()->Write(s+(char)CR+(char)LF+(char)CR+(char)LF);
-SetLogging(true);
-SetDateLogging(true);
+	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
+	wxString logfile = this->GetName() << ".log";
+	if (::wxFileExists(logfile))
+		::wxRemoveFile(logfile);
+	SetTextLog(new wxFile(logfile, wxFile::write));
+	if (!GetTextLog()->IsOpened())
+		return;
+	wxDateTime d;
+	d.SetToCurrent();
+	wxString s;
+	s << _("Logging started: ") << d.FormatDate() << (", ") << d.FormatTime();
+	GetTextLog()->Write(s + (char)CR + (char)LF + (char)CR + (char)LF);
+	SetLogging(true);
+	SetDateLogging(true);
+}
+
+void MudWindow::OnStopLogging(wxCommandEvent& event)
+{
+	SetLogging(false);
+	SetDateLogging(false);
+	m_tlog->Close();
+	delete m_tlog;
+	m_tlog = nullptr;
+}
+
+void MudWindow::OnMenuUi(wxUpdateUIEvent& event)
+{
+	if (IsLogging())
+		event.Enable(false);
+	else
+		event.Enable(true);
+
 }
 
 void MudWindow::OnMxpMenu(wxCommandEvent& event)
@@ -5710,17 +5746,17 @@ int stamp_offset = 0;
 			contextMenu->AppendSeparator();
 			contextMenu->Append(ID_MAKEACTION, _("Create action..."), _("Create an action using the linetext"));
 			contextMenu->AppendSeparator();
-			contextMenu->Append(wxID_COPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
+			contextMenu->Append(ID_MCOPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
 			contextMenu->Append(ID_COPY, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
 		}
         if (this!=m_parent->m_child)
         {
             contextMenu->AppendSeparator();
-            contextMenu->Append(ID_LOGWINDOW, _("Log this window"), _("Log the content of this window"));
+            contextMenu->AppendCheckItem(ID_LOGWINDOW, _("Log this window"), _("Log the content of this window"));
             contextMenu->Check(ID_LOGWINDOW, m_log);
             if (m_log)
             {
-                
+				contextMenu->Append(ID_STOPLOGGING, _("Stop logging this window"), _("Stop logging this window"));
             }
         }
 		wxPoint p = event.GetPosition();

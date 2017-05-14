@@ -764,6 +764,7 @@ void MudMainFrame::OnFileHistory(wxCommandEvent& event)
 
 void MudMainFrame::OnCopyClipboard(wxCommandEvent& event)
 {
+	
 	if (m_child->IsTextSelected())
     {
         wxString text = m_child->GetSelectedText();
@@ -1463,11 +1464,7 @@ void MudMainFrame::OnMenuUi(wxUpdateUIEvent& event)
 		event.Enable(true);
 	else
 		event.Enable(false);
-    
-    if (mw->IsLogging())
-        event.Enable(false);
-		
-}
+   }
 
 void MudMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
@@ -3852,7 +3849,7 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	}
 	if (keycode==WXK_RETURN)
 		m_lastcommand = GetRange(0, GetLastPosition());
-#ifndef __WXGTK__
+#ifdef __WXOS__
     if (keycode==WXK_UP)
     {
         if (m_hpos<=0)
@@ -5309,6 +5306,7 @@ wxString str;
 	//m_history.push_back(file.GetLastLine());
 	file.Close();
 	m_hpos = (int)m_history.size()-1;
+	//m_hpos = (int)m_history.size();
 	return true;
 }
 
