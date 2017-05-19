@@ -18,7 +18,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow wxamcl.destroywindow\
 				wxamcl.action.new wxamcl.action.get wxamcl.action.delete wxamcl.action.enable wxamcl.action.getpattern wxamcl.action.setpattern \
 				wxamcl.action.getact wxamcl.action.setact wxamcl.action.getpriority wxamcl.action.setpriority wxamcl.action.getcolmatch wxamcl.action.setcolmatch \
-				wxamcl.action.enableall wxamcl.action.disableall wxamcl.action.getall wxamcl.action.delgroup wxamcl.action.enablegroup \
+				wxamcl.action.enableall wxamcl.action.disableall wxamcl.action.getall wxamcl.action.delgroup wxamcl.action.enablegroup wxamcl.action.getuserdata wxamcl.action.execute \
 				wxamcl.alias.new wxamcl.alias.get wxamcl.alias.delete wxamcl.alias.enable wxamcl.alias.getall wxamcl.alias.getaction\
 				wxamcl.alias.setaction wxamcl.alias.delgroup wxamcl.alias.enablegroup \
 				wxamcl.hk.new wxamcl.hk.delgroup wxamcl.hk.delete wxamcl.hk.enable \
@@ -31,7 +31,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.gmcp.send \
 				wxamcl.db.open wxamcl.db.execute wxamcl.db.columns wxamcl.db.results wxamcl.db.close wxamcl.db.insert \
 				wxamcl.draw.text wxamcl.draw.line wxamcl.draw.circle wxamcl.draw.square wxamcl.draw.winsize wxamcl.draw.bitmap wxamcl.draw.setfont wxamcl.draw.clear wxamcl.draw.refresh wxamcl.draw.settip \
-				wxamcl.setmsp wxamcl.getscriptsign wxamcl.createamcwin \
+				wxamcl.setmsp wxamcl.getscriptsign wxamcl.createamcwin wxamcl.logwin\
 				wxamcl.seteventfile wxamcl.mouseevents wxamcl.setlefthandler wxamcl.setrighthandler wxamcl.setwheelhandler wxamcl.setmovehandler \
 				wxamcl.mxp.enable wxamcl.mxp.link wxamcl.mxp.echo wxamcl.mxp.echowin");
 	wxString amcwords =

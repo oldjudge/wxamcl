@@ -299,6 +299,7 @@ private:
 	void OnTimeStamps(wxCommandEvent& event);
 	void OnMakeAction(wxCommandEvent& event);
 	void OnCopy(wxCommandEvent& event);
+	void OnCopyAnsi(wxCommandEvent& event);
     void OnLogThisWindow(wxCommandEvent& event);
 	void OnStopLogging(wxCommandEvent& event);
 	void OnMenuUi(wxUpdateUIEvent& event);

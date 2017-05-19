@@ -59,6 +59,7 @@ int luafunc_mouseevents(lua_State *L);
 int luafunc_setfont(lua_State *L);
 int luafunc_getline(lua_State *L);
 int luafunc_getscript(lua_State *L);
+int luafunc_logwin(lua_State *L);
 //action
 int luafunc_newaction(lua_State *L);
 int luafunc_getaction(lua_State *L);
@@ -212,6 +213,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"mouseevents", luafunc_mouseevents},
 	{"getline", luafunc_getline},
 	{"getscriptsign", luafunc_getscript},
+	{"logwin", luafunc_logwin},
 	
 	//msp stuff
 	{"setmsp", luafunc_setmsp},
@@ -299,6 +301,8 @@ static const struct luaL_Reg amclib_trigger[] = {
 	{"getuserdata", luafunc_gettruserdata},
 	{NULL, NULL}
 };
+
+int findtrigger(lua_State *L, const char* tr);
 
 static const struct luaL_Reg amclib_gauge [] = {
 	{"update", luafunc_gauge},

@@ -298,13 +298,15 @@ int luafunc_echo(lua_State*L)
 	}
 	else
 		ale.SetBCol(99,m[bcol]);
-	wxString ba(text, wxCSConv(parent->GetGlobalOptions()->GetCurEncoding()));
+	/*wxString ba(text, wxCSConv(parent->GetGlobalOptions()->GetCurEncoding()));
 	if (ba.IsEmpty())
-		ba<<text;
+		ba<<text;*/
 	//replace vars
-	
+	wxString ba = wxString::From8BitData(text);
 	//parent->m_input->ParseVars(&ba);
+
 	ale.SetText(ba);
+	//ale.SetText(text);
 	AnsiLine line;
 	if (!frame->GetLines()->back().IsFull())
 	{
@@ -375,8 +377,8 @@ int luafunc_color(lua_State*L)
 	}
 	else
 		ale.SetBCol(99,m[bcol]);
-	
-	ale.SetText(text);
+	wxString t = wxString::From8BitData(text);
+	ale.SetText(t);
 	frame->GetLines()->back().m_vstyle.push_back(ale);
 	lua_pushstring(L,"");
 	wxGetApp().GetChild()->Refresh();
@@ -724,35 +726,7 @@ int luafunc_echowin(lua_State*L)
 	//frame->Update();
 	lua_pushstring(L, text);
 	
-	/*wxCriticalSectionLocker e(parent->m_scriptcs);
-	wxString s(fcol);
-	if (s.at(0)=='#')
-	{
-		fcol = "custom";
-		long col = frame->ParseHexColor(s.substr(1));
-		frame->SetCustomColour(col);
-	}
-	wxString bs(bcol);
-	if (bs.at(0)=='#')
-	{
-		bcol = "bcustom";
-		long col = frame->ParseHexColor(bs.substr(1));
-		frame->SetColour(19, col);
-	}
-	map<wxString, wxString> m;
-	m = frame->GetColCodes();
-	map<wxString, int> b;
-	b = frame->GetBCol();
-	wxString ss = m[fcol];
-	wxString t(text);
-	//replace vars
 	
-	parent->m_input->ParseVars(&t);
-	wxString msg = wxString::Format("\x1b[%s%02dm%s\x1b[0;0m", ss.c_str(), b[bcol], t.c_str());
-	lua_pushstring(L, msg.c_str());
-	msg.append("\n");
-	//frame->ParseBuffer(msg.char_str());
-	frame->ParseNBuffer(msg.char_str());*/
 	if (!frame->GetScroll())
 	{
 		frame->SetScrollPage();
@@ -768,6 +742,46 @@ int luafunc_getscript(lua_State *L)
 	wxString s(parent->GetGlobalOptions()->GetScript());
 	lua_pushstring(L, s.c_str());
 	return 1;
+}
+
+int luafunc_logwin(lua_State *L)
+{
+	const char* winname;
+	bool on_off = true;
+	winname = luaL_checkstring(L, 1);
+	on_off = lua_toboolean(L, 2) != 0;
+	const wxString* name = new wxString(winname);
+	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(*name);
+	if (frame == NULL)
+		return 0;
+	delete name;
+	MudMainFrame *parent = wxGetApp().GetFrame();
+	wxSetWorkingDirectory(parent->GetGlobalOptions()->GetWorkDir());
+	wxSetWorkingDirectory(parent->GetGlobalOptions()->GetLogDir());
+	wxString logfile = frame->GetName() << ".log";
+	if (on_off)
+	{
+		if (::wxFileExists(logfile))
+			::wxRemoveFile(logfile);
+		frame->SetTextLog(new wxFile(logfile, wxFile::write));
+		if (!frame->GetTextLog()->IsOpened())
+			return 0;
+		wxDateTime d;
+		d.SetToCurrent();
+		wxString s;
+		s << _("Logging started: ") << d.FormatDate() << (", ") << d.FormatTime();
+		frame->GetTextLog()->Write(s + (char)CR + (char)LF + (char)CR + (char)LF);
+		frame->SetLogging(true);
+		frame->SetDateLogging(true);
+	}
+	else
+	{
+		frame->SetLogging(false);
+		frame->SetDateLogging(false);
+		frame->GetTextLog()->Close();
+		//frame->SetTextLog(nullptr);
+	}
+	return 0;
 }
 
 int luafunc_drawcircle(lua_State*L)
@@ -2010,11 +2024,11 @@ LUAMOD_API int luaopen2_amc(lua_State *L)
 	return 1;
 }
 
-//! amc.action.new(name, table{pattern="pattern", action="action", class="class", on=true|false, priority=0-100, colmatch=-1|0-18})
+//! wxamcl.action.new(name, table{pattern="pattern", action="action", class="class", on=true|false, priority=0-100, colmatch=-1|0-18})
 /*!
 	Creates a new action in lua, provide a unique label and a table with the values
 	creates a user type action in lua and returns this userdatum
-	userdatum = amc.newaction("newaction", {pattern="A line", action="send to mud", class="default", on=true, prior=50, colmatch=-1})
+	userdatum = wxamcl.action.new("newaction", {pattern="A line", action="send to mud", class="default", on=true, prior=50, colmatch=-1})
 	\param lua_State *L: a valid lua State
 */
 int luafunc_newaction(lua_State*L)
@@ -2027,22 +2041,23 @@ str_ac* t;
 int index=1;
 	//MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	class MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	//int x= sizeof(struct str_ac);
-
+	
 	//called from amc.newaction
 	if(lua_type(L, index) != LUA_TTABLE)
 	{
 		l = luaL_checkstring(L, index++);
-	
+		wxString f(l, co);
 		for (it=frame->GetTrigger()->begin();it!=frame->GetTrigger()->end();it++)
 		{
-			if(l==*it)
+			if(f==*it)
 			{
 				frame->m_child->Msg(_("Error creating action. Action labels need to be unique!"));
 				return 0;
 			}
 		}
-		tr.SetLabel(l);
+		tr.SetLabel(f);
 	}
 
 	if (lua_type(L,index)==LUA_TTABLE)
@@ -2067,14 +2082,14 @@ int index=1;
 				return 1;
 			}
 			lua_getfield(L, -1, "pattern");
-			const char* cc = luaL_checkstring(L, -1);
-			tr.SetPattern(cc);
+			const char* cc = luaL_optstring(L, -1, "^*$");
+			tr.SetPattern(wxString(cc,co));
 			lua_getfield(L, -2, "action");
-			cc = luaL_checkstring(L, -1);
-			tr.SetAction(cc);
+			cc = luaL_optstring(L, -1, "?wxamcl.echo('Action fired!')");
+			tr.SetAction(wxString(cc,co));
 			lua_getfield(L, -3, "class");
 			cc = luaL_optstring(L, -1, "default");
-			tr.SetClass(cc);
+			tr.SetClass(wxString(cc,co));
 			lua_getfield(L, -4, "on");
 			tr.SetActive(lua_toboolean(L,-1)!=0);
 			lua_getfield(L, -5, "priority");
@@ -2087,10 +2102,10 @@ int index=1;
 		else
 		{
 			lua_getfield(L, index, "pattern");
-			const char* cc = luaL_checkstring(L, -1);
+			const char* cc = luaL_optstring(L, -1, "^*$");
 			tr.SetPattern(cc);
 			lua_getfield(L, index, "action");
-			cc = luaL_checkstring(L, -1);
+			cc = luaL_optstring(L, -1, "?wxamcl.echo('Action fired!')");
 			tr.SetAction(cc);
 			lua_getfield(L, index, "class");
 			cc = (char*)luaL_optstring(L, -1, "default");
@@ -2107,11 +2122,11 @@ int index=1;
 	}
 	else
 	{
-		c = luaL_checkstring(L,index++);
-		tr.SetPattern(c);
-		c = luaL_checkstring(L,index++);
-		tr.SetAction(c);
-		tr.SetClass(luaL_optstring(L,index++, "default"));
+		c = luaL_optstring(L,index++, "^*$");
+		tr.SetPattern(wxString(c,co));
+		c = luaL_optstring(L,index++, "?wxamcl.echo('Action fired!')");
+		tr.SetAction(wxString(c,co));
+		tr.SetClass(wxString(luaL_optstring(L,index++, "default"), co));
 		tr.SetActive(lua_toboolean(L,index++)!=0);
 		tr.SetPriority((int)luaL_optnumber(L,index++,50));
 		tr.SetColMatch((int)luaL_optnumber(L,index++,-1));
@@ -2121,9 +2136,9 @@ int index=1;
 	stable_sort(frame->GetTrigger()->begin(), frame->GetTrigger()->end(), greater<class Trigger>());
 	t = (str_ac*)lua_newuserdata(L, sizeof(struct str_ac));
 	wxStrcpy(t->label, l);
-	wxStrcpy(t->pattern, tr.GetPattern().c_str());
-	wxStrcpy(t->action, tr.GetAction().c_str());
-	wxStrcpy(t->cla, tr.GetClass().c_str());
+	wxStrcpy(t->pattern, tr.GetPattern().mb_str(co).data());// .c_str());
+	wxStrcpy(t->action, tr.GetAction().mb_str(co).data());// .c_str());
+	wxStrcpy(t->cla, tr.GetClass().mb_str(co).data());// .c_str());
 	t->on = tr.IsActive();
 	t->prior = tr.GetPriority();
 	t->colmatch = tr.GetColMatch();
@@ -2135,15 +2150,28 @@ int index=1;
 	return 1;
 }
 
+int findtrigger(lua_State *L, const char* tr)
+{
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	wxString f(tr, co);
+	return frame->GetTriggerIndexByLabel(f);
+}
+
 int luafunc_gettruserdata(lua_State *L)
 {
 str_ac* t;
 const char* c;
 int i;
 
+
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	/*wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	c = luaL_checkstring(L,1);
-	i = frame->GetTriggerIndexByLabel(c);
+	wxString f(c, co);
+	i = frame->GetTriggerIndexByLabel(f);*/
+	i = findtrigger(L, c=luaL_checkstring(L, 1));
 	if (i==-1)
 	{
 		frame->m_child->Msg(_("Action not found!"));
@@ -2152,9 +2180,9 @@ int i;
 	}
 	t = (str_ac*)lua_newuserdata(L, sizeof(struct str_ac));
 	wxStrcpy(t->label, c);
-	wxStrcpy(t->pattern, frame->GetTrigger()->at(i).GetPattern().c_str());
-	wxStrcpy(t->action, frame->GetTrigger()->at(i).GetAction().c_str());
-	wxStrcpy(t->cla, frame->GetTrigger()->at(i).GetClass().c_str());
+	wxStrcpy(t->pattern, frame->GetTrigger()->at(i).GetPattern().mb_str(co).data());// .c_str());
+	wxStrcpy(t->action, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());// .c_str());
+	wxStrcpy(t->cla, frame->GetTrigger()->at(i).GetClass().mb_str(co).data());// .c_str());
 	t->on = frame->GetTrigger()->at(i).IsActive();
 	t->prior = frame->GetTrigger()->at(i).GetPriority();
 	t->colmatch = frame->GetTrigger()->at(i).GetColMatch();
@@ -2181,15 +2209,16 @@ int i, index=1;
 
 	//MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	class MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetTriggerIndexByLabel(c);
+		i = findtrigger(L, c);
 	}
 	if (i==-1)
 	{
@@ -2199,13 +2228,15 @@ int i, index=1;
 	}
 	lua_settop(L,0);
 	lua_newtable(L);
-	lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().char_str());
+	wxString l = frame->GetTrigger()->at(i).GetLabel();
+	
+	lua_pushstring(L, l.mb_str(co).data());// frame->GetTrigger()->at(i).GetLabel());// .char_str());
 	lua_setfield(L, -2, "label");
-	lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().char_str());
+	lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "pattern");
-	lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().char_str());
+	lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "action");
-	lua_pushstring(L, frame->GetTrigger()->at(i).GetClass().char_str());
+	lua_pushstring(L, frame->GetTrigger()->at(i).GetClass().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "class");
 	lua_pushnumber(L, frame->GetTrigger()->at(i).GetPriority());
 	lua_setfield(L, -2, "priority");
@@ -2223,8 +2254,8 @@ int i, index=1;
 //! x = amc.delaction(action|userdatum)
 /*!
 	deletes an wxAMC action in Lua
-	x=amc.delaction("Map1")
-	x=amc.delaction(x) provide a userdatum returned from newaction
+	x=wxamcl.action.delete("Map1")
+	x=wxamcl.action.delete(x) provide a userdatum returned from newaction
 	returns the number of actions or nil in case of error
 	\param lua_State *L: a valid lua_State
 */
@@ -2236,16 +2267,17 @@ int index=1, i;
 str_ac *t;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		//t = (str_ac*)lua_touserdata(L, index);
 		t = checkaction(L);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 	}
 	else
 	{
 		c = (char*)luaL_checkstring(L,index);
-		i = frame->GetTriggerIndexByLabel(c);
+		i = findtrigger(L, c);
 	}
 	if (i==-1)
 	{
@@ -2266,16 +2298,17 @@ const char* c;
 int i, index=1;
 str_ac *t=NULL;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame(); //(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_ac*)lua_touserdata(L, index++);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetTriggerIndexByLabel(c);
+		i = findtrigger(L, c);
 	}
 	if (i==-1)
 	{
@@ -2301,7 +2334,8 @@ char* l;
 str_ac* t;
 int index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
@@ -2312,23 +2346,23 @@ int index=1;
 	else
 	{
 		l = (char*)luaL_checkstring(L,index);
-		int i = frame->GetTriggerIndexByLabel(l);
+		int i = findtrigger(L, l);
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		else
-			lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().char_str());
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().mb_str(co).data());// char_str());
 			return 1;
 	}
 	return 1;
 }
-//! amc.setpattern(action|userdatum)
+//! wxamcl.action.setpattern(action|userdatum)
 /*!
 	sets the pattern of an wxAMC action in Lua
-	amc.setpattern("Map1", "this is the pattern")
-	amc.setpattern(x) provide a userdatum returned from newaction
+	wxamcl.action.setpattern("Map1", "this is the pattern")
+	wxamcl.action.setpattern(x) provide a userdatum returned from newaction
 	returns nil on error
 	\param lua_State *L: a valid lua_State
 */
@@ -2340,33 +2374,37 @@ Trigger tr;
 str_ac* t;
 int i, index=1;
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
 		c = luaL_checkstring(L, ++index);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		wxString f(t->label, co);
+		i = frame->GetTriggerIndexByLabel(f);
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetTrigger()->at(i).SetPattern(c);
-		wxStrcpy(t->pattern, c);
+		wxString ff(c, co);
+		frame->GetTrigger()->at(i).SetPattern(ff);
+		wxStrcpy(t->pattern, ff.mb_str(co).data());
 		//t->pattern = c;
 		return 0;
 	}
 	else
 	{
 		l = luaL_checkstring(L,index++);
+		wxString ff(l, co);
 		c = luaL_checkstring(L, index);
-		i = frame->GetTriggerIndexByLabel(l);
+		i = frame->GetTriggerIndexByLabel(ff);
+		wxString fff(c, co);
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetTrigger()->at(i).SetPattern(c);
+		frame->GetTrigger()->at(i).SetPattern(fff);
 	}
 	return 0;
 }
@@ -2378,7 +2416,7 @@ const char* l;
 str_ac* t;
 int index=1;
 	MudMainFrame *frame = wxGetApp().GetFrame();
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
@@ -2389,14 +2427,14 @@ int index=1;
 	else
 	{
 		l = luaL_checkstring(L,index);
-		int i = frame->GetTriggerIndexByLabel(l);
-		if (i==-1)
+		int i = findtrigger(L, l);
+		if (i == -1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		else
-			lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().char_str());
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());//.char_str());
 			return 1;
 	}
 	return 1;
@@ -2409,33 +2447,34 @@ char* c;
 str_ac* t;
 int i, index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-
+MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
 		c = (char*)luaL_checkstring(L, ++index);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetTrigger()->at(i).SetAction(c);
-		wxStrcpy(t->action, c);
+		wxString f = wxString(c, co);
+		frame->GetTrigger()->at(i).SetAction(f);
+		wxStrcpy(t->action, f.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = (char*)luaL_checkstring(L,index++);
 		c = (char*)luaL_checkstring(L, index);
-		i = frame->GetTriggerIndexByLabel(l);
+		i = findtrigger(L, l);
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetTrigger()->at(i).SetAction(c);
+		frame->GetTrigger()->at(i).SetAction(wxString(c,co));
 	}
 	return 0;
 }
@@ -2451,7 +2490,7 @@ tr_it it;
 char* l;
 str_ac* t;
 int index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
@@ -2463,7 +2502,7 @@ int index=1;
 	else
 	{
 		l = (char*)luaL_checkstring(L,index);
-		int i = frame->GetTriggerIndexByLabel(l);
+		int i = findtrigger(L, l);
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2487,13 +2526,13 @@ str_ac *t;
 int n, i, index=1;
 const char *l;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-
+MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
 		n = (int)luaL_optnumber(L, ++index, 50);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2508,7 +2547,8 @@ const char *l;
 	{
 		l = luaL_checkstring(L,index++);
 		n = (int)luaL_optnumber(L, index, 50);
-		i = frame->GetTriggerIndexByLabel(l);
+		i = findtrigger(L, l);
+		
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2531,7 +2571,7 @@ tr_it it;
 char* l;
 str_ac* t;
 int index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
@@ -2543,7 +2583,8 @@ int index=1;
 	else
 	{
 		l = (char*)luaL_checkstring(L,index);
-		int i = frame->GetTriggerIndexByLabel(l);
+		int i = findtrigger(L, l);
+		
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2567,13 +2608,14 @@ str_ac *t;
 int n, i, index=1;
 const char* l;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-
+MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
 		n = (int)luaL_optnumber(L, ++index, -1);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2587,7 +2629,7 @@ const char* l;
 	{
 		l = luaL_checkstring(L,index++);
 		n = (int)luaL_optnumber(L, index, -1);
-		i = frame->GetTriggerIndexByLabel(l);
+		i = findtrigger(L, l);
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -2602,13 +2644,13 @@ int luafunc_getallactions(lua_State*L)
 {
 size_t i;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();//
-
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetTrigger()->size();i++)
 	{
-		lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().char_str());
+		lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().mb_str(co).data());// char_str());
 		lua_rawseti(L, -2, i+1);
 	}
 	lua_pushnumber(L, i);
@@ -2617,7 +2659,7 @@ size_t i;
 
 int luafunc_enabletriggers(lua_State *L)
 {
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	frame->SetTriggersOn(true);
 	lua_pushnumber(L, frame->GetTrigger()->size());
 	return 1;
@@ -2625,7 +2667,7 @@ int luafunc_enabletriggers(lua_State *L)
 
 int luafunc_disabletriggers(lua_State *L)
 {
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	frame->SetTriggersOn(false);
 	lua_pushnumber(L, frame->GetTrigger()->size());
 	return 1;
@@ -2636,12 +2678,14 @@ int luafunc_enabletrgroup(lua_State *L)
 {
 tr_it iter;
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	const char* trgroup;
 	trgroup = luaL_checkstring(L, 1);
+	wxString trg(trgroup, co);
 	bool active = lua_toboolean(L,2) != 0;
 	for (iter = frame->GetTrigger()->begin(); iter!= frame->GetTrigger()->end(); iter++)
 		{
-			if (trgroup == iter->GetClass())
+			if (trg == iter->GetClass())
 			{
 				iter->SetActive(active);
 			}
@@ -2654,18 +2698,19 @@ int luafunc_deltrgroup(lua_State *L)
 s_it it;
 const char* trgroup;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	trgroup = luaL_checkstring(L, 1);
-	
+	wxString trg(trgroup, co);
 	for (size_t i=0;i<frame->GetTrigger()->size(); i++)
 	{
-		if(frame->GetTrigger()->at(i).GetClass()==trgroup)
+		if(frame->GetTrigger()->at(i).GetClass()==trg)
 		{
 			frame->GetTrigger()->erase(frame->GetTrigger()->begin()+i--);
 		}
 	}
 	for (it = Trigger::GetTriggerClasses()->begin(); it!=Trigger::GetTriggerClasses()->end(); it++)
 	{
-		if (*it == trgroup)
+		if (*it == trg)
 		{
 			Trigger::GetTriggerClasses()->erase(it);
 			break;
@@ -2686,21 +2731,22 @@ const char* trgroup;
 size_t i;
 int x=0;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	trgroup = luaL_checkstring(L, 1);
+	wxString trg(trgroup, co);
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetTrigger()->size();i++)
 	{
-		if (frame->GetTrigger()->at(i).GetClass()==trgroup)
+		if (frame->GetTrigger()->at(i).GetClass()==trg)
 		{
-			lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().char_str());
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().mb_str(co).data());// .char_str());
 			lua_rawseti(L, -2, x+1);
 			x++;
 		}
 	}
 	lua_pushnumber(L, x);
 	return 2;
-	
 }
 
 int luafunc_exectr(lua_State *L)
@@ -2711,18 +2757,18 @@ str_ac* t;
 int index=1;
 int i;
 	MudMainFrame *frame = wxGetApp().GetFrame();
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
 		lua_pushstring(L, t->action);
-		i = frame->GetTriggerIndexByLabel(t->label);
+		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
 	}
 	else
 	{
 		l = luaL_checkstring(L,index);
-		i = frame->GetTriggerIndexByLabel(l);
-		lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().char_str());
+		i = findtrigger(L, l);
+		lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());// .char_str());
 	}
 	if (i==-1)
 	{
@@ -2764,14 +2810,15 @@ amcAlias al;
 str_al* a;
 int index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame(); //(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	//int x= sizeof(struct str_al);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "alias");
 		const char* cc = luaL_checkstring(L, -1);
-		wxString s(cc);
+		wxString s(cc, co);
 		if (s.at(0)!='^')
 			s = '^' + s;
 		if (!s.EndsWith("$"))
@@ -2787,17 +2834,17 @@ int index=1;
 		al.SetAlias(s);
 		lua_getfield(L, index, "action");
 		cc = luaL_checkstring(L, -1);
-		al.SetAction(cc);
+		al.SetAction(wxString(cc,co));
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		al.SetGroup(cc);
+		al.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		al.SetActive(lua_toboolean(L,-1)!=0);
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		wxString s(c);
+		wxString s(c,co);
 		if (s.at(0)!='^')
 			s = '^' + s;
 		if (!s.EndsWith("$"))
@@ -2812,17 +2859,17 @@ int index=1;
 		}
 		al.SetAlias(s);
 		c = luaL_checkstring(L,index++);
-		al.SetAction(c);
-		al.SetGroup(luaL_optstring(L,index++, "default"));
+		al.SetAction(wxString(c,co));
+		al.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		al.SetActive(lua_toboolean(L,index++)!=0);
 		
 	}
 	frame->GetAlias()->push_back(al);
 	stable_sort(frame->GetAlias()->begin(), frame->GetAlias()->end(), less<class amcAlias>());
 	a = (str_al*)lua_newuserdata(L, sizeof(struct str_al));
-	wxStrcpy(a->alias, al.GetAlias().c_str());
-	wxStrcpy(a->action, al.GetAction().c_str());
-	wxStrcpy(a->cla, al.GetGroup().c_str());
+	wxStrcpy(a->alias, al.GetAlias().mb_str(co).data());// .c_str());
+	wxStrcpy(a->action, al.GetAction().mb_str(co).data());// .c_str());
+	wxStrcpy(a->cla, al.GetGroup().mb_str(co).data());// .c_str());
 	a->on = al.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtal");
 	lua_setmetatable(L, -2);
@@ -2837,15 +2884,16 @@ amcAlias al;
 str_al* a;
 int index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-	//int x= sizeof(struct str_al);
+	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		cc = luaL_checkstring(L, -2);
+		wxString f(cc, co);
 		if (lua_type(L, -1)==LUA_TNIL)
 		{
-			int i = frame->GetAliasIndexByLabel(cc);
+			int i = frame->GetAliasIndexByLabel(f);
 			if (i==-1)
 			{
 				lua_pushnil(L);
@@ -2857,30 +2905,12 @@ int index=1;
 			lua_pushnumber(L, frame->GetAlias()->size());
 			return 1;
 		}
-		/*	lua_getfield(L, -1, wxT("pattern"));
-			wxChar* cc = (wxChar*)luaL_checkstring(L, -1);
-			tr.SetPattern(cc);
-			lua_getfield(L, -2, wxT("action"));
-			cc = (wxChar*)luaL_checkstring(L, -1);
-			tr.SetAction(cc);
-			lua_getfield(L, -3, wxT("class"));
-			cc = (wxChar*)luaL_optstring(L, -1, wxT("default"));
-			tr.SetClass(cc);
-			lua_getfield(L, -4, wxT("on"));
-			tr.SetActive(lua_toboolean(L,-1)!=0);
-			lua_getfield(L, -5, wxT("priority"));
-			tr.SetPriority(luaL_optint(L,-1,50));
-			lua_getfield(L, -6, wxT("colmatch"));
-			tr.SetColMatch(luaL_optint(L,-1,-1));
-			lua_getfield(L, -7, wxT("lines"));
-			tr.SetLines(luaL_optint(L,-1,1));
-		lua_getfield(L, index, wxT("alias"));*/
-		
-		wxString s(cc);
-		if (s.at(0)!=wxT('^'))
-			s = wxT('^') + s;
-		if (!s.EndsWith(wxT("$")))
-			s.append(wxT('$'));
+				
+		wxString s(cc,co);
+		if (s.at(0)!='^')
+			s = '^' + s;
+		if (!s.EndsWith("$"))
+			s.append('$');
 		for (it=frame->GetAlias()->begin();it!=frame->GetAlias()->end();it++)
 		{
 			if(s==*it)
@@ -2892,10 +2922,10 @@ int index=1;
 		al.SetAlias(s);
 		lua_getfield(L, -1, "action");
 		cc = luaL_checkstring(L, -1);
-		al.SetAction(cc);
+		al.SetAction(wxString(cc,co));
 		lua_getfield(L, -2, "group");
 		cc = luaL_optstring(L, -1, "default");
-		al.SetGroup(cc);
+		al.SetGroup(wxString(cc,co));
 		lua_getfield(L, -3, "on");
 		al.SetActive(lua_toboolean(L,-1)!=0);
 	}
@@ -2903,16 +2933,16 @@ int index=1;
 	frame->GetAlias()->push_back(al);
 	stable_sort(frame->GetAlias()->begin(), frame->GetAlias()->end(), less<class amcAlias>());
 	a = (str_al*)lua_newuserdata(L, sizeof(struct str_al));
-	wxStrcpy(a->alias, al.GetAlias().c_str());
-	wxStrcpy(a->action, al.GetAction().c_str());
-	wxStrcpy(a->cla, al.GetGroup().c_str());
+	wxStrcpy(a->alias, al.GetAlias().mb_str(co).data());// .c_str());
+	wxStrcpy(a->action, al.GetAction().mb_str(co).data());// .c_str());
+	wxStrcpy(a->cla, al.GetGroup().mb_str(co).data());// .c_str());
 	a->on = al.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtal");
 	lua_setmetatable(L, -2);
 	return 1;
 }
 
-/** a = getalias(name)
+/** a = wxamcl.alias.get(name)
  * \brief get an amcAlias as lua table
  * \param L
  * \return table containing the alias
@@ -2924,10 +2954,11 @@ const char* c;
 int i, index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = checkalias(L);
-		wxString s(t->alias);
+		wxString s(t->alias, co);
 		if (s.at(0)!='^')
 			s = '^' + s;
 		if (!s.EndsWith("$"))
@@ -2936,7 +2967,7 @@ int i, index=1;
 	}
 	else if (lua_type(L,index)==LUA_TTABLE)
 	{
-		wxString s = luaL_checkstring(L, index+1);
+		wxString s(luaL_checkstring(L, index+1), co);
 		if (s.at(0)!='^')
 			s = '^' + s;
 		if (!s.EndsWith("$"))
@@ -2945,13 +2976,13 @@ int i, index=1;
 		if (idx==-1)
 			return 0;
 		wxString ss = frame->GetAlias()->at(idx).GetAction();
-		lua_pushstring(L,ss.mb_str());
+		lua_pushstring(L, ss.mb_str(co).data());// .mb_str());
 		return 1;
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		wxString s(c);
+		wxString s(c, co);
 		if (s.at(0)!='^')
 			s = '^' + s;
 		if (!s.EndsWith("$"))
@@ -2966,18 +2997,18 @@ int i, index=1;
 	}
 	lua_settop(L,0);
 	lua_newtable(L);
-	lua_pushstring(L, frame->GetAlias()->at(i).GetAlias().char_str());
+	lua_pushstring(L, frame->GetAlias()->at(i).GetAlias().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "alias");
-	lua_pushstring(L, frame->GetAlias()->at(i).GetAction().mb_str());
+	lua_pushstring(L, frame->GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "action");
-	lua_pushstring(L, frame->GetAlias()->at(i).GetGroup().mb_str());
+	lua_pushstring(L, frame->GetAlias()->at(i).GetGroup().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "group");
 	lua_pushboolean(L, frame->GetAlias()->at(i).IsActive());
 	lua_setfield(L, -2, "on");
 	return 1;	
 }
 
-/** a,x = getallalias()
+/** a,x = wxamcl.alias.getall()
  * \brief get all amcAlias as lua table
  * \param L
  * \return table containing the alias, number of alias in table
@@ -2986,13 +3017,13 @@ int luafunc_getallalias(lua_State*L)
 {
 size_t i;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-
+	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetAlias()->size();i++)
 	{
-		lua_pushstring(L, frame->GetAlias()->at(i).GetAlias().mb_str());
+		lua_pushstring(L, frame->GetAlias()->at(i).GetAlias().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
 	lua_pushnumber(L, i);
@@ -3002,8 +3033,8 @@ size_t i;
 //! x = amc.alias.delete(alias|userdatum)
 /*!
 	deletes an wxAMC alias in Lua */
-/*!	x=amc.delalias("food1") */
-/*!	x=amc.delaction(x) provide a userdatum returned from newalias */
+/*!	x=wxamcl.alias.delete("food1") */
+/*!	x=wxamcl.alias.delete(x) provide a userdatum returned from newalias */
 /*	returns the number of aliases or nil in case of error
 	\param lua_State *L: a valid lua_State
 */
@@ -3014,16 +3045,17 @@ char* c;
 int index=1, i;
 str_al *a;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame(); //(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		a = (str_al*)lua_touserdata(L, index);
-		i = frame->GetAliasIndexByLabel(a->alias);
+		i = frame->GetAliasIndexByLabel(wxString(a->alias,co));
 	}
 	else
 	{
 		c = (char*)luaL_checkstring(L,index);
-		i = frame->GetAliasIndexByLabel(c);
+		i = frame->GetAliasIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3038,7 +3070,7 @@ str_al *a;
 	return 1;
 }
 
-//! x = enablealias(name, true|false)
+//! x = wxamcl.alias.enable(name, true|false)
 /*!
 	enable or disable alias via Lua
 */
@@ -3048,16 +3080,17 @@ const char* c;
 int i, index=1;
 str_al *t=NULL;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_al*)lua_touserdata(L, index++);
-		i = frame->GetAliasIndexByLabel(t->alias);
+		i = frame->GetAliasIndexByLabel(wxString(t->alias,co));
 	}
 	else
 	{
 		c = (char*)luaL_checkstring(L,index++);
-		i = frame->GetAliasIndexByLabel(c);
+		i = frame->GetAliasIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3067,7 +3100,8 @@ str_al *t=NULL;
 	frame->GetAlias()->at(i).SetActive(lua_toboolean(L,index)!=0);
 	if (!t)
 	{
-		lua_pushstring(L,c);
+		wxString f(c, co);
+		lua_pushstring(L, f.mb_str(co).data());
 	}
 	else
 	{
@@ -3084,24 +3118,25 @@ str_al* t;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkalias(L);
-		lua_pushstring(L, t->action);
+		lua_pushstring(L, wxString(t->action,co));
 		return 1;
 	}
 
 	else
 	{
 		l = luaL_checkstring(L,index);
-		int i = frame->GetAliasIndexByLabel(l);
+		int i = frame->GetAliasIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		else
-			lua_pushstring(L, frame->GetAlias()->at(i).GetAction().mb_str());
+			lua_pushstring(L, frame->GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
 			return 1;
 	}
 	return 1;
@@ -3115,32 +3150,33 @@ amcAlias al;
 str_al* t;
 int i, index=1;
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkalias(L);
 		c = (char*)luaL_checkstring(L, ++index);
-		i = frame->GetAliasIndexByLabel(t->alias);
+		i = frame->GetAliasIndexByLabel(wxString(t->alias,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetAlias()->at(i).SetAction(c);
-		wxStrcpy(t->action, c);
+		wxString f(c, co);
+		frame->GetAlias()->at(i).SetAction(f);
+		wxStrcpy(t->action, f.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = (char*)luaL_checkstring(L,index++);
 		c = (char*)luaL_checkstring(L, index);
-		i = frame->GetAliasIndexByLabel(l);
+		i = frame->GetAliasIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetAlias()->at(i).SetAction(c);
+		frame->GetAlias()->at(i).SetAction(wxString(c,co));
 	}
 	return 0;
 }
@@ -3151,13 +3187,15 @@ char* c;
 s_it it;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	c = (char*)luaL_checkstring(L,1);
+	wxString f(c, co);
 	bool del = lua_toboolean(L,2)!=0;
 	if (del)
 	{
 		for (size_t i=0;i<frame->GetAlias()->size(); i++)
 		{
-			if(frame->GetAlias()->at(i).GetGroup()==c)
+			if(frame->GetAlias()->at(i).GetGroup()==f)
 			{
 				frame->GetAlias()->erase(frame->GetAlias()->begin()+i--);
 			}
@@ -3167,7 +3205,7 @@ s_it it;
 	{
 		for (size_t i=0;i<frame->GetAlias()->size(); i++)
 		{
-			if(frame->GetAlias()->at(i).GetGroup()==c)
+			if(frame->GetAlias()->at(i).GetGroup()==f)
 			{
 				frame->GetAlias()->at(i).SetGroup("default");
 			}
@@ -3175,7 +3213,7 @@ s_it it;
 	}
 	for (it = amcAlias::GetAliasGroups()->begin(); it!=amcAlias::GetAliasGroups()->end(); it++)
 	{
-		if (*it == c)
+		if (*it == f)
 		{
 			amcAlias::GetAliasGroups()->erase(it);
 			break;
@@ -3190,13 +3228,15 @@ char* c;
 s_it it;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	c = (char*)luaL_checkstring(L,1);
+	wxString f(c, co);
 	bool active = lua_toboolean(L,2)!=0;
 	if (active)
 	{
 		for (size_t i=0;i<frame->GetAlias()->size(); i++)
 		{
-			if(frame->GetAlias()->at(i).GetGroup()==c)
+			if(frame->GetAlias()->at(i).GetGroup()==f)
 			{
 				frame->GetAlias()->at(i).SetActive(true);
 			}
@@ -3206,7 +3246,7 @@ s_it it;
 	{
 		for (size_t i=0;i<frame->GetAlias()->size(); i++)
 		{
-			if(frame->GetAlias()->at(i).GetGroup()==c)
+			if(frame->GetAlias()->at(i).GetGroup()==f)
 			{
 				frame->GetAlias()->at(i).SetActive(false);
 			}
@@ -3234,27 +3274,29 @@ const char *cc;
 amcTimer timer;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 //	int x = sizeof(struct str_timer);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "name");
 		cc = luaL_checkstring(L, -1);
+		wxString s(cc, co);
 		for (it=frame->GetTimers()->begin();it!=frame->GetTimers()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Timer already exists!"));
 				return 0;
 			}
 		}
-		timer.SetName(cc);
+		timer.SetName(s);
 		lua_getfield(L, index, "action");
 		cc = luaL_checkstring(L, -1);
-		timer.SetAction(cc);
+		timer.SetAction(wxString(cc,co));
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		timer.SetGroup(cc);
+		timer.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		timer.SetActive(lua_toboolean(L,-1)!=0);
 		lua_getfield(L, index, "intervall");
@@ -3269,18 +3311,19 @@ amcTimer timer;
 	else
 	{
 		cc = luaL_checkstring(L,index++);
+		wxString s(cc, co);
 		for (it=frame->GetTimers()->begin();it!=frame->GetTimers()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Timer already exists!"));
 				return 0;
 			}
 		}
-		timer.SetName(cc);
+		timer.SetName(s);
 		cc = luaL_checkstring(L,index++);
-		timer.SetAction(cc);
-		timer.SetGroup(luaL_optstring(L,index++, "default"));
+		timer.SetAction(wxString(cc,co));
+		timer.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		timer.SetInterval(luaL_checknumber(L,index++));
 		timer.SetRepeat((int)luaL_optnumber(L,index,-1));
 		timer.SetCurrepeat((int)luaL_optnumber(L,index++,-1));
@@ -3290,9 +3333,9 @@ amcTimer timer;
 	stable_sort(frame->GetTimers()->begin(), frame->GetTimers()->end(), less<class amcTimer>());
 	//stable_sort(frame->GetHotkeys()->begin(), frame->GetHotkeys()->end(), less<class amcHotkey>());
 	strt = (str_timer*)lua_newuserdata(L, sizeof(struct str_timer));
-	wxStrcpy(strt->name, timer.GetName().mb_str());
-	wxStrcpy(strt->action, timer.GetAction().mb_str());
-	wxStrcpy(strt->group, timer.GetGroup().mb_str());
+	wxStrcpy(strt->name, timer.GetName().mb_str(co).data());
+	wxStrcpy(strt->action, timer.GetAction().mb_str(co).data());
+	wxStrcpy(strt->group, timer.GetGroup().mb_str(co).data());
 	strt->on = timer.IsActive();
 	strt->intervall = timer.GetInterval();
 	strt->repeat = timer.GetRepeat();
@@ -3308,16 +3351,17 @@ const char* c;
 int index=1, i;
 str_timer* t;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_timer*)lua_touserdata(L, index);
-		i = frame->GetTimerIndexByLabel(t->name);
+		i = frame->GetTimerIndexByLabel(wxString(t->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetTimerIndexByLabel(c);
+		i = frame->GetTimerIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3339,16 +3383,17 @@ const char* c;
 int index=1, i;
 str_timer* t;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_timer*)lua_touserdata(L, index);
-		i = frame->GetTimerIndexByLabel(t->name);
+		i = frame->GetTimerIndexByLabel(wxString(t->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetTimerIndexByLabel(c);
+		i = frame->GetTimerIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3368,16 +3413,17 @@ const char* c;
 int index=1, i;
 str_timer* t;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_timer*)lua_touserdata(L, index);
-		i = frame->GetTimerIndexByLabel(t->name);
+		i = frame->GetTimerIndexByLabel(wxString(t->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetTimerIndexByLabel(c);
+		i = frame->GetTimerIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3397,15 +3443,16 @@ int i, index=1;
 str_timer* t=NULL;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		t = (str_timer*)lua_touserdata(L, index++);
-		i = frame->GetTimerIndexByLabel(t->name);
+		i = frame->GetTimerIndexByLabel(wxString(t->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetTimerIndexByLabel(c);
+		i = frame->GetTimerIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3415,7 +3462,8 @@ str_timer* t=NULL;
 	frame->GetTimers()->at(i).SetActive(lua_toboolean(L,index)!=0);
 	if (!t)
 	{
-		lua_pushstring(L,c);
+		wxString s(c, co);
+		lua_pushstring(L, s.mb_str(co).data());
 	}
 	else
 	{
@@ -3435,27 +3483,29 @@ str_hk* hkey;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 //	int x = sizeof(struct str_hk);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "name");
 		cc = luaL_checkstring(L, -1);
+		wxString f(cc, co);
 		for (it=frame->GetHotkeys()->begin();it!=frame->GetHotkeys()->end();it++)
 		{
-			if(cc==*it)
+			if(f==*it)
 			{
 				frame->m_child->Msg(_("Hotkey already exists!"));
 				return 0;
 			}
 		}
-		hk.SetName(cc);
+		hk.SetName(f);
 		lua_getfield(L, index, "action");
 		cc = luaL_checkstring(L, -1);
-		hk.SetAction(cc);
+		hk.SetAction(wxString(cc,co));
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		hk.SetGroup(cc);
+		hk.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		hk.SetActive(lua_toboolean(L,-1)!=0);
 		lua_getfield(L, index, "keycode");
@@ -3470,33 +3520,35 @@ int index=1;
 	else
 	{
 		cc = luaL_checkstring(L,index++);
+		wxString f(cc, co);
 		for (it=frame->GetHotkeys()->begin();it!=frame->GetHotkeys()->end();it++)
 		{
-			if(cc==*it)
+			if(f==*it)
 			{
 				frame->m_child->Msg(_("Hotkey already exists!"));
 				return 0;
 			}
 		}
-		hk.SetName(cc);
+		hk.SetName(f);
 		cc = luaL_checkstring(L,index++);
 		map<wxString, long> m = frame->GetKeys();
 		long k = m[cc];
 		hk.SetHotkey(k);
 		cc = luaL_checkstring(L,index++);
-		int i = (int)m[cc];
+		wxString g(cc, co);
+		int i = (int)m[g];
 		hk.SetMods(i);
 		cc = luaL_checkstring(L,index++);
-		hk.SetAction(cc);
-		hk.SetGroup(luaL_optstring(L,index++, "default"));
+		hk.SetAction(wxString(cc,co));
+		hk.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		hk.SetActive(lua_toboolean(L,index++)!=0);
 	}
 	frame->GetHotkeys()->push_back(hk);
 	//stable_sort(frame->GetHotkeys()->begin(), frame->GetHotkeys()->end(), less<class amcHotkey>());
 	hkey = (str_hk*)lua_newuserdata(L, sizeof(struct str_hk));
-	wxStrcpy(hkey->name, hk.GetName().mb_str());
-	wxStrcpy(hkey->action, hk.GetAction().mb_str());
-	wxStrcpy(hkey->group, hk.GetGroup().mb_str());
+	wxStrcpy(hkey->name, hk.GetName().mb_str(co).data());// .mb_str());
+	wxStrcpy(hkey->action, hk.GetAction().mb_str(co).data());// .mb_str());
+	wxStrcpy(hkey->group, hk.GetGroup().mb_str(co).data());// .mb_str());
 	hkey->on = hk.IsActive();
 	hkey->keycode = hk.GetHotkey();
 	hkey->mod = hk.GetModifier();
@@ -3512,26 +3564,27 @@ const char* c;
 int i, index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		h = checkhk(L);
-		wxString s(h->name);
+		wxString s(h->name,co);
 		i = frame->GetHkIndexByLabel(s);
 	}
 	else if (lua_type(L,index)==LUA_TTABLE)
 	{
-		wxString s = luaL_checkstring(L, index+1);
+		wxString s (luaL_checkstring(L, index+1),co);
 		int idx = frame->GetHkIndexByLabel(s);
 		if (idx==-1)
 			return 0;
 		wxString ss = frame->GetHotkeys()->at(idx).GetAction();
-		lua_pushstring(L,ss.mb_str());
+		lua_pushstring(L, ss.mb_str(co).data());// .mb_str());
 		return 1;
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		wxString s(c);
+		wxString s(c,co);
 		i = frame->GetHkIndexByLabel(s);
 	}
 	if (i==-1)
@@ -3542,17 +3595,17 @@ int i, index=1;
 	}
 	lua_settop(L,0);
 	lua_newtable(L);
-	lua_pushstring(L, frame->GetHotkeys()->at(i).GetName().char_str());
+	lua_pushstring(L, frame->GetHotkeys()->at(i).GetName().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "name");
-	lua_pushstring(L, frame->GetHotkeys()->at(i).GetAction().mb_str());
+	lua_pushstring(L, frame->GetHotkeys()->at(i).GetAction().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "action");
-	lua_pushstring(L, frame->GetHotkeys()->at(i).GetGroup().mb_str());
+	lua_pushstring(L, frame->GetHotkeys()->at(i).GetGroup().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "group");
 	lua_pushboolean(L, frame->GetHotkeys()->at(i).IsActive());
 	lua_setfield(L, -2, "on");
-	lua_pushstring(L, frame->GetHotkeys()->at(i).GetKeyName().mb_str());
+	lua_pushstring(L, frame->GetHotkeys()->at(i).GetKeyName().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "keyname");
-	lua_pushstring(L, frame->GetHotkeys()->at(i).GetModName().mb_str());
+	lua_pushstring(L, frame->GetHotkeys()->at(i).GetModName().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "modname");
 	lua_pushnumber(L, frame->GetHotkeys()->at(i).GetHotkey());
 	lua_setfield(L, -2, "key");
@@ -3568,16 +3621,17 @@ const char* c;
 int index=1, i;
 str_hk* v;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_hk*)lua_touserdata(L, index);
-		i = frame->GetHkIndexByLabel(v->name);
+		i = frame->GetHkIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetHkIndexByLabel(c);
+		i = frame->GetHkIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3599,6 +3653,7 @@ str_hk* t;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkhk(L);
@@ -3609,14 +3664,15 @@ int index=1;
 	else
 	{
 		l = luaL_checkstring(L,index);
-		int i = frame->GetHkIndexByLabel(l);
+		wxString s(l, co);
+		int i = frame->GetHkIndexByLabel(s);
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		else
-			lua_pushstring(L, frame->GetHotkeys()->at(i).GetAction().mb_str());
+			lua_pushstring(L, frame->GetHotkeys()->at(i).GetAction().mb_str(co).data());// .mb_str());
 			return 1;
 	}
 	return 1;
@@ -3631,32 +3687,34 @@ str_hk* t;
 int i, index=1;
 	
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		//t = checkalias(L);
 		t = (str_hk*)lua_touserdata(L, index);
 		c = luaL_checkstring(L, ++index);
-		i = frame->GetHkIndexByLabel(t->name);
+		i = frame->GetHkIndexByLabel(wxString(t->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetHotkeys()->at(i).SetAction(c);
-		wxStrcpy(t->action, c);
+		wxString s(c, co);
+		frame->GetHotkeys()->at(i).SetAction(s);
+		wxStrcpy(t->action, s.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = luaL_checkstring(L,index++);
 		c = luaL_checkstring(L, index);
-		i = frame->GetHkIndexByLabel(l);
+		i = frame->GetHkIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetHotkeys()->at(i).SetAction(c);
+		frame->GetHotkeys()->at(i).SetAction(wxString(c,co));
 	}
 	return 0;
 }
@@ -3668,15 +3726,16 @@ int i, index=1;
 str_hk* v=NULL;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_hk*)lua_touserdata(L, index++);
-		i = frame->GetHkIndexByLabel(v->name);
+		i = frame->GetHkIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetHkIndexByLabel(c);
+		i = frame->GetHkIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3686,7 +3745,8 @@ str_hk* v=NULL;
 	frame->GetHotkeys()->at(i).SetActive(lua_toboolean(L,index)!=0);
 	if (!v)
 	{
-		lua_pushstring(L,c);
+		wxString s(c, co);
+		lua_pushstring(L,s.mb_str(co).data());
 	}
 	else
 	{
@@ -3702,13 +3762,15 @@ const char* c;
 s_it it;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
-	c = luaL_checkstring(L,1); 
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	c = luaL_checkstring(L,1);
+	wxString s(c, co);
 	bool del = lua_toboolean(L,2)!=0;
 	if (del)
 	{
 		for (size_t i=0;i<frame->GetHotkeys()->size(); i++)
 		{
-			if(frame->GetHotkeys()->at(i).GetGroup()==c)
+			if(frame->GetHotkeys()->at(i).GetGroup()==s)
 			{
 				frame->GetHotkeys()->erase(frame->GetHotkeys()->begin()+i--);
 			}
@@ -3718,7 +3780,7 @@ s_it it;
 	{
 		for (size_t i=0;i<frame->GetHotkeys()->size(); i++)
 		{
-			if(frame->GetHotkeys()->at(i).GetGroup()==c)
+			if(frame->GetHotkeys()->at(i).GetGroup()==s)
 			{
 				frame->GetHotkeys()->at(i).SetGroup("default");
 			}
@@ -3726,7 +3788,7 @@ s_it it;
 	}
 	for (it = amcHotkey::GetHotkeyGroups()->begin(); it!=amcHotkey::GetHotkeyGroups()->end(); it++)
 	{
-		if (*it == c)
+		if (*it == s)
 		{
 			amcHotkey::GetHotkeyGroups()->erase(it);
 			break;
@@ -3741,11 +3803,13 @@ hk_it iter;
 const char* hkgroup;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	hkgroup = luaL_checkstring(L, 1);
+	wxString hkg(hkgroup, co);
 	bool active = lua_toboolean(L,2) != 0;
 	for (iter = frame->GetHotkeys()->begin(); iter!= frame->GetHotkeys()->end(); iter++)
 	{
-		if (hkgroup == iter->GetGroup())
+		if (hkg == iter->GetGroup())
 		{
 			iter->SetActive(active);
 		}
@@ -3754,9 +3818,9 @@ const char* hkgroup;
 	{
 		wxString s;
 		if (active)
-			s<<_("Enabled hotkey group ")<<hkgroup<<".";
+			s<<_("Enabled hotkey group ")<<hkg<<".";
 		else
-			s<<_("Disabled hotkey group ")<<hkgroup<<".";
+			s<<_("Disabled hotkey group ")<<hkg<<".";
 		frame->m_child->Msg(s, 3);
 	}
 	return 0;
@@ -3767,11 +3831,12 @@ int luafunc_getallhk(lua_State *L)
 size_t i;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetHotkeys()->size();i++)
 	{
-		lua_pushstring(L, frame->GetHotkeys()->at(i).GetName().mb_str());
+		lua_pushstring(L, frame->GetHotkeys()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
 	lua_pushnumber(L, i);
@@ -3785,15 +3850,16 @@ int i, index=1;
 str_hk* v=NULL;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_hk*)lua_touserdata(L, index++);
-		i = frame->GetHkIndexByLabel(v->name);
+		i = frame->GetHkIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetHkIndexByLabel(c);
+		i = frame->GetHkIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -3818,53 +3884,56 @@ str_var* a;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 //	int x = sizeof(struct str_var);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "name");
 		cc = luaL_checkstring(L, -1);
+		wxString s(cc, co);
 		for (it=frame->GetVars()->begin();it!=frame->GetVars()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Variable already exists!"));
 				return 0;
 			}
 		}
-		v.SetName(cc);
+		v.SetName(s);
 		lua_getfield(L, index, "value");
 		cc = luaL_checkstring(L, -1);
-		v.SetValue(cc);
+		v.SetValue(wxString(cc,co));
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		v.SetGroup(cc);
+		v.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		v.SetActive(lua_toboolean(L,-1)!=0);
 	}
 	else
 	{
 		cc = luaL_checkstring(L,index++);
+		wxString s(cc, co);
 		for (it=frame->GetVars()->begin();it!=frame->GetVars()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Variable already exists!"));
 				return 0;
 			}
 		}
-		v.SetName(cc);
+		v.SetName(s);
 		cc = luaL_checkstring(L,index++);
-		v.SetValue(cc);
-		v.SetGroup(luaL_optstring(L,index++, "default"));
+		v.SetValue(wxString(cc,co));
+		v.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		v.SetActive(lua_toboolean(L,index++)!=0);
 	}
 	frame->GetVars()->push_back(v);
 	stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
 	a = (str_var*)lua_newuserdata(L, sizeof(struct str_var));
-	wxStrcpy(a->name, v.GetName().c_str());
-	wxStrcpy(a->value, v.GetValue().c_str());
-	wxStrcpy(a->group, v.GetGroup().c_str());
+	wxStrcpy(a->name, v.GetName().mb_str(co).data());// .c_str());
+	wxStrcpy(a->value, v.GetValue().mb_str(co).data());// .c_str());
+	wxStrcpy(a->group, v.GetGroup().mb_str(co).data());// .c_str());
 	a->on = v.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtv");
 	lua_setmetatable(L, -2);
@@ -3882,6 +3951,7 @@ str_var* av;
 int index=1;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	//int x= sizeof(struct str_al);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
@@ -3889,7 +3959,7 @@ int index=1;
 		cc = luaL_checkstring(L, -2);
 		if (lua_type(L, -1)==LUA_TNIL)
 		{
-			int i = frame->GetVarIndexByLabel(cc);
+			int i = frame->GetVarIndexByLabel(wxString(cc,co));
 			if (i==-1)
 			{
 				lua_pushnil(L);
@@ -3901,7 +3971,7 @@ int index=1;
 			lua_pushnumber(L, frame->GetVars()->size());
 			return 1;
 		}
-		wxString s(cc);
+		wxString s(cc,co);
 		for (it=frame->GetVars()->begin();it!=frame->GetVars()->end();it++)
 		{
 			if(s==*it)
@@ -3913,10 +3983,10 @@ int index=1;
 		v.SetName(s);
 		lua_getfield(L, -1, "value");
 		cc = luaL_checkstring(L, -1);
-		v.SetValue(cc);
+		v.SetValue(wxString(cc,co));
 		lua_getfield(L, -2, "group");
 		cc = luaL_optstring(L, -1, "default");
-		v.SetGroup(cc);
+		v.SetGroup(wxString(cc,co));
 		lua_getfield(L, -3, "on");
 		v.SetActive(lua_toboolean(L,-1)!=0);
 	}
@@ -3924,9 +3994,9 @@ int index=1;
 	frame->GetVars()->push_back(v);
 	stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
 	av = (str_var*)lua_newuserdata(L, sizeof(struct str_var));
-	wxStrcpy(av->name, v.GetName().c_str());
-	wxStrcpy(av->value, v.GetValue().c_str());
-	wxStrcpy(av->group, v.GetGroup().c_str());
+	wxStrcpy(av->name, v.GetName().mb_str(co).data());// .c_str());
+	wxStrcpy(av->value, v.GetValue().mb_str(co).data());// .c_str());
+	wxStrcpy(av->group, v.GetGroup().mb_str(co).data());// .c_str());
 	av->on = v.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtv");
 	lua_setmetatable(L, -2);
@@ -3938,24 +4008,25 @@ int luafunc_getvar(lua_State *L)
 const char* name;
 str_var* v;
 int idx;
-MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,1)==LUA_TUSERDATA)
 	{
 		v = checkvar(L);
-		wxString s(v->name);
+		wxString s(v->name, co);
 		idx = frame->GetVarIndexByLabel(s);
 	}
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetVarIndexByLabel(name);
+		idx = frame->GetVarIndexByLabel(wxString(name,co));
 	}
 	if (idx==-1)
 	{
 		lua_pushnil(L);
 		return 1;
 	}
-	lua_pushstring(L, frame->GetVars()->at(idx).GetValue().mb_str());
+	lua_pushstring(L, frame->GetVars()->at(idx).GetValue().mb_str(co).data());// .mb_str());
 	return 1;
 }
 
@@ -3966,35 +4037,36 @@ const char* value;
 int idx;
 str_var* v;
 int index=1;
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));	
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		v = checkvar(L);
 		value = (char*)luaL_checkstring(L, ++index);
-		idx = frame->GetVarIndexByLabel(v->name);
+		idx = frame->GetVarIndexByLabel(wxString(v->name,co));
 		if (idx==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		wxString s(value);
+		wxString s(value,co);
 		frame->m_input->ParseVars(&s);
 		frame->GetVars()->at(idx).SetValue(s);
-		wxStrcpy(v->value, s.c_str());
+		wxStrcpy(v->value, s.mb_str(co).data());// .c_str());
 		lua_pushboolean(L, 1);
 		return 1;
 	}
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetVarIndexByLabel(name);
+		idx = frame->GetVarIndexByLabel(wxString(name,co));
 		if (idx==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		value = luaL_checkstring(L, 2);
-		wxString s(value);
+		wxString s(value,co);
 		frame->m_input->ParseVars(&s);
 		frame->GetVars()->at(idx).SetValue(s);
 		lua_pushboolean(L, 1);
@@ -4010,15 +4082,16 @@ int index=1, i;
 str_var* v;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_var*)lua_touserdata(L, index);
-		i = frame->GetVarIndexByLabel(v->name);
+		i = frame->GetVarIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetVarIndexByLabel(c);
+		i = frame->GetVarIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -4039,16 +4112,17 @@ const char* c;
 int i, index=1;
 str_var* v=NULL;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_var*)lua_touserdata(L, index++);
-		i = frame->GetVarIndexByLabel(v->name);
+		i = frame->GetVarIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetVarIndexByLabel(c);
+		i = frame->GetVarIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -4058,7 +4132,8 @@ str_var* v=NULL;
 	frame->GetVars()->at(i).SetActive(lua_toboolean(L,index)!=0);
 	if (!v)
 	{
-		lua_pushstring(L,c);
+		wxString s(c, co);
+		lua_pushstring(L,s.mb_str(co).data());
 	}
 	else
 	{
@@ -4073,12 +4148,12 @@ int luafunc_getallvar(lua_State *L)
 	size_t i;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetVars()->size();i++)
 	{
-		lua_pushstring(L, frame->GetVars()->at(i).GetName().mb_str());
+		lua_pushstring(L, frame->GetVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
 	lua_pushnumber(L, i);
@@ -4089,12 +4164,14 @@ int luafunc_enablevargroup(lua_State *L)
 {
 v_it iter;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	const char* vgroup;
 	vgroup = luaL_checkstring(L, 1);
+	wxString vgr(vgroup, co);
 	bool active = lua_toboolean(L,2) != 0;
 	for (iter = frame->GetVars()->begin(); iter!= frame->GetVars()->end(); iter++)
 	{
-		if (vgroup == iter->GetGroup())
+		if (vgr == iter->GetGroup())
 		{
 			iter->SetActive(active);
 		}
@@ -4103,9 +4180,9 @@ v_it iter;
 	{
 		wxString s;
 		if (active)
-			s<<_("Enabled variable group ")<<vgroup<<".";
+			s<<_("Enabled variable group ")<<vgr<<".";
 		else
-			s<<_("Disabled variable group ")<<vgroup<<".";
+			s<<_("Disabled variable group ")<<vgr<<".";
 		frame->m_child->Msg(s, 3);
 	}
 	return 0;
@@ -4116,11 +4193,12 @@ int luafunc_delvargroup(lua_State *L)
 s_it it;
 const char* vgroup;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	vgroup = luaL_checkstring(L, 1);
-	
+	wxString vgr(vgroup, co);
 	for (size_t i=0;i<frame->GetVars()->size(); i++)
 	{
-		if(frame->GetVars()->at(i).GetGroup()==vgroup)
+		if(frame->GetVars()->at(i).GetGroup()==vgr)
 		{
 			frame->GetVars()->erase(frame->GetVars()->begin()+i--);
 		}
@@ -4128,13 +4206,13 @@ const char* vgroup;
 	
 	for (it = amcVar::GetVarGroups()->begin(); it!=amcVar::GetVarGroups()->end(); it++)
 	{
-		if (*it == vgroup)
+		if (*it == vgr)
 		{
 			amcVar::GetVarGroups()->erase(it);
 			if (frame->IsVerbose())
 			{
 				wxString s;
-				s<<_("Deleted variable class ")<<vgroup<<".";
+				s<<_("Deleted variable class ")<<vgr<<".";
 				frame->m_child->Msg(s, 3);
 			}
 			return 0;
@@ -4143,7 +4221,7 @@ const char* vgroup;
 	if (it==amcVar::GetVarGroups()->end())
 	{
 		wxString s;
-		s<<_("Group ")<<vgroup<<_(" does not exist!");
+		s<<_("Group ")<<vgr<<_(" does not exist!");
 		frame->m_child->Msg(s,3);
 		return 0;
 	}
@@ -4161,22 +4239,23 @@ const char* c;
 str_ll* l;
 int index=1;
 
-	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();//MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 //	int x= sizeof(struct str_ll);
 	//called from amc.newlist
 	if(lua_type(L, index) != LUA_TTABLE)
 	{
 		c = luaL_checkstring(L, index++);
-	
+		wxString s(c, co);
 		for (it=frame->GetLists()->begin();it!=frame->GetLists()->end();it++)
 		{
-			if(c==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Error creating list!"));
 				return 0;
 			}
 		}
-		list.SetName(c);
+		list.SetName(s);
 	}
 
 	if (lua_type(L,index)==LUA_TTABLE)
@@ -4184,18 +4263,19 @@ int index=1;
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "name");
 		const char* cc = luaL_checkstring(L, -1);
+		wxString s(cc, co);
 		for (it=frame->GetLists()->begin();it!=frame->GetLists()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("List already exists!"));
 				return 0;
 			}
 		}
-		list.SetName(cc);
+		list.SetName(s);
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		list.SetGroup(cc);
+		list.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		list.SetActive(lua_toboolean(L,-1)!=0);
 		}
@@ -4211,16 +4291,16 @@ int index=1;
 			}
 		}
 		list.SetName(c);*/
-		list.SetGroup(luaL_optstring(L,index++, "default"));
+		list.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		list.SetActive(lua_toboolean(L,index++)!=0);
 		
 	}
 	frame->GetLists()->push_back(list);
 	//stable_sort(frame->GetLists()->begin(), frame->GetLists()->end(), less<class amcList>());
 	l = (str_ll*)lua_newuserdata(L, sizeof(struct str_ll));
-	wxStrcpy(l->name, list.GetName().c_str());
+	wxStrcpy(l->name, list.GetName().mb_str(co).data());// .c_str());
 	//l->name = list.GetName();
-	wxStrcpy(l->cla, list.GetGroup().c_str());
+	wxStrcpy(l->cla, list.GetGroup().mb_str(co).data());// .c_str());
 	l->on = list.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtll");
 	lua_setmetatable(L, -2);
@@ -4234,10 +4314,11 @@ int i, index=1;
 str_ll* l;
 
 	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4247,7 +4328,7 @@ str_ll* l;
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4256,13 +4337,13 @@ str_ll* l;
 	}
 	lua_settop(L,0);
 	lua_newtable(L);
-	int co = frame->GetLists()->at(i).GetSize();
-	for (int ii=0;ii<co;ii++)
+	int con = frame->GetLists()->at(i).GetSize();
+	for (int ii=0;ii<con;ii++)
 	{
-		lua_pushstring(L, frame->GetLists()->at(i).GetItem(ii));
+		lua_pushstring(L, frame->GetLists()->at(i).GetItem(ii).mb_str(co).data());
 		lua_rawseti(L, -2, ii+1);
 	}
-	lua_pushnumber(L, co);
+	lua_pushnumber(L, con);
 	return 2;
 }
 
@@ -4273,10 +4354,11 @@ int i, index=1;
 str_ll* l;
 
 	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4286,15 +4368,15 @@ str_ll* l;
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 	}
-	int co = luaL_checknumber(L, index);
-	if (co>frame->GetLists()->at(i).GetSize()||!co)
+	int con = luaL_checknumber(L, index);
+	if (con>frame->GetLists()->at(i).GetSize()||!con)
 	{
 		if (frame->IsVerbose())
 		{
@@ -4303,7 +4385,7 @@ str_ll* l;
 		lua_pushnil(L);
 		return 1;
 	}
-	lua_pushstring(L,frame->GetLists()->at(i).GetItem(co-1).c_str());
+	lua_pushstring(L, frame->GetLists()->at(i).GetItem(con - 1).mb_str(co).data());//.c_str());
 	return 1;
 }
 
@@ -4314,32 +4396,34 @@ int i, index=1;
 str_ll* l;
 
 	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		c = luaL_checkstring(L, index++);
-		wxStrcpy(l->items[frame->GetLists()->at(i).GetSize()], c);
-		frame->GetLists()->at(i).AddItem(c);
+		wxString s(c, co);
+		wxStrcpy(l->items[frame->GetLists()->at(i).GetSize()], s.mb_str(co).data());
+		frame->GetLists()->at(i).AddItem(s);
 		lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
 		return 1;
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
 		c = luaL_checkstring(L, index);
-		frame->GetLists()->at(i).AddItem(c);
+		frame->GetLists()->at(i).AddItem(wxString(c,co));
 		lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
 		return 1;
 	}
@@ -4352,11 +4436,12 @@ char* c;
 int i, index=1;
 str_ll* l;
 
-	MudMainFrame *frame = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4369,7 +4454,7 @@ str_ll* l;
 	else
 	{
 		c = (char*)luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4389,15 +4474,16 @@ int index=1, i;
 str_ll* l;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -4420,15 +4506,16 @@ int idx=0;
 int index=1, i;
 str_ll* l;
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -4454,15 +4541,17 @@ const char* c;
 int index=1, i;
 str_ll* l;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		wxString s(c, co);
+		i = frame->GetListIndexByLabel(s);
 	}
 	if (i==-1)
 	{
@@ -4470,7 +4559,8 @@ str_ll* l;
 		return 1;
 	}
 	c=luaL_checkstring(L, index);
-	if (!frame->GetLists()->at(i).DeleteItem(c))
+	wxString s(c, co);
+	if (!frame->GetLists()->at(i).DeleteItem(s))
 	{
 		lua_pushnil(L);
 		return 1;
@@ -4486,15 +4576,16 @@ const char* c;
 int index=1, i;
 str_ll* l;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
@@ -4502,7 +4593,8 @@ str_ll* l;
 		return 1;
 	}
 	c = luaL_checkstring(L, index);
-	if (!frame->GetLists()->at(i).Contains(c))
+	wxString s(c, co);
+	if (!frame->GetLists()->at(i).Contains(s))
 		lua_pushboolean(L, 0);
 	else
 		lua_pushboolean(L, 1);
@@ -4516,10 +4608,11 @@ int i, index=1;
 str_ll* l;
 
 	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		l = (str_ll*)lua_touserdata(L, index++);
-		i = frame->GetListIndexByLabel(l->name);
+		i = frame->GetListIndexByLabel(wxString(l->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4529,7 +4622,7 @@ str_ll* l;
 	else
 	{
 		c = luaL_checkstring(L,index++);
-		i = frame->GetListIndexByLabel(c);
+		i = frame->GetListIndexByLabel(wxString(c,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
@@ -4544,13 +4637,15 @@ int luafunc_enablelistgroup(lua_State *L)
 {
 li_it iter;
 MudMainFrame *frame = wxGetApp().GetFrame();
+wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 const char* lgroup;
 bool exist = false;
 	lgroup = luaL_checkstring(L, 1);
+	wxString lgr(lgroup, co);
 	bool active = lua_toboolean(L,2) != 0;
 	for (iter = frame->GetLists()->begin(); iter!= frame->GetLists()->end(); iter++)
 	{
-		if (lgroup == iter->GetGroup())
+		if (lgr == iter->GetGroup())
 		{
 			iter->SetActive(active);
 			exist = true;
@@ -4559,7 +4654,7 @@ bool exist = false;
 	if (!exist)
 	{
 		wxString s;
-		s<<_("Group ")<<lgroup<<_(" does not exist!");
+		s<<_("Group ")<<lgr<<_(" does not exist!");
 		frame->m_child->Msg(s,3);
 		return 0;
 	}
@@ -4567,9 +4662,9 @@ bool exist = false;
 	{
 		wxString s;
 		if (active)
-			s<<_("Enabled list group ")<<lgroup<<".";
+			s<<_("Enabled list group ")<<lgr<<".";
 		else
-			s<<_("Disabled list group ")<<lgroup<<".";
+			s<<_("Disabled list group ")<<lgr<<".";
 		frame->m_child->Msg(s, 3);
 	}
 	return 0;
@@ -4579,12 +4674,12 @@ int luafunc_getalllist(lua_State *L)
 {
 	size_t i;
 	MudMainFrame *frame = wxGetApp().GetFrame();
-
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 	for (i=0;i<frame->GetLists()->size();i++)
 	{
-		lua_pushstring(L, frame->GetLists()->at(i).GetName().mb_str());
+		lua_pushstring(L, frame->GetLists()->at(i).GetName().mb_str(co).data());
 		lua_rawseti(L, -2, i+1);
 	}
 	lua_pushnumber(L, i);
@@ -4596,11 +4691,12 @@ int luafunc_dellistgroup(lua_State *L)
 s_it it;
 const char* lgroup;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	lgroup = luaL_checkstring(L, 1);
-	
+	wxString lgr(lgroup, co);
 	for (size_t i=0;i<frame->GetLists()->size(); i++)
 	{
-		if(frame->GetLists()->at(i).GetGroup()==lgroup)
+		if(frame->GetLists()->at(i).GetGroup()==lgr)
 		{
 			frame->GetLists()->erase(frame->GetLists()->begin()+i--);
 		}
@@ -4608,13 +4704,13 @@ const char* lgroup;
 	
 	for (it = amcList::GetListGroups()->begin(); it!=amcList::GetListGroups()->end(); it++)
 	{
-		if (*it == lgroup)
+		if (*it == lgr)
 		{
 			amcList::GetListGroups()->erase(it);
 			if (frame->IsVerbose())
 			{
 				wxString s;
-				s<<_("Deleted list group ")<<lgroup<<".";
+				s<<_("Deleted list group ")<<lgr<<".";
 				frame->m_child->Msg(s, 3);
 			}
 			return 0;
@@ -4623,7 +4719,7 @@ const char* lgroup;
 	if (it==amcList::GetListGroups()->end())
 	{
 		wxString s;
-		s<<_("Group ")<<lgroup<<_(" does not exist!");
+		s<<_("Group ")<<lgr<<_(" does not exist!");
 		frame->m_child->Msg(s,3);
 		return 0;
 	}
@@ -4867,43 +4963,47 @@ int index=1;
 struct str_btn *bb;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+
 //	int x = sizeof(struct str_btn);
 	if (lua_type(L,index)==LUA_TTABLE)
 	{
 		//lua_getfield(L, -1, c);
 		lua_getfield(L, index, "name");
 		cc = luaL_checkstring(L, -1);
+		wxString s(cc, co);
 		for (it=frame->GetButtons()->begin();it!=frame->GetButtons()->end();it++)
 		{
-			if(cc==*it)
+			if(s==*it)
 			{
 				frame->m_child->Msg(_("Button already exists!"));
 				return 0;
 			}
 		}
-		b.SetName(cc);
-		b.SetText(cc);
+		b.SetName(s);
+		b.SetText(s);
 		lua_getfield(L, index, "action");
 		cc = luaL_checkstring(L, -1);
-		b.SetAction(cc);
+		b.SetAction(wxString(cc,co));
 		lua_getfield(L, index, "group");
 		cc = luaL_optstring(L, -1, "default");
-		b.SetGroup(cc);
+		b.SetGroup(wxString(cc,co));
 		lua_getfield(L, index, "on");
 		b.SetActive(lua_toboolean(L,-1)!=0);
 		b.SetId(ID_USERBUTTON+frame->GetButtons()->size()+1);
 		lua_getfield(L, index, "toolbar");
 		cc = luaL_checkstring(L, -1);
-		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(cc, frame);
+		wxString t(cc, co);
+		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(t, frame);
 		if (!tb)
 		{
 			wxString s;
-			s<<"amc.createtoolbar('"<<cc<<"')";
+			s<<"amc.createtoolbar('"<<t<<"')";
 			luaL_dostring(L,s.c_str());
-			tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(cc, frame);
+			tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(t, frame);
 			//lua_pushnil(L);
 		}
-		b.SetTbName(cc);
+		b.SetTbName(t);
 		b.SetParent(tb);
 		tb->AddTool(b.GetId(), b.GetName(), script_xpm);
 		tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
@@ -4912,35 +5012,37 @@ struct str_btn *bb;
 	else
 	{
 		cc = luaL_checkstring(L,index++);
+		wxString t(cc, co);
 		for (it=frame->GetButtons()->begin();it!=frame->GetButtons()->end();it++)
 		{
-			if(cc==*it)
+			if(t==*it)
 			{
 				frame->m_child->Msg(_("Button already exists!"));
 				return 0;
 			}
 		}
-		b.SetName(cc);
-		b.SetText(cc);
+		b.SetName(t);
+		b.SetText(t);
 		cc = luaL_checkstring(L,index++);//toolbar
-		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(cc, frame);
+		wxString s(cc, co);
+		tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(s, frame);
 		if (!tb)
 		{
-			wxString s;
-			s<<"amc.createtoolbar('"<<cc<<"')";
-			luaL_dostring(L,s.c_str());
-			tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(cc, frame);
+			wxString ss;
+			ss<<"amc.createtoolbar('"<<s<<"')";
+			luaL_dostring(L,ss.c_str());
+			tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(s, frame);
 			//lua_pushnil(L);
 		}
-		b.SetTbName(cc);
+		b.SetTbName(s);
 		b.SetParent(tb);
 		b.SetId(ID_USERBUTTON+frame->GetButtons()->size()+1);
 		tb->AddTool(b.GetId(), b.GetName(), script_xpm);
 		tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 		cc = luaL_checkstring(L,index++);
-		b.SetAction(cc);
+		b.SetAction(wxString(cc,co));
 		//cc = luaL_checkstring(L,index++);
-		b.SetGroup(luaL_optstring(L,index++, "default"));
+		b.SetGroup(wxString(luaL_optstring(L,index++, "default"),co));
 		b.SetActive(lua_toboolean(L,index++)!=0);
 		
 	}
@@ -4948,11 +5050,11 @@ struct str_btn *bb;
 	tb->Realize();
 	//stable_sort(frame->GetHotkeys()->begin(), frame->GetHotkeys()->end(), less<class amcHotkey>());
 	bb = (str_btn*)lua_newuserdata(L, sizeof(struct str_btn));
-	wxStrcpy(bb->name, b.GetName().mb_str());
-	wxStrcpy(bb->text, b.GetText().mb_str());
-	wxStrcpy(bb->action, b.GetAction().mb_str());
-	wxStrcpy(bb->group, b.GetGroup().mb_str());
-	wxStrcpy(bb->tbar, b.GetTbName().mb_str());
+	wxStrcpy(bb->name, b.GetName().mb_str(co).data());
+	wxStrcpy(bb->text, b.GetText().mb_str(co).data());
+	wxStrcpy(bb->action, b.GetAction().mb_str(co).data());
+	wxStrcpy(bb->group, b.GetGroup().mb_str(co).data());
+	wxStrcpy(bb->tbar, b.GetTbName().mb_str(co).data());
 	bb->tb = tb;
 	bb->on = b.IsActive();
 	luaL_getmetatable(L, "wxamcl.mtbtn");
@@ -4969,16 +5071,17 @@ int i=0;
 str_btn* bt;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		bt = checkbtn(L);
-		i = frame->GetVarIndexByLabel(bt->name);
+		i = frame->GetVarIndexByLabel(wxString(bt->name,co));
 	}
 	else
 	{
 		cc = luaL_checkstring(L,index);
-		i = frame->GetVarIndexByLabel(cc);
+		wxString s(cc, co);
+		i = frame->GetVarIndexByLabel(s);
 	}
 	if (i==-1)
 	{
@@ -5003,17 +5106,18 @@ int luafunc_getbtn(lua_State *L)
 const char* name;
 str_btn* bt;
 int idx;
-	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,1)==LUA_TUSERDATA)
 	{
 		bt = checkbtn(L);
-		wxString s(bt->name);
+		wxString s(bt->name, co);
 		idx = frame->GetButtonIndexByLabel(s);
 	}
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetButtonIndexByLabel(name);
+		idx = frame->GetButtonIndexByLabel(wxString(name,co));
 	}
 	if (idx==-1)
 	{
@@ -5022,19 +5126,19 @@ int idx;
 	}
 	lua_settop(L,0);
 	lua_newtable(L);
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetName().char_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetName().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "name");
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str(co).data());
 	lua_setfield(L, -2, "action");
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetGroup().mb_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetGroup().mb_str(co).data());
 	lua_setfield(L, -2, "group");
 	lua_pushboolean(L, frame->GetButtons()->at(idx).IsActive());
 	lua_setfield(L, -2, "on");
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetTbName().mb_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetTbName().mb_str(co).data());
 	lua_setfield(L, -2, "toolbar");
 	lua_pushnumber(L, frame->GetButtons()->at(idx).GetId());
 	lua_setfield(L, -2, "id");
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetText().mb_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetText().mb_str(co).data());
 	lua_setfield(L, -2, "text");
 	return 1;	
 }
@@ -5047,32 +5151,35 @@ str_btn* b;
 int i, index=1;
 	
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		//t = checkalias(L);
 		b = checkbtn(L);
 		c = luaL_checkstring(L, ++index);
-		i = frame->GetButtonIndexByLabel(b->name);
+		wxString s(c, co);
+		i = frame->GetButtonIndexByLabel(wxString(b->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetAction(c);
-		wxStrcpy(b->action, c);
+		frame->GetButtons()->at(i).SetAction(s);
+		wxStrcpy(b->action, s.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = luaL_checkstring(L,index++);
 		c = luaL_checkstring(L, index);
-		i = frame->GetButtonIndexByLabel(l);
+		i = frame->GetButtonIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetAction(c);
+		wxString s(l, co);
+		frame->GetButtons()->at(i).SetAction(s);
 	}
 	return 0;
 }
@@ -5082,24 +5189,25 @@ int luafunc_getacbtn(lua_State *L)
 const char* name;
 str_btn* bt;
 int idx;
-	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();	
+	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,1)==LUA_TUSERDATA)
 	{
 		bt = checkbtn(L);
-		wxString s(bt->name);
+		wxString s(bt->name, co);
 		idx = frame->GetButtonIndexByLabel(s);
 	}
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetButtonIndexByLabel(name);
+		idx = frame->GetButtonIndexByLabel(wxString(name,co));
 	}
 	if (idx==-1)
 	{
 		lua_pushnil(L);
 		return 1;
 	}
-	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str());
+	lua_pushstring(L, frame->GetButtons()->at(idx).GetAction().mb_str(co).data());
 	return 1;
 }
 
@@ -5111,34 +5219,38 @@ str_btn* b;
 int i, index=1;
 	
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		//t = checkalias(L);
 		b = checkbtn(L);
 		c = luaL_checkstring(L, ++index);
-		i = frame->GetButtonIndexByLabel(b->name);
+		wxString s(c, co);
+		i = frame->GetButtonIndexByLabel(wxString(b->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetText(c);
-		wxStrcpy(b->text, c);
+		
+		frame->GetButtons()->at(i).SetText(s);
+		wxStrcpy(b->text, s.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = luaL_checkstring(L,index++);
 		c = luaL_checkstring(L, index);
-		i = frame->GetButtonIndexByLabel(l);
+		i = frame->GetButtonIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetText(c);
+		wxString s(c, co);
+		frame->GetButtons()->at(i).SetText(s);
 		wxAuiToolBar* tb = (wxAuiToolBar*)frame->GetButtons()->at(i).GetParent();
-		tb->SetToolLabel(frame->GetButtons()->at(i).GetId(), c);
+		tb->SetToolLabel(frame->GetButtons()->at(i).GetId(), s);
 		tb->Realize();
 		frame->m_mgr.Update();
 	}
@@ -5153,36 +5265,39 @@ str_btn* b;
 int i, index=1;
 	
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		//t = checkalias(L);
 		b = checkbtn(L);
 		bmap = luaL_checkstring(L, ++index);
-		i = frame->GetButtonIndexByLabel(b->name);
+		i = frame->GetButtonIndexByLabel(wxString(b->name,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetBitmap(bmap);
-		wxStrcpy(b->text, bmap);
+		wxString s(bmap, co);
+		frame->GetButtons()->at(i).SetBitmap(s);
+		wxStrcpy(b->text, s.mb_str(co).data());
 		return 0;
 	}
 	else
 	{
 		l = luaL_checkstring(L,index++);
 		bmap = luaL_checkstring(L, index);
-		i = frame->GetButtonIndexByLabel(l);
+		i = frame->GetButtonIndexByLabel(wxString(l,co));
 		if (i==-1)
 		{
 			lua_pushnil(L);
 			return 1;
 		}
-		frame->GetButtons()->at(i).SetBitmap(bmap);
+		wxString s(bmap, co);
+		frame->GetButtons()->at(i).SetBitmap(s);
 		wxAuiToolBar* tb = (wxAuiToolBar*)frame->GetButtons()->at(i).GetParent();
 		wxBitmap bt;
 		wxSetWorkingDirectory(frame->GetGlobalOptions()->GetImagesDir());
-		bt.LoadFile(bmap, wxBITMAP_TYPE_XPM);
+		bt.LoadFile(s, wxBITMAP_TYPE_XPM);
 		tb->SetToolBitmap(frame->GetButtons()->at(i).GetId(), bt);
 		tb->Realize();
 		frame->m_mgr.Update();
@@ -5199,16 +5314,17 @@ int i=0;
 str_btn* bt;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	//cc = luaL_checkstring(L,1);
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		bt = checkbtn(L);
-		i = frame->GetButtonIndexByLabel(bt->name);
+		i = frame->GetButtonIndexByLabel(wxString(bt->name,co));
 	}
 	else
 	{
 		cc = luaL_checkstring(L,index);
-		i = frame->GetButtonIndexByLabel(cc);
+		i = frame->GetButtonIndexByLabel(wxString(cc,co));
 	}
 	if (i==-1)
 	{
@@ -5234,6 +5350,7 @@ int luafunc_newdb(lua_State *L)
 	const char* file;
 	int rc=0;
 	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+
 	wxSetWorkingDirectory(frame->GetGlobalOptions()->GetDatabaseDir());
 	file = luaL_checkstring(L, 1);
 	if (!::wxFileExists(file))
@@ -5462,10 +5579,12 @@ const char *link;
 const char *hint;
 const char *text;
 wxString l;
+	class MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	text = luaL_checkstring(L,1);
 	link = luaL_checkstring(L,2);
 	hint = luaL_optstring(L,3,text);
-	l<<"<send hint=\""<<hint<<"\" href=\""<<link<<"\">"<<text<<"</send>";
+	l<<"<send hint=\""<<wxString(hint,co)<<"\" href=\""<<wxString(link,co)<<"\">"<<wxString(text,co)<<"</send>";
 	MudWindow *mw = wxGetApp().GetChild();
 	if (!mw)
 		return 0;

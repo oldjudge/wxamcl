@@ -156,6 +156,7 @@ using namespace std;
 #define ID_COPY 1500
 #define ID_MAKEACTION 1510
 #define ID_MCOPY 1511
+#define ID_MANSI 1512
 #define ID_LOGWINDOW 1520
 #define ID_STOPLOGGING 1521
 #define ID_SPLITTER 1600

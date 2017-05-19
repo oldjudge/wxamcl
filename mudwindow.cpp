@@ -53,6 +53,7 @@ BEGIN_EVENT_TABLE(MudWindow, wxWindow)
 	EVT_MENU(ID_STAMPS, MudWindow::OnTimeStamps)
 	EVT_MENU(ID_MAKEACTION, MudWindow::OnMakeAction)
 	EVT_MENU(ID_MCOPY, MudWindow::OnCopy)
+	EVT_MENU(ID_MANSI, MudWindow::OnCopyAnsi)
     EVT_MENU(ID_LOGWINDOW, MudWindow::OnLogThisWindow)
 	EVT_MENU(ID_STOPLOGGING, MudWindow::OnStopLogging)
 	EVT_UPDATE_UI(ID_LOGWINDOW, MudWindow::OnMenuUi)
@@ -160,7 +161,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	//m_mxp = new amcMXP();
 	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
 	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -3272,7 +3273,8 @@ wxStringTokenizer tkz;
 					linenr=m_curline-1;
 				s = m_vmudlines.at(linenr).GetConvLineText();
 			}
-			if (m_parent->m_trigger.at(i).Match(s.To8BitData()))//trit->Match(s))
+			//if (m_parent->m_trigger.at(i).Match(s.To8BitData()))//trit->Match(s))
+			if (m_parent->m_trigger.at(i).Match(s))
 			{
 				wxString ac = m_parent->m_trigger.at(i).BuildAction();//trit->BuildAction();
 				if (m_parent->m_trigger.at(i).GetSendScript())
@@ -4906,6 +4908,19 @@ void MudWindow::OnCopy(wxCommandEvent& event)
 	
 }
 
+void MudWindow::OnCopyAnsi(wxCommandEvent& event)
+{
+	if (IsTextSelected())
+	{
+		wxString text = GetSelectedAnsiText();
+		if (wxTheClipboard->Open())
+		{
+			wxTheClipboard->SetData(new wxTextDataObject(text));
+			wxTheClipboard->Close();
+		}
+	}
+}
+
 void MudWindow::OnMakeAction(wxCommandEvent& event)
 {
 	//wxCommandEvent ev;// = new wxCommandEvent();
@@ -5747,7 +5762,7 @@ int stamp_offset = 0;
 			contextMenu->Append(ID_MAKEACTION, _("Create action..."), _("Create an action using the linetext"));
 			contextMenu->AppendSeparator();
 			contextMenu->Append(ID_MCOPY, _("Copy\tCtrl+C"), _("Copy selection to clipboard"));
-			contextMenu->Append(ID_COPY, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
+			contextMenu->Append(ID_MANSI, _("Copy with ansi"), _("Copy selection with ansicodes to clipboard"));
 		}
         if (this!=m_parent->m_child)
         {

@@ -135,8 +135,7 @@ bool MudClientApp::OnInit()
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
     
-    
-    
+      
 
 	//Output window
 	frame->m_child = new MudWindow(frame);
@@ -1054,6 +1053,10 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 
 	this->SaveGlobalOptions();
 	this->m_child->Refresh();
+	luaBuildalias();
+	luaBuilddefvar();
+	luaBuildtrigger();
+	luaBuildvar();
 	m_child->Update();
 	return;
 }
@@ -3231,20 +3234,20 @@ void MudMainFrame::luaBuildtrigger()
 size_t i;
 	amcLua *aL = m_child->GetLState();
 	struct lua_State *L = aL->GetLuaState();
-
+	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
 	for (i=0;i<GetTrigger()->size();i++)
 	{
-		lua_pushstring(L, GetTrigger()->at(i).GetLabel().mb_str());
+		lua_pushstring(L, GetTrigger()->at(i).GetLabel().mb_str(co).data());// .mb_str());
 		//lua_setfield(L, -1, GetTrigger()->at(i).GetLabel());
 		lua_newtable(L);
-		lua_pushstring(L, GetTrigger()->at(i).GetPattern().mb_str());
+		lua_pushstring(L, GetTrigger()->at(i).GetPattern().mb_str(co).data());
 		lua_setfield(L, -2, "pattern");
-		lua_pushstring(L, GetTrigger()->at(i).GetAction().mb_str());
+		lua_pushstring(L, GetTrigger()->at(i).GetAction().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "action");
-		lua_pushstring(L, GetTrigger()->at(i).GetClass().mb_str());
+		lua_pushstring(L, GetTrigger()->at(i).GetClass().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "class");
 		lua_pushboolean(L, GetTrigger()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
@@ -3287,17 +3290,17 @@ void MudMainFrame::luaBuildalias()
 size_t i;
 	amcLua *aL = m_child->GetLState();
 	struct lua_State *L = aL->GetLuaState();
-
+	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
 	for (i=0;i<GetAlias()->size();i++)
 	{
-		lua_pushstring(L, GetAlias()->at(i).GetName().mb_str());
+		lua_pushstring(L, GetAlias()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetAlias()->at(i).GetAction().mb_str());
+		lua_pushstring(L, GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "action");
-		lua_pushstring(L, GetAlias()->at(i).GetGroup().mb_str());
+		lua_pushstring(L, GetAlias()->at(i).GetGroup().mb_str(co).data());//.mb_str());
 		lua_setfield(L, -2, "group");
 		lua_pushboolean(L, GetAlias()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
@@ -3334,17 +3337,17 @@ void MudMainFrame::luaBuildvar()
 size_t i;
 	amcLua *aL = m_child->GetLState();
 	struct lua_State *L = aL->GetLuaState();
-
+	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
 	for (i=0;i<GetVars()->size();i++)
 	{
-		lua_pushstring(L, GetVars()->at(i).GetName().mb_str());
+		lua_pushstring(L, GetVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetVars()->at(i).GetValue().mb_str());
+		lua_pushstring(L, GetVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "value");
-		lua_pushstring(L, GetVars()->at(i).GetGroup().mb_str());
+		lua_pushstring(L, GetVars()->at(i).GetGroup().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "group");
 		lua_pushboolean(L, GetVars()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
@@ -3380,15 +3383,15 @@ void MudMainFrame::luaBuilddefvar()
 size_t i;
 	amcLua *aL = m_child->GetLState();
 	struct lua_State *L = aL->GetLuaState();
-
+	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L, 0);
 	lua_newtable(L);
 
 	for (i = 0; i<GetDefVars()->size(); i++)
 	{
-		lua_pushstring(L, GetDefVars()->at(i).GetName().mb_str());
+		lua_pushstring(L, GetDefVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetDefVars()->at(i).GetValue().mb_str());
+		lua_pushstring(L, GetDefVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "value");
 		lua_settable(L, -3);
 	}
