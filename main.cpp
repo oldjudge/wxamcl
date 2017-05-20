@@ -967,7 +967,7 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 	int id = event.GetId();
 	wxMenuBar* bar = GetMenuBar();
 	wxMenuItem* item;
-	for (int i=ID_CHARENCODING;i<ID_CHARENCODING+14;i++)
+	for (int i=ID_CHARENCODING;i<ID_CHARENCODING+17;i++)
 	{
 		item = bar->FindItem(i);
 		item->Check(false);
@@ -988,39 +988,46 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 	case ID_CHARENCODING+3:
 		ec = wxFONTENCODING_ISO8859_15;
 		break;
-	case ID_CHARENCODING+4:
-		ec = wxFONTENCODING_ISO8859_7;
+	case ID_CHARENCODING + 4:
+		ec = wxFONTENCODING_ISO8859_2;
 		break;
 	case ID_CHARENCODING+5:
-		ec = wxFONTENCODING_CP1253;
+		ec = wxFONTENCODING_ISO8859_7;
 		break;
 	case ID_CHARENCODING+6:
-		ec = wxFONTENCODING_KOI8;
+		ec = wxFONTENCODING_CP1253;
 		break;
 	case ID_CHARENCODING+7:
-		ec = wxFONTENCODING_KOI8_U;
+		ec = wxFONTENCODING_KOI8;
 		break;
 	case ID_CHARENCODING+8:
-		ec = wxFONTENCODING_ISO8859_5;
+		ec = wxFONTENCODING_KOI8_U;
 		break;
 	case ID_CHARENCODING+9:
-		ec = wxFONTENCODING_CP1251;
+		ec = wxFONTENCODING_ISO8859_5;
 		break;
 	case ID_CHARENCODING+10:
-		ec = wxFONTENCODING_BIG5;
+		ec = wxFONTENCODING_CP1251;
 		break;
 	case ID_CHARENCODING+11:
-		ec = wxFONTENCODING_CP936;
+		ec = wxFONTENCODING_BIG5;
 		break;
 	case ID_CHARENCODING+12:
-		ec = wxFONTENCODING_SHIFT_JIS;
+		ec = wxFONTENCODING_CP936;
 		break;
 	case ID_CHARENCODING+13:
-		ec = wxFONTENCODING_ISO2022_JP;
+		ec = wxFONTENCODING_SHIFT_JIS;
 		break;
 	case ID_CHARENCODING+14:
+		ec = wxFONTENCODING_ISO2022_JP;
+		break;
+	case ID_CHARENCODING+15:
 		ec = wxFONTENCODING_EUC_JP;
 		break;
+	case ID_CHARENCODING + 16:
+		ec = wxFONTENCODING_ISO8859_8;
+		break;
+	
 	}
 	//wxFontEncoding cur = m_gopt->GetCurEncoding();
 	m_gopt->SetEncoding(ec);
@@ -1506,32 +1513,35 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 {
 	view->AppendSeparator();
 	wxMenu *subMenu1 = new wxMenu;
-	subMenu1->AppendCheckItem(ID_CHARENCODING, _("Standard"), _("Standard encoding (ASCII)"));
+	subMenu1->AppendCheckItem(ID_CHARENCODING, _("Standard"), _("System Standard encoding"));
 	subMenu1->AppendCheckItem(ID_CHARENCODING+1, _("UTF-8"), _("UTF-8"));
 	wxMenu *subMenu11 = new wxMenu;
 	subMenu11->AppendCheckItem(ID_CHARENCODING+2, _("ISO-8859-1"), _("ISO-8859-1"));
 	subMenu11->AppendCheckItem(ID_CHARENCODING+3, _("ISO-8859-15"), _("ISO-8859-15"));
 	subMenu1->AppendSubMenu(subMenu11,_("Western"), _("Western"));
+	subMenu1->AppendCheckItem(ID_CHARENCODING + 4, _("Central and East Europe"), ("ISO-8859-2"));
+
 	wxMenu *subMenu12 = new wxMenu;
-	subMenu12->AppendCheckItem(ID_CHARENCODING+4, _("ISO-8859-7"), _("ISO-8859-7"));
-	subMenu12->AppendCheckItem(ID_CHARENCODING+5, _("Windows-1253"), _("Windows1253"));
+	subMenu12->AppendCheckItem(ID_CHARENCODING+5, _("ISO-8859-7"), _("ISO-8859-7"));
+	subMenu12->AppendCheckItem(ID_CHARENCODING+6, _("Windows-1253"), _("Windows1253"));
 	subMenu1->AppendSubMenu(subMenu12,_("Greek"), _("Greek"));
 	wxMenu *subMenu2 = new wxMenu;
-	subMenu2->AppendCheckItem(ID_CHARENCODING+6, _("KOI-8R"), _("KOI-8R"));
-	subMenu2->AppendCheckItem(ID_CHARENCODING+7, _("KOI-8U"), _("KOI-8U"));
-	subMenu2->AppendCheckItem(ID_CHARENCODING+8, _("ISO8859-5"), _("ISO8859-5"));
-	subMenu2->AppendCheckItem(ID_CHARENCODING+9, _("Windows-1251"), ("Windows-1251"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+7, _("KOI-8R"), _("KOI-8R"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+8, _("KOI-8U"), _("KOI-8U"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+9, _("ISO8859-5"), _("ISO-8859-5"));
+	subMenu2->AppendCheckItem(ID_CHARENCODING+10, _("Windows-1251"), ("Windows-1251"));
 	subMenu1->AppendSubMenu(subMenu2,_("Cyrillic"), _("Russian"));
 	wxMenu *subMenu3 = new wxMenu;
-	subMenu3->AppendCheckItem(ID_CHARENCODING+10, _("Big5"), _("Big5"));
-	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("GBK"), ("CP936"));
+	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("Big5"), _("Big5"));
+	subMenu3->AppendCheckItem(ID_CHARENCODING+12, _("GBK"), ("CP936"));
 	//subMenu3->AppendCheckItem(ID_CHARENCODING+12, _("GB1232"), ("GB1232"));
 	subMenu1->AppendSubMenu(subMenu3,_("Chinese"), _("Chinese"));
 	wxMenu *subMenu4 = new wxMenu;
-	subMenu4->AppendCheckItem(ID_CHARENCODING+12, _("Shift-JIS"), _("JIS"));
-	subMenu4->AppendCheckItem(ID_CHARENCODING+13, _("ISO2022-JP"), ("ISO2022-JP"));
-	subMenu4->AppendCheckItem(ID_CHARENCODING+14, _("EUC_JP"), ("EUC_JP"));
+	subMenu4->AppendCheckItem(ID_CHARENCODING+13, _("Shift-JIS"), _("JIS"));
+	subMenu4->AppendCheckItem(ID_CHARENCODING+14, _("ISO2022-JP"), ("ISO2022-JP"));
+	subMenu4->AppendCheckItem(ID_CHARENCODING+15, _("EUC_JP"), ("EUC_JP"));
 	subMenu1->AppendSubMenu(subMenu4,_("Japanese"), _("Japanese"));
+	subMenu1->AppendCheckItem(ID_CHARENCODING + 16, _("Hebrew"), ("ISO-8859-8"));
 	view->AppendSubMenu(subMenu1, _("Character encoding"), _("Change character encoding"));
 }
 
@@ -3852,7 +3862,7 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	}
 	if (keycode==WXK_RETURN)
 		m_lastcommand = GetRange(0, GetLastPosition());
-#ifdef __WXOS__
+#ifdef __WXOSX__
     if (keycode==WXK_UP)
     {
         if (m_hpos<=0)
@@ -3902,7 +3912,8 @@ MudWindow *sendto;
 	keycode = event.GetKeyCode();
 	switch (keycode)
 		{
-		case WXK_UP:
+#ifndef __WXOSX__	
+	case WXK_UP:
 
 			if (m_hpos<=0)
 				m_hpos = 0;
@@ -3919,6 +3930,7 @@ MudWindow *sendto;
 			if (!m_history.empty())
 				WriteText(m_history.at(m_hpos));
 			break;
+#endif
 		case WXK_PAGEUP:
             
 			newevt.SetEventType(wxEVT_SCROLLWIN_PAGEUP);
@@ -4081,12 +4093,15 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						m_parent->SetTriggersOn(false);
 						ParseVars(&comm);
 						ParseLists(&comm);
+						wxString out1 = comm.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 						wxString out;
-						//wxString 
-						out << "\x1b[56m" <<comm <<"\x1b[0m\n";
-						out = out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
-						if (out.empty())
-							out << "\x1b[56m" <<comm <<"\x1b[0m\n";
+						if (out1.empty())
+						{
+							out << "\x1b[56m" << _("Unicode conversion error!") << "\x1b[0m\n";
+						}
+						else
+							out << "\x1b[56m" << out1 <<"\x1b[0m\n";
+						//out = out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 						//out = out.ToUTF8();
 						/***always UTF8!***/
 						//bool t = m_parent->GetGlobalOptions()->UseUTF8();
@@ -4174,7 +4189,8 @@ al_it iter;
 			{
 				wxString send = iter->BuildAction();
 				ParseVars(&send);
-				Parse(send, false, false); //do not echo und put in history if alias
+				wxCSConv co(m_parent->GetGlobalOptions()->GetCurEncoding());
+				Parse(send.mb_str(co), false, false); //do not echo und put in history if alias
 				/*if (m_parent->GetGlobalOptions()->GetEcho())
 				{
 					wxString out = wxT("\x1b[56m");

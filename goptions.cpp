@@ -297,10 +297,10 @@ pcre* RegExp::Compile()
 {
 	//m_re = pcre_compile(m_pattern.c_str(), 0, &m_error, &m_erroffset, NULL);
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (!frame->GetGlobalOptions()->UseUTF8())
 		//m_re = pcre_compile(m_pattern.mb_str(), 0, &m_error, &m_erroffset, NULL);
-		m_re = pcre_compile(m_pattern.To8BitData().data(), 0, &m_error, &m_erroffset, NULL);
+		m_re = pcre_compile(m_pattern.mb_str(co).data(), 0, &m_error, &m_erroffset, NULL);
 	else
 	{
 		wxString s = m_pattern.ToUTF8();
@@ -328,11 +328,15 @@ pcre* RegExp::CompileMulti()
 int RegExp::Exec()
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	wxString ss = m_match.mb_str(co);
+	if (ss.empty())
+		return -1;
 	if (!frame->GetGlobalOptions()->UseUTF8())
 	{
 		if (m_precompiled)
-			return m_r = pcre_exec(m_re, m_prextra, m_match.To8BitData().data(), (int)m_match.length(), 0, 0, m_ovector, OVECCOUNT);
-		else return m_r = pcre_exec(m_re, NULL, m_match.To8BitData().data(), (int)m_match.length(), 0, 0, m_ovector, OVECCOUNT);
+			return m_r = pcre_exec(m_re, m_prextra, m_match.mb_str(co).data(), (int)m_match.length(), 0, 0, m_ovector, OVECCOUNT);
+		else return m_r = pcre_exec(m_re, NULL, m_match.mb_str(co).data(), (int)m_match.length(), 0, 0, m_ovector, OVECCOUNT);
 	}
 	else
 	{
