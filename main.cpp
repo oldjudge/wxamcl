@@ -1761,49 +1761,57 @@ bool MudMainFrame::LoadGlobalOptions()
 			item = bar->FindItem(ID_CHARENCODING+3);
 			item->Check();
 		break;
+        case wxFONTENCODING_ISO8859_2:
+            item = bar->FindItem(ID_CHARENCODING+4);
+            item->Check();
+        break;
 		case wxFONTENCODING_ISO8859_7:
-			item = bar->FindItem(ID_CHARENCODING+4);
-			item->Check();
-		break;
-		case wxFONTENCODING_CP1253:
 			item = bar->FindItem(ID_CHARENCODING+5);
 			item->Check();
 		break;
-		case wxFONTENCODING_KOI8:
+		case wxFONTENCODING_CP1253:
 			item = bar->FindItem(ID_CHARENCODING+6);
 			item->Check();
 		break;
-		case wxFONTENCODING_KOI8_U:
+		case wxFONTENCODING_KOI8:
 			item = bar->FindItem(ID_CHARENCODING+7);
 			item->Check();
 		break;
-		case wxFONTENCODING_ISO8859_5:
+		case wxFONTENCODING_KOI8_U:
 			item = bar->FindItem(ID_CHARENCODING+8);
 			item->Check();
 		break;
-		case wxFONTENCODING_CP1251:
+		case wxFONTENCODING_ISO8859_5:
 			item = bar->FindItem(ID_CHARENCODING+9);
 			item->Check();
 		break;
-		case wxFONTENCODING_BIG5:
+		case wxFONTENCODING_CP1251:
 			item = bar->FindItem(ID_CHARENCODING+10);
 			item->Check();
 		break;
-		case wxFONTENCODING_CP936:
+		case wxFONTENCODING_BIG5:
 			item = bar->FindItem(ID_CHARENCODING+11);
 			item->Check();
-		case wxFONTENCODING_SHIFT_JIS:
+		break;
+		case wxFONTENCODING_CP936:
 			item = bar->FindItem(ID_CHARENCODING+12);
 			item->Check();
-		break;
-		case wxFONTENCODING_ISO2022_JP:
+		case wxFONTENCODING_SHIFT_JIS:
 			item = bar->FindItem(ID_CHARENCODING+13);
 			item->Check();
 		break;
-		case wxFONTENCODING_EUC_JP:
+		case wxFONTENCODING_ISO2022_JP:
 			item = bar->FindItem(ID_CHARENCODING+14);
 			item->Check();
 		break;
+		case wxFONTENCODING_EUC_JP:
+			item = bar->FindItem(ID_CHARENCODING+15);
+			item->Check();
+		break;
+        case wxFONTENCODING_ISO8859_8:
+            item = bar->FindItem(ID_CHARENCODING+16);
+            item->Check();
+        break;
 	}
 	m_gopt->SetEncoding((wxFontEncoding)aL->GetInt(-1));
 	aL->GetGlobal("global_colors");
@@ -3894,7 +3902,7 @@ void InputTextCtrl::OnText(wxCommandEvent &event)
 
 void InputTextCtrl::OnChar(wxKeyEvent &event)
 {
-wxString command;
+wxString command("", wxConvLibc);
 int keycode;
 wxScrollWinEvent newevt;
 MudWindow *sendto;
@@ -4023,6 +4031,7 @@ MudWindow *sendto;
 	{
 		ChangeValue(m_lastcommand);
 		command = GetRange(0, GetLastPosition());
+        wxString test = GetValue();
 		command.Trim();
 		Parse(command);
 		if (!m_keepinput)
@@ -4097,10 +4106,20 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						wxString out;
 						if (out1.empty())
 						{
-							out << "\x1b[56m" << _("Unicode conversion error!") << "\x1b[0m\n";
+							#ifndef __WXGTK__
+                            out << "\x1b[56m" << _("Unicode conversion error!") << "\x1b[0m\n";
+                            #endif
+                            #ifdef __WXGTK__
+                            out << "\x1b[56m" << comm << "\x1b[0m\n";
+                            #endif
 						}
 						else
-							out << "\x1b[56m" << out1 <<"\x1b[0m\n";
+							#ifndef __WXGTK__
+                            out << "\x1b[56m" << out1 <<"\x1b[0m\n";
+                            #endif
+                            #ifdef __WXGTK__
+                            out << "\x1b[56m" << comm << "\x1b[0m\n";
+                            #endif
 						//out = out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 						//out = out.ToUTF8();
 						/***always UTF8!***/
@@ -4111,8 +4130,13 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						//m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
 						//m_parent->GetGlobalOptions()->SetUTF8(t);
 						//else
-						m_parent->m_child->ParseNBuffer((char*)out.char_str(), false);
-						m_parent->m_child->Refresh();
+                        char buf[30000];
+                        int x = strlen(out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())).data());
+                        wxStrncpy(buf, out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())).data(), x);
+                        buf[x]=EOS;
+						//m_parent->m_child->ParseNBuffer((char*)out.ToUTF8().data(), false);
+						m_parent->m_child->ParseNBuffer(buf, false);
+                        m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
 					}

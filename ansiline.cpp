@@ -120,15 +120,7 @@ wxString AnsiLineElement::GetConvText()
 	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_text.To8BitData(), c);
-		return ff;
-		
-	//}
-	//else
-	//{
-
-		//return wxString::From8BitData(m_ctext);
-		//return m_text;// .wx_str();
-	//}
+        return ff;
 }
 
 //AnsiLine
@@ -182,7 +174,12 @@ wxString AnsiLine::GetConvLineText()
 	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_linetext.To8BitData(), c);
-		return ff;
+        #ifndef __WXGTK__
+            return ff;
+        #endif
+        #ifdef __WXGTK__
+            return m_linetext;
+        #endif
 	//}
 	//else return m_linetext;
 }
