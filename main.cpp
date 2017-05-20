@@ -1035,29 +1035,7 @@ void MudMainFrame::OnCharEncoding(wxCommandEvent& event)
 		m_gopt->SetUTF8(true);
 	else	m_gopt->SetUTF8(false);
 	ale_it it;
-	//int line=0;
 	
-	/*for (line=0;line<m_child->GetLines()->size();line++)
-	{
-		for (it = this->m_child->GetLines()->at(line).m_vstyle.begin(); it!=m_child->GetLines()->at(line).m_vstyle.end(); it++)
-		{
-			wxCSConv c(ec);
-			wxEncodingConverter enc;
-			enc.Init(cur, ec);
-			if (enc.CanConvert(cur, ec))
-				wxString fff = enc.Convert(it->GetText());
-			wxString ff(it->GetText().To8BitData(), c);
-			
-			if (ff.empty())
-			{
-				
-				ff = c.cWX2MB(it->GetText());
-			}
-			
-			it->SetTextConv(ff);
-		}
-	}*/
-
 	this->SaveGlobalOptions();
 	this->m_child->Refresh();
 	luaBuildalias();
@@ -1534,7 +1512,7 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 	wxMenu *subMenu3 = new wxMenu;
 	subMenu3->AppendCheckItem(ID_CHARENCODING+11, _("Big5"), _("Big5"));
 	subMenu3->AppendCheckItem(ID_CHARENCODING+12, _("GBK"), ("CP936"));
-	//subMenu3->AppendCheckItem(ID_CHARENCODING+12, _("GB1232"), ("GB1232"));
+	//subMenu3->AppendCheckItem(ID_CHARENCODING+13, _("GB1232"), ("GB1232"));
 	subMenu1->AppendSubMenu(subMenu3,_("Chinese"), _("Chinese"));
 	wxMenu *subMenu4 = new wxMenu;
 	subMenu4->AppendCheckItem(ID_CHARENCODING+13, _("Shift-JIS"), _("JIS"));
@@ -1796,6 +1774,8 @@ bool MudMainFrame::LoadGlobalOptions()
 		case wxFONTENCODING_CP936:
 			item = bar->FindItem(ID_CHARENCODING+12);
 			item->Check();
+		break;
+		
 		case wxFONTENCODING_SHIFT_JIS:
 			item = bar->FindItem(ID_CHARENCODING+13);
 			item->Check();
@@ -4130,13 +4110,18 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						//m_parent->m_child->ParseNBuffer(out.char_str(wxCSConv(wxFONTENCODING_UTF8)), false);
 						//m_parent->GetGlobalOptions()->SetUTF8(t);
 						//else
+						#ifdef __WXGTK__
                         char buf[30000];
                         int x = strlen(out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())).data());
                         wxStrncpy(buf, out.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())).data(), x);
                         buf[x]=EOS;
 						//m_parent->m_child->ParseNBuffer((char*)out.ToUTF8().data(), false);
 						m_parent->m_child->ParseNBuffer(buf, false);
-                        m_parent->m_child->Refresh();
+						#endif
+						#ifndef __WXGTK__
+						m_parent->m_child->ParseNBuffer((char*)out.char_str(), false);
+						#endif
+						m_parent->m_child->Refresh();
 						m_parent->m_child->Update();
 						m_parent->SetTriggersOn(p);
 					}
