@@ -175,7 +175,7 @@ wxString AnsiLine::GetConvLineText()
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_linetext.To8BitData(), c);
         #ifndef __WXGTK__
-            return ff;
+			return ff;
         #endif
         #ifdef __WXGTK__
             return m_linetext;

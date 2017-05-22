@@ -4784,7 +4784,7 @@ long end=0, start=0;
 wxSize s, ss;
 int pos;
 size_t sublines=0;
-    wxLogDebug("OnPaintMudWindow");
+    //wxLogDebug("OnPaintMudWindow");
 	ss=GetClientSize();
 	wxBitmap bm(ss.x, ss.y);
 	
@@ -4798,6 +4798,7 @@ size_t sublines=0;
 	dc.Clear();
 	dc.SetFont(*m_font);
 	char_height = dc.GetCharHeight();
+		
 	char_len = dc.GetCharWidth();
 	s = dc.GetSize();
 	//dc.SetLogicalOrigin(0,s.y);

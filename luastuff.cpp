@@ -315,7 +315,7 @@ int luafunc_echo(lua_State*L)
 	}
 	line.m_vstyle.push_back(ale);
 	line.SetFull(true);
-	line.SetLineText(text);
+	line.SetLineText(ba);
 	AnsiLineElement ale1;
 	line.m_vstyle.push_back(ale1);
 	if (frame->m_curline==0)
@@ -380,6 +380,7 @@ int luafunc_color(lua_State*L)
 	wxString t = wxString::From8BitData(text);
 	ale.SetText(t);
 	frame->GetLines()->back().m_vstyle.push_back(ale);
+	frame->GetLines()->back().SetLineText(t);
 	lua_pushstring(L,"");
 	wxGetApp().GetChild()->Refresh();
 	return 1;
@@ -415,9 +416,10 @@ int luafunc_colorwin(lua_State*L)
 	}
 	else
 		ale.SetBCol(99,m[bcol]);
-	
-	ale.SetText(text);
+	wxString t = wxString::From8BitData(text);
+	ale.SetText(t);
 	mw->GetLines()->back().m_vstyle.push_back(ale);
+	mw->GetLines()->back().SetLineText(t);
 	lua_pushstring(L,"");
 	return 1;
 }
@@ -652,7 +654,7 @@ int luafunc_getlinenr(lua_State *L)
 	class MudWindow *frame = wxGetApp().GetChild();
 	if (frame==NULL)
 		return 0;
-	lua_pushnumber(L, frame->GetLines()->at(frame->GetStartLine()-1).GetLinenumber());
+	lua_pushinteger(L, frame->GetLines()->at(frame->GetStartLine()-1).GetLinenumber());
 	return 1;
 }
 
@@ -703,11 +705,13 @@ int luafunc_echowin(lua_State*L)
 	}
 	else
 		ale.SetBCol(99,m[bcol]);
-	ale.SetText(text);
+	wxString ba = wxString::From8BitData(text);
+	ale.SetText(ba);
+	//ale.SetText(text);
 	AnsiLine line;
 	line.m_vstyle.push_back(ale);
 	line.SetFull(true);
-	line.SetLineText(text);
+	line.SetLineText(ba);
 	AnsiLineElement ale1;
 	line.m_vstyle.push_back(ale1);
 	if (frame->m_curline==0)
@@ -946,7 +950,8 @@ int luafunc_drawtext(lua_State*L)
 		frame->GetamcWinDC()->SetBackgroundMode(wxSOLID);
 	frame->GetamcWinDC()->SetTextForeground(f);
 	frame->GetamcWinDC()->SetTextBackground(b);
-	frame->GetamcWinDC()->DrawText(text, x, y);
+	wxString t(text, wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding()));
+	frame->GetamcWinDC()->DrawText(t, x, y);
 	frame->GetamcWinDC()->SetBackgroundMode(wxTRANSPARENT);
 	frame->Refresh();
 	return 0;
@@ -1058,8 +1063,8 @@ int luafunc_amcwinsize(lua_State *L)
 	delete name;
 	int width, height;
 	frame->GetClientSize(&width, &height);
-	lua_pushnumber(L, width);
-	lua_pushnumber(L, height);
+	lua_pushinteger(L, width);
+	lua_pushinteger(L, height);
 	return 2;
 }
 
@@ -1187,7 +1192,7 @@ int luafunc_getline(lua_State *L)
 		
 		lua_pushstring(L, it->GetText().c_str());
 		lua_setfield(L, -2, "text");
-		lua_pushnumber(L, it->GetLen());
+		lua_pushinteger(L, it->GetLen());
 		lua_setfield(L, -2, "length");
 		lua_pushstring(L, it->GetFCol().GetAsString(wxC2S_HTML_SYNTAX).c_str());
 		lua_setfield(L, -2, "fore");
@@ -1671,11 +1676,11 @@ int luafunc_loadprofile(lua_State *L)
 	const char* l = (char*)luaL_checkstring(L,1);//filename
 	if (frame->LoadProfile(wxFileName(l)))
 	{
-		lua_pushnumber(L, frame->GetTrigger()->size());
-		lua_pushnumber(L, frame->GetAlias()->size());
-		lua_pushnumber(L, frame->GetHotkeys()->size());
-		lua_pushnumber(L, frame->GetVars()->size());
-		lua_pushnumber(L, frame->GetLists()->size());
+		lua_pushinteger(L, frame->GetTrigger()->size());
+		lua_pushinteger(L, frame->GetAlias()->size());
+		lua_pushinteger(L, frame->GetHotkeys()->size());
+		lua_pushinteger(L, frame->GetVars()->size());
+		lua_pushinteger(L, frame->GetLists()->size());
 		return 5;
 	}
 	else return 0;
@@ -2078,7 +2083,7 @@ int index=1;
 				tr_it it = frame->GetTrigger()->begin()+i;
 				frame->GetTrigger()->erase(it);
 				stable_sort(frame->GetTrigger()->begin(), frame->GetTrigger()->end(), greater<class Trigger>());
-				lua_pushnumber(L, frame->GetTrigger()->size());
+				lua_pushinteger(L, frame->GetTrigger()->size());
 				return 1;
 			}
 			lua_getfield(L, -1, "pattern");
@@ -2238,15 +2243,15 @@ int i, index=1;
 	lua_setfield(L, -2, "action");
 	lua_pushstring(L, frame->GetTrigger()->at(i).GetClass().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "class");
-	lua_pushnumber(L, frame->GetTrigger()->at(i).GetPriority());
+	lua_pushinteger(L, frame->GetTrigger()->at(i).GetPriority());
 	lua_setfield(L, -2, "priority");
-	lua_pushnumber(L, frame->GetTrigger()->at(i).GetColMatch());
+	lua_pushinteger(L, frame->GetTrigger()->at(i).GetColMatch());
 	lua_setfield(L, -2, "colmatch");
-	lua_pushnumber(L, frame->GetTrigger()->at(i).GetMatchCount());
+	lua_pushinteger(L, frame->GetTrigger()->at(i).GetMatchCount());
 	lua_setfield(L, -2, "matchcount");
 	lua_pushboolean(L, frame->GetTrigger()->at(i).IsActive());
 	lua_setfield(L, -2, "on");
-	lua_pushnumber(L, frame->GetTrigger()->at(i).GetLines());
+	lua_pushinteger(L, frame->GetTrigger()->at(i).GetLines());
 	lua_setfield(L, -2, "lines");
 	return 1;
 }
@@ -2288,7 +2293,7 @@ str_ac *t;
 	frame->GetTrigger()->erase(it);
 	t = NULL;
 	stable_sort(frame->GetTrigger()->begin(), frame->GetTrigger()->end(), greater<class Trigger>());
-	lua_pushnumber(L, frame->GetTrigger()->size());
+	lua_pushinteger(L, frame->GetTrigger()->size());
 	return 1;
 }
 
@@ -2495,7 +2500,7 @@ MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::Find
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
-		lua_pushnumber(L, t->prior);
+		lua_pushinteger(L, t->prior);
 		return 1;
 	}
 
@@ -2509,7 +2514,7 @@ MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::Find
 			return 1;
 		}
 		else
-			lua_pushnumber(L, frame->GetTrigger()->at(i).GetPriority());
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetPriority());
 			return 1;
 	}
 	return 1;
@@ -2576,7 +2581,7 @@ MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::Find
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkaction(L);
-		lua_pushnumber(L, t->colmatch);
+		lua_pushinteger(L, t->colmatch);
 		return 1;
 	}
 
@@ -2591,7 +2596,7 @@ MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::Find
 			return 1;
 		}
 		else
-			lua_pushnumber(L, frame->GetTrigger()->at(i).GetColMatch());
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetColMatch());
 			return 1;
 	}
 	return 1;
@@ -2653,7 +2658,7 @@ size_t i;
 		lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().mb_str(co).data());// char_str());
 		lua_rawseti(L, -2, i+1);
 	}
-	lua_pushnumber(L, i);
+	lua_pushinteger(L, i);
 	return 2;
 }
 
@@ -2661,7 +2666,7 @@ int luafunc_enabletriggers(lua_State *L)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	frame->SetTriggersOn(true);
-	lua_pushnumber(L, frame->GetTrigger()->size());
+	lua_pushinteger(L, frame->GetTrigger()->size());
 	return 1;
 }
 
@@ -2669,7 +2674,7 @@ int luafunc_disabletriggers(lua_State *L)
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	frame->SetTriggersOn(false);
-	lua_pushnumber(L, frame->GetTrigger()->size());
+	lua_pushinteger(L, frame->GetTrigger()->size());
 	return 1;
 }
 
@@ -2745,7 +2750,7 @@ int x=0;
 			x++;
 		}
 	}
-	lua_pushnumber(L, x);
+	lua_pushinteger(L, x);
 	return 2;
 }
 
@@ -2902,7 +2907,7 @@ int index=1;
 			al_it it = frame->GetAlias()->begin()+i;
 			frame->GetAlias()->erase(it);
 			stable_sort(frame->GetAlias()->begin(), frame->GetAlias()->end(), greater<class amcAlias>());
-			lua_pushnumber(L, frame->GetAlias()->size());
+			lua_pushinteger(L, frame->GetAlias()->size());
 			return 1;
 		}
 				
@@ -3026,7 +3031,7 @@ size_t i;
 		lua_pushstring(L, frame->GetAlias()->at(i).GetAlias().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
-	lua_pushnumber(L, i);
+	lua_pushinteger(L, i);
 	return 2;
 }
 
@@ -3066,7 +3071,7 @@ str_al *a;
 	frame->GetAlias()->erase(it);
 	a = NULL;
 	stable_sort(frame->GetAlias()->begin(), frame->GetAlias()->end(), less<class amcAlias>());
-	lua_pushnumber(L, frame->GetAlias()->size());
+	lua_pushinteger(L, frame->GetAlias()->size());
 	return 1;
 }
 
@@ -3372,7 +3377,7 @@ str_timer* t;
 	frame->GetTimers()->erase(it);
 	//v = NULL;
 	//stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
-	lua_pushnumber(L, frame->GetTimers()->size());
+	lua_pushinteger(L, frame->GetTimers()->size());
 	return 1;
 }
 
@@ -3607,9 +3612,9 @@ int i, index=1;
 	lua_setfield(L, -2, "keyname");
 	lua_pushstring(L, frame->GetHotkeys()->at(i).GetModName().mb_str(co).data());// .mb_str());
 	lua_setfield(L, -2, "modname");
-	lua_pushnumber(L, frame->GetHotkeys()->at(i).GetHotkey());
+	lua_pushinteger(L, frame->GetHotkeys()->at(i).GetHotkey());
 	lua_setfield(L, -2, "key");
-	lua_pushnumber(L, frame->GetHotkeys()->at(i).GetModifier());
+	lua_pushinteger(L, frame->GetHotkeys()->at(i).GetModifier());
 	lua_setfield(L, -2, "modifier");
 	return 1;	
 }
@@ -3642,7 +3647,7 @@ str_hk* v;
 	frame->GetHotkeys()->erase(it);
 	//v = NULL;
 	//stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
-	lua_pushnumber(L, frame->GetHotkeys()->size());
+	lua_pushinteger(L, frame->GetHotkeys()->size());
 	return 1;
 }
 
@@ -3839,7 +3844,7 @@ size_t i;
 		lua_pushstring(L, frame->GetHotkeys()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
-	lua_pushnumber(L, i);
+	lua_pushinteger(L, i);
 	return 2;
 }
 
@@ -3968,7 +3973,7 @@ int index=1;
 			v_it it = frame->GetVars()->begin()+i;
 			frame->GetVars()->erase(it);
 			stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), greater<class amcVar>());
-			lua_pushnumber(L, frame->GetVars()->size());
+			lua_pushinteger(L, frame->GetVars()->size());
 			return 1;
 		}
 		wxString s(cc,co);
@@ -4102,7 +4107,7 @@ str_var* v;
 	frame->GetVars()->erase(it);
 	v = NULL;
 	stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
-	lua_pushnumber(L, frame->GetVars()->size());
+	lua_pushinteger(L, frame->GetVars()->size());
 	return 1;
 }
 
@@ -4156,7 +4161,7 @@ int luafunc_getallvar(lua_State *L)
 		lua_pushstring(L, frame->GetVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_rawseti(L, -2, i+1);
 	}
-	lua_pushnumber(L, i);
+	lua_pushinteger(L, i);
 	return 2;
 }
 
@@ -4343,7 +4348,7 @@ str_ll* l;
 		lua_pushstring(L, frame->GetLists()->at(i).GetItem(ii).mb_str(co).data());
 		lua_rawseti(L, -2, ii+1);
 	}
-	lua_pushnumber(L, con);
+	lua_pushinteger(L, con);
 	return 2;
 }
 
@@ -4410,7 +4415,7 @@ str_ll* l;
 		wxString s(c, co);
 		wxStrcpy(l->items[frame->GetLists()->at(i).GetSize()], s.mb_str(co).data());
 		frame->GetLists()->at(i).AddItem(s);
-		lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
+		lua_pushinteger(L, frame->GetLists()->at(i).GetSize());
 		return 1;
 	}
 	else
@@ -4424,7 +4429,7 @@ str_ll* l;
 		}
 		c = luaL_checkstring(L, index);
 		frame->GetLists()->at(i).AddItem(wxString(c,co));
-		lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
+		lua_pushinteger(L, frame->GetLists()->at(i).GetSize());
 		return 1;
 	}
 	return 0;
@@ -4494,7 +4499,7 @@ str_ll* l;
 	frame->GetLists()->erase(it);
 	l = NULL;
 	stable_sort(frame->GetLists()->begin(), frame->GetLists()->end(), less<class amcList>());
-	lua_pushnumber(L, frame->GetLists()->size());
+	lua_pushinteger(L, frame->GetLists()->size());
 	return 1;
 }
 
@@ -4530,7 +4535,7 @@ str_ll* l;
 		return 1;
 	}
 	frame->GetLists()->at(i).DeleteItemAt(idx-1);
-	lua_pushnumber(L, frame->GetLists()->size());
+	lua_pushinteger(L, frame->GetLists()->size());
 	return 1;
 }
 
@@ -4565,7 +4570,7 @@ str_ll* l;
 		lua_pushnil(L);
 		return 1;
 	}
-	lua_pushnumber(L, frame->GetLists()->size());
+	lua_pushinteger(L, frame->GetLists()->size());
 	return 1;
 }
 
@@ -4629,7 +4634,7 @@ str_ll* l;
 			return 1;
 		}
 	}
-	lua_pushnumber(L, frame->GetLists()->at(i).GetSize());
+	lua_pushinteger(L, frame->GetLists()->at(i).GetSize());
 	return 1;
 }
 
@@ -4682,7 +4687,7 @@ int luafunc_getalllist(lua_State *L)
 		lua_pushstring(L, frame->GetLists()->at(i).GetName().mb_str(co).data());
 		lua_rawseti(L, -2, i+1);
 	}
-	lua_pushnumber(L, i);
+	lua_pushinteger(L, i);
 	return 2;
 }
 
@@ -5136,7 +5141,7 @@ int idx;
 	lua_setfield(L, -2, "on");
 	lua_pushstring(L, frame->GetButtons()->at(idx).GetTbName().mb_str(co).data());
 	lua_setfield(L, -2, "toolbar");
-	lua_pushnumber(L, frame->GetButtons()->at(idx).GetId());
+	lua_pushinteger(L, frame->GetButtons()->at(idx).GetId());
 	lua_setfield(L, -2, "id");
 	lua_pushstring(L, frame->GetButtons()->at(idx).GetText().mb_str(co).data());
 	lua_setfield(L, -2, "text");
@@ -5471,7 +5476,7 @@ int luafunc_columnsdb(lua_State *L)
 			lua_pushstring(L, sqlite3_column_name(stmt, i));
 			lua_rawseti(L, -2, i+1);
 		}
-		lua_pushnumber(L, c);
+		lua_pushinteger(L, c);
 		sqlite3_finalize(stmt);
 		return 2;
 	}
@@ -5516,7 +5521,7 @@ int luafunc_resultdb(lua_State *L)
 			lua_pushstring(L, result[i]);
 			lua_rawseti(L, -2, i+1);
 		}
-		lua_pushnumber(L, rows);
+		lua_pushinteger(L, rows);
 		sqlite3_free_table(result);
 		if (!columns)
 		{

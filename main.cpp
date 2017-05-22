@@ -135,7 +135,7 @@ bool MudClientApp::OnInit()
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
     
-      
+	wxInitAllImageHandlers();
 
 	//Output window
 	frame->m_child = new MudWindow(frame);
@@ -245,7 +245,7 @@ bool MudClientApp::OnInit()
 	frame->luaBuilddefvar();
 	//wxInfoMessageBox(frame);
 	frame->m_input->SetFocus();
-	wxInitAllImageHandlers();
+	
 	//wxFileName ff("defaultprofile.lua");
 	//frame->LoadProfile(ff);
 	wxCmdLineParser p(g_cmddesc, wxGetApp().argc, wxGetApp().argv);
@@ -270,6 +270,8 @@ bool MudClientApp::OnInit()
 	//wxString s = "\x1b[0;36;44m:\x1b[0;0m\x1b[0;37m \x1b[1;34m\x1b[1;36m()\x1b[1;34m Up in the sky\x1b[0;37m  via \x1b[1;36m(StdOpenDoorway)\x1b[0;37m \x1b[0;0m";
 	//wxString s="\xff\xfa\x45\x01variable\x02test\xff\xf0";
 
+	//wxString s = "北大侠客行已经执行了[1; 33m三小时五十一分三秒";
+
 
 	//std::u32string input = U"řabcdě";
 	/*wxString ss(u8"          â•”â•â•â•â•â•â•â•â•â•â•â•â•—");
@@ -283,7 +285,7 @@ bool MudClientApp::OnInit()
 
 	//wxString ss("          â•”â•â•â•â•â•â•â•â•â•â•â•â•—", wxConvUTF8);
 		
-	//frame->m_child->ParseNBuffer(ss, false);
+	//frame->m_child->ParseNBuffer((char*)s.mb_str().data(), false);
 	//wxString ss = "\x1b[0;33m           ---  \n";
 	/*ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m<\x1b[1;33m!\x1b[1;37m#\x1b[0;33m\x1b[0;33m|  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);
@@ -4199,7 +4201,11 @@ al_it iter;
 				wxString send = iter->BuildAction();
 				ParseVars(&send);
 				wxCSConv co(m_parent->GetGlobalOptions()->GetCurEncoding());
-				Parse(send.mb_str(co), false, false); //do not echo und put in history if alias
+				wxString conv = send.mb_str(co);
+				if (conv.IsEmpty())
+					conv = send.ToUTF8();
+				//Parse(send.mb_str(co), false, false); //do not echo und put in history if alias
+				Parse(conv, false, false);
 				/*if (m_parent->GetGlobalOptions()->GetEcho())
 				{
 					wxString out = wxT("\x1b[56m");
