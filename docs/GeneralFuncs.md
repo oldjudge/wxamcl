@@ -1,6 +1,6 @@
 # General Functions #
 **[Print, color and output buffer functions](#output-to-screen)**
-  * [wxamcl.echo](GeneralFuncs.md#wxamcl.echo)
+  * [wxamcl.echo](#wxamcl-echo)
   * [wxamcl.echowin](GeneralFuncs.md#wxamcl.echowin)
   * [wxamcl.substitute](GeneralFuncs.md#wxamcl.substitute)
   * [wxamcl.color](GeneralFuncs#wxamcl.color.md)
@@ -18,7 +18,7 @@
   * [wxamcl.execute](GeneralFuncs#wxamcl.execute.md)
 
 ## Output to screen ##
-> ### wxamcl.echo ###
+> ### wxamcl echo ###
 > Print text to the main mud window.
 > > #### Usage: ####
 > > `msg = wxamcl.echo(text, fg-color (optional), bg-color (optional))`
