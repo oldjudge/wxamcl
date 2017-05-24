@@ -19,7 +19,7 @@
 
 ## Output to screen ##
 > ### wxamcl echo ###
-> Print text to the main mud window.
+> > Print text to the main mud window.
 > > #### Usage: ####
 > > `msg = wxamcl.echo(text, fg-color (optional), bg-color (optional))`
 
@@ -30,11 +30,11 @@
 		wxamcl.echo("Text", "#44cc00", "#000000")
 ```
 
-> The function returns the text parameter.
-> > ### wxamcl.echowin ###
+> > The function returns the text parameter.
+> ### wxamcl.echowin ###
 
-> Print text to a user created window.
-> #### Usage: ####
+> > Print text to a user created window.
+> > #### Usage: ####
 > > `msg = wxamcl.echo(window, text, fg-color (optional), bg-color (optional))`
 
 ```lua
