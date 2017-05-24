@@ -1,8 +1,8 @@
 # General Functions #
 **[Print, color and output buffer functions](#output-to-screen)**
-  * [wxamcl.echo](GeneralFuncs.md#wxamcl-echo)
-  * [wxamcl.echowin](GeneralFuncs#wxamcl.echowin.md)
-  * [wxamcl.substitute](GeneralFuncs#wxamcl.substitute.md)
+  * [wxamcl.echo](GeneralFuncs.md#wxamcl.echo)
+  * [wxamcl.echowin](GeneralFuncs.md#wxamcl.echowin)
+  * [wxamcl.substitute](GeneralFuncs.md#wxamcl.substitute)
   * [wxamcl.color](GeneralFuncs#wxamcl.color.md)
   * [wxamcl.colorwin](GeneralFuncs#wxamcl.colorwin.md)
   * [wxamcl.colorword](GeneralFuncs#wxamcl.colorword.md)
