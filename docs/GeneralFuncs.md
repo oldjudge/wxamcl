@@ -1,8 +1,8 @@
 # General Functions #
-**[Print, color and output buffer functions](GeneralFuncs#Output_to_screen.md)**
-  * [wxamcl.echo](GeneralFuncs#wxamcl.echo.md)
-  * [wxamcl.echowin](GeneralFuncs#wxamcl.echowin.md)
-  * [wxamcl.substitute](GeneralFuncs#wxamcl.substitute.md)
+**[Print, color and output buffer functions](#output-to-screen)**
+  * [wxamcl.echo](#wxamcl-echo)
+  * [wxamcl.echowin](GeneralFuncs.md#wxamcl.echowin)
+  * [wxamcl.substitute](GeneralFuncs.md#wxamcl.substitute)
   * [wxamcl.color](GeneralFuncs#wxamcl.color.md)
   * [wxamcl.colorwin](GeneralFuncs#wxamcl.colorwin.md)
   * [wxamcl.colorword](GeneralFuncs#wxamcl.colorword.md)
@@ -18,26 +18,26 @@
   * [wxamcl.execute](GeneralFuncs#wxamcl.execute.md)
 
 ## Output to screen ##
-> ### wxamcl.echo ###
-> Print text to the main mud window.
+> ### wxamcl echo ###
+> > Print text to the main mud window.
 > > #### Usage: ####
 > > `msg = wxamcl.echo(text, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		msg = wxamcl.echo("This is a test", "black", "green")
 		wxamcl.echo("Text on screen")
 		wxamcl.echo("Test me!", "crimson", "deepskyblue")
 		wxamcl.echo("Text", "#44cc00", "#000000")
 ```
 
-> The function returns the text parameter.
-> > ### wxamcl.echowin ###
+> > The function returns the text parameter.
+> ### wxamcl.echowin ###
 
-> Print text to a user created window.
-> #### Usage: ####
+> > Print text to a user created window.
+> > #### Usage: ####
 > > `msg = wxamcl.echo(window, text, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		msg = wxamcl.echo("chat", "This is a test in a window named 'chat'!", "black", "green")
 		wxamcl.echo("userwin1", "Text on screen")
 		wxamcl.echo("win", "Test me!", "crimson", "deepskyblue")
@@ -51,7 +51,7 @@
 > #### Usage: ####
 > > `wxamcl.substitute(oldtext, newtext)`
 
-```
+```lua
 		wxamcl.substitute("Tom", "Jerry")
 		wxamcl.substitute("Tom", "^x22J^x123e^x99r^x221r^x167y!")
 		
@@ -64,7 +64,7 @@
 > > #### Usage: ####
 > > `wxamcl.color(text, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		wxamcl.color("This is a test", "black", "green")
 		wxamcl.color("Text on screen")
 		wxamcl.color("Test me!", "crimson", "deepskyblue")
@@ -72,7 +72,7 @@
 ```
 
 > Create a line with multiple colors like this:
-```
+```lua
 		wxamcl.echo("")
 		wxamcl.color("Text ", "red")
 		wxamcl.color("and text in green ", "green")
@@ -86,7 +86,7 @@
 > > #### Usage: ####
 > > `wxamcl.colorwin(window, text, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		wxamcl.colorwin("chat", "This is a test", "black", "green")
 		wxamcl.colorwin("window", "Text on screen")
 		wxamcl.colorwin("win1", "Test me!", "crimson", "deepskyblue")
@@ -94,7 +94,7 @@
 ```
 
 > Create a line with multiple colors like this:
-```
+```lua
 		wxamcl.echowin("test", "")
 		wxamcl.colorwin("test", "Text ", "red")
 		wxamcl.colorwin("test", "and text in green ", "green")
@@ -108,7 +108,7 @@
 > > #### Usage: ####
 > > `wxamcl.colorword(word, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		wxamcl.colorword("Tom", "lavender", "maroon")
 		wxamcl.colorword("Tom", "#ffffff")
 		wxamcl.colorword("Tom", "#44cc00", "#000000")
@@ -122,7 +122,7 @@
 
 > > `wxamcl.colorline(linenumber, fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		wxamcl.colorline(23, "lavender", "maroon")
 		wxamcl.colorline(wxamcl.getlinenumber(), "#ffffff")
 		wxamcl.colorline(444, "#44cc00", "#000000")
@@ -135,7 +135,7 @@
 > > #### Usage: ####
 > > `wxamcl.colorall(fg-color (optional), bg-color (optional))`
 
-```
+```lua
 		wxamcl.colorall("lavender", "maroon")
 		wxamcl.colorall("#ffffff")
 		wxamcl.colorall("#44cc00", "#000000")
@@ -149,7 +149,7 @@
 > > #### Usage: ####
 > > `nr = wxamcl.getlinenumber()`
 
-```
+```lua
 		nr = wxamcl.getlinenumber()
 ```
 
@@ -160,7 +160,7 @@
 > > #### Usage: ####
 > > `t = wxamcl.getline(linenumber)`
 
-```
+```lua
 		t = wxamcl.getline(33)
 		wxamcl.echo("")
 		for i,v in ipairs(t) do
@@ -175,7 +175,7 @@
 > > #### Usage: ####
 > > `wxamcl.scroll(true|false)`
 
-```
+```lua
 		wxamcl.scroll(true) --normal scrolling
 		wxamcl.scroll(false) --do not scroll even if new text arrives from mud
 ```
@@ -187,7 +187,7 @@
 > > #### Usage: ####
 > > `wxamcl.gag(line)`
 
-```
+```lua
 		wxamcl.gag(0) --gag current line
 ```
 
@@ -199,7 +199,7 @@
 > #### Usage: ####
 > > `wxamcl.send(command)`
 
-```
+```lua
 		wxamcl.send("say ;)")
 		wxamcl.send("quit")
 ```
@@ -211,7 +211,7 @@
 > #### Usage: ####
 > > `wxamcl.execute(command)`
 
-```
+```lua
 		wxamcl.execute("look at "..$target)
 		wxamcl.execute("quit")
 ```

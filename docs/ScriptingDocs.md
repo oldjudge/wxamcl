@@ -1,3 +1,4 @@
+
 # Introduction #
 This section contains the documentation for the client Lua interface.
 ## Details ##
@@ -19,4 +20,7 @@ This section contains the documentation for the client Lua interface.
 ## Documentation ##
 
 [General Functions](GeneralFuncs.md)
+
 [User Windows](UserWindows.md)
+
+[Actions](Actions.md)
