@@ -1263,10 +1263,7 @@ int luafunc_addpagenb(lua_State*L)
 		}
 	}
 	frame->GetNbPanes()->at(i).push_back(pagename);
-	nb->AddPage(new MudWindow(frame, pagename, 9), pagename);
-	/*nb->AddPage(new MudWindow(frame, wxT("amc2")), wxT("Second"));
-	nb->AddPage(new MudWindow(frame, wxT("amc3")), wxT("I'm here"));*/
-	//frame->m_mgr.AddPane(nb, wxAuiPaneInfo().Name(winname).Caption(winname).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1));
+	
 	frame->m_mgr.Update();
 	return 0;
 }
