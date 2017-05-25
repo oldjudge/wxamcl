@@ -48,6 +48,7 @@ void dlg_script::OnSaveAs(wxCommandEvent& WXUNUSED(event))
 	if (!file.empty())
 	{
 		m_sce->SaveFile(file);
+		m_file->SetLabel(file);
 	}
 }
 
@@ -89,7 +90,7 @@ void dlg_script::OnFontChanged(wxFontPickerEvent &event)
 		m_sce->StyleSetFont(wxSTC_LUA_WORD, bf);
 		m_sce->StyleSetBold(wxSTC_LUA_WORD, true);
 		m_sce->StyleSetFont (wxSTC_LUA_DEFAULT, f);
-		m_sce->StyleSetFont(wxSTC_LUA_WORD2, f);
+		m_sce->StyleSetFont(wxSTC_LUA_WORD2, bf);
 		m_sce->StyleSetFont(wxSTC_LUA_WORD3, bf);
 		m_sce->StyleSetBold(wxSTC_LUA_WORD3, true);
 		m_sce->StyleSetFont(wxSTC_LUA_STRING, f);

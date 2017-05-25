@@ -1559,7 +1559,7 @@ static bool colset = false;
 					m_vmudlines.push_back(line);
 					m_curline++;
 				}
-				
+							
 				m_indexend = index;
 				//line.m_vstyle.clear();
 				AnsiLine newline;
@@ -2243,6 +2243,8 @@ static bool colset = false;
 						Write8Bit(s);
 					}
 				}
+				if (*it == '\n')
+					break;
 				else
 				{
 					wxString s;
@@ -2459,13 +2461,7 @@ static bool colset = false;
 						lua_getglobal(m_L->GetLuaState(), v.c_str());
 						lua_setfield(m_L->GetLuaState(), -2, v.c_str());
 					}
-					//lua_getfield(m_L->GetLuaState(), -1, "RoomNum");
-					//lua_pushstring(m_L->GetLuaState());
 					
-					
-					/*wxString info = _("Got GMCP module: ");
-					info<<v;
-					Msg(info);*/
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvGMCPData())
 					{
 						wxString ss;
@@ -2473,8 +2469,7 @@ static bool colset = false;
 							m_parent->GetGlobalOptions()->GetEventFile(), v.c_str());
 						m_parent->m_input->ParseCommandLine(&ss);
 					}
-					//luaL_dostring(m_L->GetLuaState(), "echo(tostring(result))");
-					
+										
 					m_atcpstring.Empty();
 					if (line.GetLineText()==wxEmptyString && line.m_vstyle.size()<=1)
 					{
