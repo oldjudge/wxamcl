@@ -34,11 +34,11 @@ amcWindow::amcWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	SetName("amcwindow");
 	SetLabel("amcwindow");
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
-	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#if !defined __WXMSW__
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#else
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(10).FaceName("Courier New").Family(wxFONTFAMILY_MODERN));
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
 	m_mouseevents=false;
@@ -68,7 +68,7 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 	m_evfile = "events.lua";
 	m_wheelrot = 0;
 	
-	m_bitmap.Create(1278, 1024);
+	m_bitmap.Create(1920, 1280);
 	m_dc = new wxMemoryDC(m_bitmap);
 	#if defined __WX_MSW__
 		wxToolTip::SetMaxWidth(-1);
@@ -79,10 +79,10 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 	this->SetToolTip(m_tt);
 	m_tt->SetAutoPop(3000);
 	//this->GetToolTip()->SetMaxWidth(-1);
-	//SetBackgroundStyle(wxBG_STYLE_SYSTEM);
+	//SetBackgroundStyle(wxBG_STYLE_S);
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
 	#if !defined __WXMSW__
-		m_font = new wxFont(10, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixed");
+		m_font = new wxFont(wxFontInfo(10).Family(wxFONTFAMILY_MODERN).FaceName("Fixed"));
 	#else
 		m_font = new wxFont(wxFontInfo(10).Family(wxFONTFAMILY_MODERN).FaceName("Courier New"));
 	#endif
@@ -102,6 +102,8 @@ amcWindow::~amcWindow()
 
 void amcWindow::OnEraseBackground(wxEraseEvent& event)
 {
+	//SetBackgroundColour(m_background);
+	//ClearBackground();
 }
 
 void amcWindow::OnPaint(wxPaintEvent& event)
@@ -119,7 +121,15 @@ void amcWindow::OnSize(wxSizeEvent& event)
 
 void amcWindow::OnRightDown(wxMouseEvent &event)
 {
-    event.Skip();
+	if (m_mouseevents)
+	{
+		wxPoint p = event.GetPosition();
+		wxString s = wxString::Format("%cfunc(\"%s\", \"%s(\'%d\',\'%d')\")", m_parent->GetGlobalOptions()->GetCommand(),
+			m_evfile, m_mouseright, p.x, p.y);
+		
+		m_parent->m_input->ParseCommandLine(&s);
+	}
+	event.Skip();
 }
 
 void amcWindow::OnLeftDown(wxMouseEvent &event)
@@ -192,4 +202,14 @@ void amcWindow::OnContextMenu(wxContextMenuEvent &event)
 		p = ScreenToClient(p);
 		PopupMenu(contextMenu, p.x, p.y);
 		delete contextMenu;
+}
+
+void amcWindow::SetBackground(wxColor c)
+{
+	SetBackgroundColour(c);
+	m_background = c;
+	m_dc->SetBackground(wxBrush(m_background));
+	m_dc->Clear();
+	Refresh();
+	Update();
 }

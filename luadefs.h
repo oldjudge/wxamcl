@@ -405,6 +405,7 @@ struct str_ac {
 	int lines;
 	int count;
 	bool on;
+	bool send;
 };
 
 //represents amcAlias in a C way

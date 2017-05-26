@@ -30,6 +30,7 @@ public:
 	void EnableMouseEvents() {m_mouseevents=true;}
 	void DisableMouseEvents() {m_mouseevents=false;}
 	void SetFont(wxFont *f) {m_font=f;m_dc->SetFont(*m_font);}
+	void SetBackground(wxColor c);
 private:
 	class MudMainFrame *m_parent;
 	wxFont *m_font;

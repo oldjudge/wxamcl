@@ -15,7 +15,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	wxString luawords2 =
 		wxT("wxamcl.echo wxamcl.echowin wxamcl.gag wxamcl.color wxamcl.colorwin wxamcl.colorline wxamcl.colorword wxamcl.colorall wxamcl.scroll \
 				wxamcl.getlinenumber wxamcl.getline wxamcl.execute wxamcl.wait wxamcl.waitfor wxamcl.loadprofile wxamcl.substitute \
-				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow wxamcl.destroywindow wxamcl.setbackground wxamcl.createnb wxamcl.addpage \
+				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow wxamcl.destroywindow wxamcl.setbackground wxamcl.createnb wxamcl.addpage wxamcl.createtoolbar wxamcl.addbtn \
 				wxamcl.action.new wxamcl.action.get wxamcl.action.delete wxamcl.action.enable wxamcl.action.getpattern wxamcl.action.setpattern \
 				wxamcl.action.getact wxamcl.action.setact wxamcl.action.getpriority wxamcl.action.setpriority wxamcl.action.getcolmatch wxamcl.action.setcolmatch \
 				wxamcl.action.enableall wxamcl.action.disableall wxamcl.action.getall wxamcl.action.delgroup wxamcl.action.enablegroup wxamcl.action.getuserdata wxamcl.action.execute \
@@ -144,7 +144,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 	StyleSetFont(wxSTC_LUA_OPERATOR, m_font);
 	StyleSetForeground(wxSTC_LUA_OPERATOR, wxColour ("DARK ORCHID"));
 	StyleSetFont(wxSTC_LUA_IDENTIFIER, m_font);
-	StyleSetForeground(wxSTC_LUA_IDENTIFIER, wxColour ("GREY"));
+	StyleSetForeground(wxSTC_LUA_IDENTIFIER, wxColour ("DARK GREY"));
 	SetViewWhiteSpace(false);
 	SetCurrentPos(0);
 }

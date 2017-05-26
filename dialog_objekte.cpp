@@ -515,9 +515,9 @@ tr_it iter;
 	{
 		wxString s = m_frame->GetTrigger()->at(index).GetClass();
 		if (m_onoff->GetValue())
-			m_onoff->SetLabel(_("Class active"));
+			m_onoff->SetLabel(_("Group active"));
 		else
-			m_onoff->SetLabel(_("Class off"));
+			m_onoff->SetLabel(_("Group off"));
 		for (iter = m_frame->GetTrigger()->begin(); iter!= m_frame->GetTrigger()->end(); iter++)
 		{
 			if (s == iter->GetClass())
@@ -542,7 +542,7 @@ void dlg_obj::OnDelClass( wxCommandEvent& event )
 	else
 	{
 		wxString s = m_frame->GetTrigger()->at(index).GetClass();
-		if (wxMessageBox(_("This will delete all triggers in this class!"), _("Continue?"), wxYES_NO, this)==wxYES)
+		if (wxMessageBox(_("This will delete all triggers in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
 			for (size_t i=0;i<m_frame->GetTrigger()->size(); i++)
 			{

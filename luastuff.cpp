@@ -757,7 +757,10 @@ int luafunc_logwin(lua_State *L)
 	const wxString* name = new wxString(winname);
 	class MudWindow *frame = (MudWindow*)MudWindow::FindWindowByName(*name);
 	if (frame == NULL)
-		return 0;
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	delete name;
 	MudMainFrame *parent = wxGetApp().GetFrame();
 	wxSetWorkingDirectory(parent->GetGlobalOptions()->GetWorkDir());
@@ -769,7 +772,10 @@ int luafunc_logwin(lua_State *L)
 			::wxRemoveFile(logfile);
 		frame->SetTextLog(new wxFile(logfile, wxFile::write));
 		if (!frame->GetTextLog()->IsOpened())
-			return 0;
+		{
+			lua_pushboolean(L, FALSE);
+			return 1;
+		}
 		wxDateTime d;
 		d.SetToCurrent();
 		wxString s;
@@ -785,7 +791,8 @@ int luafunc_logwin(lua_State *L)
 		frame->GetTextLog()->Close();
 		//frame->SetTextLog(nullptr);
 	}
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_drawcircle(lua_State*L)
@@ -1097,7 +1104,7 @@ int luafunc_registerlefthandler(lua_State *L)
 	s = luaL_checkstring(L,2);
 	frame->SetLeftHandler(wxString(s));
 	//lua_setglobal(L, s);
-	return 1;
+	return 0;
 }
 
 int luafunc_registerrighthandler(lua_State *L)
@@ -1252,8 +1259,11 @@ int luafunc_addpagenb(lua_State*L)
 	pagename = luaL_checkstring(L,2);
 
 	wxAuiNotebook *nb = (wxAuiNotebook*)wxAuiNotebook::FindWindowByName(winname, frame);
-	if (nb==NULL)
-		return 0;
+	if (nb == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	if (!frame->GetNbs()->empty())
 	{
 		for (i=0;i<(int)frame->GetNbs()->size();i++)
@@ -1263,9 +1273,9 @@ int luafunc_addpagenb(lua_State*L)
 		}
 	}
 	frame->GetNbPanes()->at(i).push_back(pagename);
-	
 	frame->m_mgr.Update();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 //! amc.createwindow(windowname)
@@ -1348,13 +1358,15 @@ int luafunc_hidewindow(lua_State*L)
 	winname = (char*)luaL_checkstring(L,1);
 	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
 	if (!mw)
-		return 0;
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	
 	frame->m_mgr.GetPane(wxString(winname)).Hide();
 	frame->m_mgr.Update();
-	//if (!wxThread::IsMain())
-	//	wxMutexGuiLeave();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 //! amc.showwindow(windowname)
@@ -1374,16 +1386,16 @@ int luafunc_showwindow(lua_State*L)
 	winname = (char*)luaL_checkstring(L,1);
 	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
 	if (!mw)
-		return 0;
-	
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	frame->m_mgr.GetPane(wxString(winname)).Show();
 	frame->m_mgr.Update();
 	frame->Refresh();
 	frame->Update();
-	
-	//if (!wxThread::IsMain())
-	//	wxMutexGuiLeave();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 //! amc.clearwindow(windowname)
@@ -1401,9 +1413,13 @@ int luafunc_clearwindow(lua_State *L)
 	winname = luaL_checkstring(L,1);
 	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
 	if (!mw)
-		return 0;
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	mw->ClearLines();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_destroywindow(lua_State *L)
@@ -1434,7 +1450,8 @@ int luafunc_destroywindow(lua_State *L)
 	frame->m_mgr.DetachPane(mw);
 	frame->m_mgr.Update();
 	mw->Destroy();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_destroyamcwindow(lua_State *L)
@@ -1465,7 +1482,8 @@ int luafunc_destroyamcwindow(lua_State *L)
 	frame->m_mgr.DetachPane(mw);
 	frame->m_mgr.Update();
 	mw->Destroy();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_destroynb(lua_State *L)
@@ -1501,7 +1519,8 @@ int luafunc_destroynb(lua_State *L)
 	frame->m_mgr.DetachPane(mw);
 	frame->m_mgr.Update();
 	mw->Destroy();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_setbackground(lua_State*L)
@@ -1515,38 +1534,52 @@ wxColour c;
 	win = MudWindow::FindWindowByName(winname, frame);
 	
 	if (!win)
-		return 0;
-	//if (sizeof(*mw)==sizeof(class MudWindow))
-	if (win->IsKindOf(CLASSINFO(MudWindow)))
 	{
-	mw = (MudWindow*)win;
-	wxString s(col);
-	if (s.at(0)=='#')
-	{
-		c.Set(s);
-		mw->SetBackgroundCol(c);	
+		lua_pushnil(L);
+		return 1;
 	}
-	
+	wxString s(col);
+	if (s.at(0) == '#')
+		c.Set(s);
 	else
 	{
-		map<wxString, int> b = mw->GetBCol();
-		int x = b[col]-40;
-		if (x>=0 && x < 16)
-			c = mw->GetAnsiColor(b[col]-40);
-		else
+		map<wxString, int> b = frame->m_child->GetBCol();
+		int x = b[col] - 40;
+		if (x >= 0 && x < 16)
+			c = frame->m_child->GetAnsiColor(b[col] - 40);
+		else if (x > 16)
 		{
 			c.Set(col);
 		}
-		mw->SetBackgroundCol(c);
+		else
+		{
+			map<wxString, wxColour> m = frame->m_child->GetMXPParser()->GetMXPColorMap();
+			wxString cc(m[col].GetAsString());
+			c.Set(cc);
+		}
 	}
+	
+	
+	
+	if (win->IsKindOf(CLASSINFO(MudWindow)))
+	{
+		mw = (MudWindow*)win;
+		mw->SetBackgroundCol(c);
 	}
 	else if (win->IsKindOf(CLASSINFO(GaugeWindow)))
 	{
 		GaugeWindow* gw = (GaugeWindow*)win;
-		c.Set(col);
+		//c.Set(col);
 		gw->SetBackgroundCol(c);
 	}
-	return 0;
+	else if (win->IsKindOf(CLASSINFO(amcWindow)))
+	{
+		amcWindow* aw = (amcWindow*)win;
+		//c.Set(col);
+		aw->SetBackground(c);
+	}
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_createamcwin(lua_State*L)
@@ -1565,25 +1598,25 @@ int luafunc_createamcwin(lua_State*L)
 	mw = new amcWindow(frame, winname);
 	mw->SetName(winname);
 	wxString s(col);
-	/*if (s.at(0)=='#')
+	if (s.at(0)=='#')
 	{
-		long bcol = mw->ParseHexColor(s.substr(1));
+		long bcol = frame->m_child->ParseHexColor(s.substr(1));
 		c.Set(bcol);
-		mw->SetBackgroundCol(c);	
+		mw->SetBackground(c);	
 	}
 	
 	else
 	{
-		map<wxString, int> b = mw->GetBCol();
+		map<wxString, int> b = frame->m_child->GetBCol();
 		int x = b[col]-40;
 		if (x>=0 && x < 16)
-			c = mw->GetAnsiColor(b[col]-40);
+			c = frame->m_child->GetAnsiColor(b[col]-40);
 		else
 		{
 			c.Set(col);
 		}
-		mw->SetBackgroundCol(c);
-	}*/
+		mw->SetBackground(c);
+	}
 	frame->GetAmcWindows()->push_back(winname);//save all the windows we have
 	//if (!wxThread::IsMain())
 	//	wxMutexGuiLeave();
@@ -2026,11 +2059,11 @@ LUAMOD_API int luaopen2_amc(lua_State *L)
 	return 1;
 }
 
-//! wxamcl.action.new(name, table{pattern="pattern", action="action", class="class", on=true|false, priority=0-100, colmatch=-1|0-18})
+//! wxamcl.action.new(name, table{pattern="pattern", action="action", group="group", on=true|false, priority=0-100, colmatch=-1|0-18})
 /*!
 	Creates a new action in lua, provide a unique label and a table with the values
 	creates a user type action in lua and returns this userdatum
-	userdatum = wxamcl.action.new("newaction", {pattern="A line", action="send to mud", class="default", on=true, prior=50, colmatch=-1})
+	userdatum = wxamcl.action.new("newaction", {pattern="A line", action="send to mud", group="default", on=true, prior=50, colmatch=-1})
 	\param lua_State *L: a valid lua State
 */
 int luafunc_newaction(lua_State*L)
@@ -2089,7 +2122,7 @@ int index=1;
 			lua_getfield(L, -2, "action");
 			cc = luaL_optstring(L, -1, "?wxamcl.echo('Action fired!')");
 			tr.SetAction(wxString(cc,co));
-			lua_getfield(L, -3, "class");
+			lua_getfield(L, -3, "group");
 			cc = luaL_optstring(L, -1, "default");
 			tr.SetClass(wxString(cc,co));
 			lua_getfield(L, -4, "on");
@@ -2109,7 +2142,7 @@ int index=1;
 			lua_getfield(L, index, "action");
 			cc = luaL_optstring(L, -1, "?wxamcl.echo('Action fired!')");
 			tr.SetAction(cc);
-			lua_getfield(L, index, "class");
+			lua_getfield(L, index, "group");
 			cc = (char*)luaL_optstring(L, -1, "default");
 			tr.SetClass(cc);
 			lua_getfield(L, index, "on");
@@ -2146,6 +2179,7 @@ int index=1;
 	t->colmatch = tr.GetColMatch();
 	t->count = tr.GetMatchCount();
 	t->lines = tr.GetLines();
+	t->send = tr.GetSendScript();
 	luaL_getmetatable(L, "wxamcl.mta");
 	lua_setmetatable(L, -2);
 	//frame->luaBuildtrigger();
@@ -2190,17 +2224,18 @@ int i;
 	t->colmatch = frame->GetTrigger()->at(i).GetColMatch();
 	t->count = frame->GetTrigger()->at(i).GetMatchCount();
 	t->lines = frame->GetTrigger()->at(i).GetLines();
+	t->send = frame->GetTrigger()->at(i).GetSendScript();
 	luaL_getmetatable(L, "wxamcl.mta");
 	lua_setmetatable(L, -2);
 	//frame->luaBuildtrigger();
 	return 1;
 }
-//! table = amc.getaction(action|userdatum)
+//! table = wxacml.action.get(action|userdatum)
 /*!
 	returns a table representing an wxAMC action in Lua
-	t = amc.getaction("Map1")
-	t = amc.getaction(x) provide a userdatum returned from newaction
-	table has fields: label, pattern, action, class, on, priority, colmatch, matchcount
+	t = wxamcl.getaction("Map1")
+	t = wxamcl.getaction(x) provide a userdatum returned from newaction or getuserdata
+	table has fields: label, pattern, action, class, on, priority, colmatch, matchcount, lines, script
 	\param lua_State *L: a valid lua_State
 */
 int luafunc_getaction(lua_State*L)
@@ -2216,6 +2251,50 @@ int i, index=1;
 	{
 		t = checkaction(L);
 		i = frame->GetTriggerIndexByLabel(wxString(t->label,co));
+	}
+	else if (lua_type(L, index) == LUA_TTABLE)
+	{
+		wxString s(luaL_checkstring(L, index + 1), co);
+				
+		i = frame->GetTriggerIndexByLabel(s);
+		if (i == -1)
+		{
+			frame->m_child->Msg(_("Action not found!"));
+			lua_pushnil(L);
+			return 1;
+		}
+		wxString ss = frame->GetTrigger()->at(i).GetAction();
+		lua_settop(L, 0);
+		lua_newtable(L);
+
+		for (i = 0; i<frame->GetTrigger()->size(); i++)
+		{
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetLabel().mb_str(co).data());// .mb_str());
+																				//lua_setfield(L, -1, GetTrigger()->at(i).GetLabel());
+			lua_setfield(L, -2, "label");
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().mb_str(co).data());
+			lua_setfield(L, -2, "pattern");
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());// .mb_str());
+			lua_setfield(L, -2, "action");
+			lua_pushstring(L, frame->GetTrigger()->at(i).GetClass().mb_str(co).data());// .mb_str());
+			lua_setfield(L, -2, "group");
+			lua_pushboolean(L, frame->GetTrigger()->at(i).IsActive());
+			lua_setfield(L, -2, "on");
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetPriority());
+			lua_setfield(L, -2, "priority");
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetColMatch());
+			lua_setfield(L, -2, "colmatch");
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetLines());
+			lua_setfield(L, -2, "lines");
+			lua_pushinteger(L, frame->GetTrigger()->at(i).GetMatchCount());
+			lua_setfield(L, -2, "matchcount");
+			lua_pushboolean(L, frame->GetTrigger()->at(i).GetSendScript());
+			lua_setfield(L, -2, "script");
+			
+
+		}
+		//lua_pushstring(L, ss.mb_str(co).data());// .mb_str());
+		return 1;
 	}
 	else
 	{
@@ -2239,7 +2318,7 @@ int i, index=1;
 	lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());// .char_str());
 	lua_setfield(L, -2, "action");
 	lua_pushstring(L, frame->GetTrigger()->at(i).GetClass().mb_str(co).data());// .char_str());
-	lua_setfield(L, -2, "class");
+	lua_setfield(L, -2, "group");
 	lua_pushinteger(L, frame->GetTrigger()->at(i).GetPriority());
 	lua_setfield(L, -2, "priority");
 	lua_pushinteger(L, frame->GetTrigger()->at(i).GetColMatch());
@@ -2250,10 +2329,12 @@ int i, index=1;
 	lua_setfield(L, -2, "on");
 	lua_pushinteger(L, frame->GetTrigger()->at(i).GetLines());
 	lua_setfield(L, -2, "lines");
+	lua_pushboolean(L, frame->GetTrigger()->at(i).GetSendScript());
+	lua_setfield(L, -2, "script");
 	return 1;
 }
 
-//! x = amc.delaction(action|userdatum)
+//! x = wxamcl.action.delete(action|userdatum)
 /*!
 	deletes an wxAMC action in Lua
 	x=wxamcl.action.delete("Map1")
@@ -2294,13 +2375,21 @@ str_ac *t;
 	return 1;
 }
 
+//! x = wxamcl.action.enable(action|userdatum)
+/*!
+enables or disables an wxAMCL action in Lua
+x=wxamcl.action.enable("Map1", true|false)
+x=wxamcl.action.enable(x, true|false) provide a userdatum returned from newaction or getuserdata
+returns the label of the action or nil in case of error
+\param lua_State *L: a valid lua_State
+*/
 int luafunc_enableaction(lua_State *L)
 {
 const char* c;
 int i, index=1;
 str_ac *t=NULL;
 
-	MudMainFrame *frame = wxGetApp().GetFrame(); //(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
@@ -2336,7 +2425,7 @@ char* l;
 str_ac* t;
 int index=1;
 
-	MudMainFrame *frame = wxGetApp().GetFrame();// (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
@@ -2793,7 +2882,7 @@ str_ac* t;
 
 //	MudMainFrame *frame = wxGetApp().GetFrame();
 	t = (str_ac*)checkaction(L);
-	lua_pushfstring(L, "type: wxamcl.action, label: \"%s\", pattern: \"%s\", action: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action);
+	lua_pushfstring(L, "type: wxamcl.action, label: \"%s\", pattern: \"%s\", action: \"%s\", group: \"%s\"", (const char*)t->label, (const char*)t->pattern, t->action, (const char*)t->cla);
 	return 1;
 }
 
@@ -4742,7 +4831,8 @@ int luafunc_gauge(lua_State *L)
 	if (frame==NULL)
 	{
 		delete name;
-		return 0;
+		lua_pushnil(L);
+		return 1;
 	}
 		//frame->Msg(wxString(text));
 //	int idx = frame->GetGaugeIndexByName(gauge);
@@ -4750,7 +4840,8 @@ int luafunc_gauge(lua_State *L)
 	wxClientDC dc(frame);
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
 	frame->Refresh();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_newgauge(lua_State *L)
@@ -4772,8 +4863,11 @@ int luafunc_newgauge(lua_State *L)
 	bcol=luaL_optstring(L, 6, "black");
 	vert=(lua_toboolean(L,7)!=0);
 	class MudWindow *frame = wxGetApp().GetChild();//(MudWindow*)MudWindow::FindWindowByName("amcoutput");
-	if (frame==NULL)
-		return 0;
+	if (frame == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	wxString s(fcol);
 	if (s.at(0)=='#')
 	{
@@ -4802,7 +4896,8 @@ int luafunc_newgauge(lua_State *L)
 	g.Register();
 	f->GetGauges()->at(i).push_back(name);
 	//frame->GetGauges()->at(idx).DrawGauge();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_sizegauge(lua_State *L)
@@ -4819,8 +4914,11 @@ int luafunc_sizegauge(lua_State *L)
 	cy = (int)luaL_optnumber(L, 6, 40);
 	//class MudWindow *frame = wxGetApp().GetChild();
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
-	if (frame==NULL)
-		return 0;
+	if (frame == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	int idx = frame->GetGaugeIndexByName(gauge);
 	if (idx==-1)
 	{
@@ -4835,7 +4933,8 @@ int luafunc_sizegauge(lua_State *L)
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
 	frame->Refresh();
 	//frame->Update();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 int luafunc_colorgauge(lua_State *L)
 {
@@ -4851,8 +4950,11 @@ int luafunc_colorgauge(lua_State *L)
 	alarm=luaL_optstring(L, 5, "red");
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
 	class MudWindow *frame1 = wxGetApp().GetChild();
-	if (frame==NULL)
-		return 0;
+	if (frame == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	wxString s(fcol);
 	if (s.at(0)=='#')
 	{
@@ -4880,7 +4982,8 @@ int luafunc_colorgauge(lua_State *L)
 	//wxClientDC dc(frame);
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
 	frame->Refresh();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_creategaugewin(lua_State*L)
@@ -4915,8 +5018,11 @@ int luafunc_setgaugelabel(lua_State *L)
 	label = luaL_checkstring(L, 3);
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
 //	class MudWindow *frame1 = wxGetApp().GetChild();
-	if (frame==NULL)
-		return 0;
+	if (frame == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	int idx = frame->GetGaugeIndexByName(gauge);
 	if (idx==-1)
 	{
@@ -4927,7 +5033,8 @@ int luafunc_setgaugelabel(lua_State *L)
 	wxClientDC dc(frame);
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
 	frame->Refresh();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 int luafunc_deletegauge(lua_State *L)
@@ -4939,8 +5046,11 @@ const char* gauge;
 	gauge = luaL_checkstring(L, 2);
 	class GaugeWindow *frame = (GaugeWindow*)GaugeWindow::FindWindowByName(winname);
 //	class MudWindow *frame1 = wxGetApp().GetChild();
-	if (frame==NULL)
-		return 0;
+	if (frame == NULL)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
 	int idx = frame->GetGaugeIndexByName(gauge);
 	if (idx==-1)
 	{
@@ -4951,7 +5061,8 @@ const char* gauge;
 	wxClientDC dc(frame);
 	//frame->GetGauges()->at(idx).DrawGauge(&dc);
 	frame->Refresh();
-	return 0;
+	lua_pushboolean(L, TRUE);
+	return 1;
 }
 
 //buttons

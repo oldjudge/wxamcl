@@ -28,7 +28,7 @@ GaugeWindow::GaugeWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPo
 	SetName("amcgaugewin");
 	SetLabel("amcgaugewin");
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
-	SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#if !defined __WXMSW__
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 	#else
