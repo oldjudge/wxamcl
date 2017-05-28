@@ -52,7 +52,7 @@
 
 ```lua
          t=wxamcl.action.get("Gossip")
-		 t=wxamcl.action.get(ud)
+         t=wxamcl.action.get(ud)
 ```
 > > The function returns `nil`if action is not found, otherwise a table representing the action. Fields of the table are: pattern, action, group, on, priority, colmatch, lines, script, matchcount.
 > ### wxamcl action getuserdata ###
@@ -71,7 +71,7 @@
 
 ```lua
          size=wxamcl.action.delete("gossip")
-		 size=wacmcl.action.delete(ud)
+         size=wacmcl.action.delete(ud)
 ```
 > > The function returns `nil` in case of error, otherwise number of (remaining) defined actions.
 > ### wxamcl action enable ###
@@ -81,7 +81,7 @@
 
 ```lua
          label = wxamcl.action.enable("gossip", true)
-		 label = wxamcl.action.enable(ud, false)
+         label = wxamcl.action.enable(ud, false)
 ```
 > > Returns the label of the action if successful, otherwise `nil`.
 

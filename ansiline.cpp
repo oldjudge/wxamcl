@@ -134,6 +134,7 @@ AnsiLine::AnsiLine()
 	m_linenumber=0;
 	m_ypos=0;
 	m_linetext = wxEmptyString;
+	m_linetextlen = 0;
 	m_ansiline = wxEmptyString;
 	m_cdt = wxDateTime::Now();
 	m_cdts = wxDateTime::UNow();
@@ -149,6 +150,7 @@ AnsiLine::AnsiLine(const AnsiLine& al)
 	m_ypos= al.m_ypos;
 	//m_linetext = new wxString(*al.m_linetext);
 	m_linetext = al.m_linetext;
+	m_linetextlen = al.m_linetextlen;
 	wxStrncpy(m_clinetext, al.m_clinetext, 5000);
 	m_ansiline = al.m_ansiline;
 	//m_vstyle.assign(al.m_vstyle.begin(), al.m_vstyle.end());
@@ -178,7 +180,7 @@ wxString AnsiLine::GetConvLineText()
 			return ff;
         #endif
         #ifdef __WXGTK__
-            return m_linetext;
+			return m_linetext;
         #endif
 	//}
 	//else return m_linetext;
@@ -259,6 +261,15 @@ void AnsiLine::SetLineText(wxString st)
 	//	ff=st;
 	m_linetext.append(st);
 	m_linetext.Replace("\t", "    ");
+	MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
+	wxString ff(m_linetext.To8BitData(), c);
+	#ifndef __WXGTK__
+		m_linetextlen = ff.length();
+	#endif
+	#ifdef __WXGTK__
+		m_linetextlen = m_linetext.length();
+	#endif
 }
 
 void AnsiLine::SetCharLineText(char *t)

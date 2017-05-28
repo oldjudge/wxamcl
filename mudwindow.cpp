@@ -161,7 +161,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	//m_mxp = new amcMXP();
 	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
 	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua|quest|tick|vitals|status|stats|channel|worth|base)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -4836,15 +4836,15 @@ size_t sublines=0;
 				starty = DrawAnsi(&dc, starty, i, char_len, char_height);
 			else
 			{
-#ifdef __WXMSW__
+/*#ifdef __WXMSW__
 				if (!GetWrapping())
 					starty = DrawAnsi(&dc, starty, i, char_len, char_height);
 				else
 					starty = DrawMultiAnsi(&dc, starty, i, char_len, char_height, sublines);
 #endif // __WXMSW__
-#ifndef __WXMSW__
+#ifndef __WXMSW__*/
 				starty = DrawMultiAnsi(&dc, starty, i, char_len, char_height, sublines);
-#endif
+//#endif
 			}
 		}
 	}

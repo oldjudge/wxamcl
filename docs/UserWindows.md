@@ -135,8 +135,8 @@
 > > `wxamcl.addbtn(toolbarname, text, action, ID)`
 
 ```lua
-         wxamcl.addbtn("Directions", "Up", "up", "1")
-		 -- adds a button with label "Up", which will send the command "up" to the MUD, ID needs to be greater than 1 and less than 1000
+         wxamcl.addbtn("Directions", "Up", "up", 1)
+         -- adds a button with label "Up", which will send the command "up" to the MUD, ID needs to be greater than 1 and less than 1000
 ```
 > > The function returns nothing.
 > ### wxamcl logwin ###
@@ -146,8 +146,8 @@
 > > `wxamcl.logwin(windowname, on_off)`
 
 ```lua
-         wxamcl.loginw("Gossip", "true") --start logging the window
-		 wxamcl.logwin("Gossip", "false") --stop logging
+         wxamcl.loginw("Gossip", true) --start logging the window
+         wxamcl.logwin("Gossip", false) --stop logging
 ```
 > > The function returns `nil`if windowname was not valid, `false`if logfile couldn't be created, `true` otherwise.
 
@@ -168,7 +168,7 @@
 
 ```lua
          wxamcl.gauge.new("Stats", "Hps", "hpcur", "hpmax")
-		 wxamcl.gauge.new("Stats", "Mana", "mana", "manamax", "yellow", "blue", "true") -- will display a vertical gauge
+         wxamcl.gauge.new("Stats", "Mana", "mana", "manamax", "yellow", "blue", true) -- will display a vertical gauge
 ```
 > > The function returns `true`, `nil`if windowname wasn't valid. The variables need to hold the values to display, variable1 needs to have current value, variable2 needs to have maximal value.
 > > Those variables need to be defined before calling this function.
@@ -179,22 +179,22 @@
 
 ```lua
          x=wxamcl.gauge.update("Stats", "Hps")
-		 -- in reality will look like this, if we get the values eg through GMCP protocol, code will be in eventhandler for GMCP data received
-		 -- standard will be OnGMCPData(data) in event handler file 'events.lua'
-		 if (data == "charvitals") then
-		 wxamcl.var.set("hpscur", wxamcl.GMCP.charvitals.hp) --aardwolf
-		 wxamcl.var.set("manacur", wxamcl.GMCP.charvitals.mana)
-		 end
-		 if (data=="charmaxstats") then
-		 wxamcl.var.set("hps", wxamcl.GMCP.charmaxstats.maxhp) --aardwolf
-         wxamcl.var.set("mana", wxamcl.GMCP.charmaxstats.maxmana)
-		 end
-		 wxamcl.gauge.update("Stats", "Hps")
-		 wxamcl.gauge.update("Stats", "Mana")
-		 -- to create this gauge do
-		 wxamcl.gauge.creatwindow("Stats")
-		 wxamcl.gauge.new("Stats", "Hps", "hpscur", "hps", "green", "#999999")
-		 wxamcl.gauge.setsize("Stats", "Hps", "10", "10", "200", "40")
+         -- in reality will look like this, if we get the values eg through GMCP protocol, code will be in eventhandler for GMCP data received
+         -- standard will be OnGMCPData(data) in event handler file 'events.lua'
+         if (data == "charvitals") then
+             wxamcl.var.set("hpscur", wxamcl.GMCP.charvitals.hp) --aardwolf
+             wxamcl.var.set("manacur", wxamcl.GMCP.charvitals.mana)
+         end
+         if (data=="charmaxstats") then
+             wxamcl.var.set("hps", wxamcl.GMCP.charmaxstats.maxhp) --aardwolf
+             wxamcl.var.set("mana", wxamcl.GMCP.charmaxstats.maxmana)
+         end
+         wxamcl.gauge.update("Stats", "Hps")
+         wxamcl.gauge.update("Stats", "Mana")
+         -- to create this gauge do
+         wxamcl.gauge.creatwindow("Stats")
+         wxamcl.gauge.new("Stats", "Hps", "hpscur", "hps", "green", "#999999")
+         wxamcl.gauge.setsize("Stats", "Hps", 10, 10, 200, 40)
 ```
 > > The function returns `true` or `nil`if windowname or gaugename wasn't valid.
 > ### wxamcl gauge setsize ###
@@ -203,8 +203,8 @@
 > > `wxamcl.gauge.setsize(windowname, gaugename, x, y, cx, cy)`
 
 ```lua
-         x=wxamcl.gauge.setsize("Stats", "Hps", "10", "10", "40", "200") --vertical layout
-         value=wxamcl.gauge.setsize("Stats", "Hps", "10", "10", "200", "40") --horizontal layout
+         x=wxamcl.gauge.setsize("Stats", "Hps", 10, 10, 40, 200) --vertical layout
+         value=wxamcl.gauge.setsize("Stats", "Hps", 10, 10, 200, 40) --horizontal layout
 ```
 > > The function returns `nil` if windowname or gaugename wasn't valid, otherwise returns `true`.
 > ### wxamcl gauge setcolor ###
@@ -244,7 +244,7 @@
 
 ```lua
          wxamcl.createamcwin("Mapper")
-		 wxamcl.createamcwin("Mapper", "grey")
+         wxamcl.createamcwin("Mapper", "grey")
 ```
 > > The function returns nothing.
 > > ### wxamcl destroyamcwindow ###
@@ -307,7 +307,7 @@
 > > `wxamcl.mouseevents(winname, true_false)`
 
 ```lua
-         wxamcl.mouseevents("Mapper", "true")
-		 wxamcl.mouseevents("Mapper", "false")
+         wxamcl.mouseevents("Mapper", true)
+         wxamcl.mouseevents("Mapper", false)
 ```
 > > The function returns nothing.

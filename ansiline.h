@@ -82,7 +82,7 @@ public:
 	wxString GetAnsiLine() {return m_ansiline;}
 	wxString GetConvAnsiLine();
 	void GetCharAnsiLine(char* c);
-	size_t GetTextLength() {return m_linetext.length();}
+	size_t GetTextLength() {return m_linetextlen;}
 	void SetYPos(wxInt32 yp) {m_ypos = yp;}
 	wxInt32 GetYPos() {return m_ypos;}
 	void SetDateTime(wxDateTime d) {m_cdt = d;}
@@ -110,6 +110,7 @@ private:
 	bool m_bofull;
 	bool m_bogagme;
 	wxString m_linetext;
+	wxUint16 m_linetextlen;
 	char m_clinetext[5000];
 	wxString m_ansiline;
 	wxInt32 m_ypos;
