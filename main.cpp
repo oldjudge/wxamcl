@@ -143,7 +143,7 @@ bool MudClientApp::OnInit()
     
     
    	//Input line
-	frame->m_input = new InputTextCtrl(frame, ID_INPUTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_TAB|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2);
+	frame->m_input = new InputTextCtrl(frame, ID_INPUTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_TAB|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2|wxTE_NOHIDESEL);
 	//Bitmap Button
 	frame->m_toggle = new wxBitmapButton(frame, ID_PARSEINPUT, wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
 	//frame->m_toggle = new wxCheckBox(frame, ID_PARSEINPUT,_(""));
@@ -2889,12 +2889,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		//wxFont f;
 		aL->GetField(-2, "font");
 		wxFont f(aL->GetUTF8String(-1));
-		/*aL->GetField(-3, "fontsize");
-		f.SetPointSize(aL->GetInt(-1));
-		aL->GetField(-4, "fontweight");
-		f.SetWeight(aL->GetInt(-1));
-		aL->GetField(-5, "fontstyle");
-		f.SetStyle(aL->GetInt(-1));*/
+		
 		gw->SetFont(&f);
 		aL->GetGlobal(("amc_gauges"));
 		aL->PushInt(i + 1);
@@ -2959,7 +2954,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			//gw->GetGauges()->push_back(g);
 			aL->SetTop(0);
 		}
-		m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+		m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).CaptionVisible(false).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 		aL->SetTop(0);
 		//delete gw;
 	}
@@ -3220,7 +3215,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	//delete view;
 	//m_toolbar->Refresh();
 	//m_toolbar->Update();
-	m_mgr.LoadPerspective(p);
+	//m_mgr.LoadPerspective(p);
 	m_mgr.Update();
 	//m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
 	m_curprofile = s.GetFullPath();
@@ -3820,16 +3815,17 @@ void InputTextCtrl::OnMouseWheel(wxMouseEvent &event)
 void InputTextCtrl::OnMouseLeftUp(wxMouseEvent &event)
 {
 	
+	m_dclick = false;
 	event.Skip();
 }
 
 void InputTextCtrl::OnMouseLeftDClick(wxMouseEvent &event)
 {
-	SetSelection(-1, -1);
+	//SetSelection(-1, -1);
 	SelectAll();
 	
 	m_dclick = true;
-	event.Skip();
+	//event.Skip();
 }
 
 void InputTextCtrl::OnKeyDown(wxKeyEvent &event)

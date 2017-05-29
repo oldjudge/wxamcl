@@ -10,10 +10,12 @@
 #define GAUGE_LINES 1
 #define GAUGE_ROUNDED 2
 #define GAUGE_RLINES 3
+#define GAUGE_3D 4
 
 #define GAUGE_TEXT_BELOW 0
 #define GAUGE_TEXT_ABOVE 1
 #define GAUGE_TEXT_GAUGE 2
+#define GAUGE_TEXT_NONE	 3
 /*! \class GaugeWindow
 	\brief class representing an output window.
 	
@@ -63,7 +65,7 @@ public:
 	void SetLabel(wxString s) {m_label=s;}
 	void SetName(wxString s) {m_name=s;}
 	bool SetWindow(wxString name);
-	void DrawGauge(wxDC *cdc);
+	void DrawGauge(wxBufferedPaintDC *cdc);
 	bool GetVertical() {return m_vertical;}
 	void SetVertical(bool b) {m_vertical=b;}
 	wxString GetVar1() {return m_var1;}

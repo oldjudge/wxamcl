@@ -29,11 +29,7 @@ GaugeWindow::GaugeWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPo
 	SetLabel("amcgaugewin");
 	SetScrollbar(wxVERTICAL, 0, 0, 0);
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
-	#if !defined __WXMSW__
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	#else
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-	#endif
+	m_font = new wxFont(wxFontInfo(11).FaceName("CourierNew").Family(wxFONTFAMILY_MODERN));
 	m_background = m_parent->m_child->GetAnsiColor(0);
 
 }
@@ -52,7 +48,7 @@ GaugeWindow::GaugeWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_A
 	#if !defined __WXMSW__
 		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Fixed");
 	#else
-		m_font = new wxFont(11, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
+		m_font = new wxFont(wxFontInfo(11).FaceName("Courier New").Family(wxFONTFAMILY_MODERN));
 	#endif
 	m_background = m_parent->m_child->GetAnsiColor(0);
 }
@@ -228,7 +224,7 @@ void amcGauge::SetVarIndices()
 	m_idx2 = m_parent->GetVarIndexByLabel(m_var2);
 }
 
-void amcGauge::DrawGauge(wxDC *dc)
+void amcGauge::DrawGauge(wxBufferedPaintDC *dc)
 {
 	//wxClientDC dc(m_gwin);
 	//wxBufferedDC dc(cdc);
@@ -255,6 +251,9 @@ void amcGauge::DrawGauge(wxDC *dc)
 			case GAUGE_ROUNDED:
 			case GAUGE_RLINES:
 				dc->DrawRoundedRectangle(m_x, m_y, m_cx, m_cy, -0.5);
+				break;
+			case GAUGE_3D:
+				dc->DrawRectangle(m_x, m_y, m_cx, m_cy);
 				break;
 			default:
 				dc->DrawRectangle(m_x, m_y, m_cx, m_cy);
@@ -289,6 +288,42 @@ void amcGauge::DrawGauge(wxDC *dc)
 					dc->DrawLine(m_x, m_y+i*(m_cy/10), m_cx+m_x, m_y+i*(m_cy/10));
 				}
 				break;
+			case GAUGE_3D:
+			{
+				
+				wxColour c;
+				wxColour cd;
+				if (!m_usealarm)
+				{
+					c= m_fcol;
+					cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				else if (m_usealarm && m_perc < (float)m_alarmperc / 100)
+				{
+					c = m_alarm;
+					wxColour cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				else
+				{
+					c = m_fcol;
+					cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				wxRect rc(m_x, m_y + m_cy, m_cx/2, -(m_cy*m_perc));
+				dc->GradientFillLinear(rc, cd, c);
+				wxRect rc1(m_x + m_cx / 2, m_y+m_cy, m_cx / 2, -(m_cy*m_perc));
+				dc->GradientFillLinear(rc1, c, cd);
+				
+				
+				//dc->DrawRectangle(m_x+5, m_y + m_cy, m_cx-10, -(m_cy*m_perc));
+				
+				break;
+			}
 			default:
 				dc->DrawRectangle(m_x, m_y, m_cx, -(m_cy*m_perc));
 				break;
@@ -301,20 +336,29 @@ void amcGauge::DrawGauge(wxDC *dc)
 		switch(m_textpos)
 		{
 			case GAUGE_TEXT_BELOW:
-				dc->DrawText(m_label, m_x, m_y+m_cy);
+				dc->DrawText(m_label, m_x, m_y+m_cy+3);
 				if (m_showvalue)
 				{
 					wxString val;
 					val<<m_parent->GetVars()->at(m_idx1).GetValue();
-					dc->DrawText(val, m_x, m_y+m_cy+dc->GetCharHeight());
+					dc->DrawText(val, m_x, m_y+m_cy+dc->GetCharHeight()+3);
 				}
 				break;
 			case GAUGE_TEXT_GAUGE:
-				dc->SetTextBackground(m_fcol);
-				dc->DrawRotatedText(m_label, m_x+2, m_y+(m_cy/2), 90);
+				dc->SetBackgroundMode(wxTRANSPARENT);
+				if (m_showvalue)
+				{
+					wxString val;
+					val << m_parent->GetVars()->at(m_idx1).GetValue();
+					dc->DrawRotatedText(val, m_x + 2, m_y +(m_cy/2), 90);
+				}
+				else
+					dc->DrawRotatedText(m_label, m_x+2, m_y+(m_cy/2), 90);
 				break;
 			case GAUGE_TEXT_ABOVE:
 				dc->DrawText(m_label, m_x, m_y-dc->GetCharHeight()-2);
+				break;
+			case GAUGE_TEXT_NONE:
 				break;
 			default:
 				dc->DrawText(m_label, m_x+5, m_y+2);
@@ -334,6 +378,9 @@ void amcGauge::DrawGauge(wxDC *dc)
 			case GAUGE_ROUNDED:
 			case GAUGE_RLINES:
 				dc->DrawRoundedRectangle(m_x, m_y, m_cy, m_cx, -0.5);
+				break;
+			case GAUGE_3D:
+				dc->DrawRectangle(m_x, m_y, m_cy, m_cx);
 				break;
 			default:
 				dc->DrawRectangle(m_x, m_y, m_cy, m_cx);
@@ -367,6 +414,37 @@ void amcGauge::DrawGauge(wxDC *dc)
 					dc->DrawLine(m_x+i*(m_cy/10), m_y, m_x+i*(m_cy/10), m_y+m_cx);
 				}
 				break;
+			case GAUGE_3D:
+			{
+				wxColour c;
+				wxColour cd;
+				if (!m_usealarm)
+				{
+					c = m_fcol;
+					cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				else if (m_usealarm && m_perc < (float)m_alarmperc / 100)
+				{
+					c = m_alarm;
+					wxColour cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				else
+				{
+					c = m_fcol;
+					cd = c.ChangeLightness(30);
+					dc->SetBrush(wxBrush(cd));
+					dc->SetPen(wxPen(cd));
+				}
+				wxRect rc(m_x, m_y, m_cy*m_perc, m_cx/2);
+				dc->GradientFillLinear(rc, c, cd, wxTOP);
+				wxRect rc1(m_x,m_y+m_cx/2, m_cy*m_perc, m_cx/2);
+				dc->GradientFillLinear(rc1, cd, c, wxTOP);
+				break;
+			}
 			default:
 				dc->DrawRectangle(m_x, m_y, m_cy*m_perc, m_cx);
 				break;
@@ -382,12 +460,29 @@ void amcGauge::DrawGauge(wxDC *dc)
 		{
 			case GAUGE_TEXT_BELOW:
 				dc->DrawText(m_label, m_x, m_y+m_cx);
+				if (m_showvalue)
+				{
+					wxString val;
+					val << m_parent->GetVars()->at(m_idx1).GetValue();
+					dc->DrawText(val, m_x, m_y + m_cx + dc->GetCharHeight() + 3);
+				}
 				break;
 			case GAUGE_TEXT_GAUGE:
-				dc->DrawText(m_label, m_x+5, m_y+2);
+				dc->SetBackgroundMode(wxTRANSPARENT);
+				
+				if (m_showvalue)
+				{
+					wxString val;
+					val << m_parent->GetVars()->at(m_idx1).GetValue();
+					dc->DrawText(val, m_x+5, m_y + 2);
+				}
+				else
+					dc->DrawText(m_label, m_x + 5, m_y + 2);
 				break;
 			case GAUGE_TEXT_ABOVE:
 				dc->DrawText(m_label, m_x, m_y-m_cx);
+				break;
+			case GAUGE_TEXT_NONE:
 				break;
 			default:
 				dc->DrawText(m_label, m_x+5, m_y+2);

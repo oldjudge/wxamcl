@@ -63,6 +63,7 @@
 #include <wx/sstream.h>
 #include <wx/ipcbase.h>
 #include <wx/wupdlock.h>
+#include <wx/graphics.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__

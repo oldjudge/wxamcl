@@ -14,6 +14,7 @@
 int luafunc_createwindow(lua_State *L);
 int luafunc_hidewindow(lua_State *L);
 int luafunc_showwindow(lua_State *L);
+int luafunc_captionwindow(lua_State *L);
 int luafunc_clearwindow(lua_State *L);
 int luafunc_destroywindow(lua_State *L);
 int luafunc_destroynb(lua_State *L);
@@ -176,6 +177,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"createwindow", luafunc_createwindow},
 	{"hidewindow", luafunc_hidewindow},
 	{"showwindow", luafunc_showwindow},
+	{"caption", luafunc_captionwindow},
 	{"clearwindow", luafunc_clearwindow},
 	{"destroywindow", luafunc_destroywindow},
 	{"destroyamcwindow", luafunc_destroyamcwindow},

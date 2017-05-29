@@ -322,7 +322,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_buttons->SetSizer( bSizer131 );
 	m_buttons->Layout();
 	bSizer131->Fit( m_buttons );
-	m_notebook->AddPage( m_buttons, _("Buttons"), true );
+	m_notebook->AddPage( m_buttons, _("Buttons"), false );
 	m_gauge = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer102;
 	bSizer102 = new wxBoxSizer( wxHORIZONTAL );
@@ -378,7 +378,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	wxStaticBoxSizer* sbSizer8;
 	sbSizer8 = new wxStaticBoxSizer( new wxStaticBox( sbSizer71->GetStaticBox(), wxID_ANY, _("Style") ), wxVERTICAL );
 	
-	wxString m_drawstyleChoices[] = { _("Standard"), _("Lines"), _("Rounded"), _("Rounded with Lines") };
+	wxString m_drawstyleChoices[] = { _("Standard"), _("Lines"), _("Rounded"), _("Rounded with Lines"), _("3D-Style") };
 	int m_drawstyleNChoices = sizeof( m_drawstyleChoices ) / sizeof( wxString );
 	m_drawstyle = new wxChoice( sbSizer8->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_drawstyleNChoices, m_drawstyleChoices, 0 );
 	m_drawstyle->SetSelection( 0 );
@@ -399,7 +399,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_staticText36->Wrap( -1 );
 	fgSizer2->Add( m_staticText36, 0, wxALL, 5 );
 	
-	wxString m_textposChoices[] = { _("below gauge"), _("above gauge"), _("gauge") };
+	wxString m_textposChoices[] = { _("below gauge"), _("above gauge"), _("gauge"), _("none") };
 	int m_textposNChoices = sizeof( m_textposChoices ) / sizeof( wxString );
 	m_textpos = new wxChoice( sbSizer101->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, m_textposNChoices, m_textposChoices, 0 );
 	m_textpos->SetSelection( 0 );
@@ -531,7 +531,7 @@ ObjDlg::ObjDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wx
 	m_gauge->SetSizer( bSizer102 );
 	m_gauge->Layout();
 	bSizer102->Fit( m_gauge );
-	m_notebook->AddPage( m_gauge, _("Gauges"), false );
+	m_notebook->AddPage( m_gauge, _("Gauges"), true );
 	m_hotkey = new wxPanel( m_notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer* bSizer7;
 	bSizer7 = new wxBoxSizer( wxVERTICAL );

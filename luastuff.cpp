@@ -1369,10 +1369,10 @@ int luafunc_hidewindow(lua_State*L)
 	return 1;
 }
 
-//! amc.showwindow(windowname)
+//! wxamcl.showwindow(windowname)
 
 //!	shows a (hidden) window in lua
-//!	amc.showwindow("Name")
+//!	wamcl.showwindow("Name")
 //!	\param lua_State *L: a valid lua_State
 
 int luafunc_showwindow(lua_State*L)
@@ -1391,6 +1391,39 @@ int luafunc_showwindow(lua_State*L)
 		return 1;
 	}
 	frame->m_mgr.GetPane(wxString(winname)).Show();
+	frame->m_mgr.Update();
+	frame->Refresh();
+	frame->Update();
+	lua_pushboolean(L, TRUE);
+	return 1;
+}
+
+//! wxamcl.caption(windowname, caption, true|false)
+
+//!	shows or hides caption of a userwindow in lua
+//!	wamcl.caption("Name", "Caption", true)
+//!	\param lua_State *L: a valid lua_State
+int luafunc_captionwindow(lua_State *L)
+{
+	const char* winname;
+	const char* caption;
+	bool bo;
+	MudWindow *mw;
+	
+	class MudMainFrame *frame = wxGetApp().GetFrame();
+	winname = (char*)luaL_checkstring(L, 1);
+	caption = (char*)luaL_optstring(L, 2, "Caption");
+	bo = lua_toboolean(L, 3);
+	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	if (bo)
+		frame->m_mgr.GetPane(wxString(winname)).Caption(wxString(caption)).CaptionVisible(bo);
+	else
+		frame->m_mgr.GetPane(wxString(winname)).CaptionVisible(false).Caption(wxString(caption));
 	frame->m_mgr.Update();
 	frame->Refresh();
 	frame->Update();
