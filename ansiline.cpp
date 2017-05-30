@@ -176,12 +176,12 @@ wxString AnsiLine::GetConvLineText()
 	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_linetext.To8BitData(), c);
-        #ifndef __WXGTK__
-			return ff;
-        #endif
+        //#ifndef __WXGTK__
+		return ff;
+        /*#endif
         #ifdef __WXGTK__
 			return m_linetext;
-        #endif
+        #endif*/
 	//}
 	//else return m_linetext;
 }
@@ -195,13 +195,13 @@ void AnsiLine::GetCharAnsiLine(char * c)
 wxString AnsiLine::GetConvAnsiLine()
 {
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
-	{
+	//if (frame->GetGlobalOptions()->GetCurEncoding()!=wxFONTENCODING_UTF8)
+	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_ansiline.To8BitData(), c);
 		return ff;
-	}
-	else return m_ansiline;
+	//}
+	//else return m_ansiline;
 }
 
 size_t AnsiLine::Freq(wxString *st, wxChar ch)
@@ -264,12 +264,12 @@ void AnsiLine::SetLineText(wxString st)
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 	wxString ff(m_linetext.To8BitData(), c);
-	#ifndef __WXGTK__
-		m_linetextlen = ff.length();
-	#endif
+	//#ifndef __WXGTK__
+	m_linetextlen = ff.length();
+	/*#endif
 	#ifdef __WXGTK__
 		m_linetextlen = m_linetext.length();
-	#endif
+	#endif*/
 }
 
 void AnsiLine::SetCharLineText(char *t)
