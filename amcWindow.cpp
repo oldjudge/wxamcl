@@ -46,7 +46,8 @@ amcWindow::amcWindow(wxFrame *parent):wxWindow(parent, wxID_ANY, wxDefaultPositi
 	m_mouseright = "OnMouseRight";
 	m_mousewheel = "OnMouseWheel";
 	m_mousemove = "OnMouseMove";
-	m_evfile = "event.lua";
+	m_onsize = "OnSize";
+	m_evfile = "amcevents.lua";
 	m_wheelrot=0;
 	
 	m_tt = NULL;
@@ -65,7 +66,8 @@ amcWindow::amcWindow(wxFrame *parent, wxString name):wxWindow(parent, wxID_ANY, 
 	m_mouseright = "OnMouseRight";
 	m_mousewheel = "OnMouseWheel";
 	m_mousemove = "OnMouseMove";
-	m_evfile = "events.lua";
+	m_onsize = "OnSize";
+	m_evfile = "amcevents.lua";
 	m_wheelrot = 0;
 	
 	m_bitmap.Create(1920, 1280);
@@ -115,6 +117,11 @@ void amcWindow::OnPaint(wxPaintEvent& event)
 
 void amcWindow::OnSize(wxSizeEvent& event)
 {
+	
+	wxString s = wxString::Format("%cfunc(\"%s\", \"%s()\")", m_parent->GetGlobalOptions()->GetCommand(),
+		m_evfile, m_onsize);
+
+	m_parent->m_input->ParseCommandLine(&s);
 	Refresh();
 	Update();
 }

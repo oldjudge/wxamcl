@@ -44,6 +44,7 @@ private:
 	wxString m_mouseleft;
 	wxString m_mouseright;
 	wxString m_mousemove;
+	wxString m_onsize;
 	wxToolTip *m_tt;
 	int m_wheelrot;
 	//Event handlers

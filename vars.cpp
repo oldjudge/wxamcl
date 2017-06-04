@@ -10,7 +10,7 @@ amcVar::amcVar()
 	m_parent = (MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	m_name = wxEmptyString;
 	m_value = wxEmptyString;
-	m_group = wxT("default");
+	m_group = "default";
 	m_on = false;
 	m_idx = 0;
 }

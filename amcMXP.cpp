@@ -317,6 +317,8 @@ amcMXPTag aTag;
 static amcMXPTag oldTag;
 amcMXPTag escTag;
 amcMXPTag iacTag;
+amcMXPTag saveaTag;
+bool firstunfinishedTag = false;
 static wxString olds = wxEmptyString;
 static amcMXPTag oldescTag;
 static wxString oldsimple = wxEmptyString;
@@ -450,6 +452,8 @@ if (!s.empty())
 				ReplaceEntities(&simpleText);
 				mw->ParseNBuffer((char*)simpleText.To8BitData().data(), false);
 				mw->GetLineStyle(mw->m_curline-1)->back().SetFontStyle(0);
+				if (firstunfinishedTag)
+					saveaTag.AppendText(simpleText);
 				simpleText = wxEmptyString;
 			}
 			if (*it=='/')
@@ -504,9 +508,17 @@ if (!s.empty())
 				aTag.SetText(aTag.GetText().Append(escTag.GetText()));
 				escTag.Reset();
 				elemnum = FindElement(aTag.GetTag());
+				if (firstunfinishedTag)
+					saveaTag.AppendText(aTag.GetText());
 				if (elemnum>-1)
 				{
-					ParseTag(&aTag, elemnum);
+ 					ParseTag(&aTag, elemnum);
+					if (firstunfinishedTag == false)
+					{
+						firstunfinishedTag = true;
+						saveaTag = aTag;
+					}
+					
 					aTag.Reset();
 					break;
 				}
@@ -563,11 +575,34 @@ if (!s.empty())
 				{
 					m_parsestate = MXP_TEXT;
 					if (!aTag.GetTag().Cmp("/") || aTag.GetEndTag().StartsWith("/"))
+					{
+						
+							wxString ss;
+							ss << "/" << saveaTag.GetTag();
+						
+						if (!aTag.GetEndTag().Cmp(saveaTag.GetTag()) || !aTag.GetEndTag().Cmp(ss) )
+						{
+							if (aTag.GetEndTag().StartsWith("/"))
+							{
+								//saveaTag.SetTag(ss);
+								saveaTag.SetEndTag(saveaTag.GetTag());
+							}
+							else
+								saveaTag.AppendEndTag(aTag.GetEndTag());
+							aTag = saveaTag;
+							firstunfinishedTag = false;
+							elemnum = FindElement(aTag.GetTag());
+							
+							ParseTag(&saveaTag, elemnum);
+							aTag.Reset();
+							break;
+						}
 						if (!ParseSingleTag(&aTag))
 						{
 							//aTag.Reset();
 							break;
 						}
+					}
 				}
 				else
 				{
@@ -1176,11 +1211,26 @@ MudWindow *mw = m_parent;
 		//if (!it->GetName().CmpNoCase(ss))//Tag Found in !ELEMENTS
 		//{
 			//t->GetText().Replace("<BR>", "\r\n");
-			if (it->HasRoomFlag())//FLAG=Room..lets ignore that
+			if (it->HasRoomFlag())//FLAG=Room
 			{
 				if (!t->GetText().empty())
 				{
-					mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
+					if (t->GetEndTag().Cmp(t->GetTag()))
+						mw->ParseNBuffer((char*)t->GetText().To8BitData().data(), false);
+					amcVar nv;
+					if (f->GetVarIndexByLabel(it->GetFlag()) == -1)
+					{
+						nv.SetName(it->GetFlag());
+						nv.SetActive(true);
+						nv.SetValue(t->GetText());
+						nv.SetGroup("mxp_autovar_room");
+						f->GetVars()->push_back(nv);
+					}
+					else
+					{
+						int idx = f->GetVarIndexByLabel(it->GetFlag());
+						f->GetVars()->at(idx).SetValue(t->GetText());
+					}
 					return false;
 				}
 				else return false;

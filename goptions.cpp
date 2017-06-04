@@ -407,7 +407,7 @@ wxString sub;
 		lua_pushstring(L, s.char_str());
 		lua_settable(L, -3);
 	}
-	lua_setglobal(L, "amcWildcards");
+	lua_setglobal(L, "wxamclWildcards");
 }
 
 wxString RegExp::GetMatch(int idx)

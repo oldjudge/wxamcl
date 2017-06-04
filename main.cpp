@@ -122,27 +122,17 @@ bool MudClientApp::OnInit()
 {
     // call the base class initialization method, currently it only parses a
     // few common command-line options but it could be do more in the future
-   /* if ( !wxApp::OnInit() )
-	{
-        return false;
-	}*/
-
-	//wxFileSystem::AddHandler(new wxZipFSHandler);
-	//wxXmlResource::Get()->InitAllHandlers();
-	//wxXmlResource::Get()->Load(wxT("noname.xrc"));
-
+   
+	wxInitAllImageHandlers();
     // create the main application window
     MudMainFrame *frame = new MudMainFrame("wxAmcl");
 	SetFrame(frame);
     
-	wxInitAllImageHandlers();
-
 	//Output window
 	frame->m_child = new MudWindow(frame);
 	SetChild(frame->m_child);
     
-    
-   	//Input line
+    //Input line
 	frame->m_input = new InputTextCtrl(frame, ID_INPUTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_TAB|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2|wxTE_NOHIDESEL);
 	//Bitmap Button
 	frame->m_toggle = new wxBitmapButton(frame, ID_PARSEINPUT, wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_BUTTON));
@@ -200,24 +190,7 @@ bool MudClientApp::OnInit()
     frame->m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, frame->m_child->GetAnsiColor(0));
     frame->m_mgr.Update();
 	
-    
-    
-	//splitter->Msg(wxT("Splitter"));
-	//frame->m_child->Msg(_("Welcome to wxAMC!"));
-	//frame->m_child->Msg(_("Cross-platform mudclient using wxWidgets!"));
-	//frame->m_child->Msg(wxString::Format(wxT("%s on %s"), wxVERSION_STRING, wxGetOsDescription()));
-    //wxString s = wxVERSION_STRING;
-	//frame->m_child->Msg(wxString::Format(wxT("%s on %s"), s.c_str(), wxGetOsDescription().c_str()));
-
-	// and show it (the frames, unlike simple controls, are not shown when
-    // created initially)
-    
-    
-    //frame->Refresh();
-    //frame->Update();
-    
-    
-	frame->LoadGlobalOptions(); //5.1.4
+    frame->LoadGlobalOptions(); //5.1.4
 	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
 
 #if defined __WXMSW__
@@ -316,7 +289,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	//amcMXP am(frame->m_child);
+	amcMXP am(frame->m_child);
     
 	//am.Parse("<IMAGE 'intro.jpg' URL='http://coffeemud.net:27744/images/mxp/' H=400 W=400>  Hallo");
 	//am.Parse("<!ELEMENT HELP '<SEND HREF=\"HELP &text;\" hint=\"Click\">'>");
@@ -371,8 +344,9 @@ bool MudClientApp::OnInit()
 	//am.Parse("<Ex>nord</Ex>");
 	//am.Parse("<RNum 555><Rdesc>Hallo</Rdesc>");
 	//am.Parse("<EX1 up \"up \" nam>&name;</EX1>");
+	//am.Parse("<RName>LargePlaza</RName>");
 	//am.Parse("<!ELEMENT RExits FLAG='RoomExit'><!EL Ex '<SEND href=\"go\">'>");
-	//am.Parse("<RExits>[Exits:<Ex>north</Ex> <Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
+	//am.Parse("<RExits>[Exits: <Ex>north</Ex> <Ex>south</Ex> <Ex>west</Ex>]</RExits> ");//<Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
 	//am.Parse("\x1b[0;31m<RName>East-West Road</RName>\x1b[0;37m [\x1b[1;34mTaker's Place\x1b[0;37m]\r\n<RDesc>You are on a dirty road that leads east to west.  You can see several houses \r\non this road.  To the south is a large pantry.  There are some oil lamps \r\nhanging on top of wooden poles.</RDesc>  \r\n<RExits>[Exits: <Ex>north</Ex> <Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
 	//am.ParseElementRex("<!ELEMENT buy-uid ATT=\'uid=0\' \'<send href=\"buy #&uid;\"      hint=\"Buy &text;\">'><!ELEMENT rdesc FLAG=\"Room\"><!EL buy '<send>buy bread</send>'>");
     //class Trigger tr("Trigger Test", "#capstart(\"Test\", \"true\")", "test", "testclass");
@@ -2223,7 +2197,7 @@ li_it itl;
 		ss<<("\t\t{[\"name\"] = [[") << itv->GetName().c_str() << ("]], ");
 		file->Write(ss.c_str());//wxString::Format("\t\t{[\"label\"] = [[%s]], ", it->GetLabel().c_str()));
 		ss.clear();
-		ss<<("[\"value\"] = [[") << itv->GetValue().c_str() << ("]], ");
+		ss<<("[\"value\"] = [=[") << itv->GetValue().c_str() << ("]=], ");
 		file->Write(ss.c_str());//wxString::Format("[\"pattern\"] = [=[%s]=], ", it->GetPattern().c_str()));
 		ss.clear();
 		ss<<("[\"group\"] = [[") << itv->GetGroup().c_str() << ("]], ");
@@ -4473,6 +4447,7 @@ wxString s, params;
 			return true;
 		case 2:
 			m_parent->m_child->Msg(_("Syntax error in a Lua script!"));
+			m_parent->m_child->Msg(*sCommand);
 			return true;
 		case 3:
 			m_parent->m_child->Msg(_("Could not load specified file!"));

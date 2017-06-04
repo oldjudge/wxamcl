@@ -1431,6 +1431,44 @@ int luafunc_captionwindow(lua_State *L)
 	return 1;
 }
 
+int luafunc_floatwindow(lua_State *L)
+{
+	const char* winname;
+	MudWindow *mw;
+
+	class MudMainFrame *frame = wxGetApp().GetFrame();
+	winname = (char*)luaL_checkstring(L, 1);
+	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	frame->m_mgr.GetPane(wxString(winname)).Float();
+	frame->m_mgr.Update();
+	lua_pushboolean(L, TRUE);
+	return 1;
+}
+
+int luafunc_dockwindow(lua_State *L)
+{
+	const char* winname;
+	MudWindow *mw;
+
+	class MudMainFrame *frame = wxGetApp().GetFrame();
+	winname = (char*)luaL_checkstring(L, 1);
+	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+	frame->m_mgr.GetPane(wxString(winname)).Dock();
+	frame->m_mgr.Update();
+	lua_pushboolean(L, TRUE);
+	return 1;
+}
+
 //! amc.clearwindow(windowname)
 
 //!	clears window in lua
@@ -4138,6 +4176,11 @@ int idx;
 	{
 		v = checkvar(L);
 		wxString s(v->name, co);
+		idx = frame->GetVarIndexByLabel(s);
+	}
+	else if (lua_type(L, 1) == LUA_TTABLE)
+	{
+		wxString s(luaL_checkstring(L, 2), co);
 		idx = frame->GetVarIndexByLabel(s);
 	}
 	else

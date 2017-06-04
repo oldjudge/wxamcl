@@ -80,7 +80,22 @@ bool Trigger::Match(wxString match)
 		{
 			int begin = m_rexp.GetMatchStart();
 			class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-			if (frame->m_child->GetLines()->at(frame->m_child->m_curline - 1).GetCharFColIndex(begin) == m_colmatch)
+			ale_it it = frame->m_child->GetLineStyle(frame->m_child->m_curline - 1)->begin();
+			for (it; it != frame->m_child->GetLineStyle(frame->m_child->m_curline - 1)->end(); it++)
+			{
+				wxString m = it->GetConvText();
+				if (!m.IsEmpty())
+				{
+					if (m_match.StartsWith(m))
+					{
+						begin = it->GetFColIndex();
+						break;
+					}
+				}
+			}
+
+			//if (frame->m_child->GetLines()->at(frame->m_child->m_curline - 1).GetCharFColIndex(begin) == m_colmatch)
+			if (begin == m_colmatch)
 			{
 				m_matchcount++;
 				return true;
