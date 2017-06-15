@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 16 2016)
+// C++ code generated with wxFormBuilder (version Dec 21 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -41,7 +41,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_general, wxID_ANY, _("Commands") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 7, 2, 0, 0 );
+	gSizer1 = new wxGridSizer( 8, 2, 0, 0 );
 	
 	m_staticText4 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Command sign:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
@@ -127,6 +127,13 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_textswr->SetToolTip( _("Command sign for reverse speedwalks (default: *)") );
 	
 	gSizer1->Add( m_textswr, 0, wxALL, 5 );
+	
+	m_staticText17 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Speedwalk delay (ms)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText17->Wrap( -1 );
+	gSizer1->Add( m_staticText17, 0, wxALL, 5 );
+	
+	m_swdelay = new wxSpinCtrl( sbSizer1->GetStaticBox(), wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 5000, 0 );
+	gSizer1->Add( m_swdelay, 0, wxALL, 5 );
 	
 	m_staticText71 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Variable:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText71->Wrap( -1 );
@@ -373,7 +380,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	wxStaticBoxSizer* sbSizer6;
 	sbSizer6 = new wxStaticBoxSizer( new wxStaticBox( m_telnet, wxID_ANY, _("Font") ), wxVERTICAL );
 	
-	m_font = new wxFontPickerCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxFont( 10, 70, 90, 90, false, wxT("Consolas") ), wxDefaultPosition, wxDefaultSize, wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL );
+	m_font = new wxFontPickerCtrl( sbSizer6->GetStaticBox(), wxID_ANY, wxFont( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("Consolas") ), wxDefaultPosition, wxDefaultSize, wxFNTP_FONTDESC_AS_LABEL|wxFNTP_USEFONT_FOR_LABEL );
 	m_font->SetMaxPointSize( 100 ); 
 	sbSizer6->Add( m_font, 0, wxALL|wxEXPAND, 5 );
 	

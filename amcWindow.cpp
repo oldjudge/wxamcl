@@ -112,6 +112,7 @@ void amcWindow::OnPaint(wxPaintEvent& event)
 {
 	wxPaintDC dc(this);
 	dc.Blit(0,0,m_bitmap.GetWidth(), m_bitmap.GetHeight(), m_dc, 0, 0);
+	event.Skip();
 }
 
 

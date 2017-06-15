@@ -18,6 +18,7 @@ class pkg_dlg : public dlg_pkg
 		void OnChoice( wxCommandEvent& event );
 		void OnToggle( wxCommandEvent& event );
 		void OnCheckAll( wxCommandEvent& event );
+		void OnGroups(wxCommandEvent& event);
 	public:
 		/** Constructor */
 		pkg_dlg( wxWindow* parent );

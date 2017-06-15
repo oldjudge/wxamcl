@@ -56,6 +56,7 @@ BEGIN_EVENT_TABLE(MudWindow, wxWindow)
 	EVT_MENU(ID_MANSI, MudWindow::OnCopyAnsi)
     EVT_MENU(ID_LOGWINDOW, MudWindow::OnLogThisWindow)
 	EVT_MENU(ID_STOPLOGGING, MudWindow::OnStopLogging)
+	EVT_MENU(ID_AUTOFOCUS, MudWindow::OnAutoFocus)
 	EVT_UPDATE_UI(ID_LOGWINDOW, MudWindow::OnMenuUi)
 	EVT_MENU_RANGE(ID_MXPMENU, ID_MXPMENU+100, MudWindow::OnMxpMenu)
 	EVT_MENU_RANGE(ID_MXPMENUPROMPT, ID_MXPMENUPROMPT+100, MudWindow::OnMxpPromptMenu)
@@ -132,6 +133,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_oddmccp2 = 0;
 	m_wrap = 150;//means autowrap at window width
 	m_wrapping = true;
+	m_autofocus = true;
 	m_password = false;
 	m_noscroll = false;
 	m_selstart.x = -1;
@@ -158,10 +160,8 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
 	m_dc = new Decompressor();//\\b
 	
-	//m_mxp = new amcMXP();
-	//"(((ht|f)tp:\\/\\/)?([A-Za-z0-9]+)?\\.?([A-Za-z0-9\\-]+)?\\.(?:a)(\\/?([a-zA-Z0-9\\-\\~\\?\\.=])))
 	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua|quest|tick|vitals|status|stats|channel|worth|base)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~+%_&#:]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua|tick|room|info|vitals|status|channel|comm|char|repop|quest|group|stats|worth|maxstats)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~\\+%_&#:]+)){0,5}"); 
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -234,7 +234,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	m_mccpneg = false;
 	m_oddmccp2 = 0;
 	m_mxp = false;
-	m_MXP = new amcMXP(this);
+	
 	m_msp = false;
 	m_atcp = false;
 	m_atcp2 = false;
@@ -245,6 +245,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	m_charset = wxEmptyString;
 	m_wrap = 150;
 	m_wrapping = true;
+	m_autofocus = true; //select focus to window where text arrives in aui_notebook user windows on or off
 	m_noscroll = false;
 	m_selstart.x = -1;
 	m_selstart.y = -1;
@@ -286,11 +287,11 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	//m_botelnetparsed = false;
 	m_focusoninput = false;
 	m_curansicolor = m_colansi[DEF_FORECOL];
-	
+	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL| wxBORDER_NONE );
 	SetName(name);
 	SetLabel(name);
-	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL| wxBORDER_NONE );
-    m_tt = new wxToolTip("");
+	m_MXP = new amcMXP(this);
+	m_tt = new wxToolTip("");
 	this->SetToolTip(m_tt);
     SetScrollbar(wxVERTICAL, 0, 0, 0);
 	SetScrollbar(wxHORIZONTAL, 0, 0, 0);
@@ -1241,7 +1242,7 @@ void MudWindow::ParseNBuffer(char* cBuffer, bool b)
 static wxString sLine = wxEmptyString;
 static wxString esc = wxEmptyString;
 static AnsiLine line;
-static AnsiLineElement style[2000];
+static AnsiLineElement style[64000];
 static int index=0;
 static wxString atcp = wxEmptyString;
 int pos=0;
@@ -1254,6 +1255,8 @@ int offset=30;
 bool gotline = false;
 static bool ttsent = false;
 static bool colset = false;
+//static bool done = true;
+static BOOL bfile = FALSE;
 //static bool bol = false;
 	//********Freeze();
 	/*if (!m_parent->GetGlobalOptions()->UseUTF8())	
@@ -1295,16 +1298,24 @@ static bool colset = false;
 			
 		//}
 	//}
-	//s = wxString::FromAscii(cBuffer);	
+	//Do File only once!!
+	amcLua *aL = m_parent->m_child->GetLState();
+	if (!bfile)
+		{
+			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetScriptDir());
+			aL->DoFile(m_parent->GetGlobalOptions()->GetEventFile());
+			bfile = TRUE;
+			// only once
+		}
 	wxString::iterator it;
-	
-		
+			
 	if (m_vmudlines.empty())
 		m_parsestate = HAVE_TEXT;
 	
 	//if (s.EndsWith('\n'));
 		//sLine.Empty();
-	if (m_bourl)//Clickable URLs
+	if (m_bourl && m_parsestate != HAVE_IACSBATCP2)//Clickable URLs
 	{
 		int spos = 0;
 		
@@ -1602,7 +1613,9 @@ static bool colset = false;
 					aoldpos--;
 				}
 				m_parsestate = HAVE_TEXT;
-				//Update();
+				//done = false;
+
+				Update();
 				break;
 				}
 			case HAVE_ESC:
@@ -2431,11 +2444,14 @@ static bool colset = false;
 					m_atcpstring.Replace("\x1b[4m", "");
 					m_atcpstring.Replace("\x1b[0m", "");
 					m_parsestate = HAVE_TEXT;
-					wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-					wxFile* file = new wxFile("debuggmcp.txt", wxFile::write_append);
-					file->Write(m_atcpstring+"\n");
-					file->Close();
-					delete file;
+					if (GetDebugGMCP())
+					{
+						wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+						wxFile* file = new wxFile("debuggmcp.txt", wxFile::write_append);
+						file->Write(m_atcpstring + "\n");
+						file->Close();
+						delete file;
+					}
 					if (m_atcpstring.empty())
 					{
 						index--;
@@ -2465,9 +2481,26 @@ static bool colset = false;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvGMCPData())
 					{
 						wxString ss;
-						ss = wxString::Format("%cfunc(\"%s\", \"OnGMCPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+						/*ss = wxString::Format("%cfunc(\"%s\", \"OnGMCPData(\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							m_parent->GetGlobalOptions()->GetEventFile(), v.c_str());
-						m_parent->m_input->ParseCommandLine(&ss);
+						
+							m_parent->m_input->ParseCommandLine(&ss);*/
+						//ss = wxString::Format("\"%s\", \"OnGMCPData(\'%s')\")", m_parent->GetGlobalOptions()->GetEventFile(), v.c_str());
+						//m_parent->m_input->Func(&ss);
+						//int len = ParseFParams(&arglist, '\'');
+						aL->GetGlobal("OnGMCPData");
+						aL->PushString(v);
+						int err = aL->Call(1);
+						if (err)
+						{
+							wxString s = aL->GetwxString(aL->GetTop());
+							m_parent->m_child->Msg(s);
+							aL->Pop(1);
+							
+						}
+						aL->SetTop(0);
+						Update();
+						
 					}
 										
 					m_atcpstring.Empty();
@@ -2720,6 +2753,7 @@ static bool colset = false;
 		{
 			m_vmudlines.push_back(line);
 			m_curline++;
+			
 		}
 	}
 	
@@ -2741,7 +2775,8 @@ static bool colset = false;
 	//******Thaw();
 	CheckTrigger(m_curline-1, true);
 	RedirectWindow();
-	//Update();
+	//done = false;
+	Update();
 }
 
 void MudWindow::ParseMSDP(wxString s)
@@ -4950,6 +4985,10 @@ void MudWindow::OnLogThisWindow(wxCommandEvent& event)
 	wxString s;
 	s << _("Logging started: ") << d.FormatDate() << (", ") << d.FormatTime();
 	GetTextLog()->Write(s + (char)CR + (char)LF + (char)CR + (char)LF);
+	for (int i = 0; i<m_curline - 1; i++)
+	{
+		SendLineToLog(i);
+	}
 	SetLogging(true);
 	SetDateLogging(true);
 }
@@ -4961,6 +5000,13 @@ void MudWindow::OnStopLogging(wxCommandEvent& event)
 	m_tlog->Close();
 	delete m_tlog;
 	m_tlog = nullptr;
+}
+
+void MudWindow::OnAutoFocus(wxCommandEvent& event)
+{
+	m_autofocus = !m_autofocus;
+	wxMenu *m = (wxMenu*)event.GetEventObject();
+	m->Check(ID_AUTOFOCUS, m_autofocus);
 }
 
 void MudWindow::OnMenuUi(wxUpdateUIEvent& event)
@@ -5771,6 +5817,8 @@ int stamp_offset = 0;
             {
 				contextMenu->Append(ID_STOPLOGGING, _("Stop logging this window"), _("Stop logging this window"));
             }
+			contextMenu->AppendCheckItem(ID_AUTOFOCUS, _("Autofocus"), _("Switch windows when text arrives"));
+			contextMenu->Check(ID_AUTOFOCUS, m_autofocus);
         }
 		wxPoint p = event.GetPosition();
 		//p = ScreenToClient(p);
@@ -5865,8 +5913,7 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 
 void MudWindow::OnSocketEvent(wxSocketEvent& event)
 {
-char cBuf[64000];
-wxMemoryBuffer cMemBuf(64000);
+char cBuf[128000];
 //wxCharTypeBuffer<char> cBuf(64000);
 wxString s, buffer;
 wxUint32 uiBytesRead;
@@ -5880,7 +5927,7 @@ wxUint32 uiBytesRead;
 			
 		if (m_mccp2)
 			m_sock->Read(m_cBuffer, 4096);
-		else m_sock->Read(m_cBuffer, 30000);
+		else m_sock->Read(m_cBuffer, 16192);
 		uiBytesRead = m_sock->LastCount();
 		//buffer.assign(cBuffer, uiBytesRead);
 		//wxString ss = t.ToUTF8();

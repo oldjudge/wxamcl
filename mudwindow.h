@@ -63,6 +63,7 @@ public:
 	wxSocketClient* GetSock() {return m_sock;}
 	bool GetUseIPV6() {return m_useipv6;}
 	bool GetWrapping() { return m_wrapping; }
+	bool GetAutoFocus() { return m_autofocus; }
 	//Setters
 	void SetColour(int idx, wxColour c) {m_colansi[idx] = c;}
 	void SetBackgroundCol(wxColour c) {m_background=c;}
@@ -97,6 +98,7 @@ public:
 	void SetSelectedEnd(long l) {m_sellineend=l;}
 	void SetIPV6(bool b) {m_useipv6=b;}
 	void SetWrapping(bool b) { m_wrapping = b; }
+	void SetAutoFocus(bool b) { m_autofocus = b; }
 
 	//socket functions
 	void MyConnect(wxIPV4address addr);
@@ -268,8 +270,9 @@ private:
 	wxColour m_curansicolor;
 	wxTimer m_rc;
 
-	char m_cBuffer[30001];
+	char m_cBuffer[128001];
 	bool m_wrapping;
+	bool m_autofocus;
 	//wxMemoryBuffer m_MemBuffer;
 	//private Functions
 	size_t ParseTelnet(wxString *sLine, size_t pos);
@@ -302,6 +305,7 @@ private:
 	void OnCopyAnsi(wxCommandEvent& event);
     void OnLogThisWindow(wxCommandEvent& event);
 	void OnStopLogging(wxCommandEvent& event);
+	void OnAutoFocus(wxCommandEvent& event);
 	void OnMenuUi(wxUpdateUIEvent& event);
 	void OnMxpMenu(wxCommandEvent& event);
 	void OnMxpPromptMenu(wxCommandEvent& event);

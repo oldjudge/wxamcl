@@ -160,6 +160,7 @@ using namespace std;
 #define ID_MANSI 1512
 #define ID_LOGWINDOW 1520
 #define ID_STOPLOGGING 1521
+#define ID_AUTOFOCUS 1522
 #define ID_SPLITTER 1600
 #define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000
@@ -518,6 +519,9 @@ class InputTextCtrl : public wxTextCtrl
 	int GetHPos() {return m_hpos;}
 	void Parse(wxString sC, bool b = true, bool hist=true);
 	friend class amcScriptThread;
+
+	int Func(wxString *sPar);//#func
+
 private:
 	std::map<class wxString, int (InputTextCtrl::*)(wxString*)> m_sComm;
 	std::map<class wxString, int (InputTextCtrl::*)(wxString*)>::iterator m_it;
@@ -552,7 +556,7 @@ private:
 	int RefreshWin(wxString *sPar);//#refreshwin
 	int GagWin(wxString *sPar);//#gagwin
 	int Gag(wxString *sPar);//gag
-	int Func(wxString *sPar);//#func
+	
 	int Log(wxString *sPar);//#log
 	int HtmlLog(wxString *sPar);//#htmllog
 	int Script(wxString *sPar);//#script

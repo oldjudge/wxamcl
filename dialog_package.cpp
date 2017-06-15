@@ -5,16 +5,15 @@ pkg_dlg::pkg_dlg( wxWindow* parent )
 :
 dlg_pkg( parent )
 {
-	//m_choice->SetColumns(2);
+	
 	m_frame = (MudMainFrame*)parent;
 	wxCommandEvent ev;// = event;
 	ev.SetEventObject(m_choice);
 	ev.SetInt(0);
 	ev.SetEventType(wxEVT_COMMAND_CHOICE_SELECTED);
 	wxPostEvent(m_choice, ev);
-	//wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetPackageDir());
 	m_pkgfile->SetPath(m_frame->GetGlobalOptions()->GetPackageDir());
-	//m_choice->Select(1);
+	
 }
 
 void pkg_dlg::OnCheckAll(wxCommandEvent& event)
@@ -78,6 +77,11 @@ s_it gp, sit;
 		{
 			m_items->Check(m_items->FindString(*sit));
 		}
+		m_groups->Clear();
+		m_groups->Append(_("All"));
+		for (sit = Trigger::GetTriggerClasses()->begin(); sit != Trigger::GetTriggerClasses()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
 		if (sel)
 		break;
 	case 2://alias
@@ -91,6 +95,14 @@ s_it gp, sit;
 			m_items->Check(m_items->FindString(*sit));
 		}
 		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcAlias::GetAliasGroups()->begin(); sit != amcAlias::GetAliasGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
+		if (sel)
 		break;
 	case 3://buttons
 		for (bit=m_frame->GetButtons()->begin();bit!=m_frame->GetButtons()->end();bit++)
@@ -102,6 +114,14 @@ s_it gp, sit;
 		{
 			m_items->Check(m_items->FindString(*sit));
 		}
+		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcButton::GetButtonGroups()->begin(); sit != amcButton::GetButtonGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
 		if (sel)
 		break;
 	case 4://gauges
@@ -117,6 +137,22 @@ s_it gp, sit;
 			}
 		}
 		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+			if (!m_frame->GetGaugePanes()->empty())
+			{
+				for (gp = m_frame->GetGaugePanes()->begin(); gp != m_frame->GetGaugePanes()->end(); gp++)
+				{
+					GaugeWindow* gw = (GaugeWindow*)GaugeWindow::FindWindowByName(gp->c_str(), m_frame);
+					m_groups->Append(gp->c_str());
+
+				}
+			}
+			m_groups->Select(0);
+		}
+		
+		if (sel)
 		break;
 	case 5://hotkeys
 		for (hk=m_frame->GetHotkeys()->begin();hk!=m_frame->GetHotkeys()->end();hk++)
@@ -127,6 +163,14 @@ s_it gp, sit;
 		{
 			m_items->Check(m_items->FindString(*sit));
 		}
+		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcHotkey::GetHotkeyGroups()->begin(); sit != amcHotkey::GetHotkeyGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
 		if (sel)
 		break;
 	case 6://lists
@@ -139,6 +183,14 @@ s_it gp, sit;
 			m_items->Check(m_items->FindString(*sit));
 		}
 		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcList::GetListGroups()->begin(); sit != amcList::GetListGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
+		if (sel)
 		break;
 	case 7://timers
 		for (tiit=m_frame->GetTimers()->begin();tiit!=m_frame->GetTimers()->end();tiit++)
@@ -150,6 +202,14 @@ s_it gp, sit;
 			m_items->Check(m_items->FindString(*sit));
 		}
 		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcTimer::GetTimerGroups()->begin(); sit != amcTimer::GetTimerGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
+		if (sel)
 		break;
 	case 8://variables
 		for (vit=m_frame->GetVars()->begin();vit!=m_frame->GetVars()->end();vit++)
@@ -160,10 +220,173 @@ s_it gp, sit;
 		{
 			m_items->Check(m_items->FindString(*sit));
 		}
+		if (sel)
+		{
+			m_groups->Clear();
+			m_groups->Append(_("All"));
+		}
+		for (sit = amcVar::GetVarGroups()->begin(); sit != amcVar::GetVarGroups()->end(); sit++)
+			m_groups->Append(*sit);
+		m_groups->Select(0);
 		break;
 	default:
 		break;
 	}
+}
+
+void pkg_dlg::OnGroups( wxCommandEvent& event)
+{
+	al_it it;
+	v_it vit;
+	tr_it tit;
+	hk_it hk;
+	t_it tiit;
+	li_it lit;
+	b_it bit;
+	g_it git;
+	s_it gp, sit;
+
+	int sel = m_groups->GetSelection();
+	int csel = m_choice->GetSelection();
+	m_items->Clear();
+	wxString s; 
+	switch (csel)
+	{
+	case 0:
+		break;
+	case 1://actions
+		if (sel)
+		{
+			s = Trigger::GetTriggerClasses()->at(sel - 1);
+			for (tit = m_frame->GetTrigger()->begin(); tit != m_frame->GetTrigger()->end(); tit++)
+			{
+				if (s == tit->GetClass())
+					m_items->AppendString(tit->GetLabel());
+			}
+		}
+		else
+		{
+			for (tit = m_frame->GetTrigger()->begin(); tit != m_frame->GetTrigger()->end(); tit++)
+			{
+				m_items->AppendString(tit->GetLabel());
+			}
+		}
+		break;
+	case 2:
+		if (sel)
+		{
+			s = amcAlias::GetAliasGroups()->at(sel - 1);
+			for (it = m_frame->GetAlias()->begin(); it != m_frame->GetAlias()->end(); it++)
+			{
+				if (s == it->GetGroup())
+					m_items->AppendString(it->GetAlias());
+			}
+		}
+		else
+		{
+			for (it = m_frame->GetAlias()->begin(); it != m_frame->GetAlias()->end(); it++)
+			{
+				m_items->AppendString(it->GetAlias());
+			}
+		}
+		break;
+	case 3:
+		if (sel)
+		{
+			s = amcButton::GetButtonGroups()->at(sel - 1);
+			for (bit = m_frame->GetButtons()->begin(); bit != m_frame->GetButtons()->end(); bit++)
+			{
+				if (s == bit->GetGroup())
+					m_items->AppendString(bit->GetName());
+			}
+		}
+		else
+		{
+			for (bit = m_frame->GetButtons()->begin(); bit != m_frame->GetButtons()->end(); bit++)
+			{
+				m_items->AppendString(bit->GetName());
+			}
+		}
+		break;
+	case 4:
+		
+		break;
+	case 5:
+		if (sel)
+		{
+			s = amcHotkey::GetHotkeyGroups()->at(sel - 1);
+			for (hk = m_frame->GetHotkeys()->begin(); hk != m_frame->GetHotkeys()->end(); hk++)
+			{
+				if (s == hk->GetGroup())
+					m_items->AppendString(hk->GetName());
+			}
+		}
+		else
+		{
+			for (hk = m_frame->GetHotkeys()->begin(); hk != m_frame->GetHotkeys()->end(); hk++)
+			{
+				m_items->AppendString(hk->GetName());
+			}
+		}
+		break;
+	case 6:
+		if (sel)
+		{
+			s = amcList::GetListGroups()->at(sel - 1);
+			for (lit = m_frame->GetLists()->begin(); lit != m_frame->GetLists()->end(); lit++)
+			{
+				if (s == lit->GetGroup())
+					m_items->AppendString(lit->GetName());
+			}
+		}
+		else
+		{
+			for (lit = m_frame->GetLists()->begin(); lit != m_frame->GetLists()->end(); lit++)
+			{
+				m_items->AppendString(lit->GetName());
+			}
+		}
+		break;
+	case 7:
+		if (sel)
+		{
+			s = amcTimer::GetTimerGroups()->at(sel - 1);
+			for (tiit = m_frame->GetTimers()->begin(); tiit != m_frame->GetTimers()->end(); tiit++)
+			{
+				if (s == tiit->GetGroup())
+					m_items->AppendString(tiit->GetName());
+			}
+		}
+		else
+		{
+			for (tiit = m_frame->GetTimers()->begin(); tiit != m_frame->GetTimers()->end(); tiit++)
+			{
+				m_items->AppendString(tiit->GetName());
+			}
+		}
+		break;
+	case 8:
+		if (sel)
+		{
+			s = amcVar::GetVarGroups()->at(sel - 1);
+			for (vit = m_frame->GetVars()->begin(); vit != m_frame->GetVars()->end(); vit++)
+			{
+				if (s == vit->GetGroup())
+					m_items->AppendString(vit->GetName());
+			}
+		}
+		else
+		{
+			for (vit = m_frame->GetVars()->begin(); vit != m_frame->GetVars()->end(); vit++)
+			{
+				m_items->AppendString(vit->GetName());
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
 }
 
 void pkg_dlg::OnToggle( wxCommandEvent& event )

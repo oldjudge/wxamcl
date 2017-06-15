@@ -34,6 +34,8 @@ DlgOptions( parent )
 	m_textsw->SetValidator(wxTextValidator(wxFILTER_NONE, &m_sw));
 	m_swr = m_frame->GetGlobalOptions()->GetRevSpeedwalk();
 	m_textswr->SetValidator(wxTextValidator(wxFILTER_NONE, &m_swr));
+	m_swd = m_frame->GetGlobalOptions()->GetSWDelay();
+	m_swdelay->SetValidator(wxGenericValidator(&m_swd));
 	m_scr = m_frame->GetGlobalOptions()->GetScript();
 	m_textscript->SetValidator(wxTextValidator(wxFILTER_NONE, &m_scr));
 	m_var = m_frame->GetGlobalOptions()->GetVar();

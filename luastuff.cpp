@@ -1216,6 +1216,7 @@ int luafunc_createnb(lua_State*L)
 	const char* winname, *pagename;
 	wxAuiNotebook *nb;
 	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	size_t i;
 	winname = luaL_checkstring(L,1);
 	nb = (wxAuiNotebook*)wxWindow::FindWindowByName(winname, frame);
@@ -1230,7 +1231,8 @@ int luafunc_createnb(lua_State*L)
 		frame->m_mgr.AddPane(nb, wxAuiPaneInfo().Name(winname).Caption(winname).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Show());
 	}
 	pagename = luaL_checkstring(L, 2);
-	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(pagename);
+	wxString page(pagename, co);
+	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(page);
 	if (mw)
 		return 0;
 	if (!frame->GetNbs()->empty())
@@ -1241,8 +1243,8 @@ int luafunc_createnb(lua_State*L)
 				break;
 		}
 	}
-	frame->GetNbPanes()->at(i).push_back(pagename);
-	nb->AddPage(new MudWindow(frame, pagename, 9), pagename);
+	frame->GetNbPanes()->at(i).push_back(page);
+	nb->AddPage(new MudWindow(frame, page, 9), page);
 	frame->m_mgr.Update();
 	lua_pushlightuserdata(L, (void*)nb->FindWindowByName(winname));
 	return 1;
@@ -1273,6 +1275,7 @@ int luafunc_addpagenb(lua_State*L)
 		}
 	}
 	frame->GetNbPanes()->at(i).push_back(pagename);
+	nb->AddPage(new MudWindow(frame, pagename, 9), pagename);
 	frame->m_mgr.Update();
 	lua_pushboolean(L, TRUE);
 	return 1;
@@ -1295,13 +1298,17 @@ int luafunc_createwindow(lua_State*L)
 	//	wxMutexGuiEnter();
 	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
 	wxCriticalSectionLocker e(frame->m_scriptcs);
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	
 	winname = luaL_checkstring(L,1);
-	const char* col = luaL_optstring(L, 2, "black"); 
-	mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
+	const char* col = luaL_optstring(L, 2, "black");
+	wxString wname(winname, co);
+	mw = (MudWindow*)MudWindow::FindWindowByName(wname, frame);
 	if (mw)
 		return 0;
-	mw = new MudWindow(frame, winname, 9);
-	mw->SetName(winname);
+	
+	mw = new MudWindow(frame, wname, 9);
+	mw->SetName(wname);
 	wxString s(col);
 	if (s.at(0)=='#')
 	{
@@ -1322,10 +1329,10 @@ int luafunc_createwindow(lua_State*L)
 		}
 		mw->SetBackgroundCol(c);
 	}
-	frame->GetPanes()->push_back(winname);//save all the windows we have
+	frame->GetPanes()->push_back(wname);//save all the windows we have
 	//if (!wxThread::IsMain())
 	//	wxMutexGuiLeave();
-	frame->m_mgr.AddPane(mw, wxAuiPaneInfo().Name(winname).Caption(winname).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Hide().MinimizeButton());
+	frame->m_mgr.AddPane(mw, wxAuiPaneInfo().Name(wname).Caption(wname).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Hide().MinimizeButton());
 	//frame->m_mgr.AddPane((wxWindow*)mw, wxAuiPaneInfo().Name(wxT("Asa")).Top().Caption(wxT("Asa")));
 	
 	frame->m_mgr.GetPane(mw).Show();

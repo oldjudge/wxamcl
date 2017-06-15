@@ -21,6 +21,7 @@ public:
 	wxString GetCSep() {return m_csep;}
 	wxString GetCSw() {return m_sw;}
 	wxString GetCSwr() {return m_swr;}
+	wxInt16 GetCSwD() { return m_swd; }
 	wxString GetCScr() {return m_scr;}
 	wxString GetCVar() {return m_var;}
 	wxString GetCList() {return m_list;}
@@ -111,6 +112,7 @@ private:
 	wxString m_csep;
 	wxString m_sw;
 	wxString m_swr;
+	int m_swd;
 	wxString m_scr;
 	wxString m_var;
 	wxString m_list;

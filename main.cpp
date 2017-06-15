@@ -190,9 +190,8 @@ bool MudClientApp::OnInit()
     frame->m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, frame->m_child->GetAnsiColor(0));
     frame->m_mgr.Update();
 	
-    frame->LoadGlobalOptions(); //5.1.4
-	//frame->m_child->GetLState()->DoString(_("Echo(\"Lua started!\", \"client\")"));
-
+    frame->LoadGlobalOptions(); 
+	
 #if defined __WXMSW__
 	wxSetEnv("LUA_PATH_5_3", "!\\scripts\\?.lua;!\\lua\\?.lua");
 #endif
@@ -289,8 +288,10 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	amcMXP am(frame->m_child);
-    
+	//amcMXP am(frame->m_child);
+	//wxString s = "\xff\xfa\xc9char.vitals{ \"hp\" : 394, \"mana\" : 457, \"moves\" : 709	 }\xff\xf0<\x1b[0; 31m394 / 394Hps \x1b[1; 32m457 / 457Ma \x1b[0; 32m709 / 711Mvs \x1b[0; 36m1qt\x1b[0; 37m> \x1b[0; 37m";
+	//wxString s = "> \x1b[0;37m";
+	//frame->m_child->ParseNBuffer(s.char_str().data());
 	//am.Parse("<IMAGE 'intro.jpg' URL='http://coffeemud.net:27744/images/mxp/' H=400 W=400>  Hallo");
 	//am.Parse("<!ELEMENT HELP '<SEND HREF=\"HELP &text;\" hint=\"Click\">'>");
 	//am.Parse("<HELP>ALIAS</HELP> <HELP>!</HELP>");
@@ -1039,6 +1040,7 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 		m_gopt->SetCommand(od->GetCS().c_str());
 		m_gopt->SetSep(od->GetCSep().c_str());
 		m_gopt->SetSpeedwalk(od->GetCSw().c_str());
+		m_gopt->SetSWDelay(od->GetCSwD());
 		m_gopt->SetBSpeedwalk(od->GetCSwr().c_str());
 		m_gopt->SetScript(od->GetCScr().c_str());
 		m_gopt->SetVar(od->GetCVar().c_str());
@@ -1623,14 +1625,16 @@ bool MudMainFrame::LoadGlobalOptions()
 	aL->GetField(-9, "backspeedwalk");
 	s = aL->GetwxString(-1);
 	m_gopt->SetBSpeedwalk(s.data());
-	aL->GetField(-10, "script");
+	aL->GetField(-10, "swdelay");
+	m_gopt->SetSWDelay(aL->GetInt(-1));
+	aL->GetField(-11, "script");
 	s = aL->GetwxString(-1);
 	m_gopt->SetScript(s.data());
-	aL->GetField(-11, "list");
+	aL->GetField(-12, "list");
 	s = aL->GetwxString(-1);
 	m_gopt->SetListVar(s.data());
 	//wxFont f;
-	aL->GetField(-12, "font");
+	aL->GetField(-13, "font");
     s = aL->GetwxString(-1);
     wxFont f(s);
 	/*f.SetFaceName(aL->GetwxString(-1));
@@ -1652,47 +1656,47 @@ bool MudMainFrame::LoadGlobalOptions()
 	m_splitter->SetUFont(&f);
 	m_splitter->SetIFont(&f);
 	
-	aL->GetField(-13, "mccp");
+	aL->GetField(-14, "mccp");
 	m_gopt->SetMCCP(aL->GetBoolean(-1));
-	aL->GetField(-14, "gaeor");
+	aL->GetField(-15, "gaeor");
 	m_gopt->SetGAEOR(aL->GetBoolean(-1));
-	aL->GetField(-15, "naws");
+	aL->GetField(-16, "naws");
 	m_gopt->SetNAWS(aL->GetBoolean(-1));
-	aL->GetField(-16, "mxp");
+	aL->GetField(-17, "mxp");
 	m_gopt->SetMXP(aL->GetBoolean(-1));
-	aL->GetField(-17, "msp");
+	aL->GetField(-18, "msp");
 	m_gopt->SetMSP(aL->GetBoolean(-1));
-	aL->GetField(-18, "atcp");
+	aL->GetField(-19, "atcp");
 	m_gopt->SetUseATCP(aL->GetBoolean(-1));
-	aL->GetField(-19, "gmcp");
+	aL->GetField(-20, "gmcp");
 	m_gopt->SetUseATCP2(aL->GetBoolean(-1));
-	aL->GetField(-20, "msdp");
+	aL->GetField(-21, "msdp");
 	m_gopt->SetUseMSDP(aL->GetBoolean(-1));
-	aL->GetField(-21, "ansi");
+	aL->GetField(-22, "ansi");
 	m_child->SetAnsi(aL->GetBoolean(-1));
-	aL->GetField(-22, "echo");
+	aL->GetField(-23, "echo");
 	m_gopt->SetEcho(aL->GetBoolean(-1));
-	aL->GetField(-23, "techo");
+	aL->GetField(-24, "techo");
 	m_gopt->SetTriggerEcho(aL->GetBoolean(-1));
-	aL->GetField(-24, "utf8");
+	aL->GetField(-25, "utf8");
 	m_gopt->SetUTF8(aL->GetBoolean(-1));
-	aL->GetField(-25, "ipv6");
+	aL->GetField(-26, "ipv6");
 	m_child->SetIPV6(aL->GetBoolean(-1));
-	aL->GetField(-26, "urls");
+	aL->GetField(-27, "urls");
 	m_child->SetClickURLs(aL->GetBoolean(-1));
-	aL->GetField(-27, "splitter");
+	aL->GetField(-28, "splitter");
 	this->SetSplitter(aL->GetBoolean(-1));
-	aL->GetField(-28, "autoreconnect");
+	aL->GetField(-29, "autoreconnect");
 	m_gopt->SetAutoConnect(aL->GetBoolean(-1));
-	aL->GetField(-29, "acdelay");
+	aL->GetField(-30, "acdelay");
 	m_gopt->SetACDelay(aL->GetInt(-1));
-	aL->GetField(-30, "scriptfont");
+	aL->GetField(-31, "scriptfont");
 	//wxFont ff;
 	s = aL->GetwxString(-1);
 	delete m_scriptfont;
 //	m_scriptfont = new wxFont(9, wxMODERN, wxNORMAL, wxNORMAL, false, s);
     m_scriptfont = new wxFont(s);//(wxFontInfo(9).FaceName(s).Family(wxFONTFAMILY_MODERN));
-	aL->GetField(-31, "charencoding");
+	aL->GetField(-32, "charencoding");
 	int ec = (int)aL->GetInt(-1);
 	wxMenuBar* bar = GetMenuBar();
 	wxMenuItem* item;
@@ -2053,6 +2057,7 @@ bool MudMainFrame::SaveGlobalOptions()
 	file->Write(wxString::Format("\t\t[\"variable\"] = \"%c\",\n", m_gopt->GetVar()));
 	file->Write(wxString::Format("\t\t[\"speedwalk\"] = \"%c\",\n", m_gopt->GetSpeedwalk()));
 	file->Write(wxString::Format("\t\t[\"backspeedwalk\"] = \"%c\",\n", m_gopt->GetRevSpeedwalk()));
+	file->Write(wxString::Format("\t\t[\"swdelay\"] = \"%d\",\n", m_gopt->GetSWDelay()));
 	file->Write(wxString::Format("\t\t[\"script\"] = \"%c\",\n", m_gopt->GetScript()));
 	file->Write(wxString::Format("\t\t[\"list\"] = \"%c\",\n", m_gopt->GetListVar()));
 	//file->Write(wxString::Format("\t\t[\"font\"] = \"%s\",\n", m_child->GetFont()->GetFaceName().c_str()));
@@ -4182,15 +4187,7 @@ al_it iter;
 					conv = send.ToUTF8();
 				//Parse(send.mb_str(co), false, false); //do not echo und put in history if alias
 				Parse(conv, false, false);
-				/*if (m_parent->GetGlobalOptions()->GetEcho())
-				{
-					wxString out = wxT("\x1b[56m");
-					out.append(send);
-					out.append(wxT("\x1b[0m\r\n"));
-					m_parent->m_child->ParseBuffer((wxChar*)out.c_str());
-				}
-				send.append(LF);
-				m_parent->m_child->Write(send);*/
+				
 				return true;
 			}
 		}
@@ -4526,35 +4523,29 @@ long line;
 		return -1;
 	amcLua *aL = m_parent->m_child->GetLState();
 	//struct lua_State *L = aL->GetLuaState();
-	wxString s = wxString::Format(("amc.createwindow(\"%s\")"), GetFParam(1).c_str());
+	wxString param1 = GetFParam(1);
+	wxString param2 = GetFParam(2);
+	wxString bo = GetFParam(3);
+	wxString s = wxString::Format(("wxamcl.createwindow(\"%s\")"), param1);
 	aL->DoString(s); //Create the window
-	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(GetFParam(1).c_str());
+	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(param1);
 	if (mw==NULL)
 		return 1;
 	//mw->m_curline++;
-	GetFParam(2).ToLong(&line);
+	param2.ToLong(&line);
 	long cline = m_parent->m_child->m_curline-1;
 	if (line<0)
 		cline+=line;
 	else if (line>0)
 	{
 		m_parent->m_child->GetNumCapture()->push_back(line);
-		m_parent->m_child->GetWinCapture()->push_back(GetFParam(1));
-		if (num==3 && GetFParam(3)=="true")
+		m_parent->m_child->GetWinCapture()->push_back(param1);
+		if (num==3 && bo=="true")
 			m_parent->m_child->GetGagCapture()->push_back(true);
 		else
 			m_parent->m_child->GetGagCapture()->push_back(false);
 	}
-	/*AnsiLine al = m_parent->m_child->GetLineBuffer().at(cline);
-	mw->AddLine(al);
-	mw->Refresh();*/
-	//will only gag last line !!
-	//if (num==3 && line>=0 && GetFParam(3)==wxT("true"))
-	//{
-		//m_parent->m_child->GetLines()->pop_back();
-		//m_parent->m_child->m_curline--;
-	//}
-		//mw->Update();
+	
 	return 0;
 }
 
@@ -4568,41 +4559,41 @@ long line;
 		return -1;
 	amcLua *aL = m_parent->m_child->GetLState();
 	//struct lua_State *L = aL->GetLuaState();
-	wxString s = wxString::Format("createnb(\"%s\", \"%s\")", GetFParam(1), GetFParam(2));
+	wxString Param1 = GetFParam(1);
+	wxString Param2 = GetFParam(2);
+	wxString Param3 = GetFParam(3);
+	wxString Param4 = GetFParam(4);
+	wxString s = wxString::Format("wxamcl.createnb(\"%s\", \"%s\")", Param1, Param2);
 	aL->DoString(s); //Create the aui notebook if not there
-	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(GetFParam(2).c_str());
+	//MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(GetFParam(2).c_str());
+	wxCSConv co(m_parent->GetGlobalOptions()->GetCurEncoding());
+	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(Param2);
 	if (mw==NULL)
 		return 1;
 	//mw->m_curline++;
-	GetFParam(3).ToLong(&line);
+	Param3.ToLong(&line);
 	long cline = m_parent->m_child->m_curline-1;
 	if (line<0)
 		cline+=line;
 	else if (line>0)
 	{
 		m_parent->m_child->GetNumCapture()->push_back(line);
-		m_parent->m_child->GetWinCapture()->push_back(GetFParam(2));
-		if (num==4 && GetFParam(4)=="true")
+		m_parent->m_child->GetWinCapture()->push_back(Param2);
+		if (num==4 && Param4=="true")
 			m_parent->m_child->GetGagCapture()->push_back(true);
 		else
 			m_parent->m_child->GetGagCapture()->push_back(false);
 	}
-	wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(GetFParam(1), m_parent);
+	wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(Param1, m_parent);
 	if (nb->GetPageIndex(mw)!=wxNOT_FOUND)
 	{
-		nb->SetSelection(nb->GetPageIndex(mw));
-		this->SetFocus();
+		if (mw->GetAutoFocus())
+		{
+			nb->SetSelection(nb->GetPageIndex(mw));
+			this->SetFocus();
+		}
 	}
-	//AnsiLine al = m_parent->m_child->GetLineBuffer().at(cline);
-	//mw->AddLine(al);
-	//mw->Refresh();
-	//will only gag last line !!
-	//if (num==4 && line>=0 && GetFParam(4)==wxT("true"))
-	//{
-		//m_parent->m_child->GetLines()->pop_back();
-		//m_parent->m_child->m_curline--;
-	//}
-		//mw->Update();
+	
 	return 0;
 }
 
@@ -4616,6 +4607,7 @@ int InputTextCtrl::CapStart(wxString *sPar)
 	amcLua *aL = m_parent->m_child->GetLState();
 	//struct lua_State *L = aL->GetLuaState();
 	wxString ss = GetFParam(1);
+	wxString bo = GetFParam(2);
 	MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(ss.c_str(), m_parent);
 	if (mw==NULL)
 	{
@@ -4627,7 +4619,7 @@ int InputTextCtrl::CapStart(wxString *sPar)
 	//w = m_parent->m_child->GetCapWindow();
 	//->push_back(GetFParam(1));
 
-	if (num1==2 && GetFParam(2)=="true")
+	if (num1==2 && bo=="true")
 	{
 		long cline = m_parent->m_child->m_curline-1;
 		//AnsiLine al = m_parent->m_child->GetLineBuffer().at(cline);
@@ -4676,25 +4668,16 @@ int InputTextCtrl::CapEnd(wxString *sPar)
 				continue;
 			if (nb->GetPageIndex(mw)!=wxNOT_FOUND)
 			{
-				nb->SetSelection(nb->GetPageIndex(mw));
+				if (mw->GetAutoFocus())
+				{
+					nb->SetSelection(nb->GetPageIndex(mw));
+				}
 				break;
 			}
 		}
 	}//::wxLogDebug(wxT("capend: %ldms"), sw.Time());
 	this->SetFocus();
-	//it = find(m_parent->m_child->GetCapWindow()->begin(), m_parent->m_child->GetCapWindow()->end(), s);
-	/*if (it!=m_parent->m_child->GetCapWindow()->end())
-	{
-		int idx = it - m_parent->m_child->GetCapWindow()->begin();
-		bit = m_parent->m_child->GetGagWindow()->begin()+idx;
-		if (*bit == true)
-		{
-			m_parent->m_child->GetLines()->pop_back();
-			m_parent->m_child->m_curline--;
-		}
-		m_parent->m_child->GetCapWindow()->erase(it);
-		m_parent->m_child->GetGagWindow()->erase(bit);
-	}*/
+	
 	if (m_parent->m_child->GetCapWindow()->operator [](s))
 	{
 		//deque<AnsiLine>* l = m_parent->m_child->GetLines();
@@ -4820,7 +4803,9 @@ int InputTextCtrl::Func(wxString *sPar)
 	amcLua *aL = m_parent->m_child->GetLState();
 	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
 	wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetScriptDir());
-	int err = aL->DoFile((char*)GetFParam(1).char_str());
+	wxString file = GetFParam(1);
+	wxString func = GetFParam(2);
+	int err = aL->DoFile(file.mb_str().data());
 	if (err)
 	{
 		wxString s = aL->GetwxString(aL->GetTop());
@@ -4829,7 +4814,6 @@ int InputTextCtrl::Func(wxString *sPar)
 		return 2;
 	}
 	
-	wxString func = GetFParam(2);
 	wxString subname = func.BeforeFirst('(');
 	wxString arglist = func.AfterFirst('(');
 	int len = ParseFParams(&arglist, '\'');

@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 16 2016)
+// C++ code generated with wxFormBuilder (version Dec 21 2016)
 // http://www.wxformbuilder.org/
 //
 // PLEASE DO "NOT" EDIT THIS FILE!
@@ -18,10 +18,10 @@
 #include <wx/colour.h>
 #include <wx/settings.h>
 #include <wx/textctrl.h>
+#include <wx/spinctrl.h>
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/checkbox.h>
-#include <wx/spinctrl.h>
 #include <wx/gbsizer.h>
 #include <wx/button.h>
 #include <wx/filepicker.h>
@@ -70,6 +70,8 @@ class DlgOptions : public wxDialog
 		wxTextCtrl* m_textsw;
 		wxStaticText* m_staticText51;
 		wxTextCtrl* m_textswr;
+		wxStaticText* m_staticText17;
+		wxSpinCtrl* m_swdelay;
 		wxStaticText* m_staticText71;
 		wxTextCtrl* m_textvar;
 		wxStaticText* m_staticText121;

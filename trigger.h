@@ -68,6 +68,6 @@ private:
 };
 
 typedef std::vector<class Trigger>::iterator tr_it;
-
+typedef std::vector<wxString>::iterator trg_it;
 
 #endif
