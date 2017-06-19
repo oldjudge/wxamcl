@@ -159,10 +159,9 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	//m_gopt = new GlobalOptions(this);
 	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
 	m_dc = new Decompressor();//\\b
+		
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{3,}(?!char|comm|group)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|room|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	
-	/////m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([A-Za-z0-9]+)?\\.?(?!\\.)([A-Za-z0-9\\-]+)?\\.(?!txt)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\~+%_&#]+)){0,6}"); //\\/?(\\~|\\.|\\-|=|\\?|\\w+)?.+)\\b");
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,100}\\.?(?!\\.)[A-Za-z0-9\\-]{2,}\\.(?!txt|wav|mp3|ogg|lua|tick|room|info|vitals|status|channel|comm|char|repop|quest|group|stats|worth|maxstats)[a-z]{2,4}(\\/([a-zA-Z0-9\\.\\?=\\-\\/\\~\\+%_&#:]+)){0,5}"); 
-	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/|~/|/)?([\\w]+:\\w+@)?([a-zA-Z]{1}([\\w\\-]+\\.)+([\\w]{2,5}))(:[\\d]{1,5})?((/?\\w+/)+|/?)(\\w+\\.[\\w]{3,4})?((\\?\\w+=\\w+)?(&\\w+=\\w+)*)?");
 	m_bourl = true;
 	//m_splitbuffer = true;
 	m_ansicode = new RegExp("\\e\\[[0-1]?;?3?[0-9]?;?5?[0-9]?m");
@@ -1298,23 +1297,13 @@ static BOOL bfile = FALSE;
 			
 		//}
 	//}
-	//Do File only once!!
 	amcLua *aL = m_parent->m_child->GetLState();
-	if (!bfile)
-		{
-			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
-			wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetScriptDir());
-			aL->DoFile(m_parent->GetGlobalOptions()->GetEventFile());
-			bfile = TRUE;
-			// only once
-		}
 	wxString::iterator it;
 			
 	if (m_vmudlines.empty())
 		m_parsestate = HAVE_TEXT;
 	
-	//if (s.EndsWith('\n'));
-		//sLine.Empty();
+	
 	if (m_bourl && m_parsestate != HAVE_IACSBATCP2)//Clickable URLs
 	{
 		int spos = 0;
@@ -1325,7 +1314,7 @@ static BOOL bfile = FALSE;
 		{
 			int start=0;
 			int sub=0;
-			sub = m_url->GetMatchStart()-8;//some stuff cause ansicodes can mess regexp detection of URL
+			sub = m_url->GetMatchStart() -8;//some stuff cause ansicodes can mess regexp detection of URL
 			if (sub<0)
 				sub=0;
 			int xx = m_url->GetMatchLen();
@@ -1359,14 +1348,12 @@ static BOOL bfile = FALSE;
 			wxString s2 = test.Mid(start, xx);
 			wxString s3 = test.Mid(start+xx);
 			s = s1<<"\x1b[4m"<<s2<<"\x1b[0m"<<s3;
-			
-			//s = s.insert(start+sub, "\x1b[4m");
-			//s= s.insert(m_url->GetMatchEnd()+4+spos, "\x1b[0m");
-			//spos += m_url->GetMatchEnd()+4;
-			spos = start+xx+8;
+			wxLogDebug(s2);
+			spos = start + xx + 8;
 		}
 		m_parent->GetGlobalOptions()->SetUTF8(b);
 	}
+	
 	if (!m_vmudlines.empty())
 	{
 		if (!b)
@@ -2357,9 +2344,21 @@ static BOOL bfile = FALSE;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvTelnetData())
 					{
 						wxString ss;
-						ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-							m_parent->GetGlobalOptions()->GetEventFile(), 102, m_atcpstring.c_str());
-						m_parent->m_input->ParseCommandLine(&ss);
+						//ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+							//m_parent->GetGlobalOptions()->GetEventFile(), 102, m_atcpstring.c_str());
+						//m_parent->m_input->ParseCommandLine(&ss);
+						aL->GetGlobal("OnTelnetData");
+						aL->PushString(m_atcpstring);
+						int err = aL->Call(1);
+						if (err)
+						{
+							wxString s = aL->GetwxString(aL->GetTop());
+							m_parent->m_child->Msg(s);
+							aL->Pop(1);
+
+						}
+						aL->SetTop(0);
+
 					}
 					m_parsestate = HAVE_TEXT;
 					m_atcpstring.Empty();
@@ -2381,9 +2380,20 @@ static BOOL bfile = FALSE;
 					if (m_parent->GetGlobalOptions()->GetUseEvents() && m_parent->GetGlobalOptions()->GetUseEvTelnetData())
 					{
 						wxString ss;
-						ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
-							m_parent->GetGlobalOptions()->GetEventFile(), 200, m_atcpstring.c_str());
-						m_parent->m_input->ParseCommandLine(&ss);
+						//ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
+							//m_parent->GetGlobalOptions()->GetEventFile(), 200, m_atcpstring.c_str());
+						aL->GetGlobal("OnTelnetData");
+						aL->PushString(m_atcpstring);
+						int err = aL->Call(1);
+						if (err)
+						{
+							wxString s = aL->GetwxString(aL->GetTop());
+							m_parent->m_child->Msg(s);
+							aL->Pop(1);
+
+						}
+						aL->SetTop(0);
+						
 					}
 					m_parsestate = HAVE_TEXT;
 					if (m_atcpstring.StartsWith("Room.Num"))
@@ -2446,7 +2456,7 @@ static BOOL bfile = FALSE;
 					m_parsestate = HAVE_TEXT;
 					if (GetDebugGMCP())
 					{
-						wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetWorkDir());
+						wxSetWorkingDirectory(m_parent->GetGlobalOptions()->GetLogDir());
 						wxFile* file = new wxFile("debuggmcp.txt", wxFile::write_append);
 						file->Write(m_atcpstring + "\n");
 						file->Close();
@@ -5201,14 +5211,7 @@ wxCoord MudWindow::DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, w
 	
 	if (text.length())
 	{
-		/*for (s=text.begin();s!=text.end();s++)
-		{
-			ssi = dc->GetTextExtent(*s);
-			//dc->SetClippingRegion(startx, starty, si.GetWidth(), si.GetHeight());
-			dc->DrawText(*s, startx, starty);
-			//dc->DestroyClippingRegion();
-			startx += ssi.GetWidth()-1;
-		}*/
+		
 		wxSize si = dc->GetTextExtent(text);
 		dc->SetClippingRegion(startx, starty, si.GetWidth(), si.GetHeight());
 		dc->DrawText(text, startx, starty);

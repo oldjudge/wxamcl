@@ -190,7 +190,12 @@ bool MudClientApp::OnInit()
     frame->m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, frame->m_child->GetAnsiColor(0));
     frame->m_mgr.Update();
 	
-    frame->LoadGlobalOptions(); 
+    frame->LoadGlobalOptions();
+	amcLua *aL = frame->m_child->GetLState();
+	wxSetWorkingDirectory(frame->GetGlobalOptions()->GetWorkDir());
+	wxSetWorkingDirectory(frame->GetGlobalOptions()->GetScriptDir());
+	aL->DoFile(frame->GetGlobalOptions()->GetEventFile());
+		
 	
 #if defined __WXMSW__
 	wxSetEnv("LUA_PATH_5_3", "!\\scripts\\?.lua;!\\lua\\?.lua");
@@ -233,8 +238,7 @@ bool MudClientApp::OnInit()
 	
 	//wxString s1 = p.GetParam(1);
 	//wxString s("\u0419\u0634");
-	//frame->m_child->ParseLine(&s);
-	
+		
 	//wxString s="\x1b[1;37m!!!!~`  \[1;37m!!!!~`   [1;35m.eeW$$$$$$$$   :$$$$$$$$$$$$$***$$$$$$$$$$$$$$$$$$$$u.    [1;37m`~!!!!!x1b[1;35m.eeW$$$$$$$$   :$$$$$$$$$$$$$***$$$$$$$$$$$$$$$$$$$$u.    \x1b[1;37m`~!!!!!";
 	//wxString s="You drop a set of protective arm sleeves.\n\r<\x1b[1;32m2239/2435Hp \x1b[1;33m1003/2642Ma \x1b[1;36m1938/1938Mv \x1b[1;37m609Xp \x1b[1;35m0qt\x1b[0;37m>: \x1b[0;37m\x1b";
 	//wxString ss="[0;36mAyla gives you \x1b[1;33m24\x1b[0;36m gold coins for a set of protective arm sleeves.\x1b[0;37m";
@@ -256,7 +260,7 @@ bool MudClientApp::OnInit()
 	}*/
 
 	//wxString ss("<\x1b[0;31m5322/5322Hps \x1b[1;32m5494/5509Ma \x1b[0;32m3219/3223Mvs \x1b[0;36m0qt\x1b[0;37m> comm.tick {} ");
-		
+	//wxString ss = "{ \"name\": \"Asariom\", \"class\": \"Mage\", \"subclass\": \"Elementalist\", \"race\": \"Eldar\", \"clan\": \"\", \"pretitle\": \"\", \"perlevel\": 2000, \"tier\": 0, \"remorts\": 2, \"redos\" : \"0\" }  <\x1b[0;31m933/933Hps \x1b[1;32m1028/1054Ma \x1b[0;32m1111/1112Mvs \x1b[0;36m0qt \x1b[0;35m1815tnl \x1b[1;33m\x1b[0;37m> \x1b[0;37m";
 	//frame->m_child->ParseNBuffer((char*)ss.mb_str().data(), false);
 	//wxString ss = "\x1b[0;33m           ---  \n";
 	/*ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m<\x1b[1;33m!\x1b[1;37m#\x1b[0;33m\x1b[0;33m|  \n";
@@ -1085,8 +1089,14 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 		m_gopt->SetUseEvRecv(od->GetEvRecv());
 		m_gopt->SetUseEvGMCPData(od->GetEvGMCPData());
 		m_gopt->SetUseEvMSDPData(od->GetEvMSDPData());
+		
 		m_gopt->SetEventFile(od->GetEventFile());
+		amcLua *aL = m_child->GetLState();
+		wxSetWorkingDirectory(GetGlobalOptions()->GetWorkDir());
+		wxSetWorkingDirectory(GetGlobalOptions()->GetScriptDir());
+		aL->DoFile(GetGlobalOptions()->GetEventFile());
 		m_child->SetClickURLs(od->GetUrls());
+		
 		SetSplitter(od->GetSplitter());
 		m_child->SetInclude(od->GetInclude());
 		m_child->SetDateLogging(od->GetTs());

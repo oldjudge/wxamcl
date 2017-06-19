@@ -519,7 +519,11 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 1://trigger
 		if (m_items->IsChecked(item))
-			m_trigger.push_back(m_frame->GetTrigger()->at(item).GetLabel());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetTriggerIndexByLabel(n);
+			m_trigger.push_back(m_frame->GetTrigger()->at(idx).GetLabel());
+		}
 		else
 		{
 			s_it f = find(m_trigger.begin(),m_trigger.end(), m_frame->GetTrigger()->at(item).GetLabel());
@@ -529,7 +533,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 2://alias
 		if (m_items->IsChecked(item))
-			m_alias.push_back(m_frame->GetAlias()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetAliasIndexByLabel(n);
+			m_alias.push_back(m_frame->GetAlias()->at(idx).GetName());
+		}
+		
 		else
 		{
 			s_it f = find(m_alias.begin(),m_alias.end(), m_frame->GetAlias()->at(item).GetName());
@@ -539,7 +548,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 3://buttons
 		if (m_items->IsChecked(item))
-			m_buttons.push_back(m_frame->GetButtons()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetButtonIndexByLabel(n);
+			m_buttons.push_back(m_frame->GetButtons()->at(idx).GetName());
+		}
+			
 		else
 		{
 			s_it f = find(m_buttons.begin(),m_buttons.end(), m_frame->GetButtons()->at(item).GetName());
@@ -559,7 +573,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 5://hotkeys
 		if (m_items->IsChecked(item))
-			m_hks.push_back(m_frame->GetHotkeys()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetHkIndexByLabel(n);
+			m_hks.push_back(m_frame->GetHotkeys()->at(idx).GetName());
+		}
+			
 		else
 		{
 			s_it f = find(m_hks.begin(),m_hks.end(), m_frame->GetHotkeys()->at(item).GetName());
@@ -569,7 +588,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 6://lists
 		if (m_items->IsChecked(item))
-			m_lists.push_back(m_frame->GetLists()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetListIndexByLabel(n);
+			m_lists.push_back(m_frame->GetLists()->at(idx).GetName());
+		}
+			
 		else
 		{
 			s_it f = find(m_lists.begin(),m_lists.end(), m_frame->GetLists()->at(item).GetName());
@@ -579,7 +603,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 7://timers
 		if (m_items->IsChecked(item))
-			m_timers.push_back(m_frame->GetTimers()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetTimerIndexByLabel(n);
+			m_timers.push_back(m_frame->GetTimers()->at(idx).GetName());
+		}
+			
 		else
 		{
 			s_it f = find(m_timers.begin(),m_timers.end(), m_frame->GetTimers()->at(item).GetName());
@@ -589,7 +618,12 @@ void pkg_dlg::OnToggle( wxCommandEvent& event )
 		break;
 	case 8://vars
 		if (m_items->IsChecked(item))
-			m_vars.push_back(m_frame->GetVars()->at(item).GetName());
+		{
+			wxString n = m_items->GetString(item);
+			int idx = m_frame->GetVarIndexByLabel(n);
+			m_vars.push_back(m_frame->GetVars()->at(idx).GetName());
+		}
+			
 		else
 		{
 			s_it f = find(m_vars.begin(),m_vars.end(), m_frame->GetVars()->at(item).GetName());
