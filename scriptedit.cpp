@@ -23,7 +23,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 				wxamcl.alias.setaction wxamcl.alias.delgroup wxamcl.alias.enablegroup \
 				wxamcl.hk.new wxamcl.hk.delgroup wxamcl.hk.delete wxamcl.hk.enable wxamcl.hk.execute wxamcl.hk.enablegroup wxamcl.hk.delgroup \
 				wxamcl.var.new wxamcl.var.set wxamcl.var.get wxamcl.var.delete wxamcl.var.enable wxamcl.var.getall wxamcl.var.enablegroup wxamcl.var.delgroup \
-				wxamcl.gauge.update wxamcl.gauge.new wxamcl.gauge.setsize wxamcl.gauge.setcolor wxamcl.gauge.createwindow wxamcl.gauge.setlabel wxamcl.gauge.delete \
+				wxamcl.gauge.update wxamcl.gauge.new wxamcl.gauge.setsize wxamcl.gauge.setcolor wxamcl.gauge.createwindow wxamcl.gauge.setlabel wxamcl.gauge.delete wxamcl.gauge.setstyle \
 				wxamcl.timer.new wxamcl.timer.delete wxamcl.timer.start wxamcl.timer.stop wxamcl.timer.enable \
 				wxamcl.button.new, wxamcl.button.delete, wxamcl.button.get, wxamcl.button.setaction, wxamcl.button.getaction, wxamcl.button.press, wxamcl.button.setlabel, wxamcl.button.setbitmap, \
 				wxamcl.mxp.enable wxamcl.mxp.echo wxamcl.mxp.echowin \

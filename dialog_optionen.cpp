@@ -96,7 +96,8 @@ DlgOptions( parent )
 	m_ongmcpdata->SetValidator(wxGenericValidator(&m_evgmcpdata));
 	m_evmsdpdata = m_frame->GetGlobalOptions()->GetUseEvMSDPData();
 	m_onmsdpdata->SetValidator(wxGenericValidator(&m_evmsdpdata));
-	m_evfile = m_frame->GetGlobalOptions()->GetEventFile();
+	//m_evfile = m_frame->GetGlobalOptions()->GetEventFile();
+	m_evfile = m_frame->m_actwindow->GetEventFile();
 	wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetScriptDir());
 	m_eventfile->SetPath(m_evfile);
 	m_urls = m_frame->m_child->UseClickURLs();
@@ -285,11 +286,11 @@ void dlg_options::OnColor(wxColourPickerCtrl* ct, int idx)
 		{
 			wxGetApp().GetFrame()->SetBackgroundColour(c);
 			wxGetApp().GetFrame()->ClearBackground();
-			wxGetApp().GetChild()->SetBackgroundColour(c);
-			wxGetApp().GetChild()->SetBackgroundCol(c);
-			wxGetApp().GetChild()->ClearBackground();
-			wxGetApp().GetChild()->Refresh();
-			wxGetApp().GetChild()->Update();
+			wxGetApp().GetFrame()->m_actwindow->SetBackgroundColour(c);
+			wxGetApp().GetFrame()->m_actwindow->SetBackgroundCol(c);
+			wxGetApp().GetFrame()->m_actwindow->ClearBackground();
+			wxGetApp().GetFrame()->m_actwindow->Refresh();
+			wxGetApp().GetFrame()->m_actwindow->Update();
 			m_frame->m_splitter->SetBackgroundCol(c);
 		}
 	}

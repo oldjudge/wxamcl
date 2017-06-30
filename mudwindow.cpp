@@ -35,6 +35,7 @@
 #define HAVE_LF 26
 #define HAVE_IACSBCHARSET 27
 #define HAVE_TEXT1 28
+#define HAVE_TO_DELETE_SLINE 29
 
 BEGIN_EVENT_TABLE(MudWindow, wxWindow)
     EVT_ERASE_BACKGROUND(MudWindow::OnEraseBackground)
@@ -72,7 +73,7 @@ IMPLEMENT_DYNAMIC_CLASS(MudWindow, wxWindow)
 MudWindow::MudWindow():wxWindow()
 {
 	MudWindow(wxGetApp().GetFrame());
-	//m_tt.SetTip("");
+	
 }
 
 /*! \brief standard constructor
@@ -84,11 +85,13 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_font = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
 	m_ifont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
+	m_stfont = new wxFont(wxFontInfo(12).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Strikethrough());
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 #else
-    m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
+    m_font = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Bold());
     m_ufont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
 	m_ifont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+	m_stfont = new wxFont(wxFontInfo(12).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Strikethrough());
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 #endif
 	
@@ -154,13 +157,15 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_logfile = "log.txt";
 	m_tlog = NULL;
 	m_htmllog = NULL;
+	m_eventfile = "events.lua";
+	m_profile = "defaultprofile.lua";
 	m_L = new amcLua();
 	
 	//m_gopt = new GlobalOptions(this);
 	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
 	m_dc = new Decompressor();//\\b
 		
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{3,}(?!char|comm|group)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|room|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	
 	m_bourl = true;
 	//m_splitbuffer = true;
@@ -172,11 +177,8 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 
 	//m_botelnetparsed=false;
 	m_focusoninput = true;
-
 	m_curansicolor = m_colansi[DEF_FORECOL];
-	
-	//m_MemBuffer.SetBufSize(30001);
-	
+		
 	SetName("amcoutput");
 	m_tt = new wxToolTip("");
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE);
@@ -202,23 +204,17 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	SetCssClasses();
 	m_background = m_colansi[0];
 	#if !defined __WXMSW__
-		//m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
 		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
-        //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
         m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
-		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
 		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
-        SetBackgroundStyle(wxBG_STYLE_PAINT);
-		//SetBackgroundColour(m_background);
-		//ClearBackground();
-	#else
-        //m_font = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN));
-        //m_ufont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, true, "Courier New");
-        m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
-		//m_ifont = new wxFont(fontsize, wxFONTFAMILY_MODERN, wxFONTSTYLE_ITALIC, wxFONTWEIGHT_NORMAL, false, "Courier New");
-		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+		m_stfont = new wxFont((wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Strikethrough());
+		SetBackgroundStyle(wxBG_STYLE_PAINT);
 		
+	#else
+        m_font = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Bold());
+        m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Underlined());
+		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Italic());
+		m_stfont = new wxFont(wxFontInfo(fontsize).FaceName("Courier").Family(wxFONTFAMILY_MODERN).Strikethrough());
 		SetBackgroundStyle(wxBG_STYLE_PAINT);
 	#endif
 	m_font->SetPointSize(fontsize);
@@ -261,29 +257,24 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	m_logfile = "log.txt";
 	m_tlog=NULL;
 	m_htmllog = NULL;
+	m_eventfile = "events.lua";
+	m_profile = "defaultprofile.lua";
 	//m_L = new amcLua();
 	m_L = NULL;
 	m_bourl = false;
 	m_url = NULL;
 	//m_splitbuffer = false;
 	m_ansicode = NULL;
-	//m_drawbmp.Create(wxSystemSettings::GetMetric(wxSYS_SCREEN_X), wxSystemSettings::GetMetric(wxSYS_SCREEN_Y));
-	//m_drawbmp.Create(100,100);
-	//RegisterLuaFuncs();
-
-	//m_gopt = new GlobalOptions(this);
+	
 	m_maxlines = 500;//default line buffer for the window
 	m_trigger = false; //triggers for user created windows off
 	m_useipv6 = false;
-	//m_dc = new Decompressor();//\\b
+	
 	m_dc = NULL;
-	//m_mxp = NULL;
-	//m_url = new RegExp(("((http:\\/\\/)?([A-Za-z0-9]+)?\\.[A-Za-z0-9\\-]+\\.[a-z]+[\\/?\\~?\\.\\-=\\?\\w+]+)\\b"));
-	//m_url = NULL;
 	m_prompt = NULL;
 	m_boprompt = false;
 	m_gagprompt = false;
-	//m_botelnetparsed = false;
+	
 	m_focusoninput = false;
 	m_curansicolor = m_colansi[DEF_FORECOL];
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxHSCROLL| wxBORDER_NONE );
@@ -294,16 +285,11 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	this->SetToolTip(m_tt);
     SetScrollbar(wxVERTICAL, 0, 0, 0);
 	SetScrollbar(wxHORIZONTAL, 0, 0, 0);
-	
 }
 
 MudWindow::~MudWindow()
 {
-//line_it lit;
-//ale_it it;
-//AnsiLine *line=NULL;
-//AnsiLineElement ale;
-//int x=0;
+
 	if (m_connected)
 	{
 		m_sock->Close();
@@ -319,7 +305,9 @@ MudWindow::~MudWindow()
 			{
 				wxString s;
 				s = wxString::Format("%cfunc(\"%s\", \"OnDisconnected()\")", m_parent->GetGlobalOptions()->GetCommand(),
-					m_parent->GetGlobalOptions()->GetEventFile());
+					GetEventFile());
+					//m_parent->GetGlobalOptions()->GetEventFile());
+				m_parent->m_scriptwin = this;
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
@@ -329,6 +317,7 @@ MudWindow::~MudWindow()
 	delete m_font;
 	delete m_ufont;
 	delete m_ifont;
+	delete m_stfont;
 	delete m_oldcolor;
 	delete m_dc;
 	delete m_MXP;
@@ -479,7 +468,7 @@ void MudWindow::Write(wxString command)
 		#endif
 		
 		#ifdef __WXMSW__
-			m_sock->Write(command.To8BitData(), (wxUint32)command.To8BitData().length());
+			m_sock->Write(command.To8BitData().data(), (wxUint32)command.To8BitData().length());
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(command.char_str(), command.char_str().length(), false);
 		#endif
@@ -501,7 +490,8 @@ void MudWindow::Write(wxString command)
 				return;
 			}
 			//m_sock->Write(f.To8BitData(), (wxUint32)f.To8BitData().length());//wxStrlen(f.To8BitData()));
-			m_sock->Write(f.c_str(), wxStrlen(f));
+			m_sock->Write(f.To8BitData().data(), f.To8BitData().length());//wxStrlen(f));
+			int x = m_sock->LastWriteCount();
 			if (m_parent->GetGlobalOptions()->DebugRaw())
 				WriteRaw(f.char_str(), f.char_str().length(), false);
 			//m_sock->Write(command.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())), wxStrlen(command));
@@ -585,7 +575,8 @@ void MudWindow::Close()
 		if (m_parent->GetGlobalOptions()->GetUseEvDisco())
 		{
 			s = wxString::Format("%cfunc(\"%s\", \"OnDisconnected()\")", m_parent->GetGlobalOptions()->GetCommand(),
-				m_parent->GetGlobalOptions()->GetEventFile());
+				/*m_parent->GetGlobalOptions()->*/GetEventFile());
+			m_parent->m_scriptwin = this;
 			m_parent->m_input->ParseCommandLine(&s);
 		}
 	}
@@ -1254,9 +1245,7 @@ int offset=30;
 bool gotline = false;
 static bool ttsent = false;
 static bool colset = false;
-//static bool done = true;
-static BOOL bfile = FALSE;
-//static bool bol = false;
+
 	//********Freeze();
 	/*if (!m_parent->GetGlobalOptions()->UseUTF8())	
 		s = wxString::From8BitData((const char*) cBuffer);
@@ -1299,6 +1288,11 @@ static BOOL bfile = FALSE;
 	//}
 	amcLua *aL = m_parent->m_child->GetLState();
 	wxString::iterator it;
+	if (m_parsestate == HAVE_TO_DELETE_SLINE)
+	{
+		sLine.Empty();
+		m_parsestate = HAVE_TEXT;
+	}
 			
 	if (m_vmudlines.empty())
 		m_parsestate = HAVE_TEXT;
@@ -3322,12 +3316,13 @@ wxStringTokenizer tkz;
 				if (m_parent->m_trigger.at(i).GetSendScript())
 				{
 					ac.Replace(m_parent->GetGlobalOptions()->GetSep(), "\n");
-					if (m_parent->m_child->GetLState()->DoString(ac))
+					m_parent->m_scriptwin = this;
+					if (/*m_parent->m_child->*/GetLState()->DoString(ac))
 					{
-						struct lua_State* L = m_parent->m_child->GetLState()->GetLuaState();
+						struct lua_State* L = /*m_parent->m_child->*/GetLState()->GetLuaState();
 						int top = lua_gettop(L);
 						wxString error = luaL_checkstring(L, top);
-						m_parent->m_child->Msg(error);
+						/*m_parent->m_child->*/Msg(error);
 						continue;
 					}
 					continue;
@@ -4826,6 +4821,7 @@ int pos;
 size_t sublines=0;
     //wxLogDebug("OnPaintMudWindow");
 	ss=GetClientSize();
+
 	wxBitmap bm(ss.x, ss.y);
 	
 	wxBufferedPaintDC dc(this, bm);
@@ -5690,8 +5686,8 @@ int stamp_offset = 0;
 	size_t cxpos = p.x/dc.GetCharWidth();
 	cxpos++;
 	size_t line = CalcLine(p);
-	if ((long)line<0)
-		return;
+	//if ((long)line<0)
+	//	return;
     if (line > m_vmudlines.size()-1)
         line = m_vmudlines.size()-1;
 	if (m_timestamps)
@@ -6081,8 +6077,7 @@ wxUint32 uiBytesRead;
 		if (m_atcp)
 		{
 			char test[] = {"\xff\xfa\xc8hello wxamcl 1.0.0\nroom_brief 1\nchar_vitals 1\n\xff\xf0\0"};
-			//wxString s = "\xff\xfa\xc8hello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\nchar_name 1\xff\xf0";
-			//s.Printf("%c%c%chello wxamc 1.0.0\nauth 1\nroom_brief 1\nchar_vitals 1\xff\xf0", IAC, SB, ATCP);
+			
 			s = wxString::From8BitData((const char*)test);
 			m_sock->Write(test, (wxUint32)53);
 			//Write8Bit(s);
@@ -6162,7 +6157,8 @@ wxUint32 uiBytesRead;
 			if (m_parent->GetGlobalOptions()->GetUseEvDisco())
 			{
 				s = wxString::Format("%cfunc(\"%s\", \"OnDisconnected()\")", m_parent->GetGlobalOptions()->GetCommand(),
-					m_parent->GetGlobalOptions()->GetEventFile());
+					/*m_parent->GetGlobalOptions()->*/GetEventFile());
+				m_parent->m_scriptwin = this;
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
@@ -6204,7 +6200,7 @@ wxUint32 uiBytesRead;
 			{
 				s.empty();
 				s = wxString::Format("%cfunc(\"%s\", \"OnConnected()\")", m_parent->GetGlobalOptions()->GetCommand(),
-					m_parent->GetGlobalOptions()->GetEventFile());
+					/*m_parent->GetGlobalOptions()->GetEventFile()*/GetEventFile());
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
@@ -6342,4 +6338,123 @@ wxString MudWindow::GetSelectedAnsiText()
 		//s<<m_vmudlines.at(i).GetAnsiLine()<<"\r\n";
 	}
 	return s;
+}
+
+int MudWindow::GetTriggerIndexByLabel(wxString s)
+{
+	tr_it it;
+	int i;
+
+	for (it = m_actions.begin(), i = 0; it != m_actions.end(); it++, i++)
+	{
+		if (!s.compare(it->GetLabel()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetAliasIndexByLabel(wxString s)
+{
+	al_it it;
+	int i;
+	if (s.at(0) != ('^'))
+		s = ('^') + s;
+	
+	for (it = m_alias.begin(), i = 0; it != m_alias.end(); it++, i++)
+	{
+		if (!s.compare(0, s.length(), it->GetAlias(), 0, s.length()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetVarIndexByLabel(wxString s)
+{
+	v_it it;
+	int i;
+
+	for (it = m_vars.begin(), i = 0; it != m_vars.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetDefVarIndexByLabel(wxString s)
+{
+	dv_it it;
+	int i;
+
+	for (it = m_defvars.begin(), i = 0; it != m_defvars.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetListIndexByLabel(wxString s)
+{
+	li_it it;
+	int i;
+
+	for (it = m_lists.begin(), i = 0; it != m_lists.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetTimerIndexByLabel(wxString s)
+{
+	t_it it;
+	int i;
+
+	for (it = m_timers.begin(), i = 0; it != m_timers.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetButtonIndexByLabel(wxString s)
+{
+	b_it it;
+	int i;
+
+	for (it = m_buttons.begin(), i = 0; it != m_buttons.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetButtonIndexById(int id)
+{
+	b_it it;
+	int i;
+
+	for (it = m_buttons.begin(), i = 0; it != m_buttons.end(); it++, i++)
+	{
+		if (id == it->GetId())
+			return i;
+	}
+	return -1;
+}
+
+int MudWindow::GetHkIndexByLabel(wxString s)
+{
+	hk_it it;
+	int i;
+
+	for (it = m_hotkeys.begin(), i = 0; it != m_hotkeys.end(); it++, i++)
+	{
+		if (!s.compare(it->GetName()))
+			return i;
+	}
+	return -1;
 }

@@ -236,7 +236,9 @@ void amcGauge::DrawGauge(wxBufferedPaintDC *dc)
 	{
 		m_parent->GetVars()->at(m_idx1).GetValue().ToDouble(&val1);
 		m_parent->GetVars()->at(m_idx2).GetValue().ToDouble(&val2);
-		m_perc = (float)(val1/val2);
+		if (val2)
+			m_perc = (float)(val1/val2);
+		else m_perc = 0;
 	}
 	dc->SetBrush(back);
 	dc->SetPen(*wxWHITE_PEN);

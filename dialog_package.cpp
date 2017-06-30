@@ -22,7 +22,7 @@ void pkg_dlg::OnCheckAll(wxCommandEvent& event)
 	//wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetPackageDir());
 	if (m_checkall->IsChecked())
 	{
-		for (int i=0;i<m_items->GetCount();i++)
+		for (wxUint16 i=0;i<m_items->GetCount();i++)
 		{
 			m_items->Check(i);
 			wxCommandEvent ev;// = event;
@@ -35,7 +35,7 @@ void pkg_dlg::OnCheckAll(wxCommandEvent& event)
 	}
 	else
 	{
-		for (int i=0;i<m_items->GetCount();i++)
+		for (wxUint16 i=0;i<m_items->GetCount();i++)
 		{
 			m_items->Check(i, false);
 			//m_items->Check(i);

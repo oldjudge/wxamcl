@@ -1029,26 +1029,26 @@ MudWindow *mw = m_parent;
 	else if (!ss.Cmp("user"))
 	{
 		if (f->GetCurHost()!=-1)
-			f->m_child->Write(f->GetHosts()->at(f->GetCurHost()).GetCharName()+'\n');
+			f->m_actwindow->Write(f->GetHosts()->at(f->GetCurHost()).GetCharName()+'\n');
 		//else f->m_child->Write("Asarean\n");
 		t->Reset();
 	}
 	else if (!ss.Cmp("password"))
 	{
 		if (f->GetCurHost()!=-1)
-			f->m_child->Write(f->GetHosts()->at(f->GetCurHost()).GetPwd()+'\n');
+			f->m_actwindow->Write(f->GetHosts()->at(f->GetCurHost()).GetPwd()+'\n');
 		t->Reset();
 	}
 	else if (!ss.Cmp("version"))
 	{
 		wxString sss = "\x1b[1z<VERSION MXP=\"1.0\" CLIENT=\"wxAmcl\" VERSION=\"0.1\">\n";
-		f->m_child->Write(sss.To8BitData());
+		f->m_actwindow->Write(sss.To8BitData());
 		t->Reset();
 	}
 	else if (!ss.Cmp("support"))
 	{
 		wxString sss = "\x1b[1z<SUPPORTS -IMAGE -IMAGE.URL +send +user +password +version +color +b +bold +i +italic +u +underlined -s +br +sbr>\n";
-		f->m_child->Write(sss.To8BitData());
+		f->m_actwindow->Write(sss.To8BitData());
 		t->Reset();
 	}
 	else if (!ss.Cmp("expire"))

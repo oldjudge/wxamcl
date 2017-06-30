@@ -119,6 +119,7 @@ extern "C"
 #include <deque>
 #include <list>
 #include <map>
+#include <unordered_map>
 #include <utility>
 #include <string>
 #include <algorithm>
@@ -177,6 +178,7 @@ using namespace std;
 #define ID_PARSEINPUT 501
 #define ID_PROMPT 502
 #define ID_MEDIACTRL 503
+#define ID_NOTEBOOK 504
 
 //#define wxT(x) x
 //wxT defines
@@ -317,6 +319,12 @@ public:
 	void SetFrame(class MudMainFrame* f) {frame=f;}
     class MudWindow* GetChild() {return mw;}
 	void SetChild(class MudWindow* f) {mw=f;}
+	class MudWindow* GetChild1() { return mw1; }
+	void SetChild1(class MudWindow* f) { mw1 = f; }
+	class MudWindow* GetChild2() { return mw2; }
+	void SetChild2(class MudWindow* f) { mw2 = f; }
+	class MudWindow* GetChild3() { return mw3; }
+	void SetChild3(class MudWindow* f) { mw3 = f; }
 	// this one is called on application startup and is a good place for the app
     // initialization (doing it here and not in the ctor allows to have an error
     // return: if OnInit() returns false, the application terminates)
@@ -325,6 +333,9 @@ public:
 private:
 	class MudMainFrame *frame;
 	class MudWindow *mw;//child
+	class MudWindow *mw1;
+	class MudWindow *mw2;
+	class MudWindow *mw3;
 };
 
 DECLARE_APP(MudClientApp)
@@ -342,15 +353,15 @@ public:
 	~MudMainFrame();
 
 	class MudWindow *m_child;
+	
 	class MudWindow *m_splitter;
-    class MudWindow *m_managed;
+    
 	class InputTextCtrl *m_input;
 	class wxAuiToolBar *m_toolbar;
 	class wxBitmapButton *m_toggle;
-	//class wxStaticText *m_prompt;
 	class wxTextCtrl *m_prompt;
-	//wxCheckBox *m_toggle;
 	class wxMediaCtrl *m_media;
+	class wxAuiNotebook *m_notebook;
 	wxAuiManager m_mgr;
 	wxLocale *m_locale;
 	std::vector<class Trigger> m_trigger;
@@ -361,6 +372,11 @@ public:
 	std::vector<class amcList> m_lists;
 	std::vector<class amcTimer> m_timers;
 	std::vector<class amcButton> m_buttons;
+
+	std::vector<class MudWindow*> m_childwindows;
+	wxUint16 m_active_window;
+	class MudWindow *m_actwindow;
+	class MudWindow *m_scriptwin;
     // event handlers (these functions should _not_ be virtual)
     void OnSimpleConnect(wxCommandEvent& event);
 	void OnCharConnect(wxCommandEvent& event);
@@ -454,7 +470,10 @@ public:
 	friend class amcScriptThread;
 	void SetScriptFont(wxFont *f) {delete m_scriptfont;m_scriptfont = new wxFont(*f);}
 	wxFont* GetScriptFont() {return m_scriptfont;}
-	void BuildEncodingMenu(wxMenu*);	//class wxMediaCtrl *GetMediaCtrl() {return &m_media;}
+	void BuildEncodingMenu(wxMenu*);
+	void OnNPageChanged(wxAuiNotebookEvent& event);
+	void DeleteWindows();
+	void CreateWindows();
 private:
 	bool m_usesplitter;
 	bool m_triggerson;
@@ -489,6 +508,7 @@ private:
 	void OnIdle(wxIdleEvent& event);
 	void OnMediaLoaded(wxMediaEvent& WXUNUSED(event));
 	void OnMediaFinished(wxMediaEvent& WXUNUSED(event));
+	
     // any class wishing to process wxWidgets events must use this macro
     DECLARE_EVENT_TABLE()
 };

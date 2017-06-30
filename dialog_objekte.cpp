@@ -99,7 +99,7 @@ tr_it iter;
 
 	m_tree->DeleteAllItems();
 	wxString msg;
-	msg<<"Actions ("<<m_frame->GetTrigger()->size()<<")";
+	msg<<"Actions ("<<m_frame->m_actwindow->GetTrigger()->size()<<")";
 	//m_tree->AddRoot(wxString::Format(_("Actions (%d)"), m_frame->GetTrigger()->size()),0,0);
 	m_tree->AddRoot(msg,0,0);
 	m_class->Clear();
@@ -108,10 +108,11 @@ tr_it iter;
 	for (it = Trigger::GetTriggerClasses()->begin(); it!=Trigger::GetTriggerClasses()->end(); it++)
 	{
 		wxTreeItemId id = m_tree->AppendItem(m_tree->GetRootItem(), *it, 1, 1);
-		for (iter = m_frame->GetTrigger()->begin(); iter!= m_frame->GetTrigger()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetTrigger()->begin(); iter!= m_frame->m_actwindow->GetTrigger()->end(); iter++)
 		{
 			if (iter->GetShow())
 			{
+				
 				if (*it == iter->GetClass())
 					m_tree->AppendItem(id, iter->GetLabel(), 2, 2);
 			}
@@ -134,7 +135,7 @@ int index=0;
 	//m_frame->GetAlias()->push_back(al);
 	//m_frame->GetAlias()->push_back(al1);
 	m_listalias->DeleteAllItems();
-	for (iter = m_frame->GetAlias()->begin(); iter!= m_frame->GetAlias()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetAlias()->begin(); iter!= m_frame->m_actwindow->GetAlias()->end(); iter++)
 		{
 			iter->SetIndex(index);
 			long tmp = m_listalias->InsertItem(index, iter->GetAlias(),-1);
@@ -160,7 +161,7 @@ int index=0;
 	//m_frame->GetAlias()->push_back(al);
 	//m_frame->GetAlias()->push_back(al1);
 	m_listhkey->DeleteAllItems();
-	for (iter = m_frame->GetHotkeys()->begin(); iter!= m_frame->GetHotkeys()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetHotkeys()->begin(); iter!= m_frame->m_actwindow->GetHotkeys()->end(); iter++)
 		{
 			iter->SetIndex(index);
 			long tmp = m_listhkey->InsertItem(index, iter->GetName(),-1);
@@ -185,7 +186,7 @@ int index=0;
 	//m_frame->GetAlias()->push_back(al);
 	//m_frame->GetAlias()->push_back(al1);
 	m_listvar->DeleteAllItems();
-	for (iter = m_frame->GetVars()->begin(); iter!= m_frame->GetVars()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
 			iter->SetIndex(index);
 			long tmp = m_listvar->InsertItem(index, iter->GetName(),-1);
@@ -208,7 +209,7 @@ s_it it;
 int index=0;
 
 	m_listlist->DeleteAllItems();
-	for (iter = m_frame->GetLists()->begin(); iter!= m_frame->GetLists()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetLists()->begin(); iter!= m_frame->m_actwindow->GetLists()->end(); iter++)
 		{
 			iter->SetIndex(index);
 			long tmp = m_listlist->InsertItem(index, iter->GetName(),-1);
@@ -230,7 +231,7 @@ t_it iter;
 s_it it;
 int index=0;
 	m_timerlist->DeleteAllItems();
-	for (iter = m_frame->GetTimers()->begin(); iter!= m_frame->GetTimers()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetTimers()->begin(); iter!= m_frame->m_actwindow->GetTimers()->end(); iter++)
 		{
 			if (iter->GetShow())
 			{
@@ -256,10 +257,10 @@ s_it sit;
 	m_gaugew->DeleteAllItems();
 	m_gaugew->AddRoot(_("Gauge Windows"));
 
-	if (!m_frame->GetGaugePanes()->empty())
+	if (!m_frame->m_actwindow->GetGaugePanes()->empty())
 	{
 		
-		for (sit=m_frame->GetGaugePanes()->begin();sit!=m_frame->GetGaugePanes()->end();sit++)
+		for (sit=m_frame->m_actwindow->GetGaugePanes()->begin();sit!=m_frame->m_actwindow->GetGaugePanes()->end();sit++)
 		{
 			m_parentw->Append(*sit);
 			wxTreeItemId id = m_gaugew->AppendItem(m_gaugew->GetRootItem(), *sit);
@@ -279,7 +280,7 @@ s_it sit;
 	v_it iter;
 	m_var1->Clear();
 	m_var2->Clear();
-	for (iter = m_frame->GetVars()->begin(); iter!= m_frame->GetVars()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
 			m_var1->Append(iter->GetName());
 			m_var2->Append(iter->GetName());
@@ -299,7 +300,7 @@ vector<wxTreeItemId> id;
 	
 	m_treeCtrl3->DeleteAllItems();
 	m_treeCtrl3->AddRoot(_("Buttons"));
-	for (iter = m_frame->GetButtons()->begin(); iter!= m_frame->GetButtons()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetButtons()->begin(); iter!= m_frame->m_actwindow->GetButtons()->end(); iter++)
 		{
 			if (find(list.begin(),list.end(), iter->GetTbName())==list.end())
 			{
@@ -309,7 +310,7 @@ vector<wxTreeItemId> id;
 				
 			}
 		}
-	for (iter = m_frame->GetButtons()->begin(); iter!= m_frame->GetButtons()->end(); iter++)
+	for (iter = m_frame->m_actwindow->GetButtons()->begin(); iter!= m_frame->m_actwindow->GetButtons()->end(); iter++)
 		{
 			s_it s;
 			int i=0;
@@ -432,6 +433,7 @@ void dlg_obj::OnTriggerOn( wxCommandEvent& event )
 	else
 	{
 		m_frame->GetTrigger()->at(index).SetActive(m_tron->GetValue());
+		m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 	}
 }
 
@@ -446,6 +448,7 @@ void dlg_obj::OnSendToScript( wxCommandEvent& event )
 	else
 	{
 		m_frame->GetTrigger()->at(index).SetSendScript(m_sendscript->GetValue());
+		m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 	}
 
 }
@@ -500,6 +503,7 @@ void dlg_obj::OnPatternEdit(wxCommandEvent& event)
 		}
 		sscr->Destroy();
 	}
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnClassToggle( wxCommandEvent& event )
@@ -562,6 +566,7 @@ void dlg_obj::OnDelClass( wxCommandEvent& event )
 		BuildTree();
 		}
 	}
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnActionAdd( wxCommandEvent& event )
@@ -599,6 +604,7 @@ tr_it it;
 	stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
 	BuildTree();
 	m_class->SetStringSelection(tr.GetClass());
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnActionEdit( wxCommandEvent& event )
@@ -644,6 +650,7 @@ tr_it it;
 		m_tree->SetFocus();
 		m_tree->SelectItem(id);
 	}
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnActionDelete( wxCommandEvent& event )
@@ -665,7 +672,7 @@ tr_it it;
 		stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
 		BuildTree();
 	}
-
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnItemSelected( wxListEvent& event )
@@ -756,6 +763,7 @@ void dlg_obj::OnActionEndLabelEdit(wxTreeEvent &event)
 		}
 	BuildTree();
 	}
+	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 
@@ -794,6 +802,7 @@ al_it it;
 		}
 	wxCommandEvent ev;
 	OnGroupChanged(ev);
+	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnAliasEdit( wxCommandEvent& event )
@@ -826,6 +835,7 @@ al_it it;
 	m_groupcombo->SetStringSelection(m_frame->GetAlias()->at(m_index).GetGroup());
 	wxCommandEvent ev;
 	OnGroupChanged(ev);
+	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnAliasDelete( wxCommandEvent& event )
@@ -848,6 +858,7 @@ al_it it;
 		}
 		wxCommandEvent ev;
 		OnGroupChanged(ev);
+		m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 	}
 }
 
@@ -859,6 +870,7 @@ void dlg_obj::OnAliasOn( wxCommandEvent& event )
 	{
 		m_frame->GetAlias()->at(m_index).SetActive(m_alon->GetValue());
 	}
+	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnGroupOff( wxCommandEvent& event )
@@ -883,6 +895,7 @@ al_it iter;
 			}
 		}
 	}
+	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 
 }
 
@@ -915,6 +928,7 @@ s_it it;
 				}
 			}
 		BuildAlias();
+		m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 		}
 	}
 }
@@ -937,8 +951,9 @@ al_it iter;
 		{
 			if (group==iter->GetGroup())
 			{
+				int idx = m_frame->GetAliasIndexByLabel(iter->GetAlias());
 				long tmp = m_listalias->InsertItem(index, iter->GetAlias(),-1);
-				m_listalias->SetItemData(tmp, iter->GetIndex());
+				m_listalias->SetItemData(tmp, idx);
 				m_listalias->SetItem(index, 1, iter->GetAction(), -1);
 				m_listalias->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -997,6 +1012,7 @@ hk_it it;
 	wxCommandEvent ev;
 	OnHkGroupChanged(ev);
 	m_hkcombo->SetStringSelection(hk.GetGroup());
+	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHotkeyEdit( wxCommandEvent& event )
@@ -1026,6 +1042,7 @@ hk_it it;
 	wxCommandEvent ev;
 	OnHkGroupChanged(ev);
 	m_hkcombo->SetStringSelection(m_frame->GetHotkeys()->at(m_hkindex).GetGroup());
+	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHkSelected( wxListEvent& event )
@@ -1073,6 +1090,7 @@ hk_it it;
 		}
 		wxCommandEvent ev;
 		OnHkGroupChanged(ev);
+		m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 	}
 }
 
@@ -1084,6 +1102,8 @@ void dlg_obj::OnHkOn( wxCommandEvent& event)
 	{
 		m_frame->GetHotkeys()->at(m_hkindex).SetActive(m_hkeyon->GetValue());
 	}
+	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+
 }
 
 void dlg_obj::OnHkGroupDelete(wxCommandEvent& event)
@@ -1117,6 +1137,7 @@ s_it it;
 		BuildHotkeys();
 		}
 	}
+	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHkGroupToggle( wxCommandEvent& event )
@@ -1161,8 +1182,9 @@ hk_it iter;
 		{
 			if (group==iter->GetGroup())
 			{
+				int idx = m_frame->GetHkIndexByLabel(iter->GetKeyName());
 				long tmp = m_listhkey->InsertItem(index, iter->GetName(),-1);
-				m_listhkey->SetItemData(tmp, iter->GetIndex());
+				m_listhkey->SetItemData(tmp, idx);
 				m_listhkey->SetItem(index, 1, iter->GetAction(), -1);
 				m_listhkey->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1225,6 +1247,8 @@ v_it it;
 	m_frame->luaBuildvar();
 	wxCommandEvent ev;
 	OnVGroupChanged(ev);
+	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
+
 }
 
 void dlg_obj::OnVarEdit( wxCommandEvent& event )
@@ -1249,7 +1273,8 @@ v_it it;
 	m_vargroup->SetStringSelection(m_frame->GetVars()->at(m_vindex).GetGroup());
 	wxCommandEvent ev;
 	OnVGroupChanged(ev);
-	//BuildVars();
+	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
+	
 }
 
 void dlg_obj::OnVarDelete( wxCommandEvent& event )
@@ -1272,6 +1297,7 @@ v_it it;
 		}
 		wxCommandEvent ev;
 		OnVGroupChanged(ev);
+		m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 	}
 }
 
@@ -1282,6 +1308,7 @@ void dlg_obj::OnVarOn( wxCommandEvent& event )
 	else
 	{
 		m_frame->GetVars()->at(m_vindex).SetActive(m_von->GetValue());
+		m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 	}
 }
 
@@ -1316,6 +1343,7 @@ s_it it;
 		BuildVars();
 		}
 	}
+	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 }
 
 void dlg_obj::OnVGroupOff( wxCommandEvent& event )
@@ -1361,7 +1389,7 @@ v_it iter;
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_listvar->InsertItem(index, iter->GetName(),-1);
-				m_listvar->SetItemData(tmp, iter->GetIndex());
+				m_listvar->SetItemData(tmp, m_frame->GetVarIndexByLabel(iter->GetName()));
 				m_listvar->SetItem(index, 1, iter->GetValue(), -1);
 				m_listvar->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1428,6 +1456,7 @@ li_it it;
 	OnLGroupChanged(ev);
 	it = find(m_frame->GetLists()->begin(), m_frame->GetLists()->end(), l.GetName());
 	m_listlist->SetItemState(it->GetIndex(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListEdit(wxCommandEvent &event)
@@ -1453,6 +1482,7 @@ li_it it;
 	m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
 	wxCommandEvent ev;
 	OnLGroupChanged(ev);
+	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListDelete(wxCommandEvent& event)
@@ -1475,6 +1505,7 @@ li_it it;
 		}
 		wxCommandEvent ev;
 		OnLGroupChanged(ev);
+		m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 	}
 }
 
@@ -1486,6 +1517,7 @@ void dlg_obj::OnAddItem(wxCommandEvent& event)
 	m_items->Append(m_items->GetValue());
 	BuildLists();
 	m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
+	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListOn(wxCommandEvent& event)
@@ -1495,6 +1527,7 @@ void dlg_obj::OnListOn(wxCommandEvent& event)
 	else
 	{
 		m_frame->GetLists()->at(m_lindex).SetActive(m_lion->GetValue());
+		m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 	}
 }
 
@@ -1553,6 +1586,7 @@ s_it it;
 		BuildLists();
 		}
 	}
+	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnLGroupChanged( wxCommandEvent& event )
@@ -1574,7 +1608,7 @@ li_it iter;
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_listlist->InsertItem(index, iter->GetName(),-1);
-				m_listlist->SetItemData(tmp, iter->GetIndex());
+				m_listlist->SetItemData(tmp, m_frame->GetListIndexByLabel(iter->GetName()));
 				m_listlist->SetItem(index, 1, iter->GetValue(), -1);
 				m_listlist->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1645,6 +1679,7 @@ t_it it;
 	m_tigroup->SetStringSelection(t.GetGroup());
 	wxCommandEvent ev;
 	OnTGroupChanged(ev);
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTimerDelete( wxCommandEvent& event )
@@ -1667,6 +1702,7 @@ t_it it;
 		}
 		wxCommandEvent ev;
 		OnTGroupChanged(ev);
+		m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 	}
 }
 
@@ -1698,6 +1734,7 @@ t_it it;
 	m_tigroup->SetStringSelection(m_frame->GetTimers()->at(m_tindex).GetGroup());
 	wxCommandEvent ev;
 	OnTGroupChanged(ev);
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTimerStart(wxCommandEvent& event)
@@ -1715,6 +1752,7 @@ void dlg_obj::OnTimerOn( wxCommandEvent& event )
 	else
 	{
 		m_frame->GetTimers()->at(m_tindex).SetActive(m_ton->GetValue());
+		m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 	}
 }
 
@@ -1773,6 +1811,7 @@ s_it it;
 		BuildTimers();
 		}
 	}
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTGroupChanged( wxCommandEvent& event )
@@ -1794,7 +1833,7 @@ t_it iter;
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_timerlist->InsertItem(index, iter->GetName(),-1);
-				m_timerlist->SetItemData(tmp, iter->GetIdx());
+				m_timerlist->SetItemData(tmp, m_frame->GetTimerIndexByLabel(iter->GetName()));
 				m_timerlist->SetItem(index, 1, iter->GetAction(), -1);
 				m_timerlist->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1895,6 +1934,7 @@ int i;
 	g.Register();
 	f->GetGauges()->at(i).push_back(g.GetName());
 	BuildGaugeTree();
+	m_frame->m_actwindow->SetGauges(*m_frame->GetGauges());
 }
 
 void dlg_obj::OnDelGauge(wxCommandEvent &event)
@@ -1923,6 +1963,7 @@ class GaugeWindow *gw;
 		BuildGaugeTree();
 		gw->Refresh();
 	}
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnEditGauge(wxCommandEvent &event)
@@ -1974,6 +2015,7 @@ class GaugeWindow *gw;
 		m_gaugew->SetFocus();
 		m_gaugew->SelectItem(id);
 	}
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnButtonSelChanged( wxTreeEvent& event )
@@ -2062,6 +2104,7 @@ wxAuiToolBar *tb;
 	BuildButtons();
 	tb->Realize();
 	m_frame->m_mgr.Update();
+	m_frame->m_actwindow->SetButtons(*m_frame->GetButtons());
 }
 
 void dlg_obj::OnButtonDelete(wxCommandEvent& event)
@@ -2085,6 +2128,7 @@ b_it it;
 		tb->Realize();
 		m_frame->m_mgr.Update();
 	}
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnButtonEdit(wxCommandEvent& event)
@@ -2132,6 +2176,7 @@ b_it it;
 		m_treeCtrl3->SetFocus();
 		m_treeCtrl3->SelectItem(id);
 	}
+	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::SetData(wxString s)
@@ -2143,133 +2188,3 @@ void dlg_obj::SetData(wxString s)
 	m_s = s;
 	//(*m_pattern)<<s;
 }
-
-/*
-void dlg_obj::OnMacroChar(wxKeyEvent &event)
-{
-wxString display;
-	
-	long keycode = event.GetKeyCode();
-	int mod = event.GetModifiers();
-	wxString key;
-	if (mod&wxMOD_CMD)
-	{
-		if ( keycode > 0 && keycode < 27 )
-		{
-			key.Printf(_("%c"), _T('A') + keycode - 1);           
-			m_key << key;
-		}
-		else m_key << (wxChar)keycode;
-	}
-	
-	
-	switch ( keycode )
-        {
-            case WXK_BACK: key = _T("BACK"); break;
-            case WXK_TAB: key = _T("TAB"); break;
-            case WXK_RETURN: key = _T("RETURN"); break;
-            case WXK_ESCAPE: key = _T("ESCAPE"); break;
-            case WXK_SPACE: key = _T("SPACE"); break;
-            case WXK_DELETE: key = _T("DELETE"); break;
-            case WXK_START: key = _T("START"); break;
-            case WXK_LBUTTON: key = _T("LBUTTON"); break;
-            case WXK_RBUTTON: key = _T("RBUTTON"); break;
-            case WXK_CANCEL: key = _T("CANCEL"); break;
-            case WXK_MBUTTON: key = _T("MBUTTON"); break;
-            case WXK_CLEAR: key = _T("CLEAR"); break;
-            //case WXK_SHIFT: key = _("Shift"); break;
-            //case WXK_ALT: key = _("Alt"); break;
-            //case WXK_CONTROL: key = _("Ctrl"); break;
-            case WXK_MENU: key = _T("MENU"); break;
-            case WXK_PAUSE: key = _T("PAUSE"); break;
-            case WXK_CAPITAL: key = _T("CAPITAL"); break;
-            case WXK_END: key = _T("END"); break;
-            case WXK_HOME: key = _T("HOME"); break;
-            case WXK_LEFT: key = _T("LEFT"); break;
-            case WXK_UP: key = _T("UP"); break;
-            case WXK_RIGHT: key = _T("RIGHT"); break;
-            case WXK_DOWN: key = _T("DOWN"); break;
-            case WXK_SELECT: key = _T("SELECT"); break;
-            case WXK_PRINT: key = _T("PRINT"); break;
-            case WXK_EXECUTE: key = _T("EXECUTE"); break;
-            case WXK_SNAPSHOT: key = _T("SNAPSHOT"); break;
-            case WXK_INSERT: key = _T("INSERT"); break;
-            case WXK_HELP: key = _T("HELP"); break;
-            case WXK_NUMPAD0: key = _T("NUMPAD0"); break;
-            case WXK_NUMPAD1: key = _T("NUMPAD1"); break;
-            case WXK_NUMPAD2: key = _T("NUMPAD2"); break;
-            case WXK_NUMPAD3: key = _T("NUMPAD3"); break;
-            case WXK_NUMPAD4: key = _T("NUMPAD4"); break;
-            case WXK_NUMPAD5: key = _T("NUMPAD5"); break;
-            case WXK_NUMPAD6: key = _T("NUMPAD6"); break;
-            case WXK_NUMPAD7: key = _T("NUMPAD7"); break;
-            case WXK_NUMPAD8: key = _T("NUMPAD8"); break;
-            case WXK_NUMPAD9: key = _T("NUMPAD9"); break;
-            case WXK_MULTIPLY: key = _T("MULTIPLY"); break;
-            case WXK_ADD: key = _T("ADD"); break;
-            case WXK_SEPARATOR: key = _T("SEPARATOR"); break;
-            case WXK_SUBTRACT: key = _T("SUBTRACT"); break;
-            case WXK_DECIMAL: key = _T("DECIMAL"); break;
-            case WXK_DIVIDE: key = _T("DIVIDE"); break;
-            case WXK_F1: key = _T("F1"); break;
-            case WXK_F2: key = _T("F2"); break;
-            case WXK_F3: key = _T("F3"); break;
-            case WXK_F4: key = _T("F4"); break;
-            case WXK_F5: key = _T("F5"); break;
-            case WXK_F6: key = _T("F6"); break;
-            case WXK_F7: key = _T("F7"); break;
-            case WXK_F8: key = _T("F8"); break;
-            case WXK_F9: key = _T("F9"); break;
-            case WXK_F10: key = _T("F10"); break;
-            case WXK_F11: key = _T("F11"); break;
-            case WXK_F12: key = _T("F12"); break;
-            case WXK_F13: key = _T("F13"); break;
-            case WXK_F14: key = _T("F14"); break;
-            case WXK_F15: key = _T("F15"); break;
-            case WXK_F16: key = _T("F16"); break;
-            case WXK_F17: key = _T("F17"); break;
-            case WXK_F18: key = _T("F18"); break;
-            case WXK_F19: key = _T("F19"); break;
-            case WXK_F20: key = _T("F20"); break;
-            case WXK_F21: key = _T("F21"); break;
-            case WXK_F22: key = _T("F22"); break;
-            case WXK_F23: key = _T("F23"); break;
-            case WXK_F24: key = _T("F24"); break;
-            case WXK_NUMLOCK: key = _T("NUMLOCK"); break;
-            case WXK_SCROLL: key = _T("SCROLL"); break;
-            case WXK_PAGEUP: key = _T("PAGEUP"); break;
-            case WXK_PAGEDOWN: key = _T("PAGEDOWN"); break;
-            case WXK_NUMPAD_SPACE: key = _T("NUMPAD_SPACE"); break;
-            case WXK_NUMPAD_TAB: key = _T("NUMPAD_TAB"); break;
-            case WXK_NUMPAD_ENTER: key = _T("NUMPAD_ENTER"); break;
-            case WXK_NUMPAD_F1: key = _T("NUMPAD_F1"); break;
-            case WXK_NUMPAD_F2: key = _T("NUMPAD_F2"); break;
-            case WXK_NUMPAD_F3: key = _T("NUMPAD_F3"); break;
-            case WXK_NUMPAD_F4: key = _T("NUMPAD_F4"); break;
-            case WXK_NUMPAD_HOME: key = _T("NUMPAD_HOME"); break;
-            case WXK_NUMPAD_LEFT: key = _T("NUMPAD_LEFT"); break;
-            case WXK_NUMPAD_UP: key = _T("NUMPAD_UP"); break;
-            case WXK_NUMPAD_RIGHT: key = _T("NUMPAD_RIGHT"); break;
-            case WXK_NUMPAD_DOWN: key = _T("NUMPAD_DOWN"); break;
-            case WXK_NUMPAD_PAGEUP: key = _T("NUMPAD_PAGEUP"); break;
-            case WXK_NUMPAD_PAGEDOWN: key = _T("NUMPAD_PAGEDOWN"); break;
-            case WXK_NUMPAD_END: key = _T("NUMPAD_END"); break;
-            case WXK_NUMPAD_BEGIN: key = _T("NUMPAD_BEGIN"); break;
-            case WXK_NUMPAD_INSERT: key = _T("NUMPAD_INSERT"); break;
-            case WXK_NUMPAD_DELETE: key = _T("NUMPAD_DELETE"); break;
-            case WXK_NUMPAD_EQUAL: key = _T("NUMPAD_EQUAL"); break;
-            case WXK_NUMPAD_MULTIPLY: key = _T("NUMPAD_MULTIPLY"); break;
-            case WXK_NUMPAD_ADD: key = _T("NUMPAD_ADD"); break;
-            case WXK_NUMPAD_SEPARATOR: key = _T("NUMPAD_SEPARATOR"); break;
-            case WXK_NUMPAD_SUBTRACT: key = _T("NUMPAD_SUBTRACT"); break;
-            case WXK_NUMPAD_DECIMAL: key = _T("NUMPAD_DECIMAL"); break;
-			default:
-				if ( wxIsprint((int)keycode) )
-                   //m_key << (wxChar)keycode;
-				break;
-		}
-	
-	//m_hkey->ChangeValue(m_key);
-	//event.Skip();
-}
-*/

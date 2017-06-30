@@ -146,6 +146,9 @@ int luafunc_colorgauge(lua_State *L);
 int luafunc_creategaugewin(lua_State *L);
 int luafunc_setgaugelabel(lua_State *L);
 int luafunc_deletegauge(lua_State *L);
+int luafunc_setstyle(lua_State *L);
+int luafunc_settextpos(lua_State *L);
+int luafunc_setshowvalue(lua_State *L);
 //button
 int luafunc_newbtn(lua_State *L);
 int luafunc_delbtn(lua_State *L);
@@ -318,6 +321,9 @@ static const struct luaL_Reg amclib_gauge [] = {
 	{"createwindow", luafunc_creategaugewin},
 	{"setlabel", luafunc_setgaugelabel},
 	{"delete", luafunc_deletegauge},
+	{"setstyle", luafunc_setstyle},
+	{"settextpos", luafunc_settextpos},
+	{"showvalue", luafunc_setshowvalue},
 	{NULL, NULL}
 };
 

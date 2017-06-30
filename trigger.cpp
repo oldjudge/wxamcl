@@ -231,7 +231,7 @@ wxCoord amcColorComboBox::OnMeasureItem(size_t item) const
 {
 	//wxRect rc = GetRect();
 	//return (wxCoord)(rc.GetHeight()/16);
-	return 8;
+	return 12;
 }
 
 wxCoord amcColorComboBox::OnMeasureItemWidth(size_t item) const

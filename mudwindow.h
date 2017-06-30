@@ -64,6 +64,8 @@ public:
 	bool GetUseIPV6() {return m_useipv6;}
 	bool GetWrapping() { return m_wrapping; }
 	bool GetAutoFocus() { return m_autofocus; }
+	wxString GetEventFile() { return m_eventfile; }
+	wxString GetProfile() { return m_profile; }
 	//Setters
 	void SetColour(int idx, wxColour c) {m_colansi[idx] = c;}
 	void SetBackgroundCol(wxColour c) {m_background=c;}
@@ -99,7 +101,9 @@ public:
 	void SetIPV6(bool b) {m_useipv6=b;}
 	void SetWrapping(bool b) { m_wrapping = b; }
 	void SetAutoFocus(bool b) { m_autofocus = b; }
-
+	void SetEventFile(wxString f) { m_eventfile = f; }
+	void SetProfile(wxString s) { m_profile = s; }
+	
 	//socket functions
 	void MyConnect(wxIPV4address addr);
     #if defined WXAMCL_USEIPV6
@@ -164,16 +168,60 @@ public:
 	vector<wxString> * GetWinCapture() {return &m_capwin;}
 	vector<bool> * GetGagCapture() {return &m_capgag;}
 	map<wxString, bool> *GetCapWindow() {return &m_capwindow;}
+	
 	//GMCP
 	vector<wxString> * GetGMCPModules() {return &m_gmcpmods;}
 	void SetDebugGMCP(bool b) {m_debuggmcp=b;}
 	bool GetDebugGMCP() {return m_debuggmcp;}
+	// Objects
+	std::vector<class Trigger> * GetTrigger() { return &m_actions; };
+	std::vector<class amcAlias> * GetAlias() { return &m_alias; };
+	std::vector<class amcHotkey> * GetHotkeys() { return &m_hotkeys; };
+	std::vector<class amcVar> * GetVars() { return &m_vars; };
+	std::vector<class amcDefVar> * GetDefVars() { return &m_defvars; };
+	std::vector<class amcList> * GetLists() { return &m_lists; };
+	std::vector<class amcTimer> * GetTimers() { return &m_timers; };
+	std::vector<class amcButton> * GetButtons() { return &m_buttons; };
+	std::vector<wxString> *GetPanes() { return &m_panes; }
+	std::vector<wxString> *GetNbs() { return &m_nbs; }
+	std::vector<vector<wxString> > *GetNbPanes() { return &m_nbpanes; }
+	std::vector<wxString> *GetGaugePanes() { return &m_gaugepanes; }
+	std::vector<vector<wxString> > *GetGauges() { return &m_gauges; }
+	std::vector<wxString> *GetAmcWindows() { return &m_amcwindows; }
+	std::vector<wxString> *GetPackages() { return &m_packages; }
+	std::unordered_map<wxString, wxWindow *> *GetUserWindows() { return &m_userwindows; }
+	int GetTriggerIndexByLabel(wxString s);
+	int GetAliasIndexByLabel(wxString s);
+	int GetVarIndexByLabel(wxString s);
+	int GetListIndexByLabel(wxString s);
+	int GetTimerIndexByLabel(wxString s);
+	int GetButtonIndexByLabel(wxString s);
+	int GetButtonIndexById(int i);
+	int GetDefVarIndexByLabel(wxString s);
+	int GetHkIndexByLabel(wxString s);
+	
+	void SetTriggers(vector<class Trigger> aT) { m_actions = aT; }
+	void SetAlias(vector<class amcAlias> aA) { m_alias = aA; }
+	void SetHotkeys(vector<class amcHotkey> aH) { m_hotkeys = aH; }
+	void SetVars(vector<class amcVar> aV) { m_vars = aV; }
+	void SetLists(vector<class amcList> aL) { m_lists = aL; }
+	void SetTimers(vector<class amcTimer> aT) { m_timers = aT; }
+	void SetButtons(vector<class amcButton> aB) { m_buttons = aB; }
+	void SetPackages(vector<wxString> aS) { m_packages = aS; }
+	void SetAmcWindows(vector<wxString> aS) { m_amcwindows = aS; }
+	void SetPanes(vector<wxString> aS) { m_panes = aS; }
+	void SetNbs(vector<wxString> aS) { m_nbs = aS; }
+	void SetNbPanes(vector<vector<wxString>> aS) { m_nbpanes = aS; }
+	void SetGaugePanes(vector<wxString> aS) { m_gaugepanes = aS; }
+	void SetGauges(vector<vector<wxString>> aS) { m_gauges = aS; }
+	void SetUserWindows(unordered_map<wxString, wxWindow*> uw) { m_userwindows = uw; }
 	//Static functions
 	static void SetNewLine(bool bo) {m_bonewline=bo;}
 	static bool GetNewLine() {return m_bonewline;}
 	//public variables
 	wxUint64 m_curline;
 	wxUint64 m_scrollrange;
+	
 private:
 	class MudMainFrame *m_parent;
 	class amcLua *m_L;
@@ -203,7 +251,7 @@ private:
 	wxColour m_background;
 	std::map<wxString, int> m_bcols;
 	std::map<wxString, wxString> m_colcodes;
-	wxFont *m_font, *m_ufont, *m_ifont;
+	wxFont *m_font, *m_ufont, *m_ifont, *m_stfont;
 	static bool m_bonewline;
 	static bool m_bocolcode;
 	static bool m_atcpdata;//for atcp middle of subnegotiation
@@ -260,9 +308,11 @@ private:
 	wxString m_logfile;
 	wxFile* m_tlog;
 	wxFile* m_htmllog;
+	wxString m_eventfile;
+	wxString m_profile;
 	//colorcodes for html logging
 	std::vector<wxString> m_css;
-	//bool m_botelnetparsed;
+	
 	bool m_bourl;/*!< clickable URLs? */
 	//for mxp commands menus
 	std::vector<wxString> m_mxpcommand;
@@ -273,7 +323,24 @@ private:
 	char m_cBuffer[128001];
 	bool m_wrapping;
 	bool m_autofocus;
-	//wxMemoryBuffer m_MemBuffer;
+	//Objects
+	std::vector<class Trigger> m_actions;
+	std::vector<class amcAlias> m_alias;
+	std::vector<class amcHotkey> m_hotkeys;
+	std::vector<class amcVar> m_vars;
+	std::vector<class amcDefVar> m_defvars;
+	std::vector<class amcList> m_lists;
+	std::vector<class amcTimer> m_timers;
+	std::vector<class amcButton> m_buttons;
+	std::vector<wxString> m_panes;
+	std::vector<wxString> m_nbs;
+	vector<vector<wxString> > m_nbpanes;
+	vector<wxString> m_amcwindows;
+	std::vector<wxString> m_gaugepanes;
+	vector<vector<wxString> > m_gauges;
+	vector<wxString> m_packages;
+	unordered_map<wxString, wxWindow *> m_userwindows;
+	
 	//private Functions
 	size_t ParseTelnet(wxString *sLine, size_t pos);
 	size_t ParseMSP(wxString *sLine, size_t pos);

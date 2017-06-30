@@ -19,8 +19,8 @@ AnsiLineElement::AnsiLineElement()
 	MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	
 	m_fcol.Set(RGB(192,192,192));
-	if (frame->m_child)
-		m_bcol = frame->m_child->GetAnsiColor(0);
+	if (frame->m_actwindow)
+		m_bcol = frame->m_scriptwin->GetAnsiColor(0);
 	else m_bcol.Set(RGB(0,0,0));
 	m_fcolindex=7;
 	m_bcolindex=0;
@@ -41,8 +41,8 @@ AnsiLineElement::AnsiLineElement(wxString text, int f, int b)
 	m_fcolindex=f;
 	m_bcolindex=b;
 	MudMainFrame *frame = wxGetApp().GetFrame();
-	m_fcol=frame->m_child->GetAnsiColor(f);
-	m_bcol=frame->m_child->GetAnsiColor(b);
+	m_fcol=frame->m_actwindow->GetAnsiColor(f);
+	m_bcol=frame->m_actwindow->GetAnsiColor(b);
 	m_hint = wxEmptyString;
 	m_url = wxEmptyString;
     m_ctext[0]=EOS;
