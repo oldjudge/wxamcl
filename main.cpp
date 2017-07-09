@@ -283,8 +283,8 @@ bool MudClientApp::OnInit()
 	ss = "\x1b[0;33m           ---  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);*/
 	//s.clear();
-	//wxString s = "\xff\xfb\x5b";
-	//frame->m_child->ParseBuffer(s.char_str());
+	//wxString ss = "\x1b[1m\x1b[37mconnect <username> <password>\x1b[0m";
+	//frame->m_child->ParseNBuffer(ss.char_str());
 	//wxString s = wxVERSION_STRING;
 	//frame->m_child->Msg(wxString::Format(wxT("%s on %s"), s.c_str(), wxGetOsDescription().c_str()));
 	//wxString s = "ïðõèô";
@@ -578,11 +578,15 @@ MudMainFrame::MudMainFrame()
 
 MudMainFrame::~MudMainFrame()
 {
-	/*if (m_curhost!=-1)
-		SaveProfile(GetHosts()->at(m_curhost).GetProfileName());
-	else SaveProfile(m_curprofile);*/
+	
 	//TODO
 	// Saveallprofiles using m_childwindows;
+	int i = m_childwindows.size();
+	for (int ii = 0; ii < i; ii++)
+	{
+		m_actwindow = m_childwindows.at(ii);
+		SaveProfile(m_childwindows.at(ii)->GetProfile());
+	}
   m_mgr.UnInit();
   if (!m_notebook)
 	m_child->Destroy();
@@ -689,6 +693,7 @@ void MudMainFrame::OnCharConnect(wxCommandEvent& event)
 			LoadProfile(GetHosts()->at(m_curhost).GetProfileFName());
 			
 		}
+		
 		GetHosts()->at(m_curhost).SetIPHost();
 		SaveHosts();
 		if (!m_actwindow->GetUseIPV6())
@@ -700,7 +705,7 @@ void MudMainFrame::OnCharConnect(wxCommandEvent& event)
 		int idx = GetDefVarIndexByLabel("wxamclChar");
 		GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetCharName());
 		idx = GetDefVarIndexByLabel("wxamclIP");
-		if (!m_child->GetUseIPV6())
+		if (!m_actwindow->GetUseIPV6())
 			GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIPAddress());
 #ifdef WXAMCL_USEIPV6
 		else
@@ -982,8 +987,7 @@ void MudMainFrame::OnUserWindow(wxCommandEvent& event)
 		wxMenuItem* item = bar->FindItem(event.GetId());
 		wxString name = item->GetItemLabelText();
 		m_mgr.GetPane(name).Hide();
-		//m_parent->m_splitter->GetLineBuffer().empty();
-		//m_parent->m_mgr.GetPane(wxT("amcmain")).Hide();
+		
 		m_mgr.Update();
 		m_child->Thaw();
 		return;
@@ -1339,18 +1343,19 @@ wxString win = wxGetTextFromUser(_("Name of the window:"), _("Create new window"
 	mw = new MudWindow(this, win, 9);
 	mw->SetName(win);
 	
-	GetPanes()->push_back(win);//save all the windows we have
-	//if (!wxThread::IsMain())
-	//	wxMutexGuiLeave();
-	m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Hide());
-	//frame->m_mgr.AddPane((wxWindow*)mw, wxAuiPaneInfo().Name(wxT("Asa")).Top().Caption(wxT("Asa")));
+	m_actwindow->GetPanes()->push_back(win);//save all the windows we have
 	
+	m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Hide());
+	unordered_map <wxString, wxWindow *> uw;
+	uw = *this->m_actwindow->GetUserWindows();
+	uw[win] = mw;
+	this->m_actwindow->SetUserWindows(uw);
 	m_mgr.GetPane(mw).Show();
 	m_mgr.Update();	
 	Refresh();
 	Update();
-	m_child->Refresh();
-	m_child->Update();
+	m_actwindow->Refresh();
+	m_actwindow->Update();
 }
 
 void MudMainFrame::OnCreateNb(wxCommandEvent& event)
@@ -1520,9 +1525,15 @@ void MudMainFrame::OnMenuUi(wxUpdateUIEvent& event)
 
 void MudMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
-	if (m_curhost!=-1)
+	int i = m_childwindows.size();
+	for (int ii = 0; ii < i; ii++)
+	{
+		m_actwindow = m_childwindows.at(ii);
+		SaveProfile(m_childwindows.at(ii)->GetProfile());
+	}
+	/*if (m_curhost!=-1)
 		SaveProfile(GetHosts()->at(m_curhost).GetProfileName());
-	else SaveProfile(m_curprofile);
+	else SaveProfile(m_curprofile);*/
 	Close(true);
 }
 
@@ -2533,108 +2544,113 @@ li_it itl;
 	return true;
 }
 
-bool MudMainFrame::LoadProfile(wxFileName s)
+bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 {
 	s_it it;
 	unordered_map <wxString, wxWindow *> uw;
 	uw = *this->m_actwindow->GetUserWindows();
- 	for (it = m_panes.begin(); it != m_panes.end(); it++)
+	if (firsttime)
 	{
-		MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*it, this);
-		m_mgr.DetachPane(mw);
-		//m_mgr.Update();
-		mw->Destroy();
-	}
-	for (it = m_amcwindows.begin(); it != m_amcwindows.end(); it++)
-	{
-		amcWindow* aw = (amcWindow*)amcWindow::FindWindowByName(*it, this);
-		if (aw == NULL)
-			continue;
-		m_mgr.DetachPane(aw);
-		//m_mgr.Update();
-		aw->Destroy();
-	}
-	vector<vector<wxString> >::iterator vit;
-	if (!GetNbPanes()->empty())
-	{
-		int x = 0;
-		for (vit = GetNbPanes()->begin(); vit != GetNbPanes()->end(); vit++, x++)
+		for (it = m_panes.begin(); it != m_panes.end(); it++)
 		{
-			it = m_nbs.begin() + x;
-			wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
-			for (size_t i = 0; i < vit->size(); i++)
+			MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*it, this);
+			m_mgr.DetachPane(mw);
+			//m_mgr.Update();
+			mw->Destroy();
+		}
+		for (it = m_amcwindows.begin(); it != m_amcwindows.end(); it++)
+		{
+			amcWindow* aw = (amcWindow*)amcWindow::FindWindowByName(*it, this);
+			if (aw == NULL)
+				continue;
+			m_mgr.DetachPane(aw);
+			//m_mgr.Update();
+			aw->Destroy();
+		}
+		vector<vector<wxString> >::iterator vit;
+		if (!GetNbPanes()->empty())
+		{
+			int x = 0;
+			for (vit = GetNbPanes()->begin(); vit != GetNbPanes()->end(); vit++, x++)
 			{
-				wxString s = vit->at(i);
-				MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(s, this);
-				if (!mw)
-					continue;
-				nb->RemovePage(nb->GetPageIndex(mw));
-				m_mgr.DetachPane(mw);
-				mw->Destroy();
+				it = m_nbs.begin() + x;
+				wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
+				for (size_t i = 0; i < vit->size(); i++)
+				{
+					wxString s = vit->at(i);
+					MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(s, this);
+					if (!mw)
+						continue;
+					nb->RemovePage(nb->GetPageIndex(mw));
+					m_mgr.DetachPane(mw);
+					mw->Destroy();
+				}
 			}
 		}
-	}
-	for (it = m_nbs.begin(); it != m_nbs.end(); it++)
-	{
-
-		wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
-		m_mgr.DetachPane(nb);
-		nb->Destroy();
-	}
-
-	if (!GetGaugePanes()->empty())
-	{
-		for (it = GetGaugePanes()->begin(); it != GetGaugePanes()->end(); it++)
+		for (it = m_nbs.begin(); it != m_nbs.end(); it++)
 		{
-			GaugeWindow *gw = (GaugeWindow*)GaugeWindow::FindWindowByName(*it, this);
-			if (!gw)
-				continue;
-			m_mgr.DetachPane(gw);
-			gw->Destroy();
+
+			wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
+			m_mgr.DetachPane(nb);
+			nb->Destroy();
 		}
-	}
-    wxAuiToolBar *tb = 0;
-	if (!this->GetButtons()->empty())
-	{
-		for (size_t x = 0; x < GetButtons()->size(); x++)
+
+		if (!GetGaugePanes()->empty())
 		{
-			wxString n = GetButtons()->at(x).GetTbName();
-			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
-			if (!tb)
-				continue;
-			m_mgr.GetPane(tb).Dock();
-			m_mgr.Update();
-			m_mgr.DetachPane(tb);
-			bool b = tb->Destroy();
-            if (b)
-                tb = NULL;
+			for (it = GetGaugePanes()->begin(); it != GetGaugePanes()->end(); it++)
+			{
+				GaugeWindow *gw = (GaugeWindow*)GaugeWindow::FindWindowByName(*it, this);
+				if (!gw)
+					continue;
+				m_mgr.DetachPane(gw);
+				gw->Destroy();
+			}
 		}
-		GetButtons()->clear();
+		wxAuiToolBar *tb = 0;
+		if (!this->GetButtons()->empty())
+		{
+			for (size_t x = 0; x < GetButtons()->size(); x++)
+			{
+				wxString n = GetButtons()->at(x).GetTbName();
+				tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
+				if (!tb)
+					continue;
+				m_mgr.GetPane(tb).Dock();
+				m_mgr.Update();
+				m_mgr.DetachPane(tb);
+				bool b = tb->Destroy();
+				if (b)
+					tb = NULL;
+			}
+			GetButtons()->clear();
+		}
+		m_mgr.Update();
 	}
-	m_mgr.Update();
+	
+	
+	
 
 	//Build Menu
 	wxMenuBar* bar = GetMenuBar();
-	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));//new wxMenu;
-														  //bar->Insert(1, view, _("View1"));
-														  //view->AppendCheckItem(ID_SPLITTER, _("Split Window\tF2"), _("Show the splitter window"));
+	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));
+
 	if (m_splitter->IsShown())
 		view->Check(ID_SPLITTER, true);
 	int ii = view->GetMenuItemCount();
 
 	if (ii > 3)
 	{
-		for (size_t i = 0; i < GetPanes()->size(); i++)
+		for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
 		{
-			view->Destroy(view->FindItem(GetPanes()->at(i)));
+			view->Destroy(view->FindItem(m_actwindow->GetPanes()->at(i)));
 		}
-		for (size_t i = 0; i < GetNbs()->size(); i++)
+		for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
 		{
-			view->Destroy(view->FindItem(GetNbs()->at(i)));
+			view->Destroy(view->FindItem(m_actwindow->GetNbs()->at(i)));
 		}
-		for (size_t i = 0; i < GetGaugePanes()->size(); i++)
+		for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
 		{
-			view->Destroy(view->FindItem(GetGaugePanes()->at(i)));
+			view->Destroy(view->FindItem(m_actwindow->GetGaugePanes()->at(i)));
 		}
 	}
 
@@ -2689,7 +2705,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	}
 
 	stable_sort(m_trigger.begin(), m_trigger.end(), greater<class Trigger>());
-	luaBuildtrigger();
+	//luaBuildtrigger();
 	aL->GetGlobal("amc_alias");
 	len = aL->GetObjectLen();
 	amcAlias::GetAliasGroups()->clear();
@@ -2714,7 +2730,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		m_alias.push_back(al);
 	}
 	stable_sort(m_alias.begin(), m_alias.end(), less<class amcAlias>());
-	luaBuildalias();
+	
 	aL->GetGlobal("amc_hotkey");
 	len = aL->GetObjectLen();
 	amcHotkey::GetHotkeyGroups()->clear();
@@ -2765,7 +2781,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		m_vars.push_back(v);
 	}
 	stable_sort(m_vars.begin(), m_vars.end(), less<class amcVar>());
-	luaBuildvar();
+	//luaBuildvar();
 	aL->GetGlobal(("amc_lists"));
 	len = aL->GetObjectLen();
 	m_lists.clear();
@@ -2796,215 +2812,219 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		aL->SetTop(0);
 		m_lists.push_back(li);
 	}
-	//stable_sort(m_alias.begin(), m_alias.end(), less<class amcAlias>());
-
-	uw.clear();
-	m_panes.clear();
-	m_nbs.clear();
-	aL->GetGlobal("amc_panes");
-	len = aL->GetObjectLen();
-	aL->Pop(1);
-	for (int i = 0; i < len; i++)
+	
+	//Create the windows only if first time called
+	if (firsttime)
 	{
+
+		uw.clear();
+		m_panes.clear();
+		m_nbs.clear();
 		aL->GetGlobal("amc_panes");
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		aL->GetField(-1, "name");
-		wxString win = aL->GetUTF8String(-1);
-		GetPanes()->push_back(win);
-
-		
-		aL->GetField(-2, "font");
-		wxFont f(aL->GetUTF8String(-1));
-		
-		MudWindow * mw = new MudWindow(this, win, f.GetPointSize());
-		//MudWindow mw(this, win, 9);
-		mw->SetName(win);
-#ifdef __WXMSW__
-		if (GetGlobalOptions()->GetCurEncoding()==wxFONTENCODING_UTF8)
-			mw->SetWrapping(false); //workaround under windows UTF8
-#endif
-		
-		mw->SetNFont(&f);
-		mw->SetUFont(&f);
-		aL->GetField(-3, "timestamps");
-		mw->SetTimeStamps(aL->GetBoolean(-1));
-		m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
-		aL->SetTop(0);
-		
-		
-		uw[win] = mw;
-	}
-	m_amcwindows.clear();
-	aL->GetGlobal("amc_amcwindows");
-	len = aL->GetObjectLen();
-	aL->Pop(1);
-	for (int i = 0; i < len; i++)
-	{
-		aL->GetGlobal("amc_amcwindows");
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		aL->GetField(-1, "name");
-		wxString win = aL->GetUTF8String(-1);
-		GetAmcWindows()->push_back(win);
-
-		aL->GetField(-2, "fontname");
-		wxFont f(aL->GetUTF8String(-1));
-		
-		//amcWindow * aw = new amcWindow(this, win);
-		amcWindow * aw = new amcWindow(this, win);
-		aw->SetName(win);
-		
-		m_mgr.AddPane(aw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
-		aL->SetTop(0);
-		uw[win] = aw;
-	}
-
-	aL->GetGlobal("amc_nbs");
-	m_nbpanes.clear();
-	len = aL->GetObjectLen();
-	aL->Pop(1);
-	for (int i = 0; i < len; i++)
-	{
-		aL->GetGlobal("amc_nbs");
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		wxString win = aL->GetUTF8String(-1);
-		GetNbs()->push_back(win);
-		vector<wxString> s;
-		GetNbPanes()->push_back(s);
-		wxAuiNotebook * nb = new wxAuiNotebook(this);
-		nb->SetName(win);
-		nb->SetLabel(win);
-		aL->GetGlobal("amc_nbpanes");
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		int len1 = aL->GetObjectLen();
+		len = aL->GetObjectLen();
 		aL->Pop(1);
-		uw[win] = nb;
-
-		for (int x = 0; x < len1; x++)
+		for (int i = 0; i < len; i++)
 		{
-			aL->GetGlobal("amc_nbpanes");
+			aL->GetGlobal("amc_panes");
 			aL->PushInt(i + 1);
 			aL->GetTable(-2);
-			aL->PushInt(x + 1);
-			aL->GetTable(-2);
 			aL->GetField(-1, "name");
-			wxString win1 = aL->GetUTF8String(-1);
-			MudWindow * mw = new MudWindow(this, win1, 9);
-			mw->SetName(win1);
-			uw[win1] = mw;
-			GetNbPanes()->at(i).push_back(win1);
+			wxString win = aL->GetUTF8String(-1);
+			GetPanes()->push_back(win);
+
+
 			aL->GetField(-2, "font");
-			
 			wxFont f(aL->GetUTF8String(-1));
+
+			MudWindow * mw = new MudWindow(this, win, f.GetPointSize());
+			//MudWindow mw(this, win, 9);
+			mw->SetName(win);
+#ifdef __WXMSW__
+			if (GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
+				mw->SetWrapping(false); //workaround under windows UTF8
+#endif
+
 			mw->SetNFont(&f);
 			mw->SetUFont(&f);
 			aL->GetField(-3, "timestamps");
 			mw->SetTimeStamps(aL->GetBoolean(-1));
-			nb->AddPage(mw, win1);
-			//aL->Pop(1);
+			m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 			aL->SetTop(0);
-			//delete mw;
+
+
+			uw[win] = mw;
 		}
-		m_mgr.AddPane(nb, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
-		aL->SetTop(0);
-		//delete nb;
-	}
-
-	aL->GetGlobal("amc_gaugepanes");
-	len = aL->GetObjectLen();
-	aL->Pop(1);
-	GetGaugePanes()->clear();
-	GetGauges()->clear();
-	for (int i = 0; i < len; i++)
-	{
-		aL->GetGlobal("amc_gaugepanes");
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		aL->GetField(-1, "name");
-		wxString win = aL->GetUTF8String(-1);
-		GetGaugePanes()->push_back(win);
-		vector<wxString> s;
-		GetGauges()->push_back(s);
-		class GaugeWindow * gw = new GaugeWindow(this, win);
-		gw->SetName(win);
-		gw->SetLabel(win);
-		uw[win] = gw;
-		//wxFont f;
-		aL->GetField(-2, "font");
-		wxFont f(aL->GetUTF8String(-1));
-		
-		gw->SetFont(&f);
-		aL->GetGlobal(("amc_gauges"));
-		aL->PushInt(i + 1);
-		aL->GetTable(-2);
-		int len1 = aL->GetObjectLen();
+		m_amcwindows.clear();
+		aL->GetGlobal("amc_amcwindows");
+		len = aL->GetObjectLen();
 		aL->Pop(1);
-
-		for (int x = 0; x < len1; x++)
+		for (int i = 0; i < len; i++)
 		{
-			aL->GetGlobal("amc_gauges");
+			aL->GetGlobal("amc_amcwindows");
 			aL->PushInt(i + 1);
 			aL->GetTable(-2);
-			aL->PushInt(x + 1);
-			aL->GetTable(-2);
-			aL->GetField(-1, "gaugename");
-			wxString win1 = aL->GetUTF8String(-1);
-			GetGauges()->at(i).push_back(win1);
-			aL->GetField(-2, "var1");
-			wxString var1 = aL->GetUTF8String(-1);
-			aL->GetField(-3, "var2");
-			wxString var2 = aL->GetUTF8String(-1);
-			aL->GetField(-4, "fcol");
-			wxString fcol = aL->GetUTF8String(-1);
-			aL->GetField(-5, "bcol");
-			wxString bcol = aL->GetUTF8String(-1);
-			aL->GetField(-6, "alarm");
-			wxString al = aL->GetUTF8String(-1);
-			aL->GetField(-7, "alarmperc");
-			int f = aL->GetInt(-1);
-			aL->GetField(-8, "x");
-			int xx = aL->GetInt(-1);
-			aL->GetField(-9, "y");
-			int y = aL->GetInt(-1);
-			aL->GetField(-10, "cx");
-			int cx = aL->GetInt(-1);
-			aL->GetField(-11, "cy");
-			int cy = aL->GetInt(-1);
-			aL->GetField(-12, "vertical");
-			bool b = aL->GetBoolean(-1);
-			aL->GetField(-13, "style");
-			int style = aL->GetInt(-1);
-			aL->GetField(-14, "showvalue");
-			bool c = aL->GetBoolean(-1);
-			aL->GetField(-15, "textcol");
-			wxString tcol = aL->GetUTF8String(-1);
-			aL->GetField(-16, "textpos");
-			int t = aL->GetInt(-1);
-			wxColour fc;
-			wxColour bc;
-			wxColour alarm;
-			fc.Set(fcol.c_str());
-			bc.Set(bcol.c_str());
-			alarm.Set(al.c_str());
-			amcGauge g(win, win1, var1, var2, fc, bc, xx, y, cx, cy, b);
-			g.SetStyle(style);
-			g.SetTextPos(t);
-			g.SetTextCol(tcol);
-			g.SetAlarmCol(alarm);
-			g.SetAlarmPerc(f);
-			g.SetShowValue(c);
-			g.Register();
-			//gw->GetGauges()->push_back(g);
-			aL->SetTop(0);
-		}
-		m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).CaptionVisible(false).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
-		aL->SetTop(0);
-		//delete gw;
-	}
+			aL->GetField(-1, "name");
+			wxString win = aL->GetUTF8String(-1);
+			GetAmcWindows()->push_back(win);
 
+			aL->GetField(-2, "fontname");
+			wxFont f(aL->GetUTF8String(-1));
+
+			//amcWindow * aw = new amcWindow(this, win);
+			amcWindow * aw = new amcWindow(this, win);
+			aw->SetName(win);
+
+			m_mgr.AddPane(aw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			aL->SetTop(0);
+			uw[win] = aw;
+		}
+
+		aL->GetGlobal("amc_nbs");
+		m_nbpanes.clear();
+		len = aL->GetObjectLen();
+		aL->Pop(1);
+		for (int i = 0; i < len; i++)
+		{
+			aL->GetGlobal("amc_nbs");
+			aL->PushInt(i + 1);
+			aL->GetTable(-2);
+			wxString win = aL->GetUTF8String(-1);
+			GetNbs()->push_back(win);
+			vector<wxString> s;
+			GetNbPanes()->push_back(s);
+			wxAuiNotebook * nb = new wxAuiNotebook(this);
+			nb->SetName(win);
+			nb->SetLabel(win);
+			aL->GetGlobal("amc_nbpanes");
+			aL->PushInt(i + 1);
+			aL->GetTable(-2);
+			int len1 = aL->GetObjectLen();
+			aL->Pop(1);
+			uw[win] = nb;
+
+			for (int x = 0; x < len1; x++)
+			{
+				aL->GetGlobal("amc_nbpanes");
+				aL->PushInt(i + 1);
+				aL->GetTable(-2);
+				aL->PushInt(x + 1);
+				aL->GetTable(-2);
+				aL->GetField(-1, "name");
+				wxString win1 = aL->GetUTF8String(-1);
+				MudWindow * mw = new MudWindow(this, win1, 9);
+				mw->SetName(win1);
+				//uw[win1] = mw;
+				GetNbPanes()->at(i).push_back(win1);
+				aL->GetField(-2, "font");
+
+				wxFont f(aL->GetUTF8String(-1));
+				mw->SetNFont(&f);
+				mw->SetUFont(&f);
+				aL->GetField(-3, "timestamps");
+				mw->SetTimeStamps(aL->GetBoolean(-1));
+				nb->AddPage(mw, win1);
+				//aL->Pop(1);
+				aL->SetTop(0);
+				//delete mw;
+			}
+			m_mgr.AddPane(nb, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			aL->SetTop(0);
+			//delete nb;
+		}
+
+		aL->GetGlobal("amc_gaugepanes");
+		len = aL->GetObjectLen();
+		aL->Pop(1);
+		GetGaugePanes()->clear();
+		GetGauges()->clear();
+		for (int i = 0; i < len; i++)
+		{
+			aL->GetGlobal("amc_gaugepanes");
+			aL->PushInt(i + 1);
+			aL->GetTable(-2);
+			aL->GetField(-1, "name");
+			wxString win = aL->GetUTF8String(-1);
+			GetGaugePanes()->push_back(win);
+			vector<wxString> s;
+			GetGauges()->push_back(s);
+			class GaugeWindow * gw = new GaugeWindow(this, win);
+			gw->SetName(win);
+			gw->SetLabel(win);
+			uw[win] = gw;
+			//wxFont f;
+			aL->GetField(-2, "font");
+			wxFont f(aL->GetUTF8String(-1));
+
+			gw->SetFont(&f);
+			aL->GetGlobal(("amc_gauges"));
+			aL->PushInt(i + 1);
+			aL->GetTable(-2);
+			int len1 = aL->GetObjectLen();
+			aL->Pop(1);
+
+			for (int x = 0; x < len1; x++)
+			{
+				aL->GetGlobal("amc_gauges");
+				aL->PushInt(i + 1);
+				aL->GetTable(-2);
+				aL->PushInt(x + 1);
+				aL->GetTable(-2);
+				aL->GetField(-1, "gaugename");
+				wxString win1 = aL->GetUTF8String(-1);
+				GetGauges()->at(i).push_back(win1);
+				aL->GetField(-2, "var1");
+				wxString var1 = aL->GetUTF8String(-1);
+				aL->GetField(-3, "var2");
+				wxString var2 = aL->GetUTF8String(-1);
+				aL->GetField(-4, "fcol");
+				wxString fcol = aL->GetUTF8String(-1);
+				aL->GetField(-5, "bcol");
+				wxString bcol = aL->GetUTF8String(-1);
+				aL->GetField(-6, "alarm");
+				wxString al = aL->GetUTF8String(-1);
+				aL->GetField(-7, "alarmperc");
+				int f = aL->GetInt(-1);
+				aL->GetField(-8, "x");
+				int xx = aL->GetInt(-1);
+				aL->GetField(-9, "y");
+				int y = aL->GetInt(-1);
+				aL->GetField(-10, "cx");
+				int cx = aL->GetInt(-1);
+				aL->GetField(-11, "cy");
+				int cy = aL->GetInt(-1);
+				aL->GetField(-12, "vertical");
+				bool b = aL->GetBoolean(-1);
+				aL->GetField(-13, "style");
+				int style = aL->GetInt(-1);
+				aL->GetField(-14, "showvalue");
+				bool c = aL->GetBoolean(-1);
+				aL->GetField(-15, "textcol");
+				wxString tcol = aL->GetUTF8String(-1);
+				aL->GetField(-16, "textpos");
+				int t = aL->GetInt(-1);
+				wxColour fc;
+				wxColour bc;
+				wxColour alarm;
+				fc.Set(fcol.c_str());
+				bc.Set(bcol.c_str());
+				alarm.Set(al.c_str());
+				amcGauge g(win, win1, var1, var2, fc, bc, xx, y, cx, cy, b);
+				g.SetStyle(style);
+				g.SetTextPos(t);
+				g.SetTextCol(tcol);
+				g.SetAlarmCol(alarm);
+				g.SetAlarmPerc(f);
+				g.SetShowValue(c);
+				g.Register();
+				//gw->GetGauges()->push_back(g);
+				aL->SetTop(0);
+			}
+			m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).CaptionVisible(false).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			aL->SetTop(0);
+			//delete gw;
+		}
+
+	}//end firsttime
 
 	aL->GetGlobal("amc_packages");
 	len = aL->GetObjectLen();
@@ -3104,41 +3124,9 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_gopt->SetDatabaseDir(f);
 	aL->SetTop(0);
 
-
-
-	for(size_t i=0;i<GetPanes()->size();i++)
+	for (size_t i = 0; i < GetButtons()->size(); i++)
 	{
-		view->InsertCheckItem(i+1, ID_USERWINDOW+i, GetPanes()->at(i));
-		
-	}
-	
-	int items1 = view->GetMenuItemCount()-1;
-	for(size_t i=0;i<GetNbs()->size();i++)
-		view->InsertCheckItem(i+items1-1, ID_USERWINDOW+items1+i, GetNbs()->at(i));
-	
-	int items2 = view->GetMenuItemCount()-1;
-	for(size_t i=0;i<GetGaugePanes()->size();i++)
-		view->InsertCheckItem(i+items2-1, ID_USERWINDOW+items2+i, GetGaugePanes()->at(i));
-	
-	for(size_t i=0;i<GetPanes()->size();i++)
-	{
-		if (m_mgr.GetPane(GetPanes()->at(i)).IsShown())
-			view->Check(ID_USERWINDOW+i, true);
-	}
-	for(size_t i=0;i<GetNbs()->size();i++)
-	{
-		if (m_mgr.GetPane(GetNbs()->at(i)).IsShown())
-			view->Check(ID_USERWINDOW+items1+i, true);
-	}
-	for(size_t i=0;i<GetGaugePanes()->size();i++)
-	{
-		if (m_mgr.GetPane(GetGaugePanes()->at(i)).IsShown())
-			view->Check(ID_USERWINDOW+items2+i, true);
-	}
-	
-	for(size_t i=0;i<GetButtons()->size();i++)
-	{
-		wxString n= GetButtons()->at(i).GetTbName();
+		wxString n = GetButtons()->at(i).GetTbName();
 		//wxAuiToolBar *tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);//(wxAuiToolBar*)MudMainFrame::FindWindowByName(n, this);
 		wxAuiToolBar *tb = 0;
 		bool k = m_mgr.GetPane(n).IsOk();
@@ -3146,17 +3134,17 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 		{
 			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
 			GetButtons()->at(i).SetParent(tb);
-			if (GetButtons()->at(i).GetName()=="separator")
+			if (GetButtons()->at(i).GetName() == "separator")
 				tb->AddSeparator();
 			else
 			{
-				
- 				m_mgr.Update();
+
+				m_mgr.Update();
 				wxSetWorkingDirectory(GetGlobalOptions()->GetImagesDir());
 				tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 				wxBitmap bt(GetButtons()->at(i).GetBitmap(), wxBITMAP_TYPE_XPM);
 				tb->AddTool(GetButtons()->at(i).GetId(), GetButtons()->at(i).GetName(), bt);//script_xpm);
-				
+
 			}
 			tb->Realize();
 			continue;
@@ -3170,7 +3158,7 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			m_mgr.AddPane(tb, wxAuiPaneInfo().Name(n).Caption(n).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
 			//m_mgr.Update();
 			GetButtons()->at(i).SetParent(tb);
-			if (GetButtons()->at(i).GetName()=="separator")
+			if (GetButtons()->at(i).GetName() == "separator")
 				tb->AddSeparator();
 			else
 			{
@@ -3183,6 +3171,8 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 			//delete tb;
 		}
 	}
+	
+
 	//BuildEncodingMenu(view);
 	int ec = (int)m_gopt->GetCurEncoding();
 	//wxMenuBar* bar1 = GetMenuBar();
@@ -3257,11 +3247,46 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	wxString p = aL->GetUTF8String(-1);
 	aL->Pop(1);
 	m_mgr.LoadPerspective(p);
-	
+	m_mgr.GetPane("amcmain").Show();
+	m_mgr.GetPane("amcmultinb").Hide();
 	m_mgr.Update();
+	if (firsttime)
+	{
+		for (size_t i = 0; i < GetPanes()->size(); i++)
+		{
+			view->InsertCheckItem(i + 1, ID_USERWINDOW + i, GetPanes()->at(i));
+		}
+
+		int items1 = view->GetMenuItemCount() - 1;
+		for (size_t i = 0; i < GetNbs()->size(); i++)
+			view->InsertCheckItem(i + items1 - 1, ID_USERWINDOW + items1 + i, GetNbs()->at(i));
+
+		int items2 = view->GetMenuItemCount() - 1;
+		for (size_t i = 0; i < GetGaugePanes()->size(); i++)
+			view->InsertCheckItem(i + items2 - 1, ID_USERWINDOW + items2 + i, GetGaugePanes()->at(i));
+
+		for (size_t i = 0; i < GetPanes()->size(); i++)
+		{
+			if (m_mgr.GetPane(GetPanes()->at(i)).IsShown())
+				view->Check(ID_USERWINDOW + i, true);
+		}
+		for (size_t i = 0; i < GetNbs()->size(); i++)
+		{
+			if (m_mgr.GetPane(GetNbs()->at(i)).IsShown())
+				view->Check(ID_USERWINDOW + items1 + i, true);
+		}
+		for (size_t i = 0; i < GetGaugePanes()->size(); i++)
+		{
+			if (m_mgr.GetPane(GetGaugePanes()->at(i)).IsShown())
+				view->Check(ID_USERWINDOW + items2 + i, true);
+		}
+
+		
+	}//end firsttime
 	//m_child->Msg(wxString::Format(_("Loaded profile %s (%d actions, %d alias, %d hotkeys, %d vars, %d lists, %d timers, %d buttons)."), s.GetFullName().c_str(), m_trigger.size(), m_alias.size(), m_hotkeys.size(), m_vars.size(), m_lists.size(), m_timers.size(), m_buttons.size()));
 	m_curprofile = s.GetFullPath();
 	m_actwindow->SetProfile(s.GetFullPath());
+
 	m_actwindow->SetTriggers(m_trigger);
 	m_actwindow->SetAlias(m_alias);
 	m_actwindow->SetVars(m_vars);
@@ -3269,49 +3294,58 @@ bool MudMainFrame::LoadProfile(wxFileName s)
 	m_actwindow->SetLists(m_lists);
 	m_actwindow->SetTimers(m_timers);
 	m_actwindow->SetButtons(m_buttons);
-	m_actwindow->SetGaugePanes(m_gaugepanes);
-	m_actwindow->SetGauges(m_gauges);
 	m_actwindow->SetPackages(m_packages);
-	m_actwindow->SetPanes(m_panes);
-	m_actwindow->SetNbs(m_nbs);
-	m_actwindow->SetNbPanes(m_nbpanes);
-	m_actwindow->SetAmcWindows(m_amcwindows);
-	m_actwindow->SetUserWindows(uw);
+	
+	if (firsttime)
+		{
+		m_actwindow->SetGaugePanes(m_gaugepanes);
+		m_actwindow->SetGauges(m_gauges);
+		
+		m_actwindow->SetPanes(m_panes);
+		m_actwindow->SetNbs(m_nbs);
+		m_actwindow->SetNbPanes(m_nbpanes);
+		m_actwindow->SetAmcWindows(m_amcwindows);
+		m_actwindow->SetUserWindows(uw);
+		}
 	m_input->SetFocus();
+	luaBuildalias();
+	luaBuildtrigger();
+	luaBuildvar();
+	luaBuilddefvar();
 	return true;
 }
 
 void MudMainFrame::luaBuildtrigger()
 {
 size_t i;
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
-	for (i=0;i<GetTrigger()->size();i++)
+	for (i=0;i<m_actwindow->GetTrigger()->size();i++)
 	{
-		lua_pushstring(L, GetTrigger()->at(i).GetLabel().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetTrigger()->at(i).GetLabel().mb_str(co).data());// .mb_str());
 		//lua_setfield(L, -1, GetTrigger()->at(i).GetLabel());
 		lua_newtable(L);
-		lua_pushstring(L, GetTrigger()->at(i).GetPattern().mb_str(co).data());
+		lua_pushstring(L, m_actwindow->GetTrigger()->at(i).GetPattern().mb_str(co).data());
 		lua_setfield(L, -2, "pattern");
-		lua_pushstring(L, GetTrigger()->at(i).GetAction().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetTrigger()->at(i).GetAction().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "action");
-		lua_pushstring(L, GetTrigger()->at(i).GetClass().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetTrigger()->at(i).GetClass().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "group");
-		lua_pushboolean(L, GetTrigger()->at(i).IsActive());
+		lua_pushboolean(L, m_actwindow->GetTrigger()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
-		lua_pushinteger(L, GetTrigger()->at(i).GetPriority());
+		lua_pushinteger(L, m_actwindow->GetTrigger()->at(i).GetPriority());
 		lua_setfield(L, -2, "priority");
-		lua_pushinteger(L, GetTrigger()->at(i).GetColMatch());
+		lua_pushinteger(L, m_actwindow->GetTrigger()->at(i).GetColMatch());
 		lua_setfield(L, -2, "colmatch");
-		lua_pushinteger(L, GetTrigger()->at(i).GetLines());
+		lua_pushinteger(L, m_actwindow->GetTrigger()->at(i).GetLines());
 		lua_setfield(L, -2, "lines");
-		lua_pushinteger(L, GetTrigger()->at(i).GetMatchCount());
+		lua_pushinteger(L, m_actwindow->GetTrigger()->at(i).GetMatchCount());
 		lua_setfield(L, -2, "matchcount");
-		lua_pushboolean(L, GetTrigger()->at(i).GetSendScript());
+		lua_pushboolean(L, m_actwindow->GetTrigger()->at(i).GetSendScript());
 		lua_setfield(L, -2, "script");
 		lua_settable(L,-3);
 
@@ -3346,21 +3380,21 @@ size_t i;
 void MudMainFrame::luaBuildalias()
 {
 size_t i;
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
-	for (i=0;i<GetAlias()->size();i++)
+	for (i=0;i<m_actwindow->GetAlias()->size();i++)
 	{
-		lua_pushstring(L, GetAlias()->at(i).GetName().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetAlias()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "action");
-		lua_pushstring(L, GetAlias()->at(i).GetGroup().mb_str(co).data());//.mb_str());
+		lua_pushstring(L, m_actwindow->GetAlias()->at(i).GetGroup().mb_str(co).data());//.mb_str());
 		lua_setfield(L, -2, "group");
-		lua_pushboolean(L, GetAlias()->at(i).IsActive());
+		lua_pushboolean(L, m_actwindow->GetAlias()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
 		lua_settable(L,-3);
 
@@ -3393,21 +3427,21 @@ size_t i;
 void MudMainFrame::luaBuildvar()
 {
 size_t i;
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L,0);
 	lua_newtable(L);
 
-	for (i=0;i<GetVars()->size();i++)
+	for (i=0;i<m_actwindow->GetVars()->size();i++)
 	{
-		lua_pushstring(L, GetVars()->at(i).GetName().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "value");
-		lua_pushstring(L, GetVars()->at(i).GetGroup().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetVars()->at(i).GetGroup().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "group");
-		lua_pushboolean(L, GetVars()->at(i).IsActive());
+		lua_pushboolean(L, m_actwindow->GetVars()->at(i).IsActive());
 		lua_setfield(L, -2, "on");
 		lua_settable(L,-3);
 	}
@@ -3439,17 +3473,17 @@ size_t i;
 void MudMainFrame::luaBuilddefvar()
 {
 size_t i;
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L, 0);
 	lua_newtable(L);
 
-	for (i = 0; i<GetDefVars()->size(); i++)
+	for (i = 0; i<m_actwindow->GetDefVars()->size(); i++)
 	{
-		lua_pushstring(L, GetDefVars()->at(i).GetName().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetDefVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
-		lua_pushstring(L, GetDefVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
+		lua_pushstring(L, m_actwindow->GetDefVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
 		lua_setfield(L, -2, "value");
 		lua_settable(L, -3);
 	}
@@ -3480,7 +3514,7 @@ size_t i;
 
 void MudMainFrame::luaCreateATCPTable()
 {
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 
 	lua_settop(L,0);
@@ -3502,7 +3536,7 @@ void MudMainFrame::luaCreateATCPTable()
 
 void MudMainFrame::luaCreateGMCPTable()
 {
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 
 	lua_settop(L,0);
@@ -3524,7 +3558,7 @@ void MudMainFrame::luaCreateGMCPTable()
 
 void MudMainFrame::luaCreateMSDPTable()
 {
-	amcLua *aL = m_child->GetLState();
+	amcLua *aL = m_actwindow->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 
 	lua_settop(L,0);
@@ -3557,6 +3591,7 @@ host_it it;
 	{
 		file->Write(wxString::Format("\t\t{[\"char\"] = [[%s]], ", it->GetCharName().c_str()));
 		wxString s = it->GetPwd();
+		wxString s64 = wxBase64Encode(s.data(), s.length());
 		wxChar c = 0x1b;
 		for (size_t i=0; i<s.length(); i++)
 		{
@@ -3569,7 +3604,8 @@ host_it it;
 		file->Write(wxString::Format("[\"host\"] = [[%s]], ", it->GetHostName().c_str()));
 		file->Write(wxString::Format("[\"port\"] = [[%s]], ", it->GetPort().c_str()));
 		file->Write(wxString::Format("[\"ip\"] = [[%s]], ", it->GetIPString().c_str()));
-		file->Write(wxString::Format("[\"profile\"] = [[%s]] },\n", it->GetProfileFile().c_str()));
+		file->Write(wxString::Format("[\"profile\"] = [[%s]],", it->GetProfileFile().c_str()));
+		file->Write(wxString::Format("[\"pwd2\"] = [=[%s]=] },\n ", s64.c_str()));
 	}
 	file->Write("\t}");
 	file->Close();
@@ -3624,6 +3660,13 @@ bool MudMainFrame::LoadHosts()
 		ahost.SetIPAddr(aL->GetwxString(-1));
 		aL->GetField(-7, "profile");
 		ahost.SetProfileFile(aL->GetwxString(-1));
+		aL->GetField(-8, "pwd2");
+		wxString s64 = aL->GetwxString(-1);
+		size_t z = wxBase64DecodedSize(s64.length());
+		wxMemoryBuffer mBuf(z);
+		mBuf = wxBase64Decode(s64.data(), s64.length());
+		wxString sss(mBuf, mBuf.GetDataLen());
+		
 		aL->SetTop(0);
 		m_amchost.push_back(ahost);
 	}
@@ -3774,103 +3817,77 @@ void MudMainFrame::OnNPageChanged(wxAuiNotebookEvent& event)
 		return;
 	m_active_window = event.GetSelection();
 	m_actwindow = wxGetApp().GetFrame()->m_childwindows.at(event.GetOldSelection());
-	//DeleteWindows();
-	m_actwindow = wxGetApp().GetFrame()->m_childwindows.at(event.GetSelection());
+	DeleteWindows();
+	m_actwindow = m_scriptwin = wxGetApp().GetFrame()->m_childwindows.at(event.GetSelection());
 	m_actwindow->SetParseState(29);//HAVE_TO_DELETE_SLINE
-	//CreateWindows();
+	CreateWindows();
 	wxString s = m_actwindow->GetProfile();
-	LoadProfile(s);
-	m_mgr.Update();
-	m_mgr.GetPane(m_notebook).Show().Center().BestSize(900,500).Dock();
+	LoadProfile(s, false);
+	//m_mgr.Update();
+	m_mgr.GetPane(m_notebook).Show().Center().BestSize(900,500).Dock().CaptionVisible(false);
 	m_mgr.Update();
 	m_actwindow->Update();
-	event.Skip();
+	Update();
+	unordered_map <wxString, wxWindow *> ummw;
+	ummw = *m_actwindow->GetUserWindows();
+	unordered_map<wxString, wxWindow*>::iterator uit;
+	for (uit = ummw.begin(); uit != ummw.end(); uit++)
+	{
+		uit->second->Update();
+	}
+	wxMenuBar* bar = GetMenuBar();
+	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));
+	for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
+	{
+		view->InsertCheckItem(i + 1, ID_USERWINDOW + i, m_actwindow->GetPanes()->at(i));
+
+	}
+
+	int items1 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
+		view->InsertCheckItem(i + items1 - 1, ID_USERWINDOW + items1 + i, m_actwindow->GetNbs()->at(i));
+
+	int items2 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
+		view->InsertCheckItem(i + items2 - 1, ID_USERWINDOW + items2 + i, m_actwindow->GetGaugePanes()->at(i));
+
+	for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetPanes()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + i, true);
+	}
+	for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetNbs()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + items1 + i, true);
+	}
+	for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetGaugePanes()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + items2 + i, true);
+	}
+	//event.Skip();
 }
 
 void MudMainFrame::DeleteWindows()
 {
-	s_it it;
 	
-	for (it = m_actwindow->GetPanes()->begin(); it != m_actwindow->GetPanes()->end(); it++)
-	{
-		MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*it, this);
-		m_mgr.DetachPane(mw);
-		//m_mgr.Update();
-		mw->Destroy();
-	}
-	for (it = m_actwindow->GetAmcWindows()->begin(); it != m_actwindow->GetAmcWindows()->end(); it++)
-	{
-		amcWindow* aw = (amcWindow*)amcWindow::FindWindowByName(*it, this);
-		if (!aw)
-			continue;
-		m_mgr.DetachPane(aw);
-		//m_mgr.Update();
-		aw->Destroy();
-	}
-	vector<vector<wxString> >::iterator vit;
-	if (!m_actwindow->GetNbPanes()->empty())
-	{
-		int x = 0;
-		for (vit = m_actwindow->GetNbPanes()->begin(); vit != m_actwindow->GetNbPanes()->end(); vit++, x++)
-		{
-			it = m_nbs.begin() + x;
-			wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
-			for (size_t i = 0; i < vit->size(); i++)
-			{
-				wxString s = vit->at(i);
-				MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(s, this);
-				if (!mw)
-					continue;
-				nb->RemovePage(nb->GetPageIndex(mw));
-				m_mgr.DetachPane(mw);
-				mw->Destroy();
-			}
-		}
-	}
-	for (it = m_actwindow->GetNbs()->begin(); it != m_actwindow->GetNbs()->end(); it++)
-	{
+unordered_map <wxString, wxWindow *> ummw;
+ummw = *this->m_actwindow->GetUserWindows();
+unordered_map<wxString, wxWindow*>::iterator uit;
 
-		wxAuiNotebook *nb = (wxAuiNotebook*)wxWindow::FindWindowByName(*it, this);
-		m_mgr.DetachPane(nb);
-		nb->Destroy();
-	}
+	for (uit = ummw.begin(); uit != ummw.end(); uit++)
+		{
+			m_mgr.GetPane(uit->second).Hide();
+			m_mgr.DetachPane(uit->second);
+			uit->second->Hide();
+		}
 
-	if (!m_actwindow->GetGaugePanes()->empty())
-	{
-		for (it = m_actwindow->GetGaugePanes()->begin(); it != m_actwindow->GetGaugePanes()->end(); it++)
-		{
-			GaugeWindow *gw = (GaugeWindow*)GaugeWindow::FindWindowByName(*it, this);
-			if (!gw)
-				continue;
-			m_mgr.DetachPane(gw);
-			gw->Destroy();
-		}
-	}
-	wxAuiToolBar *tb = 0;
-	if (!m_actwindow->GetButtons()->empty())
-	{
-		for (size_t x = 0; x < m_actwindow->GetButtons()->size(); x++)
-		{
-			wxString n = m_actwindow->GetButtons()->at(x).GetTbName();
-			tb = (wxAuiToolBar*)wxAuiToolBar::FindWindowByName(n, this);
-			if (!tb)
-				continue;
-			m_mgr.GetPane(tb).Dock();
-			m_mgr.Update();
-			m_mgr.DetachPane(tb);
-			bool b = tb->Destroy();
-			if (b)
-				tb = NULL;
-		}
-		m_actwindow->GetButtons()->clear();
-	}
 	m_mgr.Update();
 
 	//Build Menu
 	wxMenuBar* bar = GetMenuBar();
-	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));//new wxMenu;
-														  //bar->Insert(1, view, _("View1"));
-														  //view->AppendCheckItem(ID_SPLITTER, _("Split Window\tF2"), _("Show the splitter window"));
+	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));
 	if (m_splitter->IsShown())
 		view->Check(ID_SPLITTER, true);
 	int ii = view->GetMenuItemCount();
@@ -3879,7 +3896,8 @@ void MudMainFrame::DeleteWindows()
 	{
 		for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
 		{
-			view->Destroy(view->FindItem(m_actwindow->GetPanes()->at(i)));
+			int b = view->FindItem(m_actwindow->GetPanes()->at(i));
+			view->Destroy(b);
 		}
 		for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
 		{
@@ -3895,17 +3913,14 @@ void MudMainFrame::DeleteWindows()
 
 void MudMainFrame::CreateWindows()
 {
-s_it it;
-	for (it = m_actwindow->GetAmcWindows()->begin(); it != m_actwindow->GetAmcWindows()->end(); it++)
+	unordered_map <wxString, wxWindow *> ummw;
+	ummw = *this->m_actwindow->GetUserWindows();
+	unordered_map<wxString, wxWindow*>::iterator uit;
+	for (uit = ummw.begin(); uit != ummw.end(); uit++)
 	{
-		amcWindow *aw = new amcWindow(wxGetApp().GetFrame(), *it);
-		aw->SetName(*it);
-
-		m_mgr.AddPane(aw, wxAuiPaneInfo().Name(*it).Caption(*it).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Show());
+		m_mgr.AddPane(uit->second, wxAuiPaneInfo().Name(uit->first).Caption(uit->first).Show().Top());
 	}
-	m_mgr.Update();
 	
-	//Call OnConnect here!?
 }
 
 //InputTextCtrl
@@ -4260,7 +4275,8 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 	if (command=="")
 	{
 		//command.append(CR);
-		command.Append((char)LF);
+		command.Append((char)CR);
+		command.append((char)LF);
 		m_parent->m_actwindow->Write(command);
 		//m_parent->m_child->Write(command);
 		m_parent->Refresh();
@@ -4357,6 +4373,7 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 				
 				//comm.append((char)LF);
 				comm.append((char)CR);
+				comm.append((char)LF);
 				//m_parent->m_child->Write(command);
 				m_parent->m_actwindow->Write(comm);
 				
@@ -4379,6 +4396,7 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 				m_parent->m_actwindow->ParseNBuffer(out.char_str(), false);
 				//m_parent->m_child->ParseNBuffer(out.char_str(), false);
 			}
+		command.append((char)CR);
 		command.append((char)LF);
 		m_parent->m_actwindow->Write(command);
 		//m_parent->m_child->Write(command);
@@ -4400,7 +4418,7 @@ al_it iter;
 	if (!ParseLists(sCommand))
 		return false;
 	//check if this is an alias
-	for (iter = m_parent->GetAlias()->begin(); iter!= m_parent->GetAlias()->end(); iter++)
+	for (iter = m_parent->m_actwindow->GetAlias()->begin(); iter!= m_parent->m_actwindow->GetAlias()->end(); iter++)
 		{
 			if (iter->Match(*sCommand))
 			{
@@ -4478,12 +4496,12 @@ wxString var;
 			int x = m_parent->GetDefVarIndexByLabel(var.substr(1));
 			if (x==-1)
 			{
-				x = m_parent->GetVarIndexByLabel(var.substr(1));
+				x = m_parent->m_actwindow->GetVarIndexByLabel(var.substr(1));
 				if (x==-1) //error no var with the name there
 					return false;
-				if (m_parent->m_vars.at(x).IsActive())
+				if (m_parent->m_actwindow->GetVars()->at(x).IsActive())
 				{//only replace if var active 
-					s->Replace(var, m_parent->m_vars.at(x).GetValue());
+					s->Replace(var, m_parent->m_actwindow->GetVars()->at(x).GetValue());
 					
 				}
 				else idx++;
@@ -4520,11 +4538,11 @@ wxString var;
 			//while (isalnum(s->at(i)))
 			//	i++;
 			var = s->substr(idx, i-idx);
-			int x = m_parent->GetListIndexByLabel(var.substr(1));
+			int x = m_parent->m_actwindow->GetListIndexByLabel(var.substr(1));
 			if (x==-1) //error no list with the name there
 				return false;
-			if (m_parent->m_lists.at(x).IsActive()) //only replace if var active 
-				s->Replace(var, m_parent->m_lists.at(x).GetValue());
+			if (m_parent->m_actwindow->GetLists()->at(x).IsActive()) //only replace if var active 
+				s->Replace(var, m_parent->m_actwindow->GetLists()->at(x).GetValue());
 		}
 	} while (idx!=string::npos);
 	return true;
@@ -5262,7 +5280,7 @@ int InputTextCtrl::Test(wxString *sPar)
 	if (ParseFParams(sPar)!=1)
 		return -1;
 	wxString s = GetFParam(1);
-	s = "\x1b[0m" + s + (char)LF;
+	s = "\x1b[0m" + s + (char)CR+(char)LF;
 	s = s.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
 	if (s.empty())
 		s << "\x1b[0m" << GetFParam(1) <<"\n";

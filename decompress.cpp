@@ -28,7 +28,8 @@ void Decompressor::Init()
 	m_z.next_in = Z_NULL;
 	m_z.total_in=0;
 	m_z.total_out=0;
-	inflateInit(&m_z);
+	//inflateInit(&m_z);
+	inflateInit2(&m_z, 15);
 	m_ratio = 0.0;
 }
 
@@ -65,6 +66,12 @@ int Decompressor::Decompress(char *data, size_t len, size_t out)
 			m_err=inflateSync(&m_z);
 		if (!m_err) {
 			inflate(&m_z, Z_SYNC_FLUSH);
+			m_uclen = m_z.total_out - m_ucbytes;
+			m_ucdata[m_uclen] = (char)EOS;
+			m_cbytes = m_z.total_in;
+			m_ucbytes = m_z.total_out;
+			m_ratio = (float)m_cbytes / m_ucbytes;
+			m_ratio = 1 - m_ratio;
 			return 0;
 			}
 		inflateEnd(&m_z);
@@ -72,6 +79,9 @@ int Decompressor::Decompress(char *data, size_t len, size_t out)
 		}
 	m_uclen = m_z.total_out-m_ucbytes;
 	//wxASSERT_MSG((m_uclen!=0), wxString::Format(wxT("%d"), m_uclen));
+	wxString deb;
+	deb << "m_uclen: " << m_uclen << " total_out: " << m_z.total_out << " m_ucbytes " << m_ucbytes;
+	wxLogDebug(deb);
 	m_ucdata[m_uclen]=(char)EOS;
 	m_cbytes = m_z.total_in;
 	m_ucbytes = m_z.total_out;
@@ -83,15 +93,7 @@ int Decompressor::Decompress(char *data, size_t len, size_t out)
 int Decompressor::Decompress(wxString data, size_t len, size_t out)
 {
 	m_len = len;
-	//m_cdata = new wxChar[len];
-	/*if (sizeof(m_ucdata)!=0)
-	{
-		delete[] m_ucdata;
-		m_ucdata=NULL;
-	}*/
-	//m_ucdata = new wxChar[out];
-
-	//m_cdata = data;
+	
 	char s[5000];
 	strncpy(s, data.To8BitData().data(), data.length());
 	//s = (char*)data.char_str();
@@ -129,6 +131,9 @@ int Decompressor::Decompress(wxString data, size_t len, size_t out)
 	m_uclen = m_z.total_out-m_ucbytes;
 	//wxASSERT_MSG((m_uclen!=0), wxString::Format(wxT("%d"), m_uclen));
 	m_ucdata[m_uclen]=(char)EOS;
+	wxString deb;
+	deb << "m_uclen: " << m_uclen << " total_out: " << m_z.total_out << " m_ucbytes " << m_ucbytes;
+	wxLogDebug(deb);
 	m_cbytes = m_z.total_in;
 	m_ucbytes = m_z.total_out;
 	m_ratio = (float)m_cbytes/m_ucbytes;
@@ -138,7 +143,8 @@ int Decompressor::Decompress(wxString data, size_t len, size_t out)
 
 void Decompressor::GetUCBuffer(char* data)
 {
-	wxStrcpy(data, m_ucdata);
+	wxStrncpy(data, m_ucdata, wxStrlen(m_ucdata));
+	data[m_uclen] = EOS;
 }
 
 void Decompressor::EndDecompress()

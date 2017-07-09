@@ -12,7 +12,7 @@ public:
     void EndDecompress();
 	void Init();
 private:
-	char m_ucdata[128000];
+	char m_ucdata[128001];
 	size_t m_len;
 	struct z_stream_s m_z;
 	int m_err;

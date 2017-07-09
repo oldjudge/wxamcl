@@ -394,7 +394,7 @@ wxString sub;
 		else m_matches.push_back("");
 	}
 	//Expose wildcards to lua
-	amcLua *aL = frame->m_actwindow->GetLState();
+	amcLua *aL = frame->m_scriptwin->GetLState();
 	struct lua_State *L = aL->GetLuaState();
 	s_it it;
 	int x;

@@ -82,7 +82,7 @@ void dlg_obj::OnPageChanged( wxNotebookEvent& event )
 		v_it iter;
 		m_var1->Clear();
 		m_var2->Clear();
-		for (iter = m_frame->GetVars()->begin(); iter!= m_frame->GetVars()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
 			m_var1->Append(iter->GetName());
 			m_var2->Append(iter->GetName());
@@ -128,12 +128,9 @@ void dlg_obj::BuildAlias()
 {
 al_it iter;
 s_it it;
-//amcAlias al(wxT("^o(d|s|n|w|e|u)$"), wxT("open %0"));
-//amcAlias al1(wxT("^dj (\\w+) (\\w+)$"), wxT("drop %0;sacrifice %0;get %1"));
+
 int index=0;
 
-	//m_frame->GetAlias()->push_back(al);
-	//m_frame->GetAlias()->push_back(al1);
 	m_listalias->DeleteAllItems();
 	for (iter = m_frame->m_actwindow->GetAlias()->begin(); iter!= m_frame->m_actwindow->GetAlias()->end(); iter++)
 		{
@@ -143,7 +140,7 @@ int index=0;
 			m_listalias->SetItem(index, 1, iter->GetAction(), -1);
 			m_listalias->SetItem(index++, 2, iter->GetGroup(), -1);
 		}
-	//m_listalias->SortItems(&dlg_obj::MyAliasSort, 0);
+	
 	m_groupcombo->Clear();
 	m_groupcombo->Append("all");
 	for (it = amcAlias::GetAliasGroups()->begin();it != amcAlias::GetAliasGroups()->end();it++)
@@ -158,8 +155,6 @@ hk_it iter;
 s_it it;
 int index=0;
 
-	//m_frame->GetAlias()->push_back(al);
-	//m_frame->GetAlias()->push_back(al1);
 	m_listhkey->DeleteAllItems();
 	for (iter = m_frame->m_actwindow->GetHotkeys()->begin(); iter!= m_frame->m_actwindow->GetHotkeys()->end(); iter++)
 		{
@@ -183,8 +178,6 @@ v_it iter;
 s_it it;
 int index=0;
 
-	//m_frame->GetAlias()->push_back(al);
-	//m_frame->GetAlias()->push_back(al1);
 	m_listvar->DeleteAllItems();
 	for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
@@ -293,8 +286,6 @@ s_it sit;
 void dlg_obj::BuildButtons()
 {
 b_it iter;
-//s_it it;
-//int index=0;
 vector<wxString> list;
 vector<wxTreeItemId> id;
 	
@@ -381,21 +372,21 @@ void dlg_obj::OnTreeSelChanged( wxTreeEvent& event )
 	int index;
 	wxTreeItemId id = event.GetItem();
 	
-	index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		m_label->SetValue(m_frame->GetTrigger()->at(index).GetLabel());
-		m_pattern->SetValue(m_frame->GetTrigger()->at(index).GetPattern());
-		wxString s = m_frame->GetTrigger()->at(index).GetAction();
+		m_label->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).GetLabel());
+		m_pattern->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).GetPattern());
+		wxString s = m_frame->m_actwindow->GetTrigger()->at(index).GetAction();
 		s.Replace(";", "\r\n");
 		m_action->SetText(s);
-		m_tron->SetValue(m_frame->GetTrigger()->at(index).IsActive());
-		m_sendscript->SetValue(m_frame->GetTrigger()->at(index).GetSendScript());
-		m_prior->SetValue(m_frame->GetTrigger()->at(index).GetPriority());
-		m_lines->SetValue(m_frame->GetTrigger()->at(index).GetLines());
-		if (m_frame->GetTrigger()->at(index).GetColMatch()==-1)
+		m_tron->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).IsActive());
+		m_sendscript->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).GetSendScript());
+		m_prior->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).GetPriority());
+		m_lines->SetValue(m_frame->m_actwindow->GetTrigger()->at(index).GetLines());
+		if (m_frame->m_actwindow->GetTrigger()->at(index).GetColMatch()==-1)
 		{
 			m_oncolor->SetValue(false);
 			m_amccombo->Disable();
@@ -405,10 +396,10 @@ void dlg_obj::OnTreeSelChanged( wxTreeEvent& event )
 		{
 			m_oncolor->SetValue(true);
 			m_amccombo->Enable();
-			m_amccombo->SetSelection(m_frame->GetTrigger()->at(index).GetColMatch());
+			m_amccombo->SetSelection(m_frame->m_actwindow->GetTrigger()->at(index).GetColMatch());
 			}
-		m_matched->SetValue(wxString::Format("%ld", m_frame->GetTrigger()->at(index).GetMatchCount()));
-		m_class->SetStringSelection(m_frame->GetTrigger()->at(index).GetClass());
+		m_matched->SetValue(wxString::Format("%ld", m_frame->m_actwindow->GetTrigger()->at(index).GetMatchCount()));
+		m_class->SetStringSelection(m_frame->m_actwindow->GetTrigger()->at(index).GetClass());
 		if (m_tron->GetValue())
 		{
 			m_onoff->SetValue(true);
@@ -427,13 +418,13 @@ void dlg_obj::OnTriggerOn( wxCommandEvent& event )
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		m_frame->GetTrigger()->at(index).SetActive(m_tron->GetValue());
-		m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetActive(m_tron->GetValue());
+		//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 	}
 }
 
@@ -442,13 +433,13 @@ void dlg_obj::OnSendToScript( wxCommandEvent& event )
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		m_frame->GetTrigger()->at(index).SetSendScript(m_sendscript->GetValue());
-		m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetSendScript(m_sendscript->GetValue());
+		//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 	}
 
 }
@@ -459,12 +450,12 @@ void dlg_obj::OnSceditor( wxCommandEvent& event)
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		wxString s = m_frame->GetTrigger()->at(index).GetAction();
+		wxString s = m_frame->m_actwindow->GetTrigger()->at(index).GetAction();
 		s.Replace(";", "\r\n");
 		sscr->GetEditor()->SetText(s);
 		if (sscr->ShowModal()==wxID_OK)
@@ -473,7 +464,7 @@ void dlg_obj::OnSceditor( wxCommandEvent& event)
 			wxString c = m_frame->GetGlobalOptions()->GetSep();
 			m_action->SetText(s);
 			s.Replace("\r\n", c.c_str());
-			m_frame->GetTrigger()->at(index).SetAction(s);
+			m_frame->m_actwindow->GetTrigger()->at(index).SetAction(s);
 		}
 		sscr->Destroy();
 	}
@@ -485,12 +476,12 @@ void dlg_obj::OnPatternEdit(wxCommandEvent& event)
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		wxString s = m_frame->GetTrigger()->at(index).GetPattern();
+		wxString s = m_frame->m_actwindow->GetTrigger()->at(index).GetPattern();
 		//s.Replace(";", "\r\n");
 		sscr->GetEditor()->SetText(s);
 		if (sscr->ShowModal()==wxID_OK)
@@ -499,11 +490,11 @@ void dlg_obj::OnPatternEdit(wxCommandEvent& event)
 			//wxString c = m_frame->GetGlobalOptions()->GetSep();
 			m_pattern->SetValue(s);
 			//s.Replace("\r\n", c.c_str());
-			m_frame->GetTrigger()->at(index).SetPattern(s);
+			m_frame->m_actwindow->GetTrigger()->at(index).SetPattern(s);
 		}
 		sscr->Destroy();
 	}
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnClassToggle( wxCommandEvent& event )
@@ -512,17 +503,17 @@ tr_it iter;
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		wxString s = m_frame->GetTrigger()->at(index).GetClass();
+		wxString s = m_frame->m_actwindow->GetTrigger()->at(index).GetClass();
 		if (m_onoff->GetValue())
 			m_onoff->SetLabel(_("Group active"));
 		else
 			m_onoff->SetLabel(_("Group off"));
-		for (iter = m_frame->GetTrigger()->begin(); iter!= m_frame->GetTrigger()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetTrigger()->begin(); iter!= m_frame->m_actwindow->GetTrigger()->end(); iter++)
 		{
 			if (s == iter->GetClass())
 			{
@@ -540,19 +531,19 @@ void dlg_obj::OnDelClass( wxCommandEvent& event )
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		wxString s = m_frame->GetTrigger()->at(index).GetClass();
+		wxString s = m_frame->m_actwindow->GetTrigger()->at(index).GetClass();
 		if (wxMessageBox(_("This will delete all triggers in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetTrigger()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetTrigger()->size(); i++)
 			{
-				if(m_frame->GetTrigger()->at(i).GetClass()==s)
+				if(m_frame->m_actwindow->GetTrigger()->at(i).GetClass()==s)
 				{
-					m_frame->GetTrigger()->erase(m_frame->GetTrigger()->begin()+i--);
+					m_frame->m_actwindow->GetTrigger()->erase(m_frame->m_actwindow->GetTrigger()->begin()+i--);
 				}
 			}
 			for (it = Trigger::GetTriggerClasses()->begin(); it!=Trigger::GetTriggerClasses()->end(); it++)
@@ -566,7 +557,7 @@ void dlg_obj::OnDelClass( wxCommandEvent& event )
 		BuildTree();
 		}
 	}
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnActionAdd( wxCommandEvent& event )
@@ -575,7 +566,7 @@ tr_it it;
 
 	Trigger tr;
 	wxString s = m_label->GetValue();
-	for (it=m_frame->GetTrigger()->begin();it!=m_frame->GetTrigger()->end();it++)
+	for (it=m_frame->m_actwindow->GetTrigger()->begin();it!=m_frame->m_actwindow->GetTrigger()->end();it++)
 	{
 		if(s==*it)
 		{
@@ -600,11 +591,11 @@ tr_it it;
 	if (m_oncolor->GetValue())
 		tr.SetColMatch(m_amccombo->GetSelection());
 	else tr.SetColMatch(-1);
-	m_frame->GetTrigger()->push_back(tr);
-	stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
+	m_frame->m_actwindow->GetTrigger()->push_back(tr);
+	stable_sort(m_frame->m_actwindow->GetTrigger()->begin(), m_frame->m_actwindow->GetTrigger()->end(), greater<class Trigger>());
 	BuildTree();
 	m_class->SetStringSelection(tr.GetClass());
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	
 }
 
 void dlg_obj::OnActionEdit( wxCommandEvent& event )
@@ -614,43 +605,43 @@ tr_it it;
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
 		wxString s = m_label->GetValue();
-		for (it=m_frame->GetTrigger()->begin();it!=m_frame->GetTrigger()->end();it++)
+		for (it=m_frame->m_actwindow->GetTrigger()->begin();it!=m_frame->m_actwindow->GetTrigger()->end();it++)
 		{
-			if(s==*it && s!=m_frame->GetTrigger()->at(index).GetLabel())
+			if(s==*it && s!=m_frame->m_actwindow->GetTrigger()->at(index).GetLabel())
 			{
 				wxMessageBox(_("Action labels need to be unique!"), _("Label already exists!"), wxOK, this);
 				return;
 			}
 		}
-		m_frame->GetTrigger()->at(index).SetLabel(s);
+		m_frame->m_actwindow->GetTrigger()->at(index).SetLabel(s);
 		m_tree->SetItemText(id, s);
-		m_frame->GetTrigger()->at(index).SetPattern(m_pattern->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetPattern(m_pattern->GetValue());
 		wxString action = m_action->GetText();
 		wxString c = m_frame->GetGlobalOptions()->GetSep();
 		action.Replace("\r\n", c.c_str());
-		m_frame->GetTrigger()->at(index).SetAction(action);//(m_action->GetValue());
-		m_frame->GetTrigger()->at(index).SetActive(m_tron->GetValue());
-		m_frame->GetTrigger()->at(index).SetSendScript(m_sendscript->GetValue());
-		m_frame->GetTrigger()->at(index).SetPriority(m_prior->GetValue());
-		m_frame->GetTrigger()->at(index).SetLines(m_lines->GetValue());
-		m_frame->GetTrigger()->at(index).SetClass(m_class->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetAction(action);//(m_action->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetActive(m_tron->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetSendScript(m_sendscript->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetPriority(m_prior->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetLines(m_lines->GetValue());
+		m_frame->m_actwindow->GetTrigger()->at(index).SetClass(m_class->GetValue());
 		if (m_oncolor->GetValue())
-			m_frame->GetTrigger()->at(index).SetColMatch(m_amccombo->GetSelection());
+			m_frame->m_actwindow->GetTrigger()->at(index).SetColMatch(m_amccombo->GetSelection());
 		else
-			m_frame->GetTrigger()->at(index).SetColMatch(-1);
-		stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
+			m_frame->m_actwindow->GetTrigger()->at(index).SetColMatch(-1);
+		stable_sort(m_frame->m_actwindow->GetTrigger()->begin(), m_frame->m_actwindow->GetTrigger()->end(), greater<class Trigger>());
 		//BuildTree();
-		m_class->SetStringSelection(m_frame->GetTrigger()->at(index).GetClass());
+		m_class->SetStringSelection(m_frame->m_actwindow->GetTrigger()->at(index).GetClass());
 		m_tree->SetFocus();
 		m_tree->SelectItem(id);
 	}
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnActionDelete( wxCommandEvent& event )
@@ -660,19 +651,19 @@ tr_it it;
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		it = m_frame->GetTrigger()->begin()+index;
+		it = m_frame->m_actwindow->GetTrigger()->begin()+index;
 		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetTrigger()->erase(it);
+		m_frame->m_actwindow->GetTrigger()->erase(it);
 		m_tree->Delete(id);
-		stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
+		stable_sort(m_frame->m_actwindow->GetTrigger()->begin(), m_frame->m_actwindow->GetTrigger()->end(), greater<class Trigger>());
 		BuildTree();
 	}
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 void dlg_obj::OnItemSelected( wxListEvent& event )
@@ -687,11 +678,11 @@ void dlg_obj::OnItemSelected( wxListEvent& event )
 		return;
 	else
 	{
-		m_defalias->SetValue(m_frame->GetAlias()->at(m_index).GetAlias());
-		m_defaction->SetValue(m_frame->GetAlias()->at(m_index).GetAction());
-		m_groupcombo->SetStringSelection(m_frame->GetAlias()->at(m_index).GetGroup());
-		m_alon->SetValue(m_frame->GetAlias()->at(m_index).IsActive());
-		m_groupon->SetValue(m_frame->GetAlias()->at(m_index).IsActive());
+		m_defalias->SetValue(m_frame->m_actwindow->GetAlias()->at(m_index).GetAlias());
+		m_defaction->SetValue(m_frame->m_actwindow->GetAlias()->at(m_index).GetAction());
+		m_groupcombo->SetStringSelection(m_frame->m_actwindow->GetAlias()->at(m_index).GetGroup());
+		m_alon->SetValue(m_frame->m_actwindow->GetAlias()->at(m_index).IsActive());
+		m_groupon->SetValue(m_frame->m_actwindow->GetAlias()->at(m_index).IsActive());
 		if (m_groupon->GetValue())
 			m_groupon->SetLabel(_("Group active"));
 		else
@@ -703,7 +694,7 @@ void dlg_obj::OnActionBeginLabelEdit(wxTreeEvent& event)
 {
 	int index;
 	wxTreeItemId id = event.GetItem();
-	index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 	{
 		if (m_tree->ItemHasChildren(id) && id != m_tree->GetRootItem())
@@ -718,7 +709,7 @@ void dlg_obj::OnActionBeginLabelEdit(wxTreeEvent& event)
 void dlg_obj::OnActionEndLabelEdit(wxTreeEvent &event)
 {
 	wxTreeItemId id = event.GetItem();
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 	if (index==-1)
 	{
 		if (m_tree->ItemHasChildren(id) && id != m_tree->GetRootItem())
@@ -730,15 +721,15 @@ void dlg_obj::OnActionEndLabelEdit(wxTreeEvent &event)
 	{
 		wxString s = event.GetLabel();
 		tr_it it;
-		for (it=m_frame->GetTrigger()->begin();it!=m_frame->GetTrigger()->end();it++)
+		for (it=m_frame->m_actwindow->GetTrigger()->begin();it!=m_frame->m_actwindow->GetTrigger()->end();it++)
 		{
-			if(s==*it && s!=m_frame->GetTrigger()->at(index).GetLabel())
+			if(s==*it && s!=m_frame->m_actwindow->GetTrigger()->at(index).GetLabel())
 			{
 				wxMessageBox(_("Action labels need to be unique!"), _("Label already exists!"), wxOK, this);
 				return;
 			}
 		}
-		m_frame->GetTrigger()->at(index).SetLabel(s);
+		m_frame->m_actwindow->GetTrigger()->at(index).SetLabel(s);
 		m_label->SetValue(s);
 	}
 	//Group name changed
@@ -746,11 +737,11 @@ void dlg_obj::OnActionEndLabelEdit(wxTreeEvent &event)
 	{
 		s_it it;
 		//change the group in all triggers
-		for (size_t i=0;i<m_frame->GetTrigger()->size(); i++)
+		for (size_t i=0;i<m_frame->m_actwindow->GetTrigger()->size(); i++)
 		{
-			if(m_frame->GetTrigger()->at(i).GetClass()==m_oldactiongroup)
+			if(m_frame->m_actwindow->GetTrigger()->at(i).GetClass()==m_oldactiongroup)
 			{
-				m_frame->GetTrigger()->at(i).SetClass(event.GetLabel());
+				m_frame->m_actwindow->GetTrigger()->at(i).SetClass(event.GetLabel());
 			}
 		}
 		for (it = Trigger::GetTriggerClasses()->begin(); it!=Trigger::GetTriggerClasses()->end(); it++)
@@ -763,7 +754,7 @@ void dlg_obj::OnActionEndLabelEdit(wxTreeEvent &event)
 		}
 	BuildTree();
 	}
-	m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
+	//m_frame->m_actwindow->SetTriggers(*m_frame->GetTrigger());
 }
 
 
@@ -778,7 +769,7 @@ al_it it;
 		s = '^' + s;
 	if (!s.EndsWith("$"))
 		s.append('$');
-	for (it=m_frame->GetAlias()->begin();it!=m_frame->GetAlias()->end();it++)
+	for (it=m_frame->m_actwindow->GetAlias()->begin();it!=m_frame->m_actwindow->GetAlias()->end();it++)
 	{
 		if(s==*it)
 		{
@@ -790,19 +781,19 @@ al_it it;
 	al.SetAction(m_defaction->GetValue());
 	al.SetActive(m_alon->GetValue());
 	al.SetGroup(m_groupcombo->GetValue());
-	m_frame->GetAlias()->push_back(al);
-	stable_sort(m_frame->GetAlias()->begin(), m_frame->GetAlias()->end(), less<class amcAlias>());
+	m_frame->m_actwindow->GetAlias()->push_back(al);
+	stable_sort(m_frame->m_actwindow->GetAlias()->begin(), m_frame->m_actwindow->GetAlias()->end(), less<class amcAlias>());
 	m_frame->luaBuildalias();
 	//BuildAlias();
 	m_groupcombo->SetStringSelection(al.GetGroup());
 	int index=0;
-	for (it = m_frame->GetAlias()->begin(); it!= m_frame->GetAlias()->end(); it++)
+	for (it = m_frame->m_actwindow->GetAlias()->begin(); it!= m_frame->m_actwindow->GetAlias()->end(); it++)
 		{
 		it->SetIndex(index++);
 		}
 	wxCommandEvent ev;
 	OnGroupChanged(ev);
-	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+	//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnAliasEdit( wxCommandEvent& event )
@@ -819,23 +810,23 @@ al_it it;
 		s.append('$');
 	
 	wxString l = m_defalias->GetValue();
-	for (it=m_frame->GetAlias()->begin();it!=m_frame->GetAlias()->end();it++)
+	for (it=m_frame->m_actwindow->GetAlias()->begin();it!=m_frame->m_actwindow->GetAlias()->end();it++)
 	{
-		if(l==*it && l!=m_frame->GetAlias()->at(m_index).GetAlias())
+		if(l==*it && l!=m_frame->m_actwindow->GetAlias()->at(m_index).GetAlias())
 		{
 			wxMessageBox(_("Alias already exists!"), _("Alias already exists!"), wxOK, this);
 			return;
 		}
 	}
-	m_frame->GetAlias()->at(m_index).SetAlias(s);
-	m_frame->GetAlias()->at(m_index).SetAction(m_defaction->GetValue());
-	m_frame->GetAlias()->at(m_index).SetActive(m_alon->GetValue());
-	m_frame->GetAlias()->at(m_index).SetGroup(m_groupcombo->GetValue());
+	m_frame->m_actwindow->GetAlias()->at(m_index).SetAlias(s);
+	m_frame->m_actwindow->GetAlias()->at(m_index).SetAction(m_defaction->GetValue());
+	m_frame->m_actwindow->GetAlias()->at(m_index).SetActive(m_alon->GetValue());
+	m_frame->m_actwindow->GetAlias()->at(m_index).SetGroup(m_groupcombo->GetValue());
 	//BuildAlias();
-	m_groupcombo->SetStringSelection(m_frame->GetAlias()->at(m_index).GetGroup());
+	m_groupcombo->SetStringSelection(m_frame->m_actwindow->GetAlias()->at(m_index).GetGroup());
 	wxCommandEvent ev;
 	OnGroupChanged(ev);
-	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+	//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnAliasDelete( wxCommandEvent& event )
@@ -846,19 +837,18 @@ al_it it;
 		return;
 	else
 	{
-		it = m_frame->GetAlias()->begin()+m_index;
-		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetAlias()->erase(it);
-		//m_listalias->DeleteItem(event.GetIndex());
-		//BuildAlias();
+		it = m_frame->m_actwindow->GetAlias()->begin()+m_index;
+		
+		m_frame->m_actwindow->GetAlias()->erase(it);
+		
 		int index=0;
-		for (it = m_frame->GetAlias()->begin(); it!= m_frame->GetAlias()->end(); it++)
+		for (it = m_frame->m_actwindow->GetAlias()->begin(); it!= m_frame->m_actwindow->GetAlias()->end(); it++)
 		{
 			it->SetIndex(index++);
 		}
 		wxCommandEvent ev;
 		OnGroupChanged(ev);
-		m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+		//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 	}
 }
 
@@ -868,9 +858,9 @@ void dlg_obj::OnAliasOn( wxCommandEvent& event )
 		return;
 	else
 	{
-		m_frame->GetAlias()->at(m_index).SetActive(m_alon->GetValue());
+		m_frame->m_actwindow->GetAlias()->at(m_index).SetActive(m_alon->GetValue());
 	}
-	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+	//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 }
 
 void dlg_obj::OnGroupOff( wxCommandEvent& event )
@@ -881,12 +871,12 @@ al_it iter;
 		return;
 	else
 	{
-		wxString s = m_frame->GetAlias()->at(m_index).GetGroup();
+		wxString s = m_frame->m_actwindow->GetAlias()->at(m_index).GetGroup();
 		if (m_groupon->GetValue())
 			m_groupon->SetLabel(_("Group active"));
 		else
 			m_groupon->SetLabel(_("Group off"));
-		for (iter = m_frame->GetAlias()->begin(); iter!= m_frame->GetAlias()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetAlias()->begin(); iter!= m_frame->m_actwindow->GetAlias()->end(); iter++)
 		{
 			if (s == iter->GetGroup())
 			{
@@ -895,7 +885,7 @@ al_it iter;
 			}
 		}
 	}
-	m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+	//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 
 }
 
@@ -909,14 +899,14 @@ s_it it;
 	else
 	{
 		if (s == wxEmptyString)
-			s = m_frame->GetAlias()->at(m_index).GetGroup();
+			s = m_frame->m_actwindow->GetAlias()->at(m_index).GetGroup();
 		if (wxMessageBox(_("This will delete all aliases in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetAlias()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetAlias()->size(); i++)
 			{
-				if(m_frame->GetAlias()->at(i).GetGroup()==s)
+				if(m_frame->m_actwindow->GetAlias()->at(i).GetGroup()==s)
 				{
-					m_frame->GetAlias()->erase(m_frame->GetAlias()->begin()+i--);
+					m_frame->m_actwindow->GetAlias()->erase(m_frame->m_actwindow->GetAlias()->begin()+i--);
 				}
 			}
 			for (it = amcAlias::GetAliasGroups()->begin(); it!=amcAlias::GetAliasGroups()->end(); it++)
@@ -928,7 +918,7 @@ s_it it;
 				}
 			}
 		BuildAlias();
-		m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
+		//m_frame->m_actwindow->SetAlias(*m_frame->GetAlias());
 		}
 	}
 }
@@ -947,11 +937,11 @@ al_it iter;
 	else if (m_alfilter->GetValue())
 	{
 		m_listalias->DeleteAllItems();
-		for (iter = m_frame->GetAlias()->begin(); iter!= m_frame->GetAlias()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetAlias()->begin(); iter!= m_frame->m_actwindow->GetAlias()->end(); iter++)
 		{
 			if (group==iter->GetGroup())
 			{
-				int idx = m_frame->GetAliasIndexByLabel(iter->GetAlias());
+				int idx = m_frame->m_actwindow->GetAliasIndexByLabel(iter->GetAlias());
 				long tmp = m_listalias->InsertItem(index, iter->GetAlias(),-1);
 				m_listalias->SetItemData(tmp, idx);
 				m_listalias->SetItem(index, 1, iter->GetAction(), -1);
@@ -966,7 +956,7 @@ void dlg_obj::OnColourCheck( wxCommandEvent& event )
 	wxTreeItemId id = m_tree->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetTriggerIndexByLabel(m_tree->GetItemText(id));
+	int index = m_frame->m_actwindow->GetTriggerIndexByLabel(m_tree->GetItemText(id));
 
 	if (m_oncolor->GetValue())
 		m_amccombo->Enable();
@@ -974,7 +964,7 @@ void dlg_obj::OnColourCheck( wxCommandEvent& event )
 	{
         m_amccombo->Disable();
 		if (index>0)
-            m_frame->GetTrigger()->at(index).SetColMatch(-1);
+            m_frame->m_actwindow->GetTrigger()->at(index).SetColMatch(-1);
 		m_amccombo->SetSelection(0);
 	}
 	m_amccombo->Refresh();
@@ -987,32 +977,25 @@ hk_it it;
 
 	long keycode = m_hkey->GetHotkey();
 	int mods = m_hkey->GetModifier();
-	/*for (it=m_frame->GetAlias()->begin();it!=m_frame->GetAlias()->end();it++)
-	{
-		if(s==*it)
-		{
-			wxMessageBox(_("Alias already exists!"), _("Alias already exists!"), wxOK, this);
-			return;
-		}
-	}*/
+	
 	hk.SetHotkey(keycode);
 	hk.SetMods(mods);
 	hk.SetName(m_hkey->GetHkName());
 	hk.SetAction(m_hkeyaction->GetValue());
 	hk.SetActive(m_hkeyon->GetValue());
 	hk.SetGroup(m_hkcombo->GetValue());
-	m_frame->GetHotkeys()->push_back(hk);
-	//stable_sort(m_frame->GetHotkeys()->begin(), m_frame->GetAlias()->end(), less<class amcAlias>());
-	//BuildHotkeys();
+	m_frame->m_actwindow->GetHotkeys()->push_back(hk);
+	
+	
 	int index=0;
-	for (it = m_frame->GetHotkeys()->begin(); it!= m_frame->GetHotkeys()->end(); it++)
+	for (it = m_frame->m_actwindow->GetHotkeys()->begin(); it!= m_frame->m_actwindow->GetHotkeys()->end(); it++)
 	{
 		it->SetIndex(index++);
 	}
 	wxCommandEvent ev;
 	OnHkGroupChanged(ev);
 	m_hkcombo->SetStringSelection(hk.GetGroup());
-	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+	//m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHotkeyEdit( wxCommandEvent& event )
@@ -1022,9 +1005,9 @@ hk_it it;
 	if (m_hkindex==-1)
 		return;
 	wxString l = m_hkey->GetHkName();
-	for (it=m_frame->GetHotkeys()->begin();it!=m_frame->GetHotkeys()->end();it++)
+	for (it=m_frame->m_actwindow->GetHotkeys()->begin();it!=m_frame->m_actwindow->GetHotkeys()->end();it++)
 	{
-		if(l==*it && l!=m_frame->GetHotkeys()->at(m_hkindex).GetName())
+		if(l==*it && l!=m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetName())
 		{
 			wxMessageBox(_("Hotkey already exists!"), _("Hotkey already exists!"), wxOK, this);
 			return;
@@ -1032,17 +1015,17 @@ hk_it it;
 	}
 	long keycode = m_hkey->GetHotkey();
 	int mods = m_hkey->GetModifier();
-	m_frame->GetHotkeys()->at(m_hkindex).SetHotkey(keycode);
-	m_frame->GetHotkeys()->at(m_hkindex).SetMods(mods);
-	m_frame->GetHotkeys()->at(m_hkindex).SetName(m_hkey->GetHkName());
-	m_frame->GetHotkeys()->at(m_hkindex).SetAction(m_hkeyaction->GetValue());
-	m_frame->GetHotkeys()->at(m_hkindex).SetActive(m_hkeyon->GetValue());
-	m_frame->GetHotkeys()->at(m_hkindex).SetGroup(m_hkcombo->GetValue());
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetHotkey(keycode);
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetMods(mods);
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetName(m_hkey->GetHkName());
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetAction(m_hkeyaction->GetValue());
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetActive(m_hkeyon->GetValue());
+	m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetGroup(m_hkcombo->GetValue());
 	//BuildHotkeys();
 	wxCommandEvent ev;
 	OnHkGroupChanged(ev);
-	m_hkcombo->SetStringSelection(m_frame->GetHotkeys()->at(m_hkindex).GetGroup());
-	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+	m_hkcombo->SetStringSelection(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetGroup());
+	//m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHkSelected( wxListEvent& event )
@@ -1056,14 +1039,14 @@ void dlg_obj::OnHkSelected( wxListEvent& event )
 		return;
 	else
 	{
-		m_hkey->SetValue(m_frame->GetHotkeys()->at(m_hkindex).GetName());
-		m_hkey->SetHkName(m_frame->GetHotkeys()->at(m_hkindex).GetName());
-		m_hkey->SetHotkey(m_frame->GetHotkeys()->at(m_hkindex).GetHotkey());
-		m_hkey->SetModifier(m_frame->GetHotkeys()->at(m_hkindex).GetModifier());
-		m_hkeyaction->SetValue(m_frame->GetHotkeys()->at(m_hkindex).GetAction());
-		m_hkcombo->SetStringSelection(m_frame->GetHotkeys()->at(m_hkindex).GetGroup());
-		m_hkeyon->SetValue(m_frame->GetHotkeys()->at(m_hkindex).IsActive());
-		m_hkgroupoff->SetValue(m_frame->GetHotkeys()->at(m_hkindex).IsActive());
+		m_hkey->SetValue(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetName());
+		m_hkey->SetHkName(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetName());
+		m_hkey->SetHotkey(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetHotkey());
+		m_hkey->SetModifier(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetModifier());
+		m_hkeyaction->SetValue(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetAction());
+		m_hkcombo->SetStringSelection(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetGroup());
+		m_hkeyon->SetValue(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).IsActive());
+		m_hkgroupoff->SetValue(m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).IsActive());
 		if (m_hkgroupoff->GetValue())
 			m_hkgroupoff->SetLabel(_("Group active"));
 		else
@@ -1078,19 +1061,19 @@ hk_it it;
 		return;
 	else
 	{
-		it = m_frame->GetHotkeys()->begin()+m_hkindex;
+		it = m_frame->m_actwindow->GetHotkeys()->begin()+m_hkindex;
 		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetHotkeys()->erase(it);
+		m_frame->m_actwindow->GetHotkeys()->erase(it);
 		m_listhkey->DeleteItem(m_hkindex);
 		//BuildHotkeys();
 		int index=0;
-		for (it = m_frame->GetHotkeys()->begin(); it!= m_frame->GetHotkeys()->end(); it++)
+		for (it = m_frame->m_actwindow->GetHotkeys()->begin(); it!= m_frame->m_actwindow->GetHotkeys()->end(); it++)
 		{
 			it->SetIndex(index++);
 		}
 		wxCommandEvent ev;
 		OnHkGroupChanged(ev);
-		m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+		//m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 	}
 }
 
@@ -1100,9 +1083,9 @@ void dlg_obj::OnHkOn( wxCommandEvent& event)
 		return;
 	else
 	{
-		m_frame->GetHotkeys()->at(m_hkindex).SetActive(m_hkeyon->GetValue());
+		m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).SetActive(m_hkeyon->GetValue());
 	}
-	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+	//m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 
 }
 
@@ -1116,14 +1099,14 @@ s_it it;
 	else
 	{
 		if (s == wxEmptyString)
-			s = m_frame->GetHotkeys()->at(m_hkindex).GetGroup();
+			s = m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetGroup();
 		if (wxMessageBox(_("This will delete all hotkeys in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetHotkeys()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetHotkeys()->size(); i++)
 			{
-				if(m_frame->GetHotkeys()->at(i).GetGroup()==s)
+				if(m_frame->m_actwindow->GetHotkeys()->at(i).GetGroup()==s)
 				{
-					m_frame->GetHotkeys()->erase(m_frame->GetHotkeys()->begin()+i--);
+					m_frame->m_actwindow->GetHotkeys()->erase(m_frame->m_actwindow->GetHotkeys()->begin()+i--);
 				}
 			}
 			for (it = amcHotkey::GetHotkeyGroups()->begin(); it!=amcHotkey::GetHotkeyGroups()->end(); it++)
@@ -1137,7 +1120,7 @@ s_it it;
 		BuildHotkeys();
 		}
 	}
-	m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
+	//m_frame->m_actwindow->SetHotkeys(*m_frame->GetHotkeys());
 }
 
 void dlg_obj::OnHkGroupToggle( wxCommandEvent& event )
@@ -1148,12 +1131,12 @@ hk_it iter;
 		return;
 	else
 	{
-		wxString s = m_frame->GetHotkeys()->at(m_hkindex).GetGroup();
+		wxString s = m_frame->m_actwindow->GetHotkeys()->at(m_hkindex).GetGroup();
 		if (m_hkgroupoff->GetValue())
 			m_hkgroupoff->SetLabel(_("Group active"));
 		else
 			m_hkgroupoff->SetLabel(_("Group off"));
-		for (iter = m_frame->GetHotkeys()->begin(); iter!= m_frame->GetHotkeys()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetHotkeys()->begin(); iter!= m_frame->m_actwindow->GetHotkeys()->end(); iter++)
 		{
 			if (s == iter->GetGroup())
 			{
@@ -1178,11 +1161,11 @@ hk_it iter;
 	else if (m_hkfilter->GetValue())
 	{
 		m_listhkey->DeleteAllItems();
-		for (iter = m_frame->GetHotkeys()->begin(); iter!= m_frame->GetHotkeys()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetHotkeys()->begin(); iter!= m_frame->m_actwindow->GetHotkeys()->end(); iter++)
 		{
 			if (group==iter->GetGroup())
 			{
-				int idx = m_frame->GetHkIndexByLabel(iter->GetKeyName());
+				int idx = m_frame->m_actwindow->GetHkIndexByLabel(iter->GetName());
 				long tmp = m_listhkey->InsertItem(index, iter->GetName(),-1);
 				m_listhkey->SetItemData(tmp, idx);
 				m_listhkey->SetItem(index, 1, iter->GetAction(), -1);
@@ -1204,17 +1187,17 @@ void dlg_obj::OnVarSelected( wxListEvent& event )
 		return;
 	else
 	{
-		m_defvar->SetValue(m_frame->GetVars()->at(m_vindex).GetName());
-		m_varvalue->SetValue(m_frame->GetVars()->at(m_vindex).GetValue());
-		m_vargroup->SetStringSelection(m_frame->GetVars()->at(m_vindex).GetGroup());
-		m_von->SetValue(m_frame->GetVars()->at(m_vindex).IsActive());
-		m_vgroupoff->SetValue(m_frame->GetVars()->at(m_vindex).IsActive());
+		m_defvar->SetValue(m_frame->m_actwindow->GetVars()->at(m_vindex).GetName());
+		m_varvalue->SetValue(m_frame->m_actwindow->GetVars()->at(m_vindex).GetValue());
+		m_vargroup->SetStringSelection(m_frame->m_actwindow->GetVars()->at(m_vindex).GetGroup());
+		m_von->SetValue(m_frame->m_actwindow->GetVars()->at(m_vindex).IsActive());
+		m_vgroupoff->SetValue(m_frame->m_actwindow->GetVars()->at(m_vindex).IsActive());
 		if (m_vgroupoff->GetValue())
 			m_vgroupoff->SetLabel(_("Group active"));
 		else
 			m_vgroupoff->SetLabel(_("Group off"));
 	}
-	m_vargroup->SetStringSelection(m_frame->GetVars()->at(m_vindex).GetGroup());
+	m_vargroup->SetStringSelection(m_frame->m_actwindow->GetVars()->at(m_vindex).GetGroup());
 }
 
 void dlg_obj::OnVarAdd( wxCommandEvent& event )
@@ -1223,7 +1206,7 @@ amcVar v;
 v_it it;
 
 	wxString s = m_defvar->GetValue();
-	for (it=m_frame->GetVars()->begin();it!=m_frame->GetVars()->end();it++)
+	for (it=m_frame->m_actwindow->GetVars()->begin();it!=m_frame->m_actwindow->GetVars()->end();it++)
 	{
 		if(s==*it)
 		{
@@ -1235,11 +1218,11 @@ v_it it;
 	v.SetValue(m_varvalue->GetValue());
 	v.SetActive(m_von->GetValue());
 	v.SetGroup(m_vargroup->GetValue());
-	m_frame->GetVars()->push_back(v);
-	stable_sort(m_frame->GetVars()->begin(), m_frame->GetVars()->end(), less<class amcVar>());
+	m_frame->m_actwindow->GetVars()->push_back(v);
+	stable_sort(m_frame->m_actwindow->GetVars()->begin(), m_frame->m_actwindow->GetVars()->end(), less<class amcVar>());
 	//BuildVars();
 	int index=0;
-	for (it = m_frame->GetVars()->begin(); it!= m_frame->GetVars()->end(); it++)
+	for (it = m_frame->m_actwindow->GetVars()->begin(); it!= m_frame->m_actwindow->GetVars()->end(); it++)
 	{
 		it->SetIndex(index++);
 	}
@@ -1247,8 +1230,7 @@ v_it it;
 	m_frame->luaBuildvar();
 	wxCommandEvent ev;
 	OnVGroupChanged(ev);
-	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
-
+	//m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 }
 
 void dlg_obj::OnVarEdit( wxCommandEvent& event )
@@ -1258,23 +1240,22 @@ v_it it;
 	if (m_vindex==-1)
 		return;
 	wxString s = m_defvar->GetValue();
-	for (it=m_frame->GetVars()->begin();it!=m_frame->GetVars()->end();it++)
+	for (it=m_frame->m_actwindow->GetVars()->begin();it!=m_frame->m_actwindow->GetVars()->end();it++)
 	{
-		if(s==*it && s!=m_frame->GetVars()->at(m_vindex).GetName())
+		if(s==*it && s!=m_frame->m_actwindow->GetVars()->at(m_vindex).GetName())
 		{
 			wxMessageBox(_("Variable already exists!"), _("Variable already exists!"), wxOK, this);
 			return;
 		}
 	}
-	m_frame->GetVars()->at(m_vindex).SetName(s);
-	m_frame->GetVars()->at(m_vindex).SetValue(m_varvalue->GetValue());
-	m_frame->GetVars()->at(m_vindex).SetActive(m_von->GetValue());
-	m_frame->GetVars()->at(m_vindex).SetGroup(m_vargroup->GetValue());
-	m_vargroup->SetStringSelection(m_frame->GetVars()->at(m_vindex).GetGroup());
+	m_frame->m_actwindow->GetVars()->at(m_vindex).SetName(s);
+	m_frame->m_actwindow->GetVars()->at(m_vindex).SetValue(m_varvalue->GetValue());
+	m_frame->m_actwindow->GetVars()->at(m_vindex).SetActive(m_von->GetValue());
+	m_frame->m_actwindow->GetVars()->at(m_vindex).SetGroup(m_vargroup->GetValue());
+	m_vargroup->SetStringSelection(m_frame->m_actwindow->GetVars()->at(m_vindex).GetGroup());
 	wxCommandEvent ev;
 	OnVGroupChanged(ev);
-	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
-	
+	//m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 }
 
 void dlg_obj::OnVarDelete( wxCommandEvent& event )
@@ -1285,19 +1266,18 @@ v_it it;
 		return;
 	else
 	{
-		it = m_frame->GetVars()->begin()+m_vindex;
-		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetVars()->erase(it);
-		//m_listalias->DeleteItem(event.GetIndex());
-		//BuildVars();
+		it = m_frame->m_actwindow->GetVars()->begin()+m_vindex;
+		
+		m_frame->m_actwindow->GetVars()->erase(it);
+		
 		int index=0;
-		for (it = m_frame->GetVars()->begin(); it!= m_frame->GetVars()->end(); it++)
+		for (it = m_frame->m_actwindow->GetVars()->begin(); it!= m_frame->m_actwindow->GetVars()->end(); it++)
 		{
 			it->SetIndex(index++);
 		}
 		wxCommandEvent ev;
 		OnVGroupChanged(ev);
-		m_frame->m_actwindow->SetVars(*m_frame->GetVars());
+		//m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 	}
 }
 
@@ -1307,8 +1287,8 @@ void dlg_obj::OnVarOn( wxCommandEvent& event )
 		return;
 	else
 	{
-		m_frame->GetVars()->at(m_vindex).SetActive(m_von->GetValue());
-		m_frame->m_actwindow->SetVars(*m_frame->GetVars());
+		m_frame->m_actwindow->GetVars()->at(m_vindex).SetActive(m_von->GetValue());
+		//m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 	}
 }
 
@@ -1322,14 +1302,14 @@ s_it it;
 	else
 	{
 		if (s == wxEmptyString)
-			s = m_frame->GetVars()->at(m_vindex).GetGroup();
+			s = m_frame->m_actwindow->GetVars()->at(m_vindex).GetGroup();
 		if (wxMessageBox(_("This will delete all variables in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetVars()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetVars()->size(); i++)
 			{
-				if(m_frame->GetVars()->at(i).GetGroup()==s)
+				if(m_frame->m_actwindow->GetVars()->at(i).GetGroup()==s)
 				{
-					m_frame->GetVars()->erase(m_frame->GetVars()->begin()+i--);
+					m_frame->m_actwindow->GetVars()->erase(m_frame->m_actwindow->GetVars()->begin()+i--);
 				}
 			}
 			for (it = amcVar::GetVarGroups()->begin(); it!=amcVar::GetVarGroups()->end(); it++)
@@ -1343,7 +1323,7 @@ s_it it;
 		BuildVars();
 		}
 	}
-	m_frame->m_actwindow->SetVars(*m_frame->GetVars());
+	//m_frame->m_actwindow->SetVars(*m_frame->GetVars());
 }
 
 void dlg_obj::OnVGroupOff( wxCommandEvent& event )
@@ -1354,12 +1334,12 @@ v_it iter;
 		return;
 	else
 	{
-		wxString s = m_frame->GetVars()->at(m_vindex).GetGroup();
+		wxString s = m_frame->m_actwindow->GetVars()->at(m_vindex).GetGroup();
 		if (m_vgroupoff->GetValue())
 			m_vgroupoff->SetLabel(_("Group active"));
 		else
 			m_vgroupoff->SetLabel(_("Group off"));
-		for (iter = m_frame->GetVars()->begin(); iter!= m_frame->GetVars()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
 			if (s == iter->GetGroup())
 			{
@@ -1384,12 +1364,12 @@ v_it iter;
 	else if (m_vfilter->GetValue())
 	{
 		m_listvar->DeleteAllItems();
-		for (iter = m_frame->GetVars()->begin(); iter!= m_frame->GetVars()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetVars()->begin(); iter!= m_frame->m_actwindow->GetVars()->end(); iter++)
 		{
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_listvar->InsertItem(index, iter->GetName(),-1);
-				m_listvar->SetItemData(tmp, m_frame->GetVarIndexByLabel(iter->GetName()));
+				m_listvar->SetItemData(tmp, m_frame->m_actwindow->GetVarIndexByLabel(iter->GetName()));
 				m_listvar->SetItem(index, 1, iter->GetValue(), -1);
 				m_listvar->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1409,21 +1389,21 @@ void dlg_obj::OnListSelected( wxListEvent& event )
 		return;
 	else
 	{
-		m_deflist->SetValue(m_frame->GetLists()->at(m_lindex).GetName());
+		m_deflist->SetValue(m_frame->m_actwindow->GetLists()->at(m_lindex).GetName());
 		//m_varvalue->SetValue(m_frame->GetVars()->at(m_vindex).GetValue());
 		int i;
 		m_items->Clear();
-		for (i=0; i<m_frame->GetLists()->at(m_lindex).GetSize();i++)
-			m_items->Append(m_frame->GetLists()->at(m_lindex).GetItem(i));
-		m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
-		m_lion->SetValue(m_frame->GetLists()->at(m_lindex).IsActive());
-		m_ligroupoff->SetValue(m_frame->GetLists()->at(m_lindex).IsActive());
+		for (i=0; i<m_frame->m_actwindow->GetLists()->at(m_lindex).GetSize();i++)
+			m_items->Append(m_frame->m_actwindow->GetLists()->at(m_lindex).GetItem(i));
+		m_ligroup->SetStringSelection(m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup());
+		m_lion->SetValue(m_frame->m_actwindow->GetLists()->at(m_lindex).IsActive());
+		m_ligroupoff->SetValue(m_frame->m_actwindow->GetLists()->at(m_lindex).IsActive());
 		if (m_ligroupoff->GetValue())
 			m_ligroupoff->SetLabel(_("Group active"));
 		else
 			m_ligroupoff->SetLabel(_("Group off"));
 	}
-	m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
+	m_ligroup->SetStringSelection(m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup());
 }
 
 void dlg_obj::OnListAdd( wxCommandEvent& event )
@@ -1432,7 +1412,7 @@ amcList l;
 li_it it;
 
 	wxString s = m_deflist->GetValue();
-	for (it=m_frame->GetLists()->begin();it!=m_frame->GetLists()->end();it++)
+	for (it=m_frame->m_actwindow->GetLists()->begin();it!=m_frame->m_actwindow->GetLists()->end();it++)
 	{
 		if(s==*it)
 		{
@@ -1443,20 +1423,20 @@ li_it it;
 	l.SetName(s);
 	l.SetActive(m_lion->GetValue());
 	l.SetGroup(m_ligroup->GetValue());
-	m_frame->GetLists()->push_back(l);
-	stable_sort(m_frame->GetLists()->begin(), m_frame->GetLists()->end(), less<class amcList>());
+	m_frame->m_actwindow->GetLists()->push_back(l);
+	stable_sort(m_frame->m_actwindow->GetLists()->begin(), m_frame->m_actwindow->GetLists()->end(), less<class amcList>());
 	//BuildLists();
 	int index=0;
-	for (it = m_frame->GetLists()->begin(); it!= m_frame->GetLists()->end(); it++)
+	for (it = m_frame->m_actwindow->GetLists()->begin(); it!= m_frame->m_actwindow->GetLists()->end(); it++)
 	{
 		it->SetIndex(index++);
 	}
 	m_ligroup->SetStringSelection(l.GetGroup());
 	wxCommandEvent ev;
 	OnLGroupChanged(ev);
-	it = find(m_frame->GetLists()->begin(), m_frame->GetLists()->end(), l.GetName());
+	it = find(m_frame->m_actwindow->GetLists()->begin(), m_frame->m_actwindow->GetLists()->end(), l.GetName());
 	m_listlist->SetItemState(it->GetIndex(), wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+	//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListEdit(wxCommandEvent &event)
@@ -1466,23 +1446,23 @@ li_it it;
 	if (m_lindex==-1)
 		return;
 	wxString s = m_deflist->GetValue();
-	for (it=m_frame->GetLists()->begin();it!=m_frame->GetLists()->end();it++)
+	for (it=m_frame->m_actwindow->GetLists()->begin();it!=m_frame->m_actwindow->GetLists()->end();it++)
 	{
-		if(s==*it && s!=m_frame->GetLists()->at(m_lindex).GetName())
+		if(s==*it && s!=m_frame->m_actwindow->GetLists()->at(m_lindex).GetName())
 		{
 			wxMessageBox(_("List already exists!"), _("List already exists!"), wxOK, this);
 			return;
 		}
 	}
-	m_frame->GetLists()->at(m_lindex).SetName(s);
-	//m_frame->GetLists()->at(m_lindex).SetAction(m_defaction->GetValue());
-	m_frame->GetLists()->at(m_lindex).SetActive(m_lion->GetValue());
-	m_frame->GetLists()->at(m_lindex).SetGroup(m_ligroup->GetValue());
+	m_frame->m_actwindow->GetLists()->at(m_lindex).SetName(s);
+	
+	m_frame->m_actwindow->GetLists()->at(m_lindex).SetActive(m_lion->GetValue());
+	m_frame->m_actwindow->GetLists()->at(m_lindex).SetGroup(m_ligroup->GetValue());
 	//BuildLists();
-	m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
+	m_ligroup->SetStringSelection(m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup());
 	wxCommandEvent ev;
 	OnLGroupChanged(ev);
-	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+	//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListDelete(wxCommandEvent& event)
@@ -1493,19 +1473,18 @@ li_it it;
 		return;
 	else
 	{
-		it = m_frame->GetLists()->begin()+m_lindex;
+		it = m_frame->m_actwindow->GetLists()->begin()+m_lindex;
 		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetLists()->erase(it);
-		//m_listalias->DeleteItem(event.GetIndex());
-		//BuildLists();
+		m_frame->m_actwindow->GetLists()->erase(it);
+		
 		int index=0;
-		for (it = m_frame->GetLists()->begin(); it!= m_frame->GetLists()->end(); it++)
+		for (it = m_frame->m_actwindow->GetLists()->begin(); it!= m_frame->m_actwindow->GetLists()->end(); it++)
 		{
 			it->SetIndex(index++);
 		}
 		wxCommandEvent ev;
 		OnLGroupChanged(ev);
-		m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+		//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 	}
 }
 
@@ -1513,11 +1492,11 @@ void dlg_obj::OnAddItem(wxCommandEvent& event)
 {
 	if (m_lindex==-1)
 		return;
-	m_frame->GetLists()->at(m_lindex).AddItem(m_items->GetValue());
+	m_frame->m_actwindow->GetLists()->at(m_lindex).AddItem(m_items->GetValue());
 	m_items->Append(m_items->GetValue());
 	BuildLists();
-	m_ligroup->SetStringSelection(m_frame->GetLists()->at(m_lindex).GetGroup());
-	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+	m_ligroup->SetStringSelection(m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup());
+	//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnListOn(wxCommandEvent& event)
@@ -1526,8 +1505,8 @@ void dlg_obj::OnListOn(wxCommandEvent& event)
 		return;
 	else
 	{
-		m_frame->GetLists()->at(m_lindex).SetActive(m_lion->GetValue());
-		m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+		m_frame->m_actwindow->GetLists()->at(m_lindex).SetActive(m_lion->GetValue());
+		//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 	}
 }
 
@@ -1539,12 +1518,12 @@ li_it iter;
 		return;
 	else
 	{
-		wxString s = m_frame->GetLists()->at(m_lindex).GetGroup();
+		wxString s = m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup();
 		if (m_ligroupoff->GetValue())
 			m_ligroupoff->SetLabel(_("Group active"));
 		else
 			m_ligroupoff->SetLabel(_("Group off"));
-		for (iter = m_frame->GetLists()->begin(); iter!= m_frame->GetLists()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetLists()->begin(); iter!= m_frame->m_actwindow->GetLists()->end(); iter++)
 		{
 			if (s == iter->GetGroup())
 			{
@@ -1565,14 +1544,14 @@ s_it it;
 	else
 	{
 		if (s == wxEmptyString)
-			s = m_frame->GetLists()->at(m_lindex).GetGroup();
+			s = m_frame->m_actwindow->GetLists()->at(m_lindex).GetGroup();
 		if (wxMessageBox(_("This will delete all lists in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetLists()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetLists()->size(); i++)
 			{
-				if(m_frame->GetLists()->at(i).GetGroup()==s)
+				if(m_frame->m_actwindow->GetLists()->at(i).GetGroup()==s)
 				{
-					m_frame->GetLists()->erase(m_frame->GetLists()->begin()+i--);
+					m_frame->m_actwindow->GetLists()->erase(m_frame->m_actwindow->GetLists()->begin()+i--);
 				}
 			}
 			for (it = amcList::GetListGroups()->begin(); it!=amcList::GetListGroups()->end(); it++)
@@ -1586,7 +1565,7 @@ s_it it;
 		BuildLists();
 		}
 	}
-	m_frame->m_actwindow->SetLists(*m_frame->GetLists());
+	//m_frame->m_actwindow->SetLists(*m_frame->GetLists());
 }
 
 void dlg_obj::OnLGroupChanged( wxCommandEvent& event )
@@ -1595,7 +1574,7 @@ int index=0;
 li_it iter;
 
 	wxString group = m_ligroup->GetValue();
-	if (group == wxT("all"))
+	if (group == "all")
 	{
 		BuildLists();
 		return;
@@ -1603,12 +1582,12 @@ li_it iter;
 	else if (m_lifilter->GetValue())
 	{
 		m_listlist->DeleteAllItems();
-		for (iter = m_frame->GetLists()->begin(); iter!= m_frame->GetLists()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetLists()->begin(); iter!= m_frame->m_actwindow->GetLists()->end(); iter++)
 		{
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_listlist->InsertItem(index, iter->GetName(),-1);
-				m_listlist->SetItemData(tmp, m_frame->GetListIndexByLabel(iter->GetName()));
+				m_listlist->SetItemData(tmp, m_frame->m_actwindow->GetListIndexByLabel(iter->GetName()));
 				m_listlist->SetItem(index, 1, iter->GetValue(), -1);
 				m_listlist->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1628,21 +1607,21 @@ void dlg_obj::OnTimerSelected( wxListEvent& event )
 		return;
 	else
 	{
-		m_deftimer->SetValue(m_frame->GetTimers()->at(m_tindex).GetName());
-		m_timeraction->SetValue(m_frame->GetTimers()->at(m_tindex).GetAction());
-		m_tigroup->SetStringSelection(m_frame->GetTimers()->at(m_tindex).GetGroup());
-		m_ton->SetValue(m_frame->GetTimers()->at(m_tindex).IsActive());
-		m_rep->SetValue(m_frame->GetTimers()->at(m_tindex).GetRepeat());
+		m_deftimer->SetValue(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetName());
+		m_timeraction->SetValue(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetAction());
+		m_tigroup->SetStringSelection(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetGroup());
+		m_ton->SetValue(m_frame->m_actwindow->GetTimers()->at(m_tindex).IsActive());
+		m_rep->SetValue(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetRepeat());
 		wxString s;
-		s<<m_frame->GetTimers()->at(m_tindex).GetFInterval();
+		s<<m_frame->m_actwindow->GetTimers()->at(m_tindex).GetFInterval();
 		m_intervall->SetValue(s);
-		m_tigroupoff->SetValue(m_frame->GetTimers()->at(m_tindex).IsActive());
+		m_tigroupoff->SetValue(m_frame->m_actwindow->GetTimers()->at(m_tindex).IsActive());
 		if (m_tigroupoff->GetValue())
 			m_tigroupoff->SetLabel(_("Group active"));
 		else
 			m_tigroupoff->SetLabel(_("Group off"));
 	}
-	m_tigroup->SetStringSelection(m_frame->GetTimers()->at(m_tindex).GetGroup());
+	m_tigroup->SetStringSelection(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetGroup());
 }
 
 void dlg_obj::OnTimerAdd(wxCommandEvent& event)
@@ -1651,7 +1630,7 @@ amcTimer t;
 t_it it;
 
 	wxString s = m_deftimer->GetValue();
-	for (it=m_frame->GetTimers()->begin();it!=m_frame->GetTimers()->end();it++)
+	for (it=m_frame->m_actwindow->GetTimers()->begin();it!=m_frame->m_actwindow->GetTimers()->end();it++)
 	{
 		if(s==*it)
 		{
@@ -1668,18 +1647,18 @@ t_it it;
 	t.SetInterval((float)f);
 	t.SetRepeat(m_rep->GetValue());
 	t.SetCurrepeat(m_rep->GetValue());
-	m_frame->GetTimers()->push_back(t);
-	stable_sort(m_frame->GetTimers()->begin(), m_frame->GetTimers()->end(), less<class amcTimer>());
+	m_frame->m_actwindow->GetTimers()->push_back(t);
+	stable_sort(m_frame->m_actwindow->GetTimers()->begin(), m_frame->m_actwindow->GetTimers()->end(), less<class amcTimer>());
 	//BuildTimers();
 	int index=0;
-	for (it = m_frame->GetTimers()->begin(); it!= m_frame->GetTimers()->end(); it++)
+	for (it = m_frame->m_actwindow->GetTimers()->begin(); it!= m_frame->m_actwindow->GetTimers()->end(); it++)
 	{
 		it->SetIdx(index++);
 	}
 	m_tigroup->SetStringSelection(t.GetGroup());
 	wxCommandEvent ev;
 	OnTGroupChanged(ev);
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTimerDelete( wxCommandEvent& event )
@@ -1690,19 +1669,19 @@ t_it it;
 		return;
 	else
 	{
-		it = m_frame->GetTimers()->begin()+m_tindex;
+		it = m_frame->m_actwindow->GetTimers()->begin()+m_tindex;
 		//for (it=m_frame->GetTrigger()->begin(), i=0;i<index;it++, i++);
-		m_frame->GetTimers()->erase(it);
+		m_frame->m_actwindow->GetTimers()->erase(it);
 		//m_listalias->DeleteItem(event.GetIndex());
 		//BuildTimers();
 		int index=0;
-		for (it = m_frame->GetTimers()->begin(); it!= m_frame->GetTimers()->end(); it++)
+		for (it = m_frame->m_actwindow->GetTimers()->begin(); it!= m_frame->m_actwindow->GetTimers()->end(); it++)
 		{
 			it->SetIdx(index++);
 		}
 		wxCommandEvent ev;
 		OnTGroupChanged(ev);
-		m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+		//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 	}
 }
 
@@ -1713,36 +1692,36 @@ t_it it;
 	if (m_tindex==-1)
 		return;
 	wxString s = m_deftimer->GetValue();
-	for (it=m_frame->GetTimers()->begin();it!=m_frame->GetTimers()->end();it++)
+	for (it=m_frame->m_actwindow->GetTimers()->begin();it!=m_frame->m_actwindow->GetTimers()->end();it++)
 	{
-		if(s==*it && s!=m_frame->GetTimers()->at(m_tindex).GetName())
+		if(s==*it && s!=m_frame->m_actwindow->GetTimers()->at(m_tindex).GetName())
 		{
 			wxMessageBox(_("Timer already exists!"), _("Timer already exists!"), wxOK, this);
 			return;
 		}
 	}
-	m_frame->GetTimers()->at(m_tindex).SetName(s);
-	m_frame->GetTimers()->at(m_tindex).SetAction(m_timeraction->GetValue());
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetName(s);
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetAction(m_timeraction->GetValue());
 	double f;
 	m_intervall->GetValue().ToDouble(&f);
-	m_frame->GetTimers()->at(m_tindex).SetInterval((float)f);
-	m_frame->GetTimers()->at(m_tindex).SetRepeat(m_rep->GetValue());
-	m_frame->GetTimers()->at(m_tindex).SetCurrepeat(m_rep->GetValue());
-	m_frame->GetTimers()->at(m_tindex).SetActive(m_ton->GetValue());
-	m_frame->GetTimers()->at(m_tindex).SetGroup(m_tigroup->GetValue());
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetInterval((float)f);
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetRepeat(m_rep->GetValue());
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetCurrepeat(m_rep->GetValue());
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetActive(m_ton->GetValue());
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetGroup(m_tigroup->GetValue());
 	//BuildTimers();
-	m_tigroup->SetStringSelection(m_frame->GetTimers()->at(m_tindex).GetGroup());
+	m_tigroup->SetStringSelection(m_frame->m_actwindow->GetTimers()->at(m_tindex).GetGroup());
 	wxCommandEvent ev;
 	OnTGroupChanged(ev);
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTimerStart(wxCommandEvent& event)
 {
 	if (m_tindex==-1)
 		return;
-	m_frame->GetTimers()->at(m_tindex).SetActive(true);
-	m_frame->GetTimers()->at(m_tindex).Run();
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).SetActive(true);
+	m_frame->m_actwindow->GetTimers()->at(m_tindex).Run();
 }
 
 void dlg_obj::OnTimerOn( wxCommandEvent& event )
@@ -1751,8 +1730,8 @@ void dlg_obj::OnTimerOn( wxCommandEvent& event )
 		return;
 	else
 	{
-		m_frame->GetTimers()->at(m_tindex).SetActive(m_ton->GetValue());
-		m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+		m_frame->m_actwindow->GetTimers()->at(m_tindex).SetActive(m_ton->GetValue());
+		//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 	}
 }
 
@@ -1764,12 +1743,12 @@ t_it iter;
 		return;
 	else
 	{
-		wxString s = m_frame->GetTimers()->at(m_tindex).GetGroup();
+		wxString s = m_frame->m_actwindow->GetTimers()->at(m_tindex).GetGroup();
 		if (m_tigroupoff->GetValue())
 			m_tigroupoff->SetLabel(_("Group active"));
 		else
 			m_tigroupoff->SetLabel(_("Group off"));
-		for (iter = m_frame->GetTimers()->begin(); iter!= m_frame->GetTimers()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetTimers()->begin(); iter!= m_frame->m_actwindow->GetTimers()->end(); iter++)
 		{
 			if (s == iter->GetGroup())
 			{
@@ -1790,14 +1769,14 @@ s_it it;
 	else
 	{
 		if (s == wxEmptyString)
-			s = m_frame->GetTimers()->at(m_tindex).GetGroup();
+			s = m_frame->m_actwindow->GetTimers()->at(m_tindex).GetGroup();
 		if (wxMessageBox(_("This will delete all timers in this group!"), _("Continue?"), wxYES_NO, this)==wxYES)
 		{
-			for (size_t i=0;i<m_frame->GetTimers()->size(); i++)
+			for (size_t i=0;i<m_frame->m_actwindow->GetTimers()->size(); i++)
 			{
-				if(m_frame->GetTimers()->at(i).GetGroup()==s)
+				if(m_frame->m_actwindow->GetTimers()->at(i).GetGroup()==s)
 				{
-					m_frame->GetTimers()->erase(m_frame->GetTimers()->begin()+i--);
+					m_frame->m_actwindow->GetTimers()->erase(m_frame->m_actwindow->GetTimers()->begin()+i--);
 				}
 			}
 			for (it = amcTimer::GetTimerGroups()->begin(); it!=amcTimer::GetTimerGroups()->end(); it++)
@@ -1811,7 +1790,7 @@ s_it it;
 		BuildTimers();
 		}
 	}
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnTGroupChanged( wxCommandEvent& event )
@@ -1828,12 +1807,12 @@ t_it iter;
 	else if (m_tifilter->GetValue())
 	{
 		m_timerlist->DeleteAllItems();
-		for (iter = m_frame->GetTimers()->begin(); iter!= m_frame->GetTimers()->end(); iter++)
+		for (iter = m_frame->m_actwindow->GetTimers()->begin(); iter!= m_frame->m_actwindow->GetTimers()->end(); iter++)
 		{
 			if (group==iter->GetGroup())
 			{
 				long tmp = m_timerlist->InsertItem(index, iter->GetName(),-1);
-				m_timerlist->SetItemData(tmp, m_frame->GetTimerIndexByLabel(iter->GetName()));
+				m_timerlist->SetItemData(tmp, m_frame->m_actwindow->GetTimerIndexByLabel(iter->GetName()));
 				m_timerlist->SetItem(index, 1, iter->GetAction(), -1);
 				m_timerlist->SetItem(index++, 2, iter->GetGroup(), -1);
 			}
@@ -1923,18 +1902,18 @@ int i;
 		g.SetVertical(true);
 	else g.SetVertical(false);
 	class MudMainFrame *f = wxGetApp().GetFrame();
-	if (!f->GetGaugePanes()->empty())
+	if (!f->m_actwindow->GetGaugePanes()->empty())
 	{
-		for (i=0;i<(int)f->GetGaugePanes()->size();i++)
+		for (i=0;i<(int)f->m_actwindow->GetGaugePanes()->size();i++)
 		{
-			if (m_parentw->GetValue()==f->GetGaugePanes()->at(i))
+			if (m_parentw->GetValue()==f->m_actwindow->GetGaugePanes()->at(i))
 				break;
 		}
 	}
 	g.Register();
-	f->GetGauges()->at(i).push_back(g.GetName());
+	f->m_actwindow->GetGauges()->at(i).push_back(g.GetName());
 	BuildGaugeTree();
-	m_frame->m_actwindow->SetGauges(*m_frame->GetGauges());
+	//m_frame->m_actwindow->SetGauges(*m_frame->GetGauges());
 }
 
 void dlg_obj::OnDelGauge(wxCommandEvent &event)
@@ -1963,7 +1942,7 @@ class GaugeWindow *gw;
 		BuildGaugeTree();
 		gw->Refresh();
 	}
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnEditGauge(wxCommandEvent &event)
@@ -2015,7 +1994,7 @@ class GaugeWindow *gw;
 		m_gaugew->SetFocus();
 		m_gaugew->SelectItem(id);
 	}
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnButtonSelChanged( wxTreeEvent& event )
@@ -2024,21 +2003,21 @@ void dlg_obj::OnButtonSelChanged( wxTreeEvent& event )
 	wxTreeItemId id = event.GetItem();
 	if (m_treeCtrl3->ItemHasChildren(id))
 		return;
-	index = m_frame->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
+	index = m_frame->m_actwindow->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
 	if (index==-1)
 		return;
-	m_butlabel->SetValue(m_frame->GetButtons()->at(index).GetText());
-	m_butcommand->SetValue(m_frame->GetButtons()->at(index).GetAction());
+	m_butlabel->SetValue(m_frame->m_actwindow->GetButtons()->at(index).GetText());
+	m_butcommand->SetValue(m_frame->m_actwindow->GetButtons()->at(index).GetAction());
 	m_bmfilepicker->SetInitialDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
-	m_bmfilepicker->SetPath(m_frame->GetButtons()->at(index).GetBitmap());
-	int found = m_parenttool->FindString(m_frame->GetButtons()->at(index).GetTbName());
+	m_bmfilepicker->SetPath(m_frame->m_actwindow->GetButtons()->at(index).GetBitmap());
+	int found = m_parenttool->FindString(m_frame->m_actwindow->GetButtons()->at(index).GetTbName());
 	if (found==wxNOT_FOUND)
 	{
-		m_parenttool->AppendString(m_frame->GetButtons()->at(index).GetTbName());
-		m_parenttool->SetStringSelection(m_frame->GetButtons()->at(index).GetTbName());
+		m_parenttool->AppendString(m_frame->m_actwindow->GetButtons()->at(index).GetTbName());
+		m_parenttool->SetStringSelection(m_frame->m_actwindow->GetButtons()->at(index).GetTbName());
 	}
 	else
-		m_parenttool->SetStringSelection(m_frame->GetButtons()->at(index).GetTbName());
+		m_parenttool->SetStringSelection(m_frame->m_actwindow->GetButtons()->at(index).GetTbName());
 }
 
 void dlg_obj::OnButtonAdd(wxCommandEvent &event)
@@ -2048,7 +2027,7 @@ b_it it;
 wxAuiToolBar *tb;
 
 	wxString s = m_butlabel->GetValue();
-	for (it=m_frame->GetButtons()->begin();it!=m_frame->GetButtons()->end();it++)
+	for (it=m_frame->m_actwindow->GetButtons()->begin();it!=m_frame->m_actwindow->GetButtons()->end();it++)
 	{
 		if(s==it->GetName())
 		{
@@ -2064,7 +2043,7 @@ wxAuiToolBar *tb;
 			tb->AddSeparator();
 			b.SetAsSeparator(tb);
 			b.SetTbName(m_parenttool->GetValue());
-			m_frame->GetButtons()->push_back(b);
+			m_frame->m_actwindow->GetButtons()->push_back(b);
 			BuildButtons();
 			tb->Realize();
 			return;
@@ -2075,7 +2054,7 @@ wxAuiToolBar *tb;
 	b.SetText(s);
 	b.SetAction(m_butcommand->GetValue());
 	b.SetActive(true);
-	b.SetId(ID_USERBUTTON+m_frame->GetButtons()->size()+1);
+	b.SetId(ID_USERBUTTON+m_frame->m_actwindow->GetButtons()->size()+1);
 	s = m_parenttool->GetValue();
 	if (s==wxEmptyString)
 		return;
@@ -2099,12 +2078,12 @@ wxAuiToolBar *tb;
 	bt.LoadFile(b.GetBitmap(), wxBITMAP_TYPE_XPM);
 	tb->AddTool(b.GetId(), b.GetName(), bt);
 	tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
-	m_frame->GetButtons()->push_back(b);
+	m_frame->m_actwindow->GetButtons()->push_back(b);
 	//stable_sort(m_frame->GetVars()->begin(), m_frame->GetVars()->end(), less<class amcVar>());
 	BuildButtons();
 	tb->Realize();
 	m_frame->m_mgr.Update();
-	m_frame->m_actwindow->SetButtons(*m_frame->GetButtons());
+	//m_frame->m_actwindow->SetButtons(*m_frame->GetButtons());
 }
 
 void dlg_obj::OnButtonDelete(wxCommandEvent& event)
@@ -2113,22 +2092,22 @@ b_it it;
 	wxTreeItemId id = m_treeCtrl3->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
+	int index = m_frame->m_actwindow->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
-		it = m_frame->GetButtons()->begin()+index;
+		it = m_frame->m_actwindow->GetButtons()->begin()+index;
 		wxAuiToolBar* tb = (wxAuiToolBar*)it->GetParent();
 		tb->DeleteTool(it->GetId());
-		m_frame->GetButtons()->erase(it);
+		m_frame->m_actwindow->GetButtons()->erase(it);
 		m_treeCtrl3->Delete(id);
 		//stable_sort(m_frame->GetTrigger()->begin(), m_frame->GetTrigger()->end(), greater<class Trigger>());
 		BuildButtons();
 		tb->Realize();
 		m_frame->m_mgr.Update();
 	}
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::OnButtonEdit(wxCommandEvent& event)
@@ -2138,29 +2117,29 @@ b_it it;
 	wxTreeItemId id = m_treeCtrl3->GetSelection();
 	if (!id.IsOk())
 		return;
-	int index = m_frame->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
+	int index = m_frame->m_actwindow->GetButtonIndexByLabel(m_treeCtrl3->GetItemText(id));
 	if (index==-1)
 		return;
 	else
 	{
 		wxString s = m_butlabel->GetValue();
-		for (it=m_frame->GetButtons()->begin();it!=m_frame->GetButtons()->end();it++)
+		for (it=m_frame->m_actwindow->GetButtons()->begin();it!=m_frame->m_actwindow->GetButtons()->end();it++)
 		{
-			if(s==*it && s!=m_frame->GetButtons()->at(index).GetName())
+			if(s==*it && s!=m_frame->m_actwindow->GetButtons()->at(index).GetName())
 			{
 				wxMessageBox(_("Button labels need to be unique!"), _("Label already exists!"), wxOK, this);
 				return;
 			}
 		}
-		m_frame->GetButtons()->at(index).SetName(s);
+		m_frame->m_actwindow->GetButtons()->at(index).SetName(s);
 		m_treeCtrl3->SetItemText(id, s);
-		m_frame->GetButtons()->at(index).SetText(s);
-		m_frame->GetButtons()->at(index).SetAction(m_butcommand->GetValue());
-		m_frame->GetButtons()->at(index).SetTbName(m_parenttool->GetValue());
-		m_frame->GetButtons()->at(index).SetBitmap(m_bmfilepicker->GetPath());
+		m_frame->m_actwindow->GetButtons()->at(index).SetText(s);
+		m_frame->m_actwindow->GetButtons()->at(index).SetAction(m_butcommand->GetValue());
+		m_frame->m_actwindow->GetButtons()->at(index).SetTbName(m_parenttool->GetValue());
+		m_frame->m_actwindow->GetButtons()->at(index).SetBitmap(m_bmfilepicker->GetPath());
 		//BuildButtons();
-		wxAuiToolBar* tb = (wxAuiToolBar*)m_frame->GetButtons()->at(index).GetParent();
-		tb->SetToolLabel(m_frame->GetButtons()->at(index).GetId(), s);
+		wxAuiToolBar* tb = (wxAuiToolBar*)m_frame->m_actwindow->GetButtons()->at(index).GetParent();
+		tb->SetToolLabel(m_frame->m_actwindow->GetButtons()->at(index).GetId(), s);
 		wxBitmap bt;
 		wxSetWorkingDirectory(m_frame->GetGlobalOptions()->GetImagesDir());
 		wxString f = m_bmfilepicker->GetPath();
@@ -2170,13 +2149,13 @@ b_it it;
 			bt.LoadFile(f, wxBITMAP_TYPE_BMP);
 		else
 			bt.LoadFile(f, wxBITMAP_TYPE_ANY);
-		tb->SetToolBitmap(m_frame->GetButtons()->at(index).GetId(), bt);
+		tb->SetToolBitmap(m_frame->m_actwindow->GetButtons()->at(index).GetId(), bt);
 		tb->Realize();
 		//m_frame->m_mgr.Update();
 		m_treeCtrl3->SetFocus();
 		m_treeCtrl3->SelectItem(id);
 	}
-	m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
+	//m_frame->m_actwindow->SetTimers(*m_frame->GetTimers());
 }
 
 void dlg_obj::SetData(wxString s)

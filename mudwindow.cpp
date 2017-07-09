@@ -36,6 +36,7 @@
 #define HAVE_IACSBCHARSET 27
 #define HAVE_TEXT1 28
 #define HAVE_TO_DELETE_SLINE 29
+#define HAVE_IACNOP 30
 
 BEGIN_EVENT_TABLE(MudWindow, wxWindow)
     EVT_ERASE_BACKGROUND(MudWindow::OnEraseBackground)
@@ -58,6 +59,8 @@ BEGIN_EVENT_TABLE(MudWindow, wxWindow)
     EVT_MENU(ID_LOGWINDOW, MudWindow::OnLogThisWindow)
 	EVT_MENU(ID_STOPLOGGING, MudWindow::OnStopLogging)
 	EVT_MENU(ID_AUTOFOCUS, MudWindow::OnAutoFocus)
+	EVT_MENU(ID_FLOAT, MudWindow::OnFloat)
+	EVT_MENU(ID_DOCK, MudWindow::OnDock)
 	EVT_UPDATE_UI(ID_LOGWINDOW, MudWindow::OnMenuUi)
 	EVT_MENU_RANGE(ID_MXPMENU, ID_MXPMENU+100, MudWindow::OnMxpMenu)
 	EVT_MENU_RANGE(ID_MXPMENUPROMPT, ID_MXPMENUPROMPT+100, MudWindow::OnMxpPromptMenu)
@@ -161,16 +164,17 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_profile = "defaultprofile.lua";
 	m_L = new amcLua();
 	
-	//m_gopt = new GlobalOptions(this);
-	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
-	m_dc = new Decompressor();//\\b
-		
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	
+	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
+	m_dc = new Decompressor();
+		
+	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
+	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?www\\.[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([a-z]){3,5}\\.?[A-Za-z0-9\\-]{3,}\\.[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~\\.]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	m_bourl = true;
-	//m_splitbuffer = true;
+	
 	m_ansicode = new RegExp("\\e\\[[0-1]?;?3?[0-9]?;?5?[0-9]?m");
-	 //m_prompt = new RegExp((".*>"));
+	
 	m_prompt = new RegExp("");             
 	m_boprompt = false;
 	m_gagprompt = false;
@@ -1361,7 +1365,7 @@ static bool colset = false;
 	}
 	m_indexstart = line.m_vstyle.size();
 	
-	char cc[30000];
+	//char cc[30000];
 	for (it=s.begin()+pos;it!=s.end();it++, pos++)
 	{
 		switch (m_parsestate)
@@ -1383,7 +1387,7 @@ static bool colset = false;
 					m_parsestate = HAVE_MSP1;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
-					cc[sLine.length()] = *it;
+					//cc[sLine.length()] = *it;
 					break;
 				}
 				if (*it==BELL)
@@ -1408,7 +1412,7 @@ static bool colset = false;
 							//sLine.Empty();
 						}
 					}
-					cc[sLine.length()] = EOS;
+					//cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
 					#ifdef _WXMSW__
@@ -1423,9 +1427,7 @@ static bool colset = false;
 					line.m_vstyle.push_back(style[index++]);
 					m_indexend=line.m_vstyle.size();
 					line.SetLineText(sLine);
-                    #ifdef _WXMSW__
-					line.SetCharLineText(cc);
-                    #endif
+                    
 					sLine.Empty();
 					//}
 				break;
@@ -1447,7 +1449,7 @@ static bool colset = false;
 					}
 					//if (pos>opos)
 					//{	
-					cc[sLine.length()] = EOS;
+					//cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");	
 					style[index].SetText(sLine);
 					#ifdef _WXMSW__
@@ -1471,9 +1473,7 @@ static bool colset = false;
 				}
 				//sLine.Append(cBuffer[pos]);
 				sLine.Append(*it);
-                #ifdef _WXMSW__
-				cc[sLine.length()-1] = *it;
-                #endif
+                
 				break;
 			case HAVE_LF:
 				m_parsestate = HAVE_TEXT;
@@ -1489,12 +1489,10 @@ static bool colset = false;
 				//sLine.Trim();
 				//if (pos>opos)
 				//{
-					cc[sLine.length()] = EOS;
+					//cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
-					#ifdef _WXMSW__
-                    style[index].SetCharText(cc);
-                    #endif
+					
 					if (m_bourl)
 					{	
 						if (m_url->Match(style[index].GetText(), false))
@@ -1562,7 +1560,7 @@ static bool colset = false;
 					style[i].SetFontStyle(0);
 					style[i].SetURL(false);
 					style[i].SetText("");
-					style[i].SetCharText("");
+					//style[i].SetCharText("");
 					style[i].SetFCol(7, m_colansi[7]);
 					style[i].SetBCol(0, m_colansi[0]);
 				}
@@ -1686,6 +1684,7 @@ static bool colset = false;
 					}
 					SwitchColor(col1, offset, &style[index]);
 					m_parsestate = HAVE_TEXT;
+					
 					colset = true;
 					//gotline = false;
 					esc.Empty();
@@ -1804,9 +1803,7 @@ static bool colset = false;
 					m_parsestate = HAVE_TEXT;
 					//sLine.Append(cBuffer[pos]);
 					sLine.Append(*it);
-                    #ifdef _WXMSW__
-					cc[sLine.length()-1] = *it;
-                    #endif
+                    
 					
 					break;
 				}
@@ -1819,7 +1816,14 @@ static bool colset = false;
 						sLine.Append(wxEmptyString);
 					
 				}
-				
+				if (*it == NOP)
+				{
+					m_parsestate = HAVE_TEXT;
+					sLine.Empty();
+					gotline = false;
+					line.SetGagme(true);
+					break;
+				}
 				if (*it==WILL)
 					m_parsestate = HAVE_IACWILL;
 				if (*it==DO)
@@ -2498,7 +2502,7 @@ static bool colset = false;
 						if (err)
 						{
 							wxString s = aL->GetwxString(aL->GetTop());
-							m_parent->m_child->Msg(s);
+							m_parent->m_scriptwin->Msg(s);
 							aL->Pop(1);
 							
 						}
@@ -2605,7 +2609,7 @@ static bool colset = false;
 				else if (*it==ESC)
 				{
 					m_parsestate = HAVE_ESC;
-					cc[sLine.length()] = EOS;
+					//cc[sLine.length()] = EOS;
 					sLine.Replace("\t", "    ");
 					style[index].SetText(sLine);
 					#ifdef _WXMSW__
@@ -2664,7 +2668,7 @@ static bool colset = false;
 				break;
 		}
 	}
-	cc[sLine.length()] = EOS;
+	//cc[sLine.length()] = EOS;
 	sLine.Replace("\t", "    ");
 	style[index].SetText(sLine);
     #ifdef _WXMSW__
@@ -2719,7 +2723,7 @@ static bool colset = false;
 			style[i].SetFontStyle(0);
 			style[i].SetURL(false);
 			style[i].SetText("");
-			style[i].SetCharText("");
+			//style[i].SetCharText("");
 			style[i].SetFCol(7, m_colansi[7]);
 			style[i].SetBCol(0, m_colansi[0]);
 		}
@@ -3084,8 +3088,16 @@ void MudWindow::SwitchColor(long c, int offset, AnsiLineElement* ale)
 		case 10:
 			break;
 		case 22://no bold
-			ale->SetFCol(ale->GetFColIndex()-8, m_colansi[ale->GetFColIndex()-8]);
-			f = m_colansi[ale->GetFColIndex()-8];
+			if (ale->GetFColIndex() - 8 > 0)
+			{
+				ale->SetFCol(ale->GetFColIndex() - 8, m_colansi[ale->GetFColIndex() - 8]);
+				f = m_colansi[ale->GetFColIndex() - 8];
+			}
+			else
+			{
+				ale->SetFCol(15, m_colansi[15]);
+				f = m_colansi[15];
+			}
 			break;
 		case 23://no italic
 		case 24://no underline
@@ -3281,22 +3293,23 @@ wxString s;
 wxStringTokenizer tkz;
 	if (!m_trigger)
 		return;
+	m_parent->m_scriptwin = this;
 	wxString token = m_parent->GetGlobalOptions()->GetSep();
 	token.append("\n");
 	if (linenr>=(int)m_vmudlines.size())
 		linenr=m_curline-1;
 	if (!m_vmudlines.at(linenr).IsTriggered() && m_parent->TriggersOn())
 	{
-		for (size_t i=0;i<m_parent->m_trigger.size();i++)
+		for (size_t i=0;i<m_actions.size();i++)
 		{
 			s = wxEmptyString;
-			if (!m_parent->m_trigger.at(i).IsActive())
+			if (!m_actions.at(i).IsActive())
 				continue;
-			if (m_parent->m_trigger.at(i).IsMultiLine())
+			if (m_actions.at(i).IsMultiLine())
 			{
 				if (!multi)
 					continue;
-				for (int x=linenr-m_parent->m_trigger.at(i).GetLines()+1;x<linenr+1;x++)
+				for (int x=linenr-m_actions.at(i).GetLines()+1;x<linenr+1;x++)
 				{
 					s += m_vmudlines.at(x).GetConvLineText() + "\n";
 				}
@@ -3310,13 +3323,13 @@ wxStringTokenizer tkz;
 				s = m_vmudlines.at(linenr).GetConvLineText();
 			}
 			//if (m_parent->m_trigger.at(i).Match(s.To8BitData()))//trit->Match(s))
-			if (m_parent->m_trigger.at(i).Match(s))
+			if (m_actions.at(i).Match(s))
 			{
-				wxString ac = m_parent->m_trigger.at(i).BuildAction();//trit->BuildAction();
-				if (m_parent->m_trigger.at(i).GetSendScript())
+				wxString ac = m_actions.at(i).BuildAction();//trit->BuildAction();
+				if (m_actions.at(i).GetSendScript())
 				{
 					ac.Replace(m_parent->GetGlobalOptions()->GetSep(), "\n");
-					m_parent->m_scriptwin = this;
+					
 					if (/*m_parent->m_child->*/GetLState()->DoString(ac))
 					{
 						struct lua_State* L = /*m_parent->m_child->*/GetLState()->GetLuaState();
@@ -3344,7 +3357,7 @@ wxStringTokenizer tkz;
 					}
 					if (!m_parent->m_input->ParseCommandLine(&comm))
 					{
-						Write(comm+(char)LF);
+						Write(comm+(char)CR+(char)LF);
 						
 					}
 					else continue;
@@ -3355,8 +3368,6 @@ wxStringTokenizer tkz;
 							wxString out = "\x1b[56m";
 							out.append(comm);
 							out.append("\x1b[0m");
-							//ParseBuffer((wxChar*)Out(ac).data());
-							//ParseLine(&out);
 							
 							int temp = m_parsestate;
 							m_parsestate = HAVE_TEXT;
@@ -3395,6 +3406,7 @@ wxStringTokenizer tkz;
 		if (m_vmudlines.at(linenr).IsFull())
 			m_vmudlines.at(linenr).SetTriggered(true);
 	}
+	m_parent->m_scriptwin = m_parent->m_actwindow;
 }
 
 
@@ -5015,6 +5027,18 @@ void MudWindow::OnAutoFocus(wxCommandEvent& event)
 	m->Check(ID_AUTOFOCUS, m_autofocus);
 }
 
+void MudWindow::OnFloat(wxCommandEvent& event)
+{
+	wxGetApp().GetFrame()->m_mgr.GetPane(this).Float();
+	wxGetApp().GetFrame()->m_mgr.Update();
+}
+
+void MudWindow::OnDock(wxCommandEvent& event)
+{
+	wxGetApp().GetFrame()->m_mgr.GetPane(this).Dock();
+	wxGetApp().GetFrame()->m_mgr.Update();
+}
+
 void MudWindow::OnMenuUi(wxUpdateUIEvent& event)
 {
 	if (IsLogging())
@@ -5741,21 +5765,7 @@ int stamp_offset = 0;
 
 	if (x>=m_vmudlines.at(line).m_vstyle.size())
 		 it = m_vmudlines.at(line).m_vstyle.end()-1;
-	/*if (m_wrap)
-		sublines = l/m_wrap;
-	else
-		sublines=0;
-
-	for (it = m_vmudlines.at(line).m_vstyle.begin(); it!=m_vmudlines.at(line).m_vstyle.end(); it++)
-	{
-		len += it->GetLen();
-		if (sublines && len>m_wrap && p.y>m_vmudlines.at(line).GetYPos()+dc.GetCharHeight()*sublines)
-		{
-			len -= m_wrap*sublines;
-		}
-		if ((cxpos-stamp_offset) <= len)
-			break;
-	}*/
+	
 	//if ((cxpos-stamp_offset)<=len)
 	if (p.x>=it->GetXPos() && p.x<=it->GetDXPos())
 	{
@@ -5818,6 +5828,17 @@ int stamp_offset = 0;
             }
 			contextMenu->AppendCheckItem(ID_AUTOFOCUS, _("Autofocus"), _("Switch windows when text arrives"));
 			contextMenu->Check(ID_AUTOFOCUS, m_autofocus);
+			if (m_parent->m_mgr.GetPane(this).IsFloatable() && m_parent->m_mgr.GetPane(this).IsDocked())
+			{
+				contextMenu->AppendSeparator();
+				contextMenu->Append(ID_FLOAT, _("Float window"), _("Float this window"));
+			}
+			if (m_parent->m_mgr.GetPane(this).IsDockable() && m_parent->m_mgr.GetPane(this).IsFloating())
+			{
+				contextMenu->AppendSeparator();
+				contextMenu->Append(ID_DOCK, _("Dock window"), _("Dock this window"));
+			}
+			
         }
 		wxPoint p = event.GetPosition();
 		//p = ScreenToClient(p);
@@ -5912,7 +5933,7 @@ void MudWindow::OnMouseWheel(wxMouseEvent& event)
 
 void MudWindow::OnSocketEvent(wxSocketEvent& event)
 {
-char cBuf[128000];
+char cBuf[128001];
 //wxCharTypeBuffer<char> cBuf(64000);
 wxString s, buffer;
 wxUint32 uiBytesRead;
@@ -6204,7 +6225,7 @@ wxUint32 uiBytesRead;
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
-		m_sock->Read(m_cBuffer, 9999);
+		m_sock->Read(m_cBuffer, 4444);
 		//m_MemBuffer.Clear();
 				
 		uiBytesRead = m_sock->LastCount();

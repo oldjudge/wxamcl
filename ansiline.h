@@ -43,7 +43,7 @@ public:
 private:
 	//wxString *m_text;
 	wxString m_text;
-	char m_ctext[1000];
+	//char m_ctext[1000];
 	size_t m_len;
 	wxColour m_fcol; //Foreground
 	wxColour m_bcol; //Background

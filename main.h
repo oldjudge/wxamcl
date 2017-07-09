@@ -64,6 +64,7 @@
 #include <wx/ipcbase.h>
 #include <wx/wupdlock.h>
 #include <wx/graphics.h>
+#include <wx/base64.h>
 #include <zlib.h>
 #include "pcre.h"
 #if defined __WXGTK__
@@ -162,6 +163,8 @@ using namespace std;
 #define ID_LOGWINDOW 1520
 #define ID_STOPLOGGING 1521
 #define ID_AUTOFOCUS 1522
+#define ID_FLOAT 1523
+#define ID_DOCK 1524
 #define ID_SPLITTER 1600
 #define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000
@@ -202,6 +205,7 @@ using namespace std;
 #define WONT 252
 #define WILL 251
 #define SB   250
+#define NOP  241
 #define SE   240
 #define AARD1 102
 #define AARD2 103
@@ -414,7 +418,7 @@ public:
 	bool LoadGlobalOptions();
 	bool SaveGlobalOptions();
 	bool SaveProfile(wxString s);
-	bool LoadProfile(wxFileName s);
+	bool LoadProfile(wxFileName s, bool first = true);
 	wxString GetCurProfileName() {return m_curprofile;}
 	void SetCurProfileName(wxString s) {m_curprofile = s;}
 	bool SaveHosts();

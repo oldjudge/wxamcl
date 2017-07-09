@@ -373,6 +373,8 @@ private:
     void OnLogThisWindow(wxCommandEvent& event);
 	void OnStopLogging(wxCommandEvent& event);
 	void OnAutoFocus(wxCommandEvent& event);
+	void OnFloat(wxCommandEvent& event);
+	void OnDock(wxCommandEvent& event);
 	void OnMenuUi(wxUpdateUIEvent& event);
 	void OnMxpMenu(wxCommandEvent& event);
 	void OnMxpPromptMenu(wxCommandEvent& event);

@@ -45,7 +45,7 @@ AnsiLineElement::AnsiLineElement(wxString text, int f, int b)
 	m_bcol=frame->m_actwindow->GetAnsiColor(b);
 	m_hint = wxEmptyString;
 	m_url = wxEmptyString;
-    m_ctext[0]=EOS;
+    //m_ctext[0]=EOS;
 }
 
 AnsiLineElement::AnsiLineElement(const AnsiLineElement& ale)
@@ -61,7 +61,7 @@ AnsiLineElement::AnsiLineElement(const AnsiLineElement& ale)
 	//m_text = new wxString(*ale.m_text);
 	m_text = ale.m_text;
 	m_len = m_text.length();
-	wxStrncpy(m_ctext, ale.m_ctext, 1000);
+	//wxStrncpy(m_ctext, ale.m_ctext, 1000);
 	m_len = m_text.length();
 	m_mxpcommand = ale.m_mxpcommand;
 	m_mxplabel = ale.m_mxplabel;
@@ -98,7 +98,7 @@ void AnsiLineElement::SetText(wxString text)
 
 void AnsiLineElement::SetCharText(char* t)
 {
-    wxStrncpy(m_ctext, t, wxStrlen(t));
+    /*wxStrncpy(m_ctext, t, wxStrlen(t));
 	m_ctext[wxStrlen(t)] = EOS;
 	m_text.Clear();
 	MudMainFrame *frame = wxGetApp().GetFrame();
@@ -109,7 +109,7 @@ void AnsiLineElement::SetCharText(char* t)
 	else
 		m_text = wxString::From8BitData(m_ctext);
 	m_text.Replace("\t", "    ");
-	m_len = m_text.length();
+	m_len = m_text.length();*/
     
 }
 

@@ -119,12 +119,12 @@ void amcWindow::OnPaint(wxPaintEvent& event)
 void amcWindow::OnSize(wxSizeEvent& event)
 {
 	
-	wxString s = wxString::Format("%cfunc(\"%s\", \"%s()\")", m_parent->GetGlobalOptions()->GetCommand(),
+	/*wxString s = wxString::Format("%cfunc(\"%s\", \"%s()\")", m_parent->GetGlobalOptions()->GetCommand(),
 		m_evfile, m_onsize);
 
 	m_parent->m_input->ParseCommandLine(&s);
 	Refresh();
-	Update();
+	Update();*/
 }
 
 void amcWindow::OnRightDown(wxMouseEvent &event)

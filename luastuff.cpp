@@ -247,6 +247,7 @@ int luafunc_send(lua_State*L)
 	if (frame==NULL)
 		return 0;
 	wxString command(c);
+	command.append((char)CR);
 	command.append((char)LF);
 	frame->m_scriptwin->Write(command);
 	return 0;
@@ -343,7 +344,7 @@ int luafunc_echo(lua_State*L)
 	
 	return 1;
 }
-//! color = amc.color(text, foreground, background)
+//! color = wxamcl.color(text, foreground, background)
 /*!
 	changes color without newline
 	
@@ -1273,10 +1274,23 @@ int luafunc_createnb(lua_State*L)
 	pagename = luaL_checkstring(L, 2);
 	wxString page(pagename, co);
 	
-	MudWindow *mw = (MudWindow*)um[page];
-	//MudWindow *mw = (MudWindow*)MudWindow::FindWindowByName(page);
-	if (mw)
-		return 0;
+	MudWindow *mw = wxGetApp().GetFrame()->m_scriptwin;
+	
+	vector<vector<wxString> >::iterator vit;
+	if (!mw->GetNbPanes()->empty())
+	{
+		int x = 0;
+		for (vit = mw->GetNbPanes()->begin(); vit != mw->GetNbPanes()->end(); vit++, x++)
+		{
+			for (size_t i = 0; i < vit->size(); i++)
+			{
+				wxString s = vit->at(i);
+				if (page == s)
+					return 0;
+
+			}
+		}
+	}
 	if (!frame->GetNbs()->empty())
 	{
 		for (i=0;i<frame->GetNbs()->size();i++)
@@ -1288,7 +1302,7 @@ int luafunc_createnb(lua_State*L)
 	frame->GetNbPanes()->at(i).push_back(page);
 	MudWindow *pg = new MudWindow(frame, page, 9);
 	nb->AddPage(pg, page);
-	um[page] = pg;
+	//um[page] = pg;
 	frame->m_mgr.Update();
 	lua_pushlightuserdata(L, um[name]);//(void*)nb->FindWindowByName(winname));
 	frame->m_scriptwin->SetNbPanes(*frame->GetNbPanes());
@@ -1393,7 +1407,7 @@ int luafunc_createwindow(lua_State*L)
 	frame->m_mgr.Update();	
 	frame->Refresh();
 	frame->Update();
-	frame->m_scriptwin->SetNbPanes(*frame->GetNbPanes());
+	frame->m_scriptwin->SetPanes(*frame->GetPanes());
 	frame->m_scriptwin->Refresh();
 	frame->m_scriptwin->Update();
 	frame->m_scriptwin->SetUserWindows(um);
@@ -1958,7 +1972,7 @@ int luafunc_convertprofile(lua_State *L)
 			break;
 		}
 		s.clear();
-		s<<frame->GetGlobalOptions()->GetPackageDir()<<evf<<"."<<evx;
+		s<<fn1.GetFullPath()<<"packages"<<evf<<"."<<evx;
 		frame->GetPackages()->at(i).assign(s);
 	}
 	switch (id)
@@ -1976,7 +1990,7 @@ int luafunc_convertprofile(lua_State *L)
 		wxFileName::SplitPath(frame->GetGlobalOptions()->GetEventFile(), NULL, &evf, &evx, wxPATH_WIN);
 	}
 	
-	wxFileName ev(frame->GetGlobalOptions()->GetScriptDir()+evf+"."+evx);
+	wxFileName ev(fn1.GetFullPath()+"scripts"+evf+"."+evx);
 	frame->GetGlobalOptions()->SetEventFile(ev.GetFullPath());
 	/*
 	
@@ -5012,7 +5026,9 @@ int luafunc_newgauge(lua_State *L)
 	{
 		amcVar v1(var1, "1", "gauges");
 		f->GetVars()->push_back(v1);
+		f->m_scriptwin->GetVars()->push_back(v1);
 		stable_sort(f->GetVars()->begin(), f->GetVars()->end(), less<class amcVar>());
+		stable_sort(f->m_scriptwin->GetVars()->begin(), f->m_scriptwin->GetVars()->end(), less<class amcVar>());
 		f->luaBuildvar();
 	}
 	idx = f->GetVarIndexByLabel(var2);
@@ -5020,7 +5036,9 @@ int luafunc_newgauge(lua_State *L)
 	{
 		amcVar v2(var2, "1", "gauges");
 		f->GetVars()->push_back(v2);
+		f->m_scriptwin->GetVars()->push_back(v2);
 		stable_sort(f->GetVars()->begin(), f->GetVars()->end(), less<class amcVar>());
+		stable_sort(f->m_scriptwin->GetVars()->begin(), f->m_scriptwin->GetVars()->end(), less<class amcVar>());
 		f->luaBuildvar();
 	}
 	wxCSConv co(f->GetGlobalOptions()->GetCurEncoding());
