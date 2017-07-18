@@ -1,5 +1,9 @@
 #include "main.h"
 #include "script.xpm"
+extern "C"
+{
+	#include "sha256.h"
+}
 amcLua::amcLua()
 {
 	
@@ -1863,6 +1867,7 @@ int luafunc_createtoolbar(lua_State*L)
 	frame->m_mgr.Update();	
 	frame->Refresh();
 	frame->Update();
+	frame->m_scriptwin->SetUserWindows(um);
 	frame->m_scriptwin->Refresh();
 	frame->m_scriptwin->Update();
 	return 0;
@@ -6052,6 +6057,31 @@ int luafunc_sendgmcp(lua_State *L)
 		frame->m_scriptwin->Msg(_("Client is not connected!"), 3);
 	}
 	return 0;
+}
+
+int luafunc_sha256(lua_State *L)
+{
+	unsigned char digest[32];
+	const char * text = luaL_checkstring(L, 1);
+	class MudMainFrame *frame = wxGetApp().GetFrame();
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	wxString t(text, co);
+	sha256_context ctx;
+	sha256_starts(&ctx);
+	sha256_update(&ctx, (unsigned char*)t.mb_str().data(), t.length());
+	sha256_finish(&ctx, digest);
+	wxString hex;
+	for (int i = 0; i < 32; i++)
+	{
+		wxString hx = wxString::Format("%02lx", digest[i]);
+		hex.Append(hx);
+	}
+	
+	wxString d(digest);
+	//lua_pushstring(L, (const char*)digest);
+	lua_pushstring(L, d);
+	lua_pushstring(L, hex);
+	return 2;
 }
 
 //#endif

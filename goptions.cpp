@@ -30,6 +30,7 @@ void GlobalOptions::Init()
 	m_script = '?';
 	m_intvar = '%';
 	m_listvar = '@';
+	m_worldsend = ':';
 	m_swdelay = 1000;//milliseconds
 	m_ansilog = false;
 	m_htmllog = false;
@@ -401,7 +402,7 @@ wxString sub;
 
 	lua_newtable(L);
 	for(it=m_matches.begin(), x=0;it!=m_matches.end();it++, x++)
-	{
+	{ 
 		lua_pushnumber(L, x);
 		wxString s = *it;
 		lua_pushstring(L, s.char_str());

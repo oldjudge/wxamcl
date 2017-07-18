@@ -56,7 +56,8 @@ BEGIN_EVENT_TABLE(MudMainFrame, wxFrame)
     //EVT_FIND_REPLACE(wxID_ANY, MudMainFrame::OnFindDialog)
     //EVT_FIND_REPLACE_ALL(wxID_ANY, MudMainFrame::OnFindDialog)
     EVT_FIND_CLOSE(wxID_ANY, MudMainFrame::OnFindDialog)
-	EVT_MENU_RANGE(ID_USERWINDOW, ID_USERWINDOW+100, MudMainFrame::OnUserWindow)
+	EVT_MENU_RANGE(ID_USERWINDOW, ID_USERWINDOW+300, MudMainFrame::OnUserWindow)
+	EVT_MENU_RANGE(ID_AMCUSERWINDOW, ID_AMCUSERWINDOW + 300, MudMainFrame::OnAmcUserWindow)
 	EVT_MENU_RANGE(ID_USERBUTTON, ID_USERBUTTON+1000, MudMainFrame::OnUserButton)
 	EVT_MENU_RANGE(ID_CHARENCODING, ID_CHARENCODING+20, MudMainFrame::OnCharEncoding)
 	EVT_MENU_RANGE(wxID_FILE1, wxID_FILE1+9, MudMainFrame::OnFileHistory)
@@ -194,9 +195,12 @@ bool MudClientApp::OnInit()
     frame->m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, frame->m_actwindow->GetAnsiColor(0));
 
 	
-	frame->m_notebook = new wxAuiNotebook(frame, wxID_ANY, wxDefaultPosition, s, wxAUI_NB_TOP |  wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_MIDDLE_CLICK_CLOSE);
+	frame->m_notebook = new wxAuiNotebook(frame, wxID_ANY, wxDefaultPosition, s, wxAUI_NB_TOP |  wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ACTIVE_TAB | wxAUI_NB_MIDDLE_CLICK_CLOSE | wxAUI_NB_WINDOWLIST_BUTTON);
 	frame->m_notebook->SetBackgroundColour(frame->m_child->GetAnsiColor(0));
+	frame->m_notebook->SetArtProvider(new wxAuiSimpleTabArt());
 	frame->m_notebook->Connect(wxEVT_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(MudMainFrame::OnNPageChanged), NULL, frame);
+	frame->m_notebook->Connect(wxEVT_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(MudMainFrame::OnNPageClose), NULL, frame);
+	frame->m_notebook->Connect(wxEVT_AUINOTEBOOK_PAGE_CLOSED, wxAuiNotebookEventHandler(MudMainFrame::OnNPageClosed), NULL, frame);
 	frame->m_mgr.AddPane(frame->m_notebook, wxAuiPaneInfo().Name("amcmultinb").Center().Dockable(false).Floatable(false).Hide().BestSize(1000, 1000));
 
     frame->m_mgr.Update();
@@ -274,9 +278,9 @@ bool MudClientApp::OnInit()
 	//wxString ss = "{ \"name\": \"Asariom\", \"class\": \"Mage\", \"subclass\": \"Elementalist\", \"race\": \"Eldar\", \"clan\": \"\", \"pretitle\": \"\", \"perlevel\": 2000, \"tier\": 0, \"remorts\": 2, \"redos\" : \"0\" }  <\x1b[0;31m933/933Hps \x1b[1;32m1028/1054Ma \x1b[0;32m1111/1112Mvs \x1b[0;36m0qt \x1b[0;35m1815tnl \x1b[1;33m\x1b[0;37m> \x1b[0;37m";
 	//frame->m_child->ParseNBuffer((char*)ss.mb_str().data(), false);
 	//wxString ss = "\x1b[0;33m           ---  \n";
-	/*ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m<\x1b[1;33m!\x1b[1;37m#\x1b[0;33m\x1b[0;33m|  \n";
+	wxString ss = "https://pastebin.com";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);
-	ss = "\x1b[0;33m          \x1b[0;33m|   \x1b[0;33m\x1b[0;33m|  \n";
+	/*ss = "\x1b[0;33m          \x1b[0;33m|   \x1b[0;33m\x1b[0;33m|  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);
 	ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m#\x1b[1;35m#\x1b[1;37m>\x1b[0;33m\x1b[0;33m|  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);
@@ -579,31 +583,29 @@ MudMainFrame::MudMainFrame()
 MudMainFrame::~MudMainFrame()
 {
 	
-	//TODO
-	// Saveallprofiles using m_childwindows;
 	int i = m_childwindows.size();
 	for (int ii = 0; ii < i; ii++)
 	{
 		m_actwindow = m_childwindows.at(ii);
 		SaveProfile(m_childwindows.at(ii)->GetProfile());
 	}
-  m_mgr.UnInit();
-  if (!m_notebook)
-	m_child->Destroy();
-  if (m_notebook!=nullptr)
-	m_notebook->Destroy();
-  m_splitter->Destroy();
-  m_prompt->Destroy();
-  delete m_locale;
-  delete m_gopt;
-  delete m_filehist;
-  delete m_scriptfont;
-  m_media->Destroy();
-  if (m_find)
-	delete m_find;
-  //if (m_notebook)
-	  
-  // No delayed deletion here, as the frame is dying anyway
+	if (!i)
+		SaveProfile(m_actwindow->GetProfile());
+	m_mgr.UnInit();
+	if (!m_notebook)
+		m_child->Destroy();
+	if (m_notebook!=nullptr)
+		m_notebook->Destroy();
+	m_splitter->Destroy();
+	m_prompt->Destroy();
+	delete m_locale;
+	delete m_gopt;
+	delete m_filehist;
+	delete m_scriptfont;
+	m_media->Destroy();
+	if (m_find)
+		delete m_find;
+ // No delayed deletion here, as the frame is dying anyway
 }
 
 // event handlers
@@ -653,30 +655,31 @@ void MudMainFrame::OnCharConnect(wxCommandEvent& event)
 	{
 		if (m_child->IsConnected()) //Should we open another world?
 		{
-			m_mgr.GetPane(m_notebook).Show().CenterPane();
-			m_mgr.DetachPane(m_child);
+			m_active_window++;
 			
-			m_child->Reparent(m_notebook);
-			m_childwindows.push_back(m_child);
+			if (m_active_window == 1 && m_notebook->GetSelection()==-1)
+			{
+				m_mgr.GetPane(m_notebook).Show().CenterPane();
+				m_mgr.DetachPane(m_child);
+
+				m_child->Reparent(m_notebook);
+				m_childwindows.push_back(m_child);
+			}
 			MudWindow *nmw = new MudWindow(this);
-			nmw->SetNFont(m_child->GetFont());
-			nmw->SetUFont(m_child->GetFont());
-			nmw->SetIFont(m_child->GetFont());
+			nmw->SetNFont(m_actwindow->GetFont());
+			nmw->SetUFont(m_actwindow->GetFont());
+			nmw->SetIFont(m_actwindow->GetFont());
 			nmw->Reparent(m_notebook);
 			m_childwindows.push_back(nmw);
 			m_actwindow = m_scriptwin = nmw;
-			m_active_window++;
+			
+			int oldhost = m_curhost;
 			m_curhost = cc->GetLastSelection();
-			/*if (m_curhost == -1)
-			{
-				m_actwindow->Msg(_("No profile selected!"));
-				return;
-			}
-			LoadProfile(GetHosts()->at(m_curhost).GetProfileFName());*/
+			
 			nmw->SetProfile(GetHosts()->at(m_curhost).GetProfileFName().GetFullPath());
-			if (m_active_window==1)
-				m_notebook->AddPage(m_child, "World 1", false);
-			m_notebook->AddPage(nmw, "World 2", true);
+			if (m_active_window==1 && m_notebook->GetSelection() == -1)
+				m_notebook->AddPage(m_child, GetHosts()->at(oldhost).GetMudName(), false);
+			m_notebook->AddPage(nmw, GetHosts()->at(m_curhost).GetMudName(), true);
 			
 			m_mgr.GetPane(m_notebook).Show();
 			m_mgr.Update();
@@ -928,41 +931,35 @@ void MudMainFrame::OnShowSplitter(wxCommandEvent& event)
 
 		if (UseSplitter() && !m_splitter->IsShown())
 		{
-			m_child->Freeze();
+			m_actwindow->Freeze();
             m_splitter->Freeze();
-			m_splitter->SetLineBuffer(m_child->GetLines());
-			m_splitter->m_curline = m_child->m_curline;
+			m_splitter->SetLineBuffer(m_actwindow->GetLines());
+			m_splitter->m_curline = m_actwindow->m_curline;
 			
-			int line = m_child->m_curline-m_child->m_scrollrange;
+			int line = m_actwindow->m_curline-m_child->m_scrollrange;
 			m_splitter->SetScrollPage();
 			m_splitter->SetScrollPos(wxVERTICAL, line-m_splitter->m_scrollrange);
-            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
+            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_actwindow->GetAnsiColor(0));
             
             m_mgr.GetPane("amcsplitter").Dock().Show().Row(0);
             m_mgr.GetPane("amcmain").Show().Row(1);
             m_mgr.Update();
-            m_child->Thaw();
+            m_actwindow->Thaw();
             m_splitter->Thaw();
 			return;
 		}
 		if (m_splitter->IsShown())
 		{
-			m_child->Freeze();
+			m_actwindow->Freeze();
             
 			m_mgr.GetPane("amcsplitter").Hide();
-            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_child->GetAnsiColor(0));
+            m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, m_actwindow->GetAnsiColor(0));
             //m_mgr.GetPane("amcmain").Show();
             m_mgr.Update();
-            m_child->Thaw();
+            m_actwindow->Thaw();
 			return;
 		}
-    	//}
-	//else
-	//{
-		
-	//}
-	//sendto->SetKEvtForwarded(true);
-	//sendto->GetEventHandler()->ProcessEvent(newevt);
+    	
 	return;
 }
 
@@ -971,29 +968,58 @@ void MudMainFrame::OnUserWindow(wxCommandEvent& event)
 
 	if (event.IsChecked())
 	{
-		m_child->Freeze();
+		m_actwindow->Freeze();
 		wxMenuBar* bar = GetMenuBar();
 		wxMenuItem* item = bar->FindItem(event.GetId());
 		wxString name = item->GetItemLabelText();
 		m_mgr.GetPane(name).Show();
 		m_mgr.Update();
-		m_child->Thaw();
+		m_actwindow->Thaw();
 		return;
 	}
 	else
 	{
-		m_child->Freeze();
+		m_actwindow->Freeze();
 		wxMenuBar* bar = GetMenuBar();
 		wxMenuItem* item = bar->FindItem(event.GetId());
 		wxString name = item->GetItemLabelText();
 		m_mgr.GetPane(name).Hide();
 		
 		m_mgr.Update();
-		m_child->Thaw();
+		m_actwindow->Thaw();
 		return;
 	}
 	//sendto->SetKEvtForwarded(true);
 	//sendto->GetEventHandler()->ProcessEvent(newevt);
+	return;
+}
+
+void MudMainFrame::OnAmcUserWindow(wxCommandEvent& event)
+{
+	if (event.IsChecked())
+	{
+		m_actwindow->Freeze();
+		wxMenuBar* bar = GetMenuBar();
+		wxMenuItem* item = bar->FindItem(event.GetId());
+		wxString name = item->GetItemLabelText();
+		m_mgr.GetPane(name).Show();
+		m_mgr.Update();
+		m_actwindow->Thaw();
+		return;
+	}
+	else
+	{
+		m_actwindow->Freeze();
+		wxMenuBar* bar = GetMenuBar();
+		wxMenuItem* item = bar->FindItem(event.GetId());
+		wxString name = item->GetItemLabelText();
+		m_mgr.GetPane(name).Hide();
+
+		m_mgr.Update();
+		m_actwindow->Thaw();
+		return;
+	}
+	
 	return;
 }
 
@@ -1365,7 +1391,10 @@ size_t i;
 wxString win = wxGetTextFromUser(_("Name of the window:"), _("Create new window"));
 	if(win==wxEmptyString)
 		return;
-	mw = (wxAuiNotebook*)wxAuiNotebook::FindWindowByName(win, this);
+	unordered_map <wxString, wxWindow *> uw;
+	uw = *this->m_actwindow->GetUserWindows();
+	mw = (wxAuiNotebook*)uw[win];
+	//mw = (wxAuiNotebook*)wxAuiNotebook::FindWindowByName(win, this);
 	if (mw)
 		return;
 	if (!mw)
@@ -1373,40 +1402,45 @@ wxString win = wxGetTextFromUser(_("Name of the window:"), _("Create new window"
 		mw = new wxAuiNotebook(this);
 		mw->SetLabel(win);
 		mw->SetName(win);
-		GetNbs()->push_back(win);
+		m_actwindow->GetNbs()->push_back(win);
 		vector<wxString> s;
-		GetNbPanes()->push_back(s);
+		m_actwindow->GetNbPanes()->push_back(s);
 		MudWindow *mw1 = (MudWindow*)MudWindow::FindWindowByName("tab1");
 		if (mw1)
 			return;
-		if (!GetNbs()->empty())
+		if (!m_actwindow->GetNbs()->empty())
 		{
-			for (i=0;i<GetNbs()->size();i++)
+			for (i=0;i<m_actwindow->GetNbs()->size();i++)
 			{
-				if (win==GetNbs()->at(i))
+				if (win==m_actwindow->GetNbs()->at(i))
 					break;
 			}
 		}
-		GetNbPanes()->at(i).push_back("tab1");
+		m_actwindow->GetNbPanes()->at(i).push_back("tab1");
 		mw->AddPage(new MudWindow(this, "tab1", 9), "tab1");
 		m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1).Show());
 	}
 	
 	m_mgr.GetPane(mw).Show();
-	m_mgr.Update();	
+	m_mgr.Update();
+	
+	uw[win] = mw;
+	this->m_actwindow->SetUserWindows(uw);
 	Refresh();
 	Update();
-	m_child->Refresh();
-	m_child->Update();
+	m_actwindow->Refresh();
+	m_actwindow->Update();
 }
 
 void MudMainFrame::OnCreateTB(wxCommandEvent& event)
 {
 	wxString tool = wxGetTextFromUser(_("Name of the toolbar:"), _("Create new toolbar"));
 	wxAuiToolBar *tb;
-	//class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName("wxAMC");
-	//wxCriticalSectionLocker e(frame->m_scriptcs);
-	tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(tool, this);
+	unordered_map <wxString, wxWindow *> uw;
+	uw = *this->m_actwindow->GetUserWindows();
+	
+	tb = (wxAuiToolBar*)uw[tool];
+	//tb = (wxAuiToolBar*)MudMainFrame::FindWindowByName(tool, this);
 	if (tb)
 		return;
 	tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_TEXT | wxAUI_TB_GRIPPER);
@@ -1417,8 +1451,10 @@ void MudMainFrame::OnCreateTB(wxCommandEvent& event)
 	m_mgr.Update();	
 	Refresh();
 	Update();
-	m_child->Refresh();
-	m_child->Update();
+	uw[tool] = tb;
+	m_actwindow->SetUserWindows(uw);
+	m_actwindow->Refresh();
+	m_actwindow->Update();
 }
 
 void MudMainFrame::OnCreateGaugeWindow(wxCommandEvent& event)
@@ -1426,7 +1462,11 @@ void MudMainFrame::OnCreateGaugeWindow(wxCommandEvent& event)
 	
 	GaugeWindow *gw;
 	wxString gauge = wxGetTextFromUser(_("Name of the window:"), _("Create new window"));
-	gw = (GaugeWindow*)GaugeWindow::FindWindowByName(gauge, this);
+	unordered_map <wxString, wxWindow *> uw;
+	uw = *this->m_actwindow->GetUserWindows();
+
+	gw = (GaugeWindow*)uw[gauge];
+	//gw = (GaugeWindow*)GaugeWindow::FindWindowByName(gauge, this);
 	if (gw)
 		return;
 	gw = new GaugeWindow(this, gauge);
@@ -1434,6 +1474,8 @@ void MudMainFrame::OnCreateGaugeWindow(wxCommandEvent& event)
 	GetGaugePanes()->push_back(gauge);
 	vector<wxString> s;
 	GetGauges()->push_back(s);
+	uw[gauge] = gw;
+	m_actwindow->SetUserWindows(uw);
 	m_mgr.AddPane(gw, wxAuiPaneInfo().Name(gauge).Caption(gauge).CaptionVisible(true).Floatable(true).FloatingSize(400,200).BestSize(400,200).Dockable(true).Dock().Top().Layer(1));
 	m_mgr.Update();
 }
@@ -1526,11 +1568,14 @@ void MudMainFrame::OnMenuUi(wxUpdateUIEvent& event)
 void MudMainFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 	int i = m_childwindows.size();
+	
 	for (int ii = 0; ii < i; ii++)
 	{
 		m_actwindow = m_childwindows.at(ii);
 		SaveProfile(m_childwindows.at(ii)->GetProfile());
 	}
+	if (!i)
+		SaveProfile(m_actwindow->GetProfile());
 	/*if (m_curhost!=-1)
 		SaveProfile(GetHosts()->at(m_curhost).GetProfileName());
 	else SaveProfile(m_curprofile);*/
@@ -2652,6 +2697,10 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 		{
 			view->Destroy(view->FindItem(m_actwindow->GetGaugePanes()->at(i)));
 		}
+		for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+		{
+			view->Destroy(view->FindItem(m_actwindow->GetAmcWindows()->at(i)));
+		}
 	}
 
 
@@ -3280,6 +3329,17 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			if (m_mgr.GetPane(GetGaugePanes()->at(i)).IsShown())
 				view->Check(ID_USERWINDOW + items2 + i, true);
 		}
+		int items3 = view->GetMenuItemCount() - 1;
+		
+		for (size_t i = 0; i < GetAmcWindows()->size(); i++)
+		{
+			view->InsertCheckItem(i + items3 - 1, ID_AMCUSERWINDOW + i, GetAmcWindows()->at(i));
+		}
+		for (size_t i = 0; i < GetAmcWindows()->size(); i++)
+		{
+			if (m_mgr.GetPane(GetAmcWindows()->at(i)).IsShown())
+				view->Check(ID_AMCUSERWINDOW + i, true);
+		}
 
 		
 	}//end firsttime
@@ -3815,7 +3875,7 @@ void MudMainFrame::OnNPageChanged(wxAuiNotebookEvent& event)
 		return;
 	if (event.GetOldSelection() == event.GetSelection())
 		return;
-	m_active_window = event.GetSelection();
+	
 	m_actwindow = wxGetApp().GetFrame()->m_childwindows.at(event.GetOldSelection());
 	DeleteWindows();
 	m_actwindow = m_scriptwin = wxGetApp().GetFrame()->m_childwindows.at(event.GetSelection());
@@ -3866,7 +3926,90 @@ void MudMainFrame::OnNPageChanged(wxAuiNotebookEvent& event)
 		if (m_mgr.GetPane(m_actwindow->GetGaugePanes()->at(i)).IsShown())
 			view->Check(ID_USERWINDOW + items2 + i, true);
 	}
+	int items3 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+	{
+		view->InsertCheckItem(i + items3 - 1, ID_AMCUSERWINDOW + i, m_actwindow->GetAmcWindows()->at(i));
+
+	}
+	for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetAmcWindows()->at(i)).IsShown())
+			view->Check(ID_AMCUSERWINDOW + i, true);
+
+	}
 	//event.Skip();
+}
+
+void MudMainFrame::OnNPageClose(wxAuiNotebookEvent& event)
+{
+	m_actwindow = m_scriptwin = wxGetApp().GetFrame()->m_childwindows.at(event.GetSelection());
+	SaveProfile(m_actwindow->GetProfile());
+	DeleteWindows();
+	m_childwindows.erase(m_childwindows.begin() + event.GetSelection());
+	
+	m_active_window = m_childwindows.size();
+}
+
+void MudMainFrame::OnNPageClosed(wxAuiNotebookEvent& event)
+{
+	m_actwindow = m_scriptwin = m_childwindows.at(m_notebook->GetSelection());
+	CreateWindows();
+	LoadProfile(m_actwindow->GetProfile(), false);
+	m_mgr.GetPane(m_notebook).Show().Center().BestSize(900, 500).Dock().CaptionVisible(false);
+	m_mgr.Update();
+	m_actwindow->Update();
+	Update();
+	unordered_map <wxString, wxWindow *> ummw;
+	ummw = *m_actwindow->GetUserWindows();
+	unordered_map<wxString, wxWindow*>::iterator uit;
+	for (uit = ummw.begin(); uit != ummw.end(); uit++)
+	{
+		uit->second->Update();
+	}
+	wxMenuBar* bar = GetMenuBar();
+	wxMenu* view = bar->GetMenu(bar->FindMenu(_("View")));
+	for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
+	{
+		view->InsertCheckItem(i + 1, ID_USERWINDOW + i, m_actwindow->GetPanes()->at(i));
+
+	}
+
+	int items1 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
+		view->InsertCheckItem(i + items1 - 1, ID_USERWINDOW + items1 + i, m_actwindow->GetNbs()->at(i));
+
+	int items2 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
+		view->InsertCheckItem(i + items2 - 1, ID_USERWINDOW + items2 + i, m_actwindow->GetGaugePanes()->at(i));
+
+	for (size_t i = 0; i < m_actwindow->GetPanes()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetPanes()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + i, true);
+	}
+	for (size_t i = 0; i < m_actwindow->GetNbs()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetNbs()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + items1 + i, true);
+	}
+	for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetGaugePanes()->at(i)).IsShown())
+			view->Check(ID_USERWINDOW + items2 + i, true);
+	}
+	int items3 = view->GetMenuItemCount() - 1;
+	for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+	{
+		view->InsertCheckItem(i + items3 - 1, ID_AMCUSERWINDOW + i, m_actwindow->GetAmcWindows()->at(i));
+
+	}
+	for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+	{
+		if (m_mgr.GetPane(m_actwindow->GetAmcWindows()->at(i)).IsShown())
+		view->Check(ID_AMCUSERWINDOW + i, true);
+
+	}
 }
 
 void MudMainFrame::DeleteWindows()
@@ -3906,6 +4049,10 @@ unordered_map<wxString, wxWindow*>::iterator uit;
 		for (size_t i = 0; i < m_actwindow->GetGaugePanes()->size(); i++)
 		{
 			view->Destroy(view->FindItem(m_actwindow->GetGaugePanes()->at(i)));
+		}
+		for (size_t i = 0; i < m_actwindow->GetAmcWindows()->size(); i++)
+		{
+			view->Destroy(view->FindItem(m_actwindow->GetAmcWindows()->at(i)));
 		}
 	}
 
@@ -4054,9 +4201,9 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 		Clear();
 		m_dclick = false;
 	}
-	//MudMainFrame* frame = (MudMainFrame*)GetParent();
+	MudMainFrame* frame = (MudMainFrame*)GetParent();
 	//check if this is an hotkey combo
-	for (iter = m_parent->GetHotkeys()->begin(); iter!= m_parent->GetHotkeys()->end(); iter++)
+	for (iter = frame->m_actwindow->GetHotkeys()->begin(); iter!= frame->m_actwindow->GetHotkeys()->end(); iter++)
 	{
 		if (keycode == iter->GetHotkey() && mods == iter->GetModifier())
 		{
@@ -4464,6 +4611,21 @@ al_it iter;
 		s = sCommand->substr(1);
 		if (ParsePath(&s))
 			return true;
+
+	}
+	//check for worldsend, only simple commands
+	if (sCommand->at(0) == m_parent->GetGlobalOptions()->GetWorldSend())
+	{
+		s = sCommand->substr(1);
+		s.Append((char)CR);
+		s.Append((char)LF);
+		size_t ss = m_parent->m_childwindows.size();
+		for (size_t x = 0; x < ss; x++)
+		{
+			
+			m_parent->m_childwindows.at(x)->Write(s.mb_str());
+		}
+		return true;
 
 	}
 	return false;

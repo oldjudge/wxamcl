@@ -165,12 +165,12 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_L = new amcLua();
 	
 	
-	m_maxlines = 5000;//default line buffer for the window(\\e\\[0-1}+?;?[0-9]+m) (?<!\\e\\[[0-1];?3[0-9])m
+	m_maxlines = 5000;//default line buffer for the window
 	m_dc = new Decompressor();
 		
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?www\\.[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([a-z]){3,5}\\.?[A-Za-z0-9\\-]{3,}\\.[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~\\.]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?([a-z]+\\.)?[a-zA-Z0-9]+\\.[a-z]+(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~\\.]+)?");//
 	m_bourl = true;
 	
 	m_ansicode = new RegExp("\\e\\[[0-1]?;?3?[0-9]?;?5?[0-9]?m");
@@ -211,7 +211,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 		m_font = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN));
         m_ufont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Underlined());
 		m_ifont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Italic());
-		m_stfont = new wxFont((wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Strikethrough());
+		m_stfont = new wxFont(wxFontInfo(fontsize).FaceName("Monospace Regular").Family(wxFONTFAMILY_MODERN).Strikethrough());
 		SetBackgroundStyle(wxBG_STYLE_PAINT);
 		
 	#else
@@ -1290,7 +1290,7 @@ static bool colset = false;
 			
 		//}
 	//}
-	amcLua *aL = m_parent->m_child->GetLState();
+	//amcLua *aL = m_parent->m_actwindow->GetLState();
 	wxString::iterator it;
 	if (m_parsestate == HAVE_TO_DELETE_SLINE)
 	{
@@ -1308,7 +1308,7 @@ static bool colset = false;
 		
 		bool b = m_parent->GetGlobalOptions()->UseUTF8();
 		m_parent->GetGlobalOptions()->SetUTF8(false);
-		while (m_url->Match(s.Mid(spos), false, true))
+		while (m_url->Match(s.Mid(spos), true, false))
 		{
 			int start=0;
 			int sub=0;
@@ -1338,7 +1338,7 @@ static bool colset = false;
 				start += spos;
 			if (!sub && !m_url->GetMatchStart())
 				start=0;
-			m_url->Match(s.Mid(start));
+			//m_url->Match(s.Mid(start));
 			xx=m_url->GetMatchLen();
 			test = s;
 			
@@ -2345,17 +2345,17 @@ static bool colset = false;
 						//ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							//m_parent->GetGlobalOptions()->GetEventFile(), 102, m_atcpstring.c_str());
 						//m_parent->m_input->ParseCommandLine(&ss);
-						aL->GetGlobal("OnTelnetData");
-						aL->PushString(m_atcpstring);
-						int err = aL->Call(1);
+						m_L->GetGlobal("OnTelnetData");
+						m_L->PushString(m_atcpstring);
+						int err = m_L->Call(1);
 						if (err)
 						{
-							wxString s = aL->GetwxString(aL->GetTop());
+							wxString s = m_L->GetwxString(m_L->GetTop());
 							m_parent->m_child->Msg(s);
-							aL->Pop(1);
+							m_L->Pop(1);
 
 						}
-						aL->SetTop(0);
+						m_L->SetTop(0);
 
 					}
 					m_parsestate = HAVE_TEXT;
@@ -2380,17 +2380,17 @@ static bool colset = false;
 						wxString ss;
 						//ss = wxString::Format("%cfunc(\"%s\", \"OnTelnetData(\'%d\',\'%s')\")", m_parent->GetGlobalOptions()->GetCommand(),
 							//m_parent->GetGlobalOptions()->GetEventFile(), 200, m_atcpstring.c_str());
-						aL->GetGlobal("OnTelnetData");
-						aL->PushString(m_atcpstring);
-						int err = aL->Call(1);
+						m_L->GetGlobal("OnTelnetData");
+						m_L->PushString(m_atcpstring);
+						int err = m_L->Call(1);
 						if (err)
 						{
-							wxString s = aL->GetwxString(aL->GetTop());
+							wxString s = m_L->GetwxString(m_L->GetTop());
 							m_parent->m_child->Msg(s);
-							aL->Pop(1);
+							m_L->Pop(1);
 
 						}
-						aL->SetTop(0);
+						m_L->SetTop(0);
 						
 					}
 					m_parsestate = HAVE_TEXT;
@@ -2496,18 +2496,20 @@ static bool colset = false;
 						//ss = wxString::Format("\"%s\", \"OnGMCPData(\'%s')\")", m_parent->GetGlobalOptions()->GetEventFile(), v.c_str());
 						//m_parent->m_input->Func(&ss);
 						//int len = ParseFParams(&arglist, '\'');
-						aL->GetGlobal("OnGMCPData");
-						aL->PushString(v);
-						int err = aL->Call(1);
+						//amcLua *aLu = m_parent->m_scriptwin->GetLState();
+						m_L->SetTop(0);
+						m_L->GetGlobal("OnGMCPData");
+						m_L->PushString(v);
+						int err = m_L->Call(1);
 						if (err)
 						{
-							wxString s = aL->GetwxString(aL->GetTop());
+							wxString s = m_L->GetwxString(m_L->GetTop());
 							m_parent->m_scriptwin->Msg(s);
-							aL->Pop(1);
+							m_L->Pop(1);
 							
 						}
-						aL->SetTop(0);
-						Update();
+						m_L->SetTop(0);
+						//Update();
 						
 					}
 										
@@ -5997,10 +5999,11 @@ wxUint32 uiBytesRead;
 			if (m_parent->GetGlobalOptions()->GetUseEvRecv())
 			{
 				s = wxString::Format("%cfunc(\"%s\", \"OnPacketReceived()\")", m_parent->GetGlobalOptions()->GetCommand(),
-					m_parent->GetGlobalOptions()->GetEventFile());
+					/*m_parent->GetGlobalOptions()->GetEventFile()*/m_parent->m_actwindow->GetEventFile());
 				m_parent->m_input->ParseCommandLine(&s);
 				GetLState()->SetTop(0);
 				GetLState()->GetGlobal("wxamclPacket");
+				
 				if (!m_parent->GetGlobalOptions()->UseUTF8())
 				{
 					if (m_mccp2 && cBuf!=NULL)
@@ -6202,6 +6205,7 @@ wxUint32 uiBytesRead;
 		SetScrollbar(wxVERTICAL, scrollpos, m_scrollrange, m_curline);
 		Refresh();
 		Update();*/
+		m_parent->m_scriptwin = m_parent->m_actwindow;
 		SetScrollPage();
 		Refresh();
 		Update();
@@ -6225,13 +6229,12 @@ wxUint32 uiBytesRead;
 				m_parent->m_input->ParseCommandLine(&s);
 			}
 		}
-		m_sock->Read(m_cBuffer, 4444);
-		//m_MemBuffer.Clear();
-				
+		m_sock->Read(m_cBuffer, 512);
+		
 		uiBytesRead = m_sock->LastCount();
 		
 		m_cBuffer[uiBytesRead]=EOS;
-		//m_MemBuffer.AppendData(m_cBuffer, uiBytesRead+1);
+		
 		if (m_parent->GetGlobalOptions()->DebugRaw())
 			WriteRaw(m_cBuffer, uiBytesRead);
 		

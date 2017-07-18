@@ -29,6 +29,8 @@ public:
 	void SetIntVar(const wxChar *c) {m_intvar=*c;}
 	wxChar GetListVar() {return m_listvar;}
 	void SetListVar(const wxChar *c) {m_listvar=*c;}
+	void SetWorldSend(const wxChar *c) { m_worldsend = *c; }
+	wxChar GetWorldSend() { return m_worldsend; }
 	bool UseMCCP() {return m_usemccp;}
 	void SetMCCP(bool b) {m_usemccp=b;}
 	bool UseMXP() {return m_usemxp;}
@@ -134,6 +136,7 @@ private:
 	wxChar m_script;
 	wxChar m_intvar;
 	wxChar m_listvar;
+	wxChar m_worldsend;
 	int m_swdelay;
 	bool m_ansilog;
 	bool m_htmllog;

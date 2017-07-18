@@ -14,7 +14,7 @@ amcScriptEdit::amcScriptEdit(wxWindow *parent,  wxWindowID id,
 		wxT("function end if then do else for in return break while local repeat elseif and or not false true nil require");
 	wxString luawords2 =
 		wxT("wxamcl.echo wxamcl.echowin wxamcl.gag wxamcl.color wxamcl.colorwin wxamcl.colorline wxamcl.colorword wxamcl.colorall wxamcl.scroll \
-				wxamcl.getlinenumber wxamcl.getline wxamcl.execute wxamcl.wait wxamcl.waitfor wxamcl.loadprofile wxamcl.substitute \
+				wxamcl.getlinenumber wxamcl.getline wxamcl.execute wxamcl.send wxamcl.wait wxamcl.waitfor wxamcl.loadprofile wxamcl.substitute \
 				wxamcl.createwindow wxamcl.hidewindow wxamcl.showwindow wxamcl.clearwindow wxamcl.destroywindow wxamcl.setbackground wxamcl.createnb wxamcl.addpage wxamcl.createtoolbar wxamcl.addbtn \
 				wxamcl.action.new wxamcl.action.get wxamcl.action.delete wxamcl.action.enable wxamcl.action.getpattern wxamcl.action.setpattern \
 				wxamcl.action.getact wxamcl.action.setact wxamcl.action.getpriority wxamcl.action.setpriority wxamcl.action.getcolmatch wxamcl.action.setcolmatch \

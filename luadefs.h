@@ -63,6 +63,7 @@ int luafunc_setfont(lua_State *L);
 int luafunc_getline(lua_State *L);
 int luafunc_getscript(lua_State *L);
 int luafunc_logwin(lua_State *L);
+int luafunc_sha256(lua_State *L);
 //action
 int luafunc_newaction(lua_State *L);
 int luafunc_getaction(lua_State *L);
@@ -223,7 +224,7 @@ static const struct luaL_Reg amclib_f [] = {
 	{"getline", luafunc_getline},
 	{"getscriptsign", luafunc_getscript},
 	{"logwin", luafunc_logwin},
-	
+	{"sha256", luafunc_sha256},
 	//msp stuff
 	{"setmsp", luafunc_setmsp},
 	
@@ -308,6 +309,7 @@ static const struct luaL_Reg amclib_trigger[] = {
 	{"delgroup", luafunc_deltrgroup},
 	{"execute", luafunc_exectr},
 	{"getuserdata", luafunc_gettruserdata},
+	
 	{NULL, NULL}
 };
 

@@ -168,6 +168,7 @@ using namespace std;
 #define ID_SPLITTER 1600
 #define ID_CHARENCODING 1700
 #define ID_USERWINDOW 3000
+#define ID_AMCUSERWINDOW 4000
 #define ID_CREATEWINDOW 1602
 #define ID_CREATEGAUGEWIN 1603
 #define ID_CREATENOTEBOOKWINDOW 1604
@@ -281,9 +282,12 @@ enum
 
 #define OVECCOUNT 60
 
-#define APP_VERSION "0.1.r96"
+#define APP_VERSION "0.1.r98"
 
 #define WXAMCL_USEIPV6 1
+
+
+
 
 #include "mudwindow.h"
 #include "luadefs.h"
@@ -404,6 +408,7 @@ public:
 	void OnMenuUi(wxUpdateUIEvent& event);
 	void OnShowSplitter(wxCommandEvent& event);
 	void OnUserWindow(wxCommandEvent& event);
+	void OnAmcUserWindow(wxCommandEvent& event);
 	void OnUserButton(wxCommandEvent& event);
 	void OnCharEncoding(wxCommandEvent& event);
 	void OnCreateCapture(wxCommandEvent& event);
@@ -476,6 +481,8 @@ public:
 	wxFont* GetScriptFont() {return m_scriptfont;}
 	void BuildEncodingMenu(wxMenu*);
 	void OnNPageChanged(wxAuiNotebookEvent& event);
+	void OnNPageClose(wxAuiNotebookEvent& event);
+	void OnNPageClosed(wxAuiNotebookEvent& event);
 	void DeleteWindows();
 	void CreateWindows();
 private:
