@@ -4221,29 +4221,36 @@ const char* name;
 str_var* v;
 int idx;
 	MudMainFrame *frame = (MudMainFrame*)wxGetApp().GetFrame();
+	MudWindow *mw = frame->m_scriptwin;
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,1)==LUA_TUSERDATA)
 	{
 		v = checkvar(L);
 		wxString s(v->name, co);
-		idx = frame->GetVarIndexByLabel(s);
+		idx = mw->GetVarIndexByLabel(s);
 	}
 	else if (lua_type(L, 1) == LUA_TTABLE)
 	{
 		wxString s(luaL_checkstring(L, 2), co);
-		idx = frame->GetVarIndexByLabel(s);
+		idx = mw->GetVarIndexByLabel(s);
 	}
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetVarIndexByLabel(wxString(name,co));
+		idx = mw->GetVarIndexByLabel(wxString(name,co));
 	}
 	if (idx==-1)
 	{
 		lua_pushnil(L);
 		return 1;
 	}
-	lua_pushstring(L, frame->GetVars()->at(idx).GetValue().mb_str(co).data());// .mb_str());
+	long number;
+	wxString ss = mw->GetVars()->at(idx).GetValue().mb_str(co);
+
+	if (ss.ToLong(&number))
+		lua_pushinteger(L, number);
+	else
+		lua_pushstring(L, mw->GetVars()->at(idx).GetValue().mb_str(co).data());// .mb_str());
 	return 1;
 }
 
@@ -4255,12 +4262,13 @@ int idx;
 str_var* v;
 int index=1;
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	MudWindow *mw = frame->m_scriptwin;
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		v = checkvar(L);
 		value = (char*)luaL_checkstring(L, ++index);
-		idx = frame->GetVarIndexByLabel(wxString(v->name,co));
+		idx = mw->GetVarIndexByLabel(wxString(v->name,co));
 		if (idx==-1)
 		{
 			lua_pushnil(L);
@@ -4277,7 +4285,7 @@ int index=1;
 	else
 	{
 		name = luaL_checkstring(L, 1);
-		idx = frame->GetVarIndexByLabel(wxString(name,co));
+		idx = mw->GetVarIndexByLabel(wxString(name,co));
 		if (idx==-1)
 		{
 			lua_pushnil(L);
@@ -4301,28 +4309,30 @@ int index=1, i;
 str_var* v;
 
 	MudMainFrame *frame = wxGetApp().GetFrame();
+	MudWindow *mw = frame->m_scriptwin;
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	if (lua_type(L,index)==LUA_TUSERDATA)
 	{
 		v = (str_var*)lua_touserdata(L, index);
-		i = frame->GetVarIndexByLabel(wxString(v->name,co));
+		i = mw->GetVarIndexByLabel(wxString(v->name,co));
 	}
 	else
 	{
 		c = luaL_checkstring(L,index);
-		i = frame->GetVarIndexByLabel(wxString(c,co));
+		i = mw->GetVarIndexByLabel(wxString(c,co));
 	}
 	if (i==-1)
 	{
 		lua_pushnil(L);
 		return 1;
 	}
-	it = frame->GetVars()->begin()+i;
-	frame->GetVars()->erase(it);
+	it = mw->GetVars()->begin()+i;
+	mw->GetVars()->erase(it);
 	v = NULL;
-	stable_sort(frame->GetVars()->begin(), frame->GetVars()->end(), less<class amcVar>());
-	frame->m_scriptwin->SetVars(*frame->GetVars());
-	lua_pushinteger(L, frame->GetVars()->size());
+	stable_sort(mw->GetVars()->begin(), mw->GetVars()->end(), less<class amcVar>());
+	frame->SetVars(*mw->GetVars());
+	//frame->m_scriptwin->SetVars(*->GetVars());
+	lua_pushinteger(L, mw->GetVars()->size());
 	return 1;
 }
 

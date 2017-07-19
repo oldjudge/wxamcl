@@ -464,6 +464,7 @@ public:
 	vector<wxString> *GetPackages() {return &m_packages;}
 	std::vector<class amcScriptThread*> *GetThreads() {return &m_threads;}
 	map<int, struct lua_State*> *GetLuaStates() {return &m_luastates;}
+	void SetVars(vector<class amcVar> aV) { m_vars = aV; }
 	int GetLRefCount() {return m_refcount;}
 	void SetLRefCount(int i) {m_refcount=i;}
 	void luaBuildtrigger();
