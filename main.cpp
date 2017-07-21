@@ -4141,7 +4141,7 @@ void InputTextCtrl::OnIdle(wxIdleEvent &event)
 void InputTextCtrl::OnSetFocus(wxFocusEvent &event)
 {
 #if defined __WXMSW__
-	wxLogDebug("OnSetFocus..Input Text");
+	//wxLogDebug("OnSetFocus..Input Text");
 	
 	//SetSelection(-1, -1);
 #endif
@@ -4500,6 +4500,9 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						else if (m_history.empty() && history)
 							m_history.push_back(comm);
 						m_hpos = (int)m_history.size()-1;
+						wxString l;
+						l << m_hpos;
+						wxLogDebug(l);
 					//}
 				//}
 			}
