@@ -168,7 +168,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	m_maxlines = 5000;//default line buffer for the window
 	m_dc = new Decompressor();
 		
-	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
+	m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?[A-Za-z0-9]{1,}(?!char|comm|group|room)\\.?(?!\\.)[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%#_-]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?www\\.[A-Za-z0-9\\-]{3,}\\.(?!\\.txt|\\.wav|\\.mp3|\\.ogg|\\.lua|tick|info|vitals|status|channel|comm\\.|char\\.|repop|quest|group|stats|worth|maxstats|wrongdir|room\\.)[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~]+)?");//\\.\\ ? = \\ - \\~\\ + %_&#:\\ / ] + )) { 0, 4 }"); 
 	//m_url = new RegExp("((ht|f)tp(s?)\\:\\/\\/)?(www\\.)?[a-zA-Z0-9]{3,}\\.[a-z]{2,4}(\\/[a-zA-Z0-9\\?=:\\/%_&#\\~\\.]+)?");//
 	m_bourl = true;

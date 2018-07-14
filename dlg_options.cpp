@@ -41,7 +41,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	sbSizer1 = new wxStaticBoxSizer( new wxStaticBox( m_general, wxID_ANY, _("Commands") ), wxVERTICAL );
 	
 	wxGridSizer* gSizer1;
-	gSizer1 = new wxGridSizer( 8, 2, 0, 0 );
+	gSizer1 = new wxGridSizer( 9, 2, 0, 0 );
 	
 	m_staticText4 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Command sign:"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_staticText4->Wrap( -1 );
@@ -156,7 +156,7 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_staticText121->Wrap( -1 );
 	gSizer1->Add( m_staticText121, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_listvar = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CV, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
+	m_listvar = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CVL, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
 	#ifdef __WXGTK__
 	if ( !m_listvar->HasFlag( wxTE_MULTILINE ) )
 	{
@@ -168,6 +168,23 @@ DlgOptions::DlgOptions( wxWindow* parent, wxWindowID id, const wxString& title, 
 	m_listvar->SetToolTip( _("List sign (default: @)") );
 	
 	gSizer1->Add( m_listvar, 0, wxALL, 5 );
+	
+	m_staticText18 = new wxStaticText( sbSizer1->GetStaticBox(), wxID_ANY, _("Send to all worlds: "), wxDefaultPosition, wxDefaultSize, 0 );
+	m_staticText18->Wrap( -1 );
+	gSizer1->Add( m_staticText18, 0, wxALL, 5 );
+	
+	m_worldvar = new wxTextCtrl( sbSizer1->GetStaticBox(), ID_CWORLD, wxEmptyString, wxDefaultPosition, wxSize( 24,-1 ), 0 );
+	#ifdef __WXGTK__
+	if ( !m_worldvar->HasFlag( wxTE_MULTILINE ) )
+	{
+	m_worldvar->SetMaxLength( 1 );
+	}
+	#else
+	m_worldvar->SetMaxLength( 1 );
+	#endif
+	m_worldvar->SetToolTip( _("Send to all worlds (default: :)") );
+	
+	gSizer1->Add( m_worldvar, 0, wxALL, 5 );
 	
 	
 	sbSizer1->Add( gSizer1, 0, wxALL, 5 );

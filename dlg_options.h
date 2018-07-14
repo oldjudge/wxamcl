@@ -55,7 +55,9 @@ class DlgOptions : public wxDialog
 			ID_CSCRIPT,
 			ID_CSP,
 			ID_CSPR,
-			ID_CV
+			ID_CV,
+			ID_CVL,
+			ID_CWORLD
 		};
 		
 		wxNotebook* m_nb;
@@ -76,6 +78,8 @@ class DlgOptions : public wxDialog
 		wxTextCtrl* m_textvar;
 		wxStaticText* m_staticText121;
 		wxTextCtrl* m_listvar;
+		wxStaticText* m_staticText18;
+		wxTextCtrl* m_worldvar;
 		wxCheckBox* m_keepin;
 		wxCheckBox* m_parsein;
 		wxStaticText* m_staticText11;

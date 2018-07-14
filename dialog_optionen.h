@@ -25,6 +25,7 @@ public:
 	wxString GetCScr() {return m_scr;}
 	wxString GetCVar() {return m_var;}
 	wxString GetCList() {return m_list;}
+	wxString GetCWorld() { return m_world; }
 	int GetMaxLines() {return m_lbuf;}
 	int GetHistSize() {return m_hist;}
 	wxString GetGMCPMods() {return m_gmcpmodules->GetValue();}
@@ -116,6 +117,7 @@ private:
 	wxString m_scr;
 	wxString m_var;
 	wxString m_list;
+	wxString m_world;
 	wxString m_regexp;
 	wxString m_gmcpmods;
 	

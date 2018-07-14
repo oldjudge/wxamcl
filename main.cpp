@@ -278,8 +278,8 @@ bool MudClientApp::OnInit()
 	//wxString ss = "{ \"name\": \"Asariom\", \"class\": \"Mage\", \"subclass\": \"Elementalist\", \"race\": \"Eldar\", \"clan\": \"\", \"pretitle\": \"\", \"perlevel\": 2000, \"tier\": 0, \"remorts\": 2, \"redos\" : \"0\" }  <\x1b[0;31m933/933Hps \x1b[1;32m1028/1054Ma \x1b[0;32m1111/1112Mvs \x1b[0;36m0qt \x1b[0;35m1815tnl \x1b[1;33m\x1b[0;37m> \x1b[0;37m";
 	//frame->m_child->ParseNBuffer((char*)ss.mb_str().data(), false);
 	//wxString ss = "\x1b[0;33m           ---  \n";
-	wxString ss = "https://pastebin.com";
-	frame->m_child->ParseNBuffer(ss.char_str(), false);
+	//wxString ss = "https://pastebin.com";
+	//frame->m_child->ParseNBuffer(ss.char_str(), false);
 	/*ss = "\x1b[0;33m          \x1b[0;33m|   \x1b[0;33m\x1b[0;33m|  \n";
 	frame->m_child->ParseNBuffer(ss.char_str(), false);
 	ss = "\x1b[0;33m          \x1b[0;33m|\x1b[1;37m#\x1b[1;35m#\x1b[1;37m>\x1b[0;33m\x1b[0;33m|  \n";
@@ -1141,6 +1141,7 @@ void MudMainFrame::OnPrefs(wxCommandEvent& WXUNUSED(event))
 		m_gopt->SetScript(od->GetCScr().c_str());
 		m_gopt->SetVar(od->GetCVar().c_str());
 		m_gopt->SetListVar(od->GetCList().c_str());
+		m_gopt->SetWorldSend(od->GetCWorld().c_str());
 		m_gopt->SetMCCP(od->GetMccp());
 		m_gopt->SetNAWS(od->GetNaws());
 		m_gopt->SetGAEOR(od->GetGAEOR());

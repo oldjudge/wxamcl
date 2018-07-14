@@ -42,6 +42,8 @@ DlgOptions( parent )
 	m_textvar->SetValidator(wxTextValidator(wxFILTER_NONE, &m_var));
 	m_list = m_frame->GetGlobalOptions()->GetListVar();
 	m_listvar->SetValidator(wxTextValidator(wxFILTER_NONE, &m_list));
+	m_world = m_frame->GetGlobalOptions()->GetWorldSend();
+	m_worldvar->SetValidator(wxTextValidator(wxFILTER_NONE, &m_world));
 	m_lbuf = m_frame->m_child->GetMaxLines();
 	m_linebuf->SetValidator(wxGenericValidator(&m_lbuf));
 	m_hist = m_frame->GetGlobalOptions()->GetMaxHist();
