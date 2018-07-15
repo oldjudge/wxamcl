@@ -44,7 +44,7 @@ class Connect : public wxDialog
 		wxComboBox* m_server;
 		wxComboBox* m_port;
 		
-		Connect( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connect"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE ); 
+		Connect( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Connect"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 280,185 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~Connect();
 	
 };
