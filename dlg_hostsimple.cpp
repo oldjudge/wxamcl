@@ -40,7 +40,7 @@ Connect::Connect( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_port->Append( _("4000") );
 	m_port->Append( _("23") );
 	gbSizer1->Add( m_port, wxGBPosition( 1, 1 ), wxGBSpan( 1, 5 ), wxALL|wxEXPAND, 5 );
-	
+
 	
 	gbSizer1->AddGrowableCol( 1 );
 	
