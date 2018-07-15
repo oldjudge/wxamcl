@@ -1,0 +1,2329 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-06-15 18:58+0200\n"
+"PO-Revision-Date: 2017-06-15 18:58+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de_AT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.2\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-KeywordsList: _\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: amcWindow.cpp:199 dlg_options.cpp:381 gaugewin.cpp:93 mudwindow.cpp:5800
+msgid "Font"
+msgstr "Schriftart"
+
+#: amcWindow.cpp:199 gaugewin.cpp:93 mudwindow.cpp:5800
+msgid "Set the output font"
+msgstr ""
+
+#: amcWindow.cpp:200 dlg_options.cpp:391 dlg_options.cpp:598 mudwindow.cpp:5801
+msgid "Timestamps"
+msgstr ""
+
+#: amcWindow.cpp:200 mudwindow.cpp:5801
+msgid "Show timestamps in this window"
+msgstr ""
+
+#: amcWindow.cpp:204 mudwindow.cpp:5806
+msgid "Create action..."
+msgstr ""
+
+#: amcWindow.cpp:204 mudwindow.cpp:5806
+msgid "Create an action using the linetext"
+msgstr ""
+
+#: amcWindow.cpp:206 main.cpp:456 mudwindow.cpp:5808
+msgid "Copy\tCtrl+C"
+msgstr ""
+
+#: amcWindow.cpp:206 main.cpp:456 mudwindow.cpp:5808
+msgid "Copy selection to clipboard"
+msgstr ""
+
+#: amcWindow.cpp:207 main.cpp:459 mudwindow.cpp:5809
+msgid "Copy with ansi"
+msgstr ""
+
+#: amcWindow.cpp:207 main.cpp:459 mudwindow.cpp:5809
+msgid "Copy selection with ansicodes to clipboard"
+msgstr ""
+
+#: connect_dlg.cpp:29
+msgid "Data:"
+msgstr ""
+
+#: connect_dlg.cpp:37
+msgid "Character:"
+msgstr ""
+
+#: connect_dlg.cpp:44
+msgid "Password:"
+msgstr ""
+
+#: connect_dlg.cpp:51
+msgid "MUD:"
+msgstr ""
+
+#: connect_dlg.cpp:58 dlg_hostsimple.cpp:28
+msgid "Host:"
+msgstr ""
+
+#: connect_dlg.cpp:65
+msgid "IP-Address:"
+msgstr ""
+
+#: connect_dlg.cpp:72 dlg_hostsimple.cpp:35
+msgid "Port:"
+msgstr ""
+
+#: connect_dlg.cpp:79
+msgid "Profile file:"
+msgstr ""
+
+#: connect_dlg.cpp:83 dlg_options.cpp:322 dlg_pkg.cpp:55 objects_dlgs.cpp:295
+msgid "Select a file"
+msgstr ""
+
+#: connect_dlg.cpp:93
+msgid "Add data"
+msgstr ""
+
+#: connect_dlg.cpp:96
+msgid "Edit data"
+msgstr ""
+
+#: connect_dlg.cpp:99
+msgid "Delete data"
+msgstr ""
+
+#: connect_dlg.cpp:107 dlg_hostsimple.h:47 main.cpp:145 simpleconn.h:46
+msgid "Connect"
+msgstr ""
+
+#: connect_dlg.cpp:111 simpleconn.cpp:55
+msgid "Cancel"
+msgstr ""
+
+#: connect_dlg.h:71
+msgid "Connect to a mud"
+msgstr ""
+
+#: dialog_objekte.cpp:44 dlg_pkg.cpp:22 objects_dlgs.cpp:248
+msgid "Alias"
+msgstr ""
+
+#: dialog_objekte.cpp:45 dialog_objekte.cpp:48 dialog_objekte.cpp:57
+msgid "Action"
+msgstr ""
+
+#: dialog_objekte.cpp:46 dialog_objekte.cpp:49 dialog_objekte.cpp:52
+#: dialog_objekte.cpp:55 dialog_objekte.cpp:58
+msgid "Group"
+msgstr ""
+
+#: dialog_objekte.cpp:47
+msgid "Hotkey"
+msgstr ""
+
+#: dialog_objekte.cpp:50
+msgid "Variable"
+msgstr ""
+
+#: dialog_objekte.cpp:51
+msgid "Value"
+msgstr ""
+
+#: dialog_objekte.cpp:53
+msgid "List"
+msgstr ""
+
+#: dialog_objekte.cpp:54
+msgid "Items"
+msgstr ""
+
+#: dialog_objekte.cpp:56
+msgid "Timer"
+msgstr ""
+
+#: dialog_objekte.cpp:68 dialog_objekte.cpp:414 dialog_objekte.cpp:518
+#: dialog_objekte.cpp:689 dialog_objekte.cpp:874 dialog_objekte.cpp:1051
+#: dialog_objekte.cpp:1132 dialog_objekte.cpp:1191 dialog_objekte.cpp:1331
+#: dialog_objekte.cpp:1394 dialog_objekte.cpp:1511 dialog_objekte.cpp:1607
+#: dialog_objekte.cpp:1731
+msgid "Group active"
+msgstr ""
+
+#: dialog_objekte.cpp:69 trigger.cpp:406
+msgid "None"
+msgstr ""
+
+#: dialog_objekte.cpp:257
+msgid "Gauge Windows"
+msgstr ""
+
+#: dialog_objekte.cpp:301 dlg_pkg.cpp:22 objects_dlgs.cpp:325
+msgid "Buttons"
+msgstr ""
+
+#: dialog_objekte.cpp:419 dialog_objekte.cpp:520 dialog_objekte.cpp:691
+#: dialog_objekte.cpp:876 dialog_objekte.cpp:1053 dialog_objekte.cpp:1134
+#: dialog_objekte.cpp:1193 dialog_objekte.cpp:1333 dialog_objekte.cpp:1396
+#: dialog_objekte.cpp:1513 dialog_objekte.cpp:1609 dialog_objekte.cpp:1733
+#: objects_dlgs.cpp:83 objects_dlgs.cpp:214 objects_dlgs.cpp:580
+#: objects_dlgs.cpp:659 objects_dlgs.cpp:738 objects_dlgs.cpp:830
+msgid "Group off"
+msgstr ""
+
+#: dialog_objekte.cpp:545
+msgid "This will delete all triggers in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:545 dialog_objekte.cpp:900 dialog_objekte.cpp:1100
+#: dialog_objekte.cpp:1299 dialog_objekte.cpp:1536 dialog_objekte.cpp:1756
+msgid "Continue?"
+msgstr ""
+
+#: dialog_objekte.cpp:577 dialog_objekte.cpp:621 dialog_objekte.cpp:730
+msgid "Action labels need to be unique!"
+msgstr ""
+
+#: dialog_objekte.cpp:577 dialog_objekte.cpp:621 dialog_objekte.cpp:730
+#: dialog_objekte.cpp:2107
+msgid "Label already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:593 objects_dlgs.cpp:80 objects_dlgs.cpp:207
+#: objects_dlgs.cpp:823
+msgid "default"
+msgstr ""
+
+#: dialog_objekte.cpp:777 dialog_objekte.cpp:817 luastuff.cpp:2999
+#: luastuff.cpp:3025 luastuff.cpp:3087
+msgid "Alias already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:900
+msgid "This will delete all aliases in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:1013 luastuff.cpp:3667 luastuff.cpp:3697
+msgid "Hotkey already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:1100
+msgid "This will delete all hotkeys in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:1208 dialog_objekte.cpp:1241 luastuff.cpp:4068
+#: luastuff.cpp:4090 luastuff.cpp:4148
+msgid "Variable already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:1299
+msgid "This will delete all variables in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:1411 dialog_objekte.cpp:1444 luastuff.cpp:4445
+msgid "List already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:1536
+msgid "This will delete all lists in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:1624 dialog_objekte.cpp:1684 luastuff.cpp:3458
+#: luastuff.cpp:3488
+msgid "Timer already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:1756
+msgid "This will delete all timers in this group!"
+msgstr ""
+
+#: dialog_objekte.cpp:2013 luastuff.cpp:5175 luastuff.cpp:5216
+msgid "Button already exists!"
+msgstr ""
+
+#: dialog_objekte.cpp:2107
+msgid "Button labels need to be unique!"
+msgstr ""
+
+#: dialog_optionen.cpp:209 dialog_optionen.cpp:485 dlg_options.cpp:615
+msgid "Start logging"
+msgstr ""
+
+#: dialog_optionen.cpp:213 dialog_optionen.cpp:490
+msgid "Stop logging"
+msgstr ""
+
+#: dialog_optionen.cpp:403
+msgid "Mud Output looks like this"
+msgstr ""
+
+#: dialog_optionen.cpp:408
+msgid "Echo color looks like this"
+msgstr ""
+
+#: dialog_optionen.cpp:412
+msgid "Client messages look like this"
+msgstr ""
+
+#: dialog_optionen.cpp:416
+msgid "Custom color looks like this"
+msgstr ""
+
+#: dialog_package.cpp:81 dialog_package.cpp:100 dialog_package.cpp:120
+#: dialog_package.cpp:142 dialog_package.cpp:169 dialog_package.cpp:188
+#: dialog_package.cpp:207 dialog_package.cpp:226 dlg_pkg.cpp:22 dlg_pkg.cpp:28
+msgid "All"
+msgstr ""
+
+#: dialog_regexp.cpp:19
+msgid "No match!"
+msgstr ""
+
+#: dialog_regexp.cpp:24
+msgid "Matched from "
+msgstr ""
+
+#: dialog_regexp.cpp:24
+msgid " to "
+msgstr ""
+
+#: dialog_regexp.cpp:30 dialog_regexp.cpp:35
+msgid "Match is: "
+msgstr ""
+
+#: dialog_regexp.cpp:37
+msgid "Captured "
+msgstr ""
+
+#: dialog_regexp.cpp:37
+msgid " strings.\r\n"
+msgstr ""
+
+#: dialog_skript.cpp:26
+msgid "Choose script to load"
+msgstr ""
+
+#: dialog_skript.cpp:26 dialog_skript.cpp:47
+msgid "lua files (*.lua)|*.lua|all files (*.*)|*.*"
+msgstr ""
+
+#: dialog_skript.cpp:47
+msgid "Save script"
+msgstr ""
+
+#: dialog_verbinden.cpp:97
+msgid "Avatar"
+msgstr ""
+
+#: dialog_verbinden.cpp:98
+msgid "Mud"
+msgstr ""
+
+#: dialog_verbinden.cpp:99 dlg_hostsimple.cpp:20 simpleconn.cpp:20
+msgid "Host"
+msgstr ""
+
+#: dialog_verbinden.cpp:100
+msgid "Port"
+msgstr ""
+
+#: dialog_verbinden.cpp:101
+msgid "IP"
+msgstr ""
+
+#: dlg_hostsimple.cpp:32
+msgid "localhost"
+msgstr ""
+
+#: dlg_hostsimple.cpp:39 dlg_hostsimple.cpp:40
+msgid "4000"
+msgstr ""
+
+#: dlg_hostsimple.cpp:41
+msgid "23"
+msgstr ""
+
+#: dlg_options.cpp:41
+msgid "Commands"
+msgstr ""
+
+#: dlg_options.cpp:46
+msgid "Command sign:"
+msgstr ""
+
+#: dlg_options.cpp:59
+msgid "Command sign (default: #)"
+msgstr ""
+
+#: dlg_options.cpp:63
+msgid "Seperator sign:"
+msgstr ""
+
+#: dlg_options.cpp:76
+msgid "Command separator sign (default: ;)"
+msgstr ""
+
+#: dlg_options.cpp:80
+msgid "Script sign:"
+msgstr ""
+
+#: dlg_options.cpp:93
+msgid "Script command sign (default: ?)"
+msgstr ""
+
+#: dlg_options.cpp:97
+msgid "Speedwalk:"
+msgstr ""
+
+#: dlg_options.cpp:110
+msgid "Command sign for speedwalks (default: .)"
+msgstr ""
+
+#: dlg_options.cpp:114
+msgid "Reverse sw:"
+msgstr ""
+
+#: dlg_options.cpp:127
+msgid "Command sign for reverse speedwalks (default: *)"
+msgstr ""
+
+#: dlg_options.cpp:131
+msgid "Speedwalk delay (ms)"
+msgstr ""
+
+#: dlg_options.cpp:138 objects_dlgs.cpp:805
+msgid "Variable:"
+msgstr ""
+
+#: dlg_options.cpp:151
+msgid "Variable sign (default: $)"
+msgstr ""
+
+#: dlg_options.cpp:155
+msgid "List:"
+msgstr ""
+
+#: dlg_options.cpp:168
+msgid "List sign (default: @)"
+msgstr ""
+
+#: dlg_options.cpp:179
+msgid "Command window"
+msgstr ""
+
+#: dlg_options.cpp:189
+msgid "Keep input"
+msgstr ""
+
+#: dlg_options.cpp:192
+msgid "Parse input"
+msgstr ""
+
+#: dlg_options.cpp:195
+msgid "History size:"
+msgstr ""
+
+#: dlg_options.cpp:208
+msgid "Use tabcompletion-dialog"
+msgstr ""
+
+#: dlg_options.cpp:211 tabedit_dlg.h:44
+msgid "Edit tabcompletion list"
+msgstr ""
+
+#: dlg_options.cpp:218
+msgid "Prompt"
+msgstr ""
+
+#: dlg_options.cpp:220
+msgid "Lock prompt"
+msgstr ""
+
+#: dlg_options.cpp:223
+msgid "Gag prompt when locked"
+msgstr ""
+
+#: dlg_options.cpp:226
+msgid "Prompt detection pattern:"
+msgstr ""
+
+#: dlg_options.cpp:237
+msgid "Connection options"
+msgstr ""
+
+#: dlg_options.cpp:246
+msgid "Use GMCP"
+msgstr ""
+
+#: dlg_options.cpp:252
+msgid "Negotiate MCCP"
+msgstr ""
+
+#: dlg_options.cpp:255
+msgid "Negotiate MXP"
+msgstr ""
+
+#: dlg_options.cpp:258
+msgid "Negotiate MSP"
+msgstr ""
+
+#: dlg_options.cpp:261
+msgid "Use MSDP"
+msgstr ""
+
+#: dlg_options.cpp:264
+msgid "Use Aard Telopts"
+msgstr ""
+
+#: dlg_options.cpp:267
+msgid "Use ATCP"
+msgstr ""
+
+#: dlg_options.cpp:270
+msgid "GA EOR"
+msgstr ""
+
+#: dlg_options.cpp:273
+msgid "Negotiate NAWS"
+msgstr ""
+
+#: dlg_options.cpp:276
+msgid "UTF8 connection"
+msgstr ""
+
+#: dlg_options.cpp:279
+msgid "Use IPV6"
+msgstr ""
+
+#: dlg_options.cpp:282
+msgid "Reconnect after disconnect"
+msgstr ""
+
+#: dlg_options.cpp:295
+msgid "Events"
+msgstr ""
+
+#: dlg_options.cpp:297
+msgid "Use events"
+msgstr ""
+
+#: dlg_options.cpp:300
+msgid "OnConnect"
+msgstr ""
+
+#: dlg_options.cpp:303
+msgid "OnDisconnect"
+msgstr ""
+
+#: dlg_options.cpp:306
+msgid "OnPacketReceived"
+msgstr ""
+
+#: dlg_options.cpp:309
+msgid "OnTelnetData"
+msgstr ""
+
+#: dlg_options.cpp:312
+msgid "OnGMCPData"
+msgstr ""
+
+#: dlg_options.cpp:315
+msgid "OnMSDPData"
+msgstr ""
+
+#: dlg_options.cpp:318
+msgid "Script file:"
+msgstr ""
+
+#: dlg_options.cpp:341
+msgid "General"
+msgstr ""
+
+#: dlg_options.cpp:362
+msgid "Line buffer"
+msgstr ""
+
+#: dlg_options.cpp:367
+msgid "Size:"
+msgstr ""
+
+#: dlg_options.cpp:393
+msgid "Show timestamps"
+msgstr ""
+
+#: dlg_options.cpp:396
+msgid "Show milliseconds"
+msgstr ""
+
+#: dlg_options.cpp:403
+msgid "Dark colors"
+msgstr ""
+
+#: dlg_options.cpp:433
+msgid "Bright colors"
+msgstr ""
+
+#: dlg_options.cpp:463 dlg_options.h:202
+msgid "Options"
+msgstr ""
+
+#: dlg_options.cpp:465
+msgid "Ansi colors on"
+msgstr ""
+
+#: dlg_options.cpp:468
+msgid "Local echo on"
+msgstr ""
+
+#: dlg_options.cpp:471
+msgid "Echo triggers on"
+msgstr ""
+
+#: dlg_options.cpp:474
+msgid "Script verbose on"
+msgstr ""
+
+#: dlg_options.cpp:481
+msgid "Extra colors"
+msgstr ""
+
+#: dlg_options.cpp:489
+msgid "Echo color"
+msgstr ""
+
+#: dlg_options.cpp:496
+msgid "Client color"
+msgstr ""
+
+#: dlg_options.cpp:503
+msgid "Custom color"
+msgstr ""
+
+#: dlg_options.cpp:518
+msgid "Default colors"
+msgstr ""
+
+#: dlg_options.cpp:522
+msgid "Line wrap options"
+msgstr ""
+
+#: dlg_options.cpp:524
+msgid "Wrap lines"
+msgstr ""
+
+#: dlg_options.cpp:527
+msgid "Autowrap"
+msgstr ""
+
+#: dlg_options.cpp:537
+msgid "Misc"
+msgstr ""
+
+#: dlg_options.cpp:539
+msgid "Clickable URLs"
+msgstr ""
+
+#: dlg_options.cpp:542
+msgid "Use splitwindow for scrollback"
+msgstr ""
+
+#: dlg_options.cpp:565
+msgid "Output options"
+msgstr ""
+
+#: dlg_options.cpp:586
+msgid "Logging options"
+msgstr ""
+
+#: dlg_options.cpp:589
+msgid "Hmtl"
+msgstr ""
+
+#: dlg_options.cpp:589
+msgid "Plain Text"
+msgstr ""
+
+#: dlg_options.cpp:589
+msgid "Text with ansi codes"
+msgstr ""
+
+#: dlg_options.cpp:591
+msgid "Format"
+msgstr ""
+
+#: dlg_options.cpp:595
+msgid "Include scroll buffer"
+msgstr ""
+
+#: dlg_options.cpp:601
+msgid "Logging directory:"
+msgstr ""
+
+#: dlg_options.cpp:605 dlg_options.cpp:624 dlg_options.cpp:633
+#: dlg_options.cpp:642 dlg_options.cpp:651 dlg_options.cpp:660
+#: dlg_options.cpp:669 dlg_options.cpp:678
+msgid "Select a folder"
+msgstr ""
+
+#: dlg_options.cpp:608
+msgid "Filename:"
+msgstr ""
+
+#: dlg_options.cpp:612
+msgid "log.txt"
+msgstr ""
+
+#: dlg_options.cpp:622
+msgid "Working directory"
+msgstr ""
+
+#: dlg_options.cpp:631
+msgid "Profile directory"
+msgstr ""
+
+#: dlg_options.cpp:640
+msgid "Scripting directory"
+msgstr ""
+
+#: dlg_options.cpp:649
+msgid "Package directory"
+msgstr ""
+
+#: dlg_options.cpp:658
+msgid "Database directory"
+msgstr ""
+
+#: dlg_options.cpp:667
+msgid "Sound (MSP) directory"
+msgstr ""
+
+#: dlg_options.cpp:676
+msgid "Lua directory"
+msgstr ""
+
+#: dlg_options.cpp:693
+msgid "Logging && paths"
+msgstr ""
+
+#: dlg_pkg.cpp:20
+msgid "Choose package content"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:170
+msgid "Actions"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:534
+msgid "Gauges"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:612
+msgid "Hotkeys"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:694
+msgid "Lists"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:786
+msgid "Timers"
+msgstr ""
+
+#: dlg_pkg.cpp:22 objects_dlgs.cpp:864
+msgid "Variables"
+msgstr ""
+
+#: dlg_pkg.cpp:38
+msgid "Check items"
+msgstr ""
+
+#: dlg_pkg.cpp:46
+msgid "Check all items"
+msgstr ""
+
+#: dlg_pkg.cpp:53
+msgid "Package file"
+msgstr ""
+
+#: dlg_pkg.h:56
+msgid "Create package"
+msgstr ""
+
+#: dlg_regexptest.cpp:20
+msgid "Text to test"
+msgstr ""
+
+#: dlg_regexptest.cpp:29
+msgid "Pattern"
+msgstr ""
+
+#: dlg_regexptest.cpp:37
+msgid "Matches"
+msgstr ""
+
+#: dlg_regexptest.cpp:48
+msgid "Test"
+msgstr ""
+
+#: dlg_regexptest.cpp:51 script_dlg.cpp:61
+msgid "Close"
+msgstr ""
+
+#: dlg_regexptest.h:46
+msgid "Test your Regular Expression"
+msgstr ""
+
+#: dlg_sscript.cpp:20
+msgid "Edit commands"
+msgstr ""
+
+#: dlg_sscript.h:40
+msgid "Edit"
+msgstr ""
+
+#: gaugewin.cpp:102 mudwindow.cpp:4908
+msgid "Set font for this window"
+msgstr ""
+
+#: luastuff.cpp:782 main.cpp:4928 mudwindow.cpp:4986
+msgid "Logging started: "
+msgstr ""
+
+#: luastuff.cpp:1763
+msgid "Id for user button needs to be >0 and <1000"
+msgstr ""
+
+#: luastuff.cpp:2169
+msgid "Error creating action. Action labels need to be unique!"
+msgstr ""
+
+#: luastuff.cpp:2291 luastuff.cpp:2340 luastuff.cpp:2384
+msgid "Action not found!"
+msgstr ""
+
+#: luastuff.cpp:2891
+msgid "Deleted action group "
+msgstr ""
+
+#: luastuff.cpp:3163
+msgid "Alias not found!"
+msgstr ""
+
+#: luastuff.cpp:3761
+msgid "Hotkey not found!"
+msgstr ""
+
+#: luastuff.cpp:3990
+msgid "Enabled hotkey group "
+msgstr ""
+
+#: luastuff.cpp:3992
+msgid "Disabled hotkey group "
+msgstr ""
+
+#: luastuff.cpp:4357
+msgid "Enabled variable group "
+msgstr ""
+
+#: luastuff.cpp:4359
+msgid "Disabled variable group "
+msgstr ""
+
+#: luastuff.cpp:4389
+msgid "Deleted variable class "
+msgstr ""
+
+#: luastuff.cpp:4398 luastuff.cpp:4831 luastuff.cpp:4896
+msgid "Group "
+msgstr ""
+
+#: luastuff.cpp:4398 luastuff.cpp:4831 luastuff.cpp:4896
+msgid " does not exist!"
+msgstr ""
+
+#: luastuff.cpp:4428
+msgid "Error creating list!"
+msgstr ""
+
+#: luastuff.cpp:4557
+msgid "Given index out of bounds!"
+msgstr ""
+
+#: luastuff.cpp:4839
+msgid "Enabled list group "
+msgstr ""
+
+#: luastuff.cpp:4841
+msgid "Disabled list group "
+msgstr ""
+
+#: luastuff.cpp:4887
+msgid "Deleted list group "
+msgstr ""
+
+#: luastuff.cpp:5554
+msgid "Database file does not exist!"
+msgstr ""
+
+#: luastuff.cpp:5822
+msgid "Client is not connected!"
+msgstr ""
+
+#: main.cpp:145
+msgid "Connect char..."
+msgstr ""
+
+#: main.cpp:147
+msgid "Objects"
+msgstr ""
+
+#: main.cpp:147 main.cpp:483
+msgid "Define objects..."
+msgstr ""
+
+#: main.cpp:148
+msgid "Preferences"
+msgstr ""
+
+#: main.cpp:148
+msgid "Global preferences"
+msgstr ""
+
+#: main.cpp:150
+msgid "Edit Scripts"
+msgstr ""
+
+#: main.cpp:150 script_dlg.cpp:23
+msgid "Edit script"
+msgstr ""
+
+#: main.cpp:183
+msgid "Main Toolbar"
+msgstr ""
+
+#: main.cpp:184
+msgid "Media"
+msgstr ""
+
+#: main.cpp:210 main.cpp:526
+msgid "Welcome to wxAmcl!"
+msgstr ""
+
+#: main.cpp:214
+#, c-format
+msgid "Cross platform mudclient using %s on %s."
+msgstr ""
+
+#: main.cpp:461 main.cpp:781
+msgid "Search"
+msgstr ""
+
+#: main.cpp:461
+msgid "Search buffer"
+msgstr ""
+
+#: main.cpp:466
+msgid "&About...\tF1"
+msgstr ""
+
+#: main.cpp:466
+msgid "Show about dialog"
+msgstr ""
+
+#: main.cpp:468
+msgid "Connect char...\tAlt+A"
+msgstr ""
+
+#: main.cpp:468
+msgid "Connect a char to a mud"
+msgstr ""
+
+#: main.cpp:473
+msgid "&Connect\tAlt+C"
+msgstr ""
+
+#: main.cpp:473
+msgid "Connect to a host"
+msgstr ""
+
+#: main.cpp:476
+msgid "&Disconnect"
+msgstr ""
+
+#: main.cpp:476
+msgid "Disconnect from the mud"
+msgstr ""
+
+#: main.cpp:478
+msgid "Load profile"
+msgstr ""
+
+#: main.cpp:478
+msgid "Load a profile file offline"
+msgstr ""
+
+#: main.cpp:480
+msgid "E&nd\tAlt+X"
+msgstr ""
+
+#: main.cpp:480
+msgid "Terminate program"
+msgstr ""
+
+#: main.cpp:483
+msgid "Define actions, aliases, etc."
+msgstr ""
+
+#: main.cpp:486 main.cpp:1356
+msgid "Disable all actions"
+msgstr ""
+
+#: main.cpp:486
+msgid "Enable/Disable trigger parsing"
+msgstr ""
+
+#: main.cpp:489
+msgid "Create capture window"
+msgstr ""
+
+#: main.cpp:489
+msgid "Create a window for text capturing"
+msgstr ""
+
+#: main.cpp:490
+msgid "Create a notebook window"
+msgstr ""
+
+#: main.cpp:490
+msgid "Create a window with notebook tabs in it"
+msgstr ""
+
+#: main.cpp:491
+msgid "Create gauge window"
+msgstr ""
+
+#: main.cpp:491
+msgid "Create a window to display gauges"
+msgstr ""
+
+#: main.cpp:492
+msgid "Create toolbar"
+msgstr ""
+
+#: main.cpp:492
+msgid "Create a user toolbar"
+msgstr ""
+
+#: main.cpp:493
+msgid "Create user window"
+msgstr ""
+
+#: main.cpp:493
+msgid "Create a user window"
+msgstr ""
+
+#: main.cpp:495
+msgid "Edit Scripts..."
+msgstr ""
+
+#: main.cpp:495
+msgid "Open script editor"
+msgstr ""
+
+#: main.cpp:497
+msgid "Create Package..."
+msgstr ""
+
+#: main.cpp:497
+msgid "Create package file"
+msgstr ""
+
+#: main.cpp:498
+msgid "Install Package"
+msgstr ""
+
+#: main.cpp:498
+msgid "Install a profile package"
+msgstr ""
+
+#: main.cpp:499
+msgid "Uninstall Package"
+msgstr ""
+
+#: main.cpp:499
+msgid "Remove a profile package"
+msgstr ""
+
+#: main.cpp:501
+msgid "&Save Layout"
+msgstr ""
+
+#: main.cpp:501
+msgid "Save the window layout"
+msgstr ""
+
+#: main.cpp:503
+msgid "&Preferences"
+msgstr ""
+
+#: main.cpp:503
+msgid "Global preferences for the client"
+msgstr ""
+
+#: main.cpp:507
+msgid "Split window\tF2"
+msgstr ""
+
+#: main.cpp:507
+msgid "Show the splitter window"
+msgstr ""
+
+#: main.cpp:513
+msgid "&File"
+msgstr ""
+
+#: main.cpp:514
+msgid "&Edit"
+msgstr ""
+
+#: main.cpp:515 main.cpp:2541
+msgid "View"
+msgstr ""
+
+#: main.cpp:516
+msgid "&Extras"
+msgstr ""
+
+#: main.cpp:517
+msgid "&Help"
+msgstr ""
+
+#: main.cpp:627
+msgid "No profile selected!"
+msgstr ""
+
+#: main.cpp:722
+msgid "Choose profile to load"
+msgstr ""
+
+#: main.cpp:1172
+msgid "Choose package to install"
+msgstr ""
+
+#: main.cpp:1182
+msgid "Installed package: "
+msgstr ""
+
+#: main.cpp:1189
+msgid "Error installing package!"
+msgstr ""
+
+#: main.cpp:1198
+msgid "Choose package to remove"
+msgstr ""
+
+#: main.cpp:1208
+msgid "Uninstalled package!"
+msgstr ""
+
+#: main.cpp:1210
+msgid "Error uninstalling package!"
+msgstr ""
+
+#: main.cpp:1247 main.cpp:1274 main.cpp:1337
+msgid "Name of the window:"
+msgstr ""
+
+#: main.cpp:1247 main.cpp:1274 main.cpp:1337
+msgid "Create new window"
+msgstr ""
+
+#: main.cpp:1314
+msgid "Name of the toolbar:"
+msgstr ""
+
+#: main.cpp:1314
+msgid "Create new toolbar"
+msgstr ""
+
+#: main.cpp:1358
+msgid "Enable all actions"
+msgstr ""
+
+#: main.cpp:1450
+msgid "wxAmcl"
+msgstr ""
+
+#: main.cpp:1451
+msgid "Mud client using wxWidgets!"
+msgstr ""
+
+#: main.cpp:1472 objects_dlgs.cpp:381
+msgid "Standard"
+msgstr ""
+
+#: main.cpp:1472
+msgid "System Standard encoding"
+msgstr ""
+
+#: main.cpp:1473
+msgid "UTF-8"
+msgstr ""
+
+#: main.cpp:1475
+msgid "ISO-8859-1"
+msgstr ""
+
+#: main.cpp:1476
+msgid "ISO-8859-15"
+msgstr ""
+
+#: main.cpp:1477
+msgid "Western"
+msgstr ""
+
+#: main.cpp:1478
+msgid "Central and East Europe"
+msgstr ""
+
+#: main.cpp:1481
+msgid "ISO-8859-7"
+msgstr ""
+
+#: main.cpp:1482
+msgid "Windows-1253"
+msgstr ""
+
+#: main.cpp:1482
+msgid "Windows1253"
+msgstr ""
+
+#: main.cpp:1483
+msgid "Greek"
+msgstr ""
+
+#: main.cpp:1485
+msgid "KOI-8R"
+msgstr ""
+
+#: main.cpp:1486
+msgid "KOI-8U"
+msgstr ""
+
+#: main.cpp:1487
+msgid "ISO8859-5"
+msgstr ""
+
+#: main.cpp:1487
+msgid "ISO-8859-5"
+msgstr ""
+
+#: main.cpp:1488
+msgid "Windows-1251"
+msgstr ""
+
+#: main.cpp:1489
+msgid "Cyrillic"
+msgstr ""
+
+#: main.cpp:1489
+msgid "Russian"
+msgstr ""
+
+#: main.cpp:1491
+msgid "Big5"
+msgstr ""
+
+#: main.cpp:1492
+msgid "GBK"
+msgstr ""
+
+#: main.cpp:1494
+msgid "Chinese"
+msgstr ""
+
+#: main.cpp:1496
+msgid "Shift-JIS"
+msgstr ""
+
+#: main.cpp:1496
+msgid "JIS"
+msgstr ""
+
+#: main.cpp:1497
+msgid "ISO2022-JP"
+msgstr ""
+
+#: main.cpp:1498
+msgid "EUC_JP"
+msgstr ""
+
+#: main.cpp:1499
+msgid "Japanese"
+msgstr ""
+
+#: main.cpp:1500
+msgid "Hebrew"
+msgstr ""
+
+#: main.cpp:1501
+msgid "Character encoding"
+msgstr ""
+
+#: main.cpp:1501
+msgid "Change character encoding"
+msgstr ""
+
+#: main.cpp:3978
+msgid "Choose"
+msgstr ""
+
+#: main.cpp:3978
+msgid "TabCompletion"
+msgstr ""
+
+#: main.cpp:4073
+msgid "Unicode conversion error!"
+msgstr ""
+
+#: main.cpp:4428
+msgid "No such command found: "
+msgstr ""
+
+#: main.cpp:4440
+msgid "Wrong number of parameters!"
+msgstr ""
+
+#: main.cpp:4443
+msgid "Parameter not valid or out of range!"
+msgstr ""
+
+#: main.cpp:4446
+msgid "Syntax error in a Lua script!"
+msgstr ""
+
+#: main.cpp:4450
+msgid "Could not load specified file!"
+msgstr ""
+
+#: main.cpp:5135
+msgid "--- Information ----"
+msgstr ""
+
+#: main.cpp:5139
+msgid "Version: "
+msgstr ""
+
+#: main.cpp:5142
+msgid "--- Libraries used ---"
+msgstr ""
+
+#: main.cpp:5144
+msgid "Lua version "
+msgstr ""
+
+#: main.cpp:5147
+msgid "Sqlite3 version "
+msgstr ""
+
+#: main.cpp:5150
+msgid "Pcre version "
+msgstr ""
+
+#: main.cpp:5153
+msgid "--- Protocols used ---"
+msgstr ""
+
+#: main.cpp:5155
+msgid "MCCP: "
+msgstr ""
+
+#: main.cpp:5155 main.cpp:5167 main.cpp:5186 main.cpp:5189 main.cpp:5199
+msgid "active"
+msgstr ""
+
+#: main.cpp:5155 main.cpp:5167 main.cpp:5186 main.cpp:5189 main.cpp:5199
+msgid "not active"
+msgstr ""
+
+#: main.cpp:5162
+msgid "Saving "
+msgstr ""
+
+#: main.cpp:5167
+msgid "MXP: "
+msgstr ""
+
+#: main.cpp:5172
+msgid "Elements received: "
+msgstr ""
+
+#: main.cpp:5178
+msgid "    Received element * "
+msgstr ""
+
+#: main.cpp:5182
+msgid "Entities received: "
+msgstr ""
+
+#: main.cpp:5186
+msgid "MSP: "
+msgstr ""
+
+#: main.cpp:5189
+msgid "GMCP: "
+msgstr ""
+
+#: main.cpp:5195
+msgid "    Received variable * "
+msgstr ""
+
+#: main.cpp:5199
+msgid "MSDP: "
+msgstr ""
+
+#: main.cpp:5203 main.cpp:5207 main.cpp:5211
+msgid "Connected to "
+msgstr ""
+
+#: main.cpp:5216
+msgid "--- Information end----"
+msgstr ""
+
+#: mudwindow.cpp:386 mudwindow.cpp:421
+msgid "Trying to connect..."
+msgstr ""
+
+#: mudwindow.cpp:556
+msgid "Connection closed by user!"
+msgstr ""
+
+#: mudwindow.cpp:563 mudwindow.cpp:6136
+msgid "%D days, %H hours, %M minutes and %S seconds."
+msgstr ""
+
+#: mudwindow.cpp:565 mudwindow.cpp:6138
+msgid "Your connection lasted: "
+msgstr ""
+
+#: mudwindow.cpp:568 mudwindow.cpp:6141
+msgid "Connection failed!"
+msgstr ""
+
+#: mudwindow.cpp:594 mudwindow.cpp:6167
+msgid "Not Connected!"
+msgstr ""
+
+#: mudwindow.cpp:601 mudwindow.cpp:6174
+msgid "Auto reconnecting.."
+msgstr ""
+
+#: mudwindow.cpp:1889 mudwindow.cpp:4235
+msgid "MCCP2 agreed!"
+msgstr ""
+
+#: mudwindow.cpp:1920 mudwindow.cpp:4253
+msgid "MSP enabled!"
+msgstr ""
+
+#: mudwindow.cpp:1930 mudwindow.cpp:4258
+msgid "MSP denied!"
+msgstr ""
+
+#: mudwindow.cpp:1943 mudwindow.cpp:2185 mudwindow.cpp:4269 mudwindow.cpp:4439
+msgid "MXP enabled!"
+msgstr ""
+
+#: mudwindow.cpp:1952 mudwindow.cpp:2194 mudwindow.cpp:4276 mudwindow.cpp:4445
+msgid "MXP denied!"
+msgstr ""
+
+#: mudwindow.cpp:1973
+msgid "NAWS agreed!"
+msgstr ""
+
+#: mudwindow.cpp:2027 mudwindow.cpp:4342
+msgid "ATCP negotiated!"
+msgstr ""
+
+#: mudwindow.cpp:2049
+msgid "GMCP negotiated!"
+msgstr ""
+
+#: mudwindow.cpp:2097
+msgid "MSDP negotiated!"
+msgstr ""
+
+#: mudwindow.cpp:4332
+msgid "AARD telnet negotiated!"
+msgstr ""
+
+#: mudwindow.cpp:4359 mudwindow.cpp:4398
+msgid "Terminal type requested!"
+msgstr ""
+
+#: mudwindow.cpp:5814
+msgid "Log this window"
+msgstr ""
+
+#: mudwindow.cpp:5814
+msgid "Log the content of this window"
+msgstr ""
+
+#: mudwindow.cpp:5818
+msgid "Stop logging this window"
+msgstr ""
+
+#: mudwindow.cpp:5820
+msgid "Autofocus"
+msgstr ""
+
+#: mudwindow.cpp:5820
+msgid "Switch windows when text arrives"
+msgstr ""
+
+#: mudwindow.cpp:6240
+#, c-format
+msgid "Lines: %d"
+msgstr ""
+
+#: mudwindow.cpp:6242
+msgid "Connected!"
+msgstr ""
+
+#: mudwindow.cpp:6257
+msgid "incoming packet: "
+msgstr ""
+
+#: mudwindow.cpp:6257 mudwindow.cpp:6259
+msgid " bytes ("
+msgstr ""
+
+#: mudwindow.cpp:6259
+msgid "sent packet: "
+msgstr ""
+
+#: objects_dlgs.cpp:29
+msgid "List of all defined actions"
+msgstr ""
+
+#: objects_dlgs.cpp:37
+msgid "Define action"
+msgstr ""
+
+#: objects_dlgs.cpp:44 objects_dlgs.cpp:270 objects_dlgs.cpp:347
+msgid "Label:"
+msgstr ""
+
+#: objects_dlgs.cpp:49
+msgid "Name of the trigger"
+msgstr ""
+
+#: objects_dlgs.cpp:53
+msgid "Pattern:"
+msgstr ""
+
+#: objects_dlgs.cpp:58
+msgid "Regular expression pattern of mud text"
+msgstr ""
+
+#: objects_dlgs.cpp:63 objects_dlgs.cpp:73
+msgid "..."
+msgstr ""
+
+#: objects_dlgs.cpp:66 objects_dlgs.cpp:196 objects_dlgs.cpp:720
+msgid "Action:"
+msgstr ""
+
+#: objects_dlgs.cpp:76 objects_dlgs.cpp:203 objects_dlgs.cpp:576
+#: objects_dlgs.cpp:648 objects_dlgs.cpp:727 objects_dlgs.cpp:819
+msgid "Group:"
+msgstr ""
+
+#: objects_dlgs.cpp:84
+msgid "Disable all actions in a class"
+msgstr ""
+
+#: objects_dlgs.cpp:88 objects_dlgs.cpp:220 objects_dlgs.cpp:560
+#: objects_dlgs.cpp:665 objects_dlgs.cpp:744 objects_dlgs.cpp:836
+msgid "Delete group"
+msgstr ""
+
+#: objects_dlgs.cpp:91
+msgid "Priority:"
+msgstr ""
+
+#: objects_dlgs.cpp:96
+msgid "Priority of the action (highest evaluated first)"
+msgstr ""
+
+#: objects_dlgs.cpp:100
+msgid "Lines:"
+msgstr ""
+
+#: objects_dlgs.cpp:107
+msgid "Match on color"
+msgstr ""
+
+#: objects_dlgs.cpp:116
+msgid "Matched:"
+msgstr ""
+
+#: objects_dlgs.cpp:121
+msgid "Show how often the trigger matched"
+msgstr ""
+
+#: objects_dlgs.cpp:125
+msgid "Action active"
+msgstr ""
+
+#: objects_dlgs.cpp:126
+msgid "Action active?"
+msgstr ""
+
+#: objects_dlgs.cpp:130
+msgid "Test regular expression"
+msgstr ""
+
+#: objects_dlgs.cpp:133
+msgid "Send to script"
+msgstr ""
+
+#: objects_dlgs.cpp:148
+msgid "Add action"
+msgstr ""
+
+#: objects_dlgs.cpp:151
+msgid "Edit action"
+msgstr ""
+
+#: objects_dlgs.cpp:154
+msgid "Delete action"
+msgstr ""
+
+#: objects_dlgs.cpp:176
+msgid "Defined aliases"
+msgstr ""
+
+#: objects_dlgs.cpp:189
+msgid "Alias:"
+msgstr ""
+
+#: objects_dlgs.cpp:210 objects_dlgs.cpp:583 objects_dlgs.cpp:655
+#: objects_dlgs.cpp:734 objects_dlgs.cpp:826
+msgid "filter"
+msgstr ""
+
+#: objects_dlgs.cpp:217
+msgid "Alias active"
+msgstr ""
+
+#: objects_dlgs.cpp:232
+msgid "Add alias"
+msgstr ""
+
+#: objects_dlgs.cpp:235
+msgid "Edit alias"
+msgstr ""
+
+#: objects_dlgs.cpp:238
+msgid "Delete alias"
+msgstr ""
+
+#: objects_dlgs.cpp:263
+msgid "Define buttons"
+msgstr ""
+
+#: objects_dlgs.cpp:277 objects_dlgs.cpp:563
+msgid "Command:"
+msgstr ""
+
+#: objects_dlgs.cpp:284
+msgid "Parent toolbar:"
+msgstr ""
+
+#: objects_dlgs.cpp:291
+msgid "Bitmap: "
+msgstr ""
+
+#: objects_dlgs.cpp:306
+msgid "Add button"
+msgstr ""
+
+#: objects_dlgs.cpp:309
+msgid "Edit button"
+msgstr ""
+
+#: objects_dlgs.cpp:312
+msgid "Delete button"
+msgstr ""
+
+#: objects_dlgs.cpp:340
+msgid "Define gauges"
+msgstr ""
+
+#: objects_dlgs.cpp:354
+msgid "Variable 1:"
+msgstr ""
+
+#: objects_dlgs.cpp:363
+msgid "Variable 2:"
+msgstr ""
+
+#: objects_dlgs.cpp:372
+msgid "Vertical"
+msgstr ""
+
+#: objects_dlgs.cpp:372
+msgid "Horizontal"
+msgstr ""
+
+#: objects_dlgs.cpp:374
+msgid "Direction"
+msgstr ""
+
+#: objects_dlgs.cpp:379
+msgid "Style"
+msgstr ""
+
+#: objects_dlgs.cpp:381
+msgid "Lines"
+msgstr ""
+
+#: objects_dlgs.cpp:381
+msgid "Rounded"
+msgstr ""
+
+#: objects_dlgs.cpp:381
+msgid "Rounded with Lines"
+msgstr ""
+
+#: objects_dlgs.cpp:381
+msgid "3D-Style"
+msgstr ""
+
+#: objects_dlgs.cpp:391
+msgid "Label properties"
+msgstr ""
+
+#: objects_dlgs.cpp:398
+msgid "Position:"
+msgstr ""
+
+#: objects_dlgs.cpp:402
+msgid "below gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:402
+msgid "above gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:402
+msgid "gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:402
+msgid "none"
+msgstr ""
+
+#: objects_dlgs.cpp:408
+msgid "Colour:"
+msgstr ""
+
+#: objects_dlgs.cpp:415
+msgid "show value"
+msgstr ""
+
+#: objects_dlgs.cpp:425
+msgid "Position of gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:432
+msgid "X:"
+msgstr ""
+
+#: objects_dlgs.cpp:439
+msgid "Y:"
+msgstr ""
+
+#: objects_dlgs.cpp:446
+msgid "Width:"
+msgstr ""
+
+#: objects_dlgs.cpp:453
+msgid "Height:"
+msgstr ""
+
+#: objects_dlgs.cpp:466
+msgid "Parent window:"
+msgstr ""
+
+#: objects_dlgs.cpp:476
+msgid "Foreground:"
+msgstr ""
+
+#: objects_dlgs.cpp:483
+msgid "Background:"
+msgstr ""
+
+#: objects_dlgs.cpp:490
+msgid "Alarm:"
+msgstr ""
+
+#: objects_dlgs.cpp:503
+msgid "Show alarm color %"
+msgstr ""
+
+#: objects_dlgs.cpp:515
+msgid "Add gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:518
+msgid "Edit gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:521
+msgid "Delete gauge"
+msgstr ""
+
+#: objects_dlgs.cpp:540
+msgid "Defined hotkeys"
+msgstr ""
+
+#: objects_dlgs.cpp:553
+msgid "Press key:"
+msgstr ""
+
+#: objects_dlgs.cpp:570
+msgid "Hotkey active"
+msgstr ""
+
+#: objects_dlgs.cpp:596
+msgid "Add hotkey"
+msgstr ""
+
+#: objects_dlgs.cpp:599
+msgid "Edit hotkey"
+msgstr ""
+
+#: objects_dlgs.cpp:602
+msgid "Delete hotkey"
+msgstr ""
+
+#: objects_dlgs.cpp:618
+msgid "Defined lists"
+msgstr ""
+
+#: objects_dlgs.cpp:631 objects_dlgs.cpp:713
+msgid "Name:"
+msgstr ""
+
+#: objects_dlgs.cpp:638
+msgid "Items:"
+msgstr ""
+
+#: objects_dlgs.cpp:645
+msgid "Add item"
+msgstr ""
+
+#: objects_dlgs.cpp:662
+msgid "List active"
+msgstr ""
+
+#: objects_dlgs.cpp:678
+msgid "Add list"
+msgstr ""
+
+#: objects_dlgs.cpp:681
+msgid "Edit list"
+msgstr ""
+
+#: objects_dlgs.cpp:684
+msgid "Delete list"
+msgstr ""
+
+#: objects_dlgs.cpp:700
+msgid "Defined timers"
+msgstr ""
+
+#: objects_dlgs.cpp:741
+msgid "Timer active"
+msgstr ""
+
+#: objects_dlgs.cpp:747
+msgid "Repeat:"
+msgstr ""
+
+#: objects_dlgs.cpp:767
+msgid "Add timer"
+msgstr ""
+
+#: objects_dlgs.cpp:770
+msgid "Edit timer"
+msgstr ""
+
+#: objects_dlgs.cpp:773
+msgid "Delete timer"
+msgstr ""
+
+#: objects_dlgs.cpp:776
+msgid "Start timer"
+msgstr ""
+
+#: objects_dlgs.cpp:792
+msgid "Defined variables"
+msgstr ""
+
+#: objects_dlgs.cpp:812
+msgid "Value:"
+msgstr ""
+
+#: objects_dlgs.cpp:833
+msgid "Variable active"
+msgstr ""
+
+#: objects_dlgs.cpp:848
+msgid "Add variable"
+msgstr ""
+
+#: objects_dlgs.cpp:851
+msgid "Edit variable"
+msgstr ""
+
+#: objects_dlgs.cpp:854
+msgid "Delete variable"
+msgstr ""
+
+#: objects_dlgs.h:302
+msgid "Define objects"
+msgstr ""
+
+#: script_dlg.cpp:32
+msgid "No file loaded!"
+msgstr ""
+
+#: script_dlg.cpp:42
+msgid "Load script"
+msgstr ""
+
+#: script_dlg.cpp:45
+msgid "Save"
+msgstr ""
+
+#: script_dlg.cpp:48
+msgid " Save script as"
+msgstr ""
+
+#: script_dlg.cpp:51
+msgid "Run script"
+msgstr ""
+
+#: script_dlg.h:57
+msgid "Edit Script"
+msgstr ""
+
+#: simpleconn.cpp:28
+msgid "Server:"
+msgstr ""
+
+#: simpleconn.cpp:36
+msgid "Port:  "
+msgstr ""
+
+#: simpleconn.cpp:51
+msgid "Ok"
+msgstr ""
+
+#: tabedit_dlg.cpp:21
+msgid "Edit text"
+msgstr ""
+
+#: trigger.cpp:205
+msgid "Black (color 1)"
+msgstr ""
+
+#: trigger.cpp:206
+msgid "Red (color 2)"
+msgstr ""
+
+#: trigger.cpp:207
+msgid "Green (color 3)"
+msgstr ""
+
+#: trigger.cpp:208
+msgid "Yellow (color 4)"
+msgstr ""
+
+#: trigger.cpp:209
+msgid "Blue (color 5)"
+msgstr ""
+
+#: trigger.cpp:210
+msgid "Magenta (color 6)"
+msgstr ""
+
+#: trigger.cpp:211
+msgid "Cyan (color 7)"
+msgstr ""
+
+#: trigger.cpp:212
+msgid "Grey (color 8)"
+msgstr ""
+
+#: trigger.cpp:213
+msgid "Dark gray (color 9)"
+msgstr ""
+
+#: trigger.cpp:214
+msgid "Bright red (color 10)"
+msgstr ""
+
+#: trigger.cpp:215
+msgid "Bright green (color 11)"
+msgstr ""
+
+#: trigger.cpp:216
+msgid "Bright yellow (color 12)"
+msgstr ""
+
+#: trigger.cpp:217
+msgid "Bright blue (color 13)"
+msgstr ""
+
+#: trigger.cpp:218
+msgid "Bright magenta (color 14)"
+msgstr ""
+
+#: trigger.cpp:219
+msgid "Bright cyan (color 15)"
+msgstr ""
+
+#: trigger.cpp:220
+msgid "Bright white (color 16)"
+msgstr ""
+
+#: trigger.cpp:284
+msgid "Ctrl + "
+msgstr ""
+
+#: trigger.cpp:286
+msgid "Alt + "
+msgstr ""
+
+#: trigger.cpp:288
+msgid "Shift + "
+msgstr ""
+
+#: trigger.cpp:290
+msgid "Ctrl + Alt + "
+msgstr ""
+
+#: trigger.cpp:292
+msgid "Shift + Alt + "
+msgstr ""
+
+#: trigger.cpp:294
+msgid "Shift + Ctrl + "
+msgstr ""
+
+#: trigger.cpp:296
+msgid "Shift + Ctrl + Alt + "
+msgstr ""
+
+#: trigger.cpp:302
+msgid "F1"
+msgstr ""
+
+#: trigger.cpp:303
+msgid "F2"
+msgstr ""
+
+#: trigger.cpp:304
+msgid "F3"
+msgstr ""
+
+#: trigger.cpp:305
+msgid "F4"
+msgstr ""
+
+#: trigger.cpp:306
+msgid "F5"
+msgstr ""
+
+#: trigger.cpp:307
+msgid "F6"
+msgstr ""
+
+#: trigger.cpp:308
+msgid "F7"
+msgstr ""
+
+#: trigger.cpp:309
+msgid "F8"
+msgstr ""
+
+#: trigger.cpp:310
+msgid "F9"
+msgstr ""
+
+#: trigger.cpp:311
+msgid "F10"
+msgstr ""
+
+#: trigger.cpp:312
+msgid "F11"
+msgstr ""
+
+#: trigger.cpp:313
+msgid "F12"
+msgstr ""
+
+#: trigger.cpp:314
+msgid "F13"
+msgstr ""
+
+#: trigger.cpp:315
+msgid "F14"
+msgstr ""
+
+#: trigger.cpp:316
+msgid "F15"
+msgstr ""
+
+#: trigger.cpp:317
+msgid "F16"
+msgstr ""
+
+#: trigger.cpp:318
+msgid "F17"
+msgstr ""
+
+#: trigger.cpp:319
+msgid "F18"
+msgstr ""
+
+#: trigger.cpp:320
+msgid "F19"
+msgstr ""
+
+#: trigger.cpp:321
+msgid "F20"
+msgstr ""
+
+#: trigger.cpp:322
+msgid "F21"
+msgstr ""
+
+#: trigger.cpp:323
+msgid "F22"
+msgstr ""
+
+#: trigger.cpp:324
+msgid "F23"
+msgstr ""
+
+#: trigger.cpp:325
+msgid "F24"
+msgstr ""
+
+#: trigger.cpp:326
+msgid "NUMPAD0"
+msgstr ""
+
+#: trigger.cpp:327
+msgid "NUMPAD1"
+msgstr ""
+
+#: trigger.cpp:328
+msgid "NUMPAD2"
+msgstr ""
+
+#: trigger.cpp:329
+msgid "NUMPAD3"
+msgstr ""
+
+#: trigger.cpp:330
+msgid "NUMPAD4"
+msgstr ""
+
+#: trigger.cpp:331
+msgid "NUMPAD5"
+msgstr ""
+
+#: trigger.cpp:332
+msgid "NUMPAD6"
+msgstr ""
+
+#: trigger.cpp:333
+msgid "NUMPAD7"
+msgstr ""
+
+#: trigger.cpp:334
+msgid "NUMPAD8"
+msgstr ""
+
+#: trigger.cpp:335
+msgid "NUMPAD9"
+msgstr ""
+
+#: trigger.cpp:336
+msgid "NUMPAD_LEFT"
+msgstr ""
+
+#: trigger.cpp:337
+msgid "NUMPAD_UP"
+msgstr ""
+
+#: trigger.cpp:338
+msgid "NUMPAD_RIGHT"
+msgstr ""
+
+#: trigger.cpp:339
+msgid "NUMPAD_DOWN"
+msgstr ""
+
+#: trigger.cpp:340
+msgid "NUMPAD_PAGEUP"
+msgstr ""
+
+#: trigger.cpp:341
+msgid "NUMPAD_PAGEDOWN"
+msgstr ""
+
+#: trigger.cpp:342
+msgid "NUMPAD_HOME"
+msgstr ""
+
+#: trigger.cpp:343
+msgid "NUMPAD_END"
+msgstr ""
+
+#: trigger.cpp:344
+msgid "NUMPAD_BEGIN"
+msgstr ""
+
+#: trigger.cpp:345
+msgid "NUMPAD_INSERT"
+msgstr ""
+
+#: trigger.cpp:346
+msgid "NUMPAD_DELETE"
+msgstr ""
+
+#: trigger.cpp:347
+msgid "NUMPAD_EQUAL"
+msgstr ""
+
+#: trigger.cpp:348
+msgid "NUMPAD_MULTIPLY"
+msgstr ""
+
+#: trigger.cpp:349
+msgid "NUMPAD_DIVIDE"
+msgstr ""
+
+#: trigger.cpp:350
+msgid "NUMPAD_ADD"
+msgstr ""
+
+#: trigger.cpp:351
+msgid "NUMPAD_SEPARATOR"
+msgstr ""
+
+#: trigger.cpp:352
+msgid "NUMPAD_SUBTRACT"
+msgstr ""
+
+#: trigger.cpp:353
+msgid "NUMPAD_DECIMAL"
+msgstr ""
+
+#: trigger.cpp:354
+msgid "NUMPAD_SPACE"
+msgstr ""
+
+#: trigger.cpp:355
+msgid "NUMPAD_TAB"
+msgstr ""
+
+#: trigger.cpp:356
+msgid "NUMPAD_ENTER"
+msgstr ""
+
+#: trigger.cpp:357
+msgid "MULTIPLY"
+msgstr ""
+
+#: trigger.cpp:358
+msgid "ADD"
+msgstr ""
+
+#: trigger.cpp:359
+msgid "SEPARATOR"
+msgstr ""
+
+#: trigger.cpp:360
+msgid "SUBTRACT"
+msgstr ""
+
+#: trigger.cpp:361
+msgid "DECIMAL"
+msgstr ""
+
+#: trigger.cpp:362
+msgid "DIVIDE"
+msgstr ""
+
+#: trigger.cpp:363
+msgid "MENU"
+msgstr ""
+
+#: trigger.cpp:364
+msgid "PAUSE"
+msgstr ""
+
+#: trigger.cpp:365
+msgid "CAPITAL"
+msgstr ""
+
+#: trigger.cpp:366
+msgid "END"
+msgstr ""
+
+#: trigger.cpp:367
+msgid "HOME"
+msgstr ""
+
+#: trigger.cpp:368
+msgid "LEFT"
+msgstr ""
+
+#: trigger.cpp:369
+msgid "UP"
+msgstr ""
+
+#: trigger.cpp:370
+msgid "RIGHT"
+msgstr ""
+
+#: trigger.cpp:371
+msgid "DOWN"
+msgstr ""
+
+#: trigger.cpp:372
+msgid "SELECT"
+msgstr ""
+
+#: trigger.cpp:373
+msgid "PRINT"
+msgstr ""

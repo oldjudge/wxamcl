@@ -1,8 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////
-// C++ code generated with wxFormBuilder (version Feb 16 2016)
+// C++ code generated with wxFormBuilder (version Jul 11 2018)
 // http://www.wxformbuilder.org/
 //
-// PLEASE DO "NOT" EDIT THIS FILE!
+// PLEASE DO *NOT* EDIT THIS FILE!
 ///////////////////////////////////////////////////////////////////////////
 
 #include "dlg_hostsimple.h"
@@ -39,7 +39,7 @@ Connect::Connect( wxWindow* parent, wxWindowID id, const wxString& title, const 
 	m_port = new wxComboBox( sbSizer2->GetStaticBox(), wxID_ANY, _("4000"), wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_port->Append( _("4000") );
 	m_port->Append( _("23") );
-	gbSizer1->Add( m_port, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL|wxEXPAND, 5 );
+	gbSizer1->Add( m_port, wxGBPosition( 1, 1 ), wxGBSpan( 1, 1 ), wxALL, 5 );
 	
 	
 	gbSizer1->AddGrowableCol( 1 );
