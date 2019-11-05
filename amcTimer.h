@@ -1,6 +1,7 @@
 #ifndef amcTimer_H
 #define amcTimer_H
 
+#include "main.h"
 class amcTimer : public wxTimer
 {
 public:

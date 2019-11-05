@@ -26,7 +26,8 @@ void dialog_regexp::OnTest( wxCommandEvent& event )
 		{
 			wxString ss = test.ToUTF8();
 			test = ss.substr(rexp.GetMatchStart(), rexp.GetMatchLen());
-			ss = wxString::FromUTF8(test);
+			//ss = wxString::FromUTF8(test);
+			ss = test;
 			s<< _("Match is: ") << ss << "\r\n";
 			
 		}

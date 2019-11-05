@@ -136,6 +136,10 @@ void GlobalOptions::Init()
 			dest = GetWorkDir();
 			wxCopyFile(src, dest<<"/profiles/defaultprofile.lua");
 			src = s;
+			src << "/dbaardmap.lua";
+			dest = GetWorkDir();
+			wxCopyFile(src, dest << "/scripts/dbaardmap.lua");
+			src = s;
 			src<<"/mapper.lua";
 			dest = GetWorkDir();
 			wxCopyFile(src, dest<<"/scripts/mapper.lua");
@@ -299,15 +303,15 @@ pcre* RegExp::Compile()
 	//m_re = pcre_compile(m_pattern.c_str(), 0, &m_error, &m_erroffset, NULL);
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
-	if (!frame->GetGlobalOptions()->UseUTF8())
-		//m_re = pcre_compile(m_pattern.mb_str(), 0, &m_error, &m_erroffset, NULL);
-		m_re = pcre_compile(m_pattern.mb_str(co).data(), 0, &m_error, &m_erroffset, NULL);
-	else
-	{
+	//if (!frame->GetGlobalOptions()->UseUTF8())
+		///m_re = pcre_compile(m_pattern.mb_str(), 0, &m_error, &m_erroffset, NULL);
+	//	m_re = pcre_compile(m_pattern.mb_str(co).data(), 0, &m_error, &m_erroffset, NULL);
+	//else
+	//{
 		wxString s = m_pattern.ToUTF8();
 		m_re = pcre_compile(s.mb_str(), PCRE_UTF8|PCRE_NO_UTF8_CHECK, &m_error, &m_erroffset, NULL);
 		
-	}
+	//}
 	return m_re;
 }
 
@@ -384,7 +388,8 @@ wxString sub;
 			{
 				wxString s = m_match.ToUTF8();
 				sub = s.substr(m_ovector[2*i], m_ovector[2*i+1] - m_ovector[2*i]);
-				m_matches.push_back(wxString::FromUTF8(sub));
+				//m_matches.push_back(wxString::FromUTF8(sub));
+				m_matches.push_back(sub);
 			}
 			else
 			{

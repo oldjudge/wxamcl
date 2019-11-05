@@ -1796,9 +1796,9 @@ bool amcMXPTag::IsOpenTag()
 		return true;
 	else return false;
 	//look if this is literally sent by the mud
-	return (!m_tag.Lower().CmpNoCase("bold") ||	!m_tag.Lower().CmpNoCase("b") || !m_tag.Lower().CmpNoCase("underline") ||
-		!m_tag.Lower().CmpNoCase("u") || !m_tag.Lower().CmpNoCase("strikeout") ||
-		!m_tag.Lower().CmpNoCase("s") || !m_tag.Lower().CmpNoCase("italic") ||	!m_tag.Lower().CmpNoCase("i"));
+	//return (!m_tag.Lower().CmpNoCase("bold") ||	!m_tag.Lower().CmpNoCase("b") || !m_tag.Lower().CmpNoCase("underline") ||
+	//	!m_tag.Lower().CmpNoCase("u") || !m_tag.Lower().CmpNoCase("strikeout") ||
+	//	!m_tag.Lower().CmpNoCase("s") || !m_tag.Lower().CmpNoCase("italic") ||	!m_tag.Lower().CmpNoCase("i"));
 }
 
 void amcMXPTag::Reset()

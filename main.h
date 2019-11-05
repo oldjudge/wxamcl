@@ -287,34 +287,6 @@ enum
 #define WXAMCL_USEIPV6 1
 
 
-
-
-#include "mudwindow.h"
-#include "luadefs.h"
-#include "ansiline.h"
-#include "decompress.h"
-#include "goptions.h"
-//#include "simpleconn.h"
-#include "dialog_hostsimple.h"
-#include "dialog_optionen.h"
-#include "dialog_objekte.h"
-#include "dialog_verbinden.h"
-#include "dialog_tabedit.h"
-#include "dialog_skript.h"
-#include "dialog_sscr.h"
-#include "dialog_regexp.h"
-#include "dialog_package.h"
-#include "trigger.h"
-#include "alias.h"
-#include "vars.h"
-#include "hotkey.h"
-#include "amcTimer.h"
-#include "amchost.h"
-#include "scriptedit.h"
-#include "gaugewin.h"
-#include "amcButton.h"
-#include "amcMXP.h"
-#include "amcWindow.h"
 //#include "amcSqlite.h"
 
 // Define a new application type, each program should derive a class from wxApp
@@ -648,5 +620,32 @@ private:
 	wxMutex* m_mutex;
 	wxCondition* m_cond;
 };
+
+#include "mudwindow.h"
+#include "luadefs.h"
+#include "ansiline.h"
+#include "decompress.h"
+#include "goptions.h"
+//#include "simpleconn.h"
+#include "dialog_hostsimple.h"
+#include "dialog_optionen.h"
+#include "dialog_objekte.h"
+#include "dialog_verbinden.h"
+#include "dialog_tabedit.h"
+#include "dialog_skript.h"
+#include "dialog_sscr.h"
+#include "dialog_regexp.h"
+#include "dialog_package.h"
+#include "trigger.h"
+#include "alias.h"
+#include "vars.h"
+#include "hotkey.h"
+#include "amcTimer.h"
+#include "amchost.h"
+#include "scriptedit.h"
+#include "gaugewin.h"
+#include "amcButton.h"
+#include "amcMXP.h"
+#include "amcWindow.h"
 #endif
 

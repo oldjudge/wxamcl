@@ -4,6 +4,9 @@
 /*!
 	this class implements user buttons for the mudclient
 */
+
+#include "main.h"
+
 class amcButton 
 {
 public:

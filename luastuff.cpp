@@ -143,6 +143,7 @@ const char* amcLua::GetString(int idx)
 int amcLua::DoString(wxString s)
 {
 	return luaL_dostring(m_L, s.char_str(wxCSConv(wxGetApp().GetFrame()->GetGlobalOptions()->GetCurEncoding())));
+	
 	//return luaL_dostring(m_L, s.c_str());
 }
 
@@ -3319,7 +3320,9 @@ int index=1;
 	if (lua_type(L, index)==LUA_TUSERDATA)
 	{
 		t = checkalias(L);
-		lua_pushstring(L, wxString(t->action,co));
+		//lua_pushstring(L, wxString(t->action,co));
+		wxString im = wxString(t->action, co);
+		lua_pushstring(L, im.mb_str(co).data());
 		return 1;
 	}
 
@@ -6089,8 +6092,8 @@ int luafunc_sha256(lua_State *L)
 	
 	wxString d(digest);
 	//lua_pushstring(L, (const char*)digest);
-	lua_pushstring(L, d);
-	lua_pushstring(L, hex);
+	lua_pushstring(L, d.mb_str().data());
+	lua_pushstring(L, hex.mb_str().data());
 	return 2;
 }
 

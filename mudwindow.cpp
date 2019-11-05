@@ -3260,7 +3260,7 @@ map<wxString, bool>::iterator mit;
 				m_parent->m_mgr.GetPane("amctoggle").Position(2);
 				m_parent->m_mgr.GetPane("amcprompt").Show();	
 			}
-			int x;
+			int x=0;
 			if (m_parent->m_splitter->IsShown())
 				x = m_parent->m_splitter->GetScrollPos(wxVERTICAL);
 			m_parent->m_mgr.Update();
@@ -5730,7 +5730,7 @@ int stamp_offset = 0;
 	int l = m_vmudlines.at(line).GetTextLength();
 	if (m_timestamps)
 		l += m_vmudlines.at(line).GetTime().length();
-	int sublines;
+	int sublines=0;
 	if (m_wrap)
 		sublines = abs((int)(l/m_wrap));
 	if (sublines)
@@ -6328,7 +6328,7 @@ wxString MudWindow::FindPrevAnsi(wxString ansi, int idx)
 		int xx = sub.find('m', x);
 		return ("\x1b[0m" + sub.substr(x, xx-x+1));
 	}
-	return wxEmptyString;
+	//return wxEmptyString; 
 }
 
 wxString MudWindow::GetSelectedText()

@@ -4196,7 +4196,16 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
 	long keycode = event.GetKeyCode();
 	int mods = event.GetModifiers();
 	hk_it iter;
+	wxScrollWinEvent newevt;
+	MudWindow *sendto;
 
+	newevt.SetPosition(0);
+	newevt.SetOrientation(wxVERTICAL);
+	if (m_parent->m_splitter->IsShown())
+		sendto = m_parent->m_splitter;
+	else
+		sendto = m_parent->m_actwindow;
+	
 	if (m_dclick)
 	{
 		Clear();
@@ -4237,6 +4246,38 @@ void InputTextCtrl::OnKeyDown(wxKeyEvent &event)
         if (!m_history.empty())
             WriteText(m_history.at(m_hpos));
     }
+	if (keycode == WXK_UP && mods == wxMOD_CONTROL)
+	{
+		newevt.SetEventType(wxEVT_SCROLLWIN_PAGEUP);
+		if (m_parent->UseSplitter() && !m_parent->m_splitter->IsShown())
+		{
+			wxWindowUpdateLocker noUpdates(m_parent);
+			m_parent->m_actwindow->Freeze();
+			m_parent->m_splitter->Freeze();
+			m_parent->m_splitter->SetLineBuffer(m_parent->m_actwindow->GetLines());
+			m_parent->m_splitter->m_curline = m_parent->m_actwindow->m_curline;
+			m_parent->m_mgr.GetPane("amcsplitter").Show();
+
+			int line = m_parent->m_actwindow->m_curline - m_parent->m_actwindow->m_scrollrange;
+			m_parent->m_splitter->SetScrollPage();
+			m_parent->m_splitter->SetScrollPos(wxVERTICAL, line - m_parent->m_splitter->m_scrollrange);
+			m_parent->m_splitter->Refresh();
+			m_parent->m_splitter->Thaw();
+			m_parent->m_actwindow->Thaw();
+			m_parent->m_mgr.Update();
+			return;
+		}
+		sendto->SetKEvtForwarded(true);
+		sendto->GetEventHandler()->ProcessEvent(newevt);
+		return;
+	}
+	if (keycode == WXK_DOWN && mods == wxMOD_CONTROL)
+	{
+		sendto->SetKEvtForwarded(true);
+		newevt.SetEventType(wxEVT_SCROLLWIN_PAGEDOWN);
+		sendto->GetEventHandler()->ProcessEvent(newevt);
+		return;
+	}
     #endif
 	event.Skip();
 }
@@ -4453,12 +4494,14 @@ void InputTextCtrl::Parse(wxString command, bool echo, bool history)
 						m_parent->SetTriggersOn(false);
 						ParseVars(&comm);
 						ParseLists(&comm);
-						wxString out1 = comm.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+						//wxString out1 = comm.mb_str(wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding())).data();
+						wxString out1 = comm;
 						wxString out;
 						if (out1.empty())
 						{
 							#ifndef __WXGTK__
                             out << "\x1b[56m" << _("Unicode conversion error!") << "\x1b[0m\n";
+							
                             #endif
                             #ifdef __WXGTK__
                             out << "\x1b[56m" << comm << "\x1b[0m\n";
@@ -4576,7 +4619,7 @@ al_it iter;
 				wxString send = iter->BuildAction();
 				ParseVars(&send);
 				wxCSConv co(m_parent->GetGlobalOptions()->GetCurEncoding());
-				wxString conv = send.mb_str(co);
+				wxString conv = send;// send.mb_str(co);
 				if (conv.IsEmpty())
 					conv = send.ToUTF8();
 				//Parse(send.mb_str(co), false, false); //do not echo und put in history if alias
