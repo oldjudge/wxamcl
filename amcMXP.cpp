@@ -1088,10 +1088,14 @@ wxString send;
 	wxString ss = t->GetTag().BeforeFirst(' ').Lower();
 	vector<wxString> v_parms;
 	v_parms = SplitString(" ", t->GetTag().AfterFirst(' '));
+    const wxString ansi("\x1b[22m");
+    const wxString ansi1("\x1b[23m");
+    const wxString ansi2("\x1b[24m");
 	if (t->GetEndTag().Lower().StartsWith("bold") || ! t->GetEndTag().Lower().CmpNoCase("b"))
 	{
-		mw->ParseNBuffer("\x1b[22m", false);
-		t->Reset();
+		//mw->ParseNBuffer("\x1b[22m", false);
+		mw->ParseNBuffer(ansi.char_str(), false);
+        t->Reset();
 	}
 	else if (t->GetTag().Lower().StartsWith("bold") || ! t->GetTag().Lower().CmpNoCase("b"))
 	{
@@ -1101,7 +1105,7 @@ wxString send;
 	}
 	else if (t->GetEndTag().Lower().StartsWith("italic") || ! t->GetEndTag().Lower().CmpNoCase("i"))
 	{
-		mw->ParseNBuffer("\x1b[23m", false);
+		mw->ParseNBuffer(ansi1.char_str(), false);
 		t->Reset();
 	}
 	else if (t->GetTag().Lower().StartsWith("italic") || ! t->GetTag().Lower().CmpNoCase("i"))
@@ -1125,7 +1129,7 @@ wxString send;
 	}
 	else if (t->GetEndTag().Lower().StartsWith("underline") || ! t->GetEndTag().Lower().CmpNoCase("u"))
 	{
-		mw->ParseNBuffer("\x1b[24m", false);
+		mw->ParseNBuffer(ansi2.char_str(), false);
 		t->Reset();
 	}
 	else if (t->GetTag().Lower().StartsWith("underline") || ! t->GetTag().Lower().CmpNoCase("u"))
@@ -1154,7 +1158,7 @@ wxString send;
 	}
 	else if (t->GetEndTag().Lower().StartsWith("strikeout") || ! t->GetEndTag().Lower().CmpNoCase("s"))
 	{
-		mw->ParseNBuffer("\x1b[22m", false);
+		mw->ParseNBuffer(ansi.char_str(), false);
 		t->Reset();
 	}
 	else

@@ -1,9 +1,17 @@
 #include "main.h"
 #include "script.xpm"
+
+
 extern "C"
 {
 	#include "sha256.h"
 }
+
+
+
+//#include "sha256.h"
+
+
 amcLua::amcLua()
 {
 	
@@ -1321,7 +1329,7 @@ int luafunc_addpagenb(lua_State*L)
 {
 	const char* winname;
 	const char* pagename;
-	int i;
+	int i=0;
 	class MudMainFrame *frame = wxGetApp().GetFrame();//(MudMainFrame*)MudMainFrame::FindWindowByName(wxT("wxAMC"));
 	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
 	winname = luaL_checkstring(L,1);
@@ -2482,7 +2490,7 @@ returns the label of the action or nil in case of error
 */
 int luafunc_enableaction(lua_State *L)
 {
-const char* c;
+const char* c=NULL;
 int i, index=1;
 str_ac *t=NULL;
 
@@ -2542,9 +2550,11 @@ int index=1;
 			return 1;
 		}
 		else
+        {
 			lua_pushstring(L, frame->GetTrigger()->at(i).GetPattern().mb_str(co).data());// char_str());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 //! wxamcl.action.setpattern(action|userdatum)
@@ -2624,9 +2634,11 @@ int index=1;
 			return 1;
 		}
 		else
+        {
 			lua_pushstring(L, frame->GetTrigger()->at(i).GetAction().mb_str(co).data());//.char_str());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 
@@ -2700,9 +2712,11 @@ MudMainFrame *frame = wxGetApp().GetFrame();
 			return 1;
 		}
 		else
+        {
 			lua_pushinteger(L, frame->GetTrigger()->at(i).GetPriority());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 
@@ -2783,9 +2797,11 @@ MudMainFrame *frame = wxGetApp().GetFrame();
 			return 1;
 		}
 		else
+        {
 			lua_pushinteger(L, frame->GetTrigger()->at(i).GetColMatch());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 
@@ -3273,7 +3289,7 @@ str_al *a;
 */
 int luafunc_enablealias(lua_State *L)
 {
-const char* c;
+const char* c=NULL;
 int i, index=1;
 str_al *t=NULL;
 
@@ -3336,9 +3352,11 @@ int index=1;
 			return 1;
 		}
 		else
+        {
 			lua_pushstring(L, frame->GetAlias()->at(i).GetAction().mb_str(co).data());// .mb_str());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 
@@ -3643,7 +3661,7 @@ str_timer* t;
 
 int luafunc_enabletimer(lua_State *L)
 {
-const char* c;
+const char* c=NULL;
 int i, index=1;
 str_timer* t=NULL;
 
@@ -3880,9 +3898,11 @@ int index=1;
 			return 1;
 		}
 		else
+        {
 			lua_pushstring(L, frame->GetHotkeys()->at(i).GetAction().mb_str(co).data());// .mb_str());
 			return 1;
-	}
+        }
+    }
 	return 1;
 }
 
@@ -3930,7 +3950,7 @@ int i, index=1;
 
 int luafunc_enablehk(lua_State *L)
 {
-const char* c;
+const char* c=NULL;
 int i, index=1;
 str_hk* v=NULL;
 
@@ -4341,7 +4361,7 @@ str_var* v;
 
 int luafunc_enablevar(lua_State *L)
 {
-const char* c;
+const char* c=NULL;
 int i, index=1;
 str_var* v=NULL;
 
@@ -4976,9 +4996,9 @@ const char* lgroup;
 int luafunc_gauge(lua_State *L)
 {
 	const char* winname;
-	const char* gauge;
+	//const char* gauge;
 	winname=luaL_checkstring(L, 1);
-	gauge=luaL_checkstring(L, 2);
+	const char* gauge=luaL_checkstring(L, 2);
 	wxString name(winname);
 	unordered_map<wxString, wxWindow*> um = *wxGetApp().GetFrame()->m_scriptwin->GetUserWindows();
 	class GaugeWindow *frame = (GaugeWindow*)um[name];
@@ -5007,7 +5027,7 @@ int luafunc_newgauge(lua_State *L)
 	const char* var2;
 	const char* fcol;
 	const char* bcol;
-	unsigned int i;
+	unsigned int i=0;
 	bool vert;
 	//long col, bcolor;
 	winname=luaL_checkstring(L, 1);

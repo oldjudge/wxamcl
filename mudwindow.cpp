@@ -3794,11 +3794,11 @@ wxUint16 col;
 		wxClientDC dc(this);
 		dc.SetFont(*m_font);
 		int s_lines = ss.GetHeight()/dc.GetCharHeight();
-		
+		const wxString lineend("\r\n");
 		for(int x=0;x<s_lines;x++)
 			//ParseBuffer("\r\n");
 			//ParseUTF8Buffer("\r\n");
-            ParseNBuffer("\r\n");
+            ParseNBuffer(lineend.char_str());
 		colCode = 37;
 	}
 	if (colCode>=3 && colCode<=5)
@@ -5485,7 +5485,9 @@ int stamp_offset = 0;
 	if ((long)line<0)
 		return;
     if (line > m_vmudlines.size()-1)
+    {
         line = m_vmudlines.size()-1;
+    }
 	if (m_timestamps)
 	{
 		wxString s = m_vmudlines.at(line).GetTime();
@@ -5593,10 +5595,13 @@ bool multiline = false;
 	if ((long)line<0)
 		return;
     if (line > m_vmudlines.size()-1)
+    {
         line = m_vmudlines.size()-1;
-
+    }
 	if (m_vmudlines.at(line).m_vstyle.empty())
+    {
         return;
+    }
 	if (m_timestamps)
 	{
 		wxString s = m_vmudlines.at(line).GetTime();
@@ -5717,7 +5722,9 @@ int stamp_offset = 0;
 	//if ((long)line<0)
 	//	return;
     if (line > m_vmudlines.size()-1)
+    {
         line = m_vmudlines.size()-1;
+    }
 	if (m_timestamps)
 	{
 		wxString s = m_vmudlines.at(line).GetTime();
