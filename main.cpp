@@ -146,12 +146,12 @@ bool MudClientApp::OnInit()
 	frame->m_toolbar = new wxAuiToolBar(frame, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                    wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_GRIPPER);
 	frame->m_toolbar->SetToolBitmapSize(wxSize(24,24));
-	frame->m_toolbar->AddTool(ID_CHARCONNECT, _("Connect"), net_xpm, _("Connect char..."));
+	frame->m_toolbar->AddTool(ID_CHARCONNECT, _("Connect"), wxBitmap(net_xpm), _("Connect char..."));
 	frame->m_toolbar->AddSeparator();
-	frame->m_toolbar->AddTool(ID_OBJS, _("Objects"), defs_xpm, _("Define objects..."));
-	frame->m_toolbar->AddTool(ID_PREFS, _("Preferences"), prefs_xpm, _("Global preferences"));
+	frame->m_toolbar->AddTool(ID_OBJS, _("Objects"), wxBitmap(defs_xpm), _("Define objects..."));
+	frame->m_toolbar->AddTool(ID_PREFS, _("Preferences"), wxBitmap(prefs_xpm), _("Global preferences"));
 	frame->m_toolbar->AddSeparator();
-	frame->m_toolbar->AddTool(Amcl_EditScript, _("Edit Scripts"), script_xpm, _("Edit script"));
+	frame->m_toolbar->AddTool(Amcl_EditScript, _("Edit Scripts"), wxBitmap(script_xpm), _("Edit script"));
 	
 	frame->m_toolbar->Realize();
 	//prompt lock window

@@ -1905,7 +1905,7 @@ amcButton b;
 		frame->m_scriptwin->Msg(_("Id for user button needs to be >0 and <1000"), 3);
 		return 0;
 	}
-	tb->AddTool(ID_USERBUTTON + luaL_checkinteger(L, 4), luaL_checkstring(L,2), script_xpm);
+	tb->AddTool(ID_USERBUTTON + luaL_checkinteger(L, 4), luaL_checkstring(L,2), wxBitmap(script_xpm));
 	tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 	b.SetName(luaL_checkstring(L, 2));
 	b.SetText(luaL_checkstring(L, 2));
@@ -5456,7 +5456,7 @@ struct str_btn *bb;
 		}
 		b.SetTbName(t);
 		b.SetParent(tb);
-		tb->AddTool(b.GetId(), b.GetName(), script_xpm);
+		tb->AddTool(b.GetId(), b.GetName(), wxBitmap(script_xpm));
 		tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 		
 	}
@@ -5488,7 +5488,7 @@ struct str_btn *bb;
 		b.SetTbName(s);
 		b.SetParent(tb);
 		b.SetId(ID_USERBUTTON+frame->GetButtons()->size()+1);
-		tb->AddTool(b.GetId(), b.GetName(), script_xpm);
+		tb->AddTool(b.GetId(), b.GetName(), wxBitmap(script_xpm));
 		tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
 		cc = luaL_checkstring(L,index++);
 		b.SetAction(wxString(cc,co));
