@@ -120,7 +120,9 @@ wxString AnsiLineElement::GetConvText()
 	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_text.To8BitData(), c);
-        return ff;
+		if (!ff.IsEmpty())
+			return ff;
+		else return m_text;
 }
 
 //AnsiLine
@@ -176,8 +178,10 @@ wxString AnsiLine::GetConvLineText()
 	//{
 		wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 		wxString ff(m_linetext.To8BitData(), c);
-        //#ifndef __WXGTK__
-		return ff;
+		if (!ff.IsEmpty())
+			return ff;
+		else
+			return m_linetext;
         /*#endif
         #ifdef __WXGTK__
 			return m_linetext;
@@ -264,6 +268,8 @@ void AnsiLine::SetLineText(wxString st)
 	MudMainFrame *frame = wxGetApp().GetFrame();
 	wxCSConv c(frame->GetGlobalOptions()->GetCurEncoding());
 	wxString ff(m_linetext.To8BitData(), c);
+	//if (!ff.IsEmpty())
+	//	m_linetext = ff;
 	//#ifndef __WXGTK__
 	m_linetextlen = ff.length();
 	/*#endif
@@ -281,6 +287,8 @@ void AnsiLine::SetCharLineText(char *t)
 	if (frame->GetGlobalOptions()->GetCurEncoding() == wxFONTENCODING_UTF8)
 	{
 		m_linetext = wxString(m_clinetext, wxConvUTF8);
+		if (m_linetext.IsEmpty())
+			m_linetext = wxString(m_clinetext) ;
 	}
 	else
 		m_linetext = wxString::From8BitData(m_clinetext);

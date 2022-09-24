@@ -1278,6 +1278,8 @@ static bool colset = false;
 			
 			#ifdef __WXMSW__
 			s = wxString::From8BitData((const char*) cBuffer);
+			//wxString f(s, wxCSConv(m_parent->GetGlobalOptions()->GetCurEncoding()));
+			
 			
 			/*if (s.empty())
 			{
