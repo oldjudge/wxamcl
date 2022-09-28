@@ -106,9 +106,8 @@ public:
 	
 	//socket functions
 	void MyConnect(wxIPV4address addr);
-    #if defined WXAMCL_USEIPV6
-	void MyConnect(wxIPV6address addr);
-    #endif
+	void MyConnect6(wxIPV6address addr);
+    
 	void Write(wxString command);
 	void Write8Bit(wxString command);
 	void Close();
@@ -351,6 +350,7 @@ private:
 	wxCoord DrawStyle(wxBufferedPaintDC *dc, unsigned int lnr, int snr, wxCoord startx, wxCoord starty, wxCoord char_len);
 	unsigned long CalcLine(wxPoint click);
 	void SetCssClasses();
+	void CreateDefVars();
 	
 	//Event handlers
 	void OnEraseBackground(wxEraseEvent& event);

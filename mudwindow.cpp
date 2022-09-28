@@ -76,6 +76,7 @@ IMPLEMENT_DYNAMIC_CLASS(MudWindow, wxWindow)
 MudWindow::MudWindow():wxWindow()
 {
 	MudWindow(wxGetApp().GetFrame());
+
 	
 }
 
@@ -188,6 +189,7 @@ MudWindow::MudWindow(wxFrame *parent):wxWindow() //wxWindow(parent, wxID_ANY, wx
 	Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxVSCROLL | wxBORDER_NONE);
     this->SetToolTip(m_tt);
     SetScrollbar(wxVERTICAL, 0, 0, 0);
+	CreateDefVars();
 	//wxString *text = new wxString("testinf");
 	//ParseLine(text);
 }
@@ -289,6 +291,7 @@ MudWindow::MudWindow(wxFrame *parent, wxString name, int fontsize):wxWindow()//(
 	this->SetToolTip(m_tt);
     SetScrollbar(wxVERTICAL, 0, 0, 0);
 	SetScrollbar(wxHORIZONTAL, 0, 0, 0);
+	CreateDefVars();
 }
 
 MudWindow::~MudWindow()
@@ -387,23 +390,13 @@ bool waitmore = true;
     }
 	m_sock->GetLocal(local);
 	wxString s = local.IPAddress();
-	int idx = m_parent->GetDefVarIndexByLabel("wxamclLocalIP");
-	m_parent->GetDefVars()->at(idx).SetValue(s);
+	int idx = m_parent->m_actwindow->GetDefVarIndexByLabel("wxamclLocalIP");
+	if (idx!=-1)
+		m_parent->m_actwindow->GetDefVars()->at(idx).SetValue(s);
 	m_parent->luaBuilddefvar();
-	//s = m_addr.IPAddress();
-	/*bool waitmore = true;
 	
-			 if (!m_sock->IsConnected())
-	{
-		Msg(_("Connection failed! No internet connection available?"));
-		return;
-	}*/
-	//m_sock->SetFlags(wxSOCKET_NOWAIT);
-	//m_sock->SetFlags(wxSOCKET_WAITALL);
-	//m_sock->Peek(cBuffer, 1);
 }
-#if defined WXAMCL_USEIPV6
-void MudWindow::MyConnect(wxIPV6address addr)
+void MudWindow::MyConnect6(wxIPV6address addr)
 {
 bool waitmore = true;
 	m_addr6 = addr;
@@ -422,23 +415,23 @@ bool waitmore = true;
     }
 	m_sock->GetLocal(local);
 	
-	int idx = m_parent->GetDefVarIndexByLabel("wxamclLocalIP");
+	int idx = m_parent->m_actwindow->GetDefVarIndexByLabel("wxamclLocalIP");
 	//
-	m_parent->GetDefVars()->at(idx).SetValue("IPV6 address");
+	m_parent->m_actwindow->GetDefVars()->at(idx).SetValue("IPV6 address");
 #ifndef __WXMSW__
     wxString s = local.IPAddress();
-	m_parent->GetDefVars()->at(idx).SetValue(s);
+	m_parent->m_actwindow->GetDefVars()->at(idx).SetValue(s);
 #endif
 	m_parent->luaBuilddefvar();
 }
-#endif
+
 
 void MudWindow::OnAutoReconnect(wxTimerEvent& event)
 {
 	if (!this->GetUseIPV6())
 		MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP4());
 	else
-		MyConnect(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP6());
+		MyConnect6(m_parent->GetHosts()->at(m_parent->GetCurHost()).GetIP6());
 }
 
 void MudWindow::Write(wxString command)
@@ -812,6 +805,15 @@ void MudWindow::SetCssClasses()
 	m_css.push_back("col15");
 	m_css.push_back("col16");
 	m_css.push_back("col17");
+}
+
+void MudWindow::CreateDefVars()
+{
+	GetDefVars()->push_back(amcDefVar("wxamclChar", " "));
+	GetDefVars()->push_back(amcDefVar("wxamclIP", "0.0.0.0"));
+	GetDefVars()->push_back(amcDefVar("wxamclLocalIP", "0.0.0.0"));
+	GetDefVars()->push_back(amcDefVar("wxamclLines", "0"));
+	
 }
 
 void MudWindow::SetDefaultColors()
@@ -1533,11 +1535,13 @@ static bool colset = false;
 					m_curline = m_vmudlines.size();
 					line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 				}
-				int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
+				int idx = GetDefVarIndexByLabel("wxamclLines");
 				wxString l;
 				l << line.GetLinenumber();
-				m_parent->GetDefVars()->at(idx).SetValue(l);
-				m_parent->luaBuilddefvar();
+				if (idx >= 0) {
+					GetDefVars()->at(idx).SetValue(l);
+					m_parent->luaBuilddefvar();
+				}
 				wxDateTime d;
 				d = wxDateTime::UNow();
 				line.SetDateTimeMS(d);
@@ -2744,11 +2748,13 @@ static bool colset = false;
 		//line.SetLinenumber(m_vmudlines.at(m_curline-1).GetLinenumber()+1);
 		line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 	}
-	int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
+	int idx = GetDefVarIndexByLabel("wxamclLines");
 	wxString l;
 	l << line.GetLinenumber();
-	m_parent->GetDefVars()->at(idx).SetValue(l);
-	m_parent->luaBuilddefvar();
+	if (idx >= 0) {
+		GetDefVars()->at(idx).SetValue(l);
+		m_parent->luaBuilddefvar();
+	}
 	wxDateTime d, ddt;
 	ddt = wxDateTime::UNow();
 	line.SetDateTimeMS(ddt);
@@ -3718,11 +3724,13 @@ size_t len;
 		//line.SetLinenumber(m_vmudlines.at(m_curline-1).GetLinenumber()+1);
 		line.SetLinenumber(m_vmudlines.back().GetLinenumber()+1);
 	}
-	int idx = m_parent->GetDefVarIndexByLabel("wxamclLines");
+	int idx = GetDefVarIndexByLabel("wxamclLines");
 	wxString l;
 	l << line.GetLinenumber();
-	m_parent->GetDefVars()->at(idx).SetValue(l);
-	m_parent->luaBuilddefvar();
+	if (idx >= 0) {
+		GetDefVars()->at(idx).SetValue(l);
+		m_parent->luaBuilddefvar();
+	}
 	wxDateTime d;
 	//d.SetToCurrent();
 	d = wxDateTime::UNow();

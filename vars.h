@@ -74,7 +74,7 @@ public:
 	wxString GetValue();//!< get the string in a|b|c format
 	wxString GetItem(int i) {return m_list.at(i);}
 	int GetSize() {return m_list.size();}
-	void ClearItems() {m_list.empty();}
+	bool ClearItems() {return m_list.empty();}
 	wxString GetGroup() {return m_group;} //!< get the group
 	bool IsActive() {return m_on;} //!< is the list active
 	void SetName(wxString s) {m_name=s;} //!< Set the definition

@@ -593,7 +593,7 @@ if (!s.empty())
 							firstunfinishedTag = false;
 							elemnum = FindElement(aTag.GetTag());
 							
-							ParseTag(&saveaTag, elemnum);
+							//ParseTag(&saveaTag, elemnum);
 							aTag.Reset();
 							break;
 						}

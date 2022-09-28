@@ -135,6 +135,8 @@ bool MudClientApp::OnInit()
 	SetChild(frame->m_child);
     
 	frame->m_actwindow = frame->m_scriptwin = frame->m_child;
+	frame->CreateDefVars();
+	
 	
     //Input line
 	frame->m_input = new InputTextCtrl(frame, ID_INPUTCTRL, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_TAB|wxTE_LEFT|wxTE_MULTILINE|wxTE_RICH2|wxTE_NOHIDESEL);
@@ -306,7 +308,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	//amcMXP am(frame->m_child);
+	amcMXP am(frame->m_child);
 	//wxString s = "\xff\xfa\xc9char.vitals{ \"hp\" : 394, \"mana\" : 457, \"moves\" : 709	 }\xff\xf0<\x1b[0; 31m394 / 394Hps \x1b[1; 32m457 / 457Ma \x1b[0; 32m709 / 711Mvs \x1b[0; 36m1qt\x1b[0; 37m> \x1b[0; 37m";
 	//wxString s = "> \x1b[0;37m";
 	//frame->m_child->ParseNBuffer(s.char_str().data());
@@ -364,6 +366,8 @@ bool MudClientApp::OnInit()
 	//am.Parse("<RNum 555><Rdesc>Hallo</Rdesc>");
 	//am.Parse("<EX1 up \"up \" nam>&name;</EX1>");
 	//am.Parse("<RName>LargePlaza</RName>");
+	am.Parse("<!ELEMENT help '<send href=\"help & text; \">'>");
+	am.Parse("<help>start_newbie</help>");
 	//am.Parse("<!ELEMENT RExits FLAG='RoomExit'><!EL Ex '<SEND href=\"go\">'>");
 	//am.Parse("<RExits>[Exits: <Ex>north</Ex> <Ex>south</Ex> <Ex>west</Ex>]</RExits> ");//<Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
 	//am.Parse("\x1b[0;31m<RName>East-West Road</RName>\x1b[0;37m [\x1b[1;34mTaker's Place\x1b[0;37m]\r\n<RDesc>You are on a dirty road that leads east to west.  You can see several houses \r\non this road.  To the south is a large pantry.  There are some oil lamps \r\nhanging on top of wooden poles.</RDesc>  \r\n<RExits>[Exits: <Ex>north</Ex> <Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
@@ -549,7 +553,8 @@ MudMainFrame::MudMainFrame(const wxString& title)
 #endif 
 	SetName("wxAMC");
 
-	CreateDefVars();
+	
+	
 	DefineKeys();
 #if defined __WXMSW__
 	wxFont ff(wxFontInfo(9).FaceName("Consolas"));
@@ -701,17 +706,17 @@ void MudMainFrame::OnCharConnect(wxCommandEvent& event)
 			m_actwindow->MyConnect(GetHosts()->at(m_curhost).GetIP4());
 #ifdef WXAMCL_USEIPV6
 		else
-			m_actwindow->MyConnect(GetHosts()->at(m_curhost).GetIP6());
+			m_actwindow->MyConnect6(GetHosts()->at(m_curhost).GetIP6());
 #endif
-		int idx = GetDefVarIndexByLabel("wxamclChar");
-		GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetCharName());
-		idx = GetDefVarIndexByLabel("wxamclIP");
+		int idx = m_actwindow->GetDefVarIndexByLabel("wxamclChar");
+		m_actwindow->GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetCharName());
+		idx = m_actwindow->GetDefVarIndexByLabel("wxamclIP");
 		if (!m_actwindow->GetUseIPV6())
-			GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIPAddress());
+			m_actwindow->GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIPAddress());
 #ifdef WXAMCL_USEIPV6
 		else
-			//GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIP6Address());
-			GetDefVars()->at(idx).SetValue(":::::");
+			m_actwindow->GetDefVars()->at(idx).SetValue(GetHosts()->at(m_curhost).GetIP6Address());
+			//m_actwindow->GetDefVars()->at(idx).SetValue("::");
 #endif
 		luaBuilddefvar();
 	}
@@ -741,10 +746,38 @@ wxIPV6address addr6;
 		sd->m_port->AppendString(wxString::Format("%d", *iit));
 	if (sd->ShowModal()==wxID_OK)
 	{
+			
 			sd->Validate();
 			sd->TransferDataFromWindow();
 			//addr.Hostname(*sd->m_ip);
-			if (!m_child->GetUseIPV6())
+			if (m_child->IsConnected()) //Should we open another world?
+			{
+				m_active_window++;
+
+				if (m_active_window == 1 && m_notebook->GetSelection() == -1)
+				{
+					m_mgr.GetPane(m_notebook).Show().CenterPane();
+					m_mgr.DetachPane(m_child);
+
+					m_child->Reparent(m_notebook);
+					m_childwindows.push_back(m_child);
+				}
+				MudWindow* nmw = new MudWindow(this);
+				nmw->SetNFont(m_actwindow->GetFont());
+				nmw->SetUFont(m_actwindow->GetFont());
+				nmw->SetIFont(m_actwindow->GetFont());
+				nmw->Reparent(m_notebook);
+				m_childwindows.push_back(nmw);
+				m_actwindow = m_scriptwin = nmw;
+				if (m_active_window == 1 && m_notebook->GetSelection() == -1)
+					m_notebook->AddPage(m_child, _("Welt 1"), false);
+				m_notebook->AddPage(nmw, sd->m_server->GetValue(), true);
+
+				m_mgr.GetPane(m_notebook).Show();
+				m_mgr.Update();
+			}
+			
+			if (!m_actwindow->GetUseIPV6())
 				addr.Hostname(sd->m_server->GetValue());
             #if defined WXAMCL_USEIPV6
 			else
@@ -755,8 +788,8 @@ wxIPV6address addr6;
 			if (!m_child->GetUseIPV6())
 			{
 				addr.Service(iPort);
-				if (!m_child->GetSock()->IsConnected())
-					m_child->MyConnect(addr);
+				if (!m_actwindow->GetSock()->IsConnected())
+					m_actwindow->MyConnect(addr);
 				else
 				{
 					return;
@@ -767,7 +800,7 @@ wxIPV6address addr6;
 			{
 				#if defined WXAMCL_USEIPV6
                 addr6.Service(iPort);
-				m_child->MyConnect(addr6);
+				m_actwindow->MyConnect6(addr6);
                 #endif
 			}
 			int i = count(m_lasthost.begin(), m_lasthost.end(), sd->m_server->GetValue());
@@ -779,6 +812,18 @@ wxIPV6address addr6;
 			if (!i)
 				m_lastport.push_back(l);
 		}
+	
+	
+	int idx = m_actwindow->GetDefVarIndexByLabel("wxamclIP");
+	if (!m_actwindow->GetUseIPV6())
+		m_actwindow->GetDefVars()->at(idx).SetValue(addr.IPAddress());
+	#ifdef WXAMCL_USEIPV6
+	else
+		m_actwindow->GetDefVars()->at(idx).SetValue(addr6.IPAddress());
+	//m_actwindow->GetDefVars()->at(idx).SetValue("::");
+	#endif
+	luaBuilddefvar();
+
 	sd->Destroy();
 }
 
@@ -1644,10 +1689,12 @@ void MudMainFrame::BuildEncodingMenu(wxMenu* view)
 
 void MudMainFrame::CreateDefVars()
 {
-	GetDefVars()->push_back(amcDefVar("wxamclChar", " "));
-	GetDefVars()->push_back(amcDefVar("wxamclIP", "0.0.0.0"));
-	GetDefVars()->push_back(amcDefVar("wxamclLocalIP", "0.0.0.0"));
-	GetDefVars()->push_back(amcDefVar("wxamclLines", "0"));
+	
+	m_actwindow->GetDefVars()->clear();
+	m_actwindow->GetDefVars()->push_back(amcDefVar("wxamclChar", " "));
+	m_actwindow->GetDefVars()->push_back(amcDefVar("wxamclIP", "0.0.0.0"));
+	m_actwindow->GetDefVars()->push_back(amcDefVar("wxamclLocalIP", "0.0.0.0"));
+	m_actwindow->GetDefVars()->push_back(amcDefVar("wxamclLines", "0"));
 
 }
 
@@ -3537,14 +3584,20 @@ size_t i;
 	wxCSConv co(GetGlobalOptions()->GetCurEncoding());
 	lua_settop(L, 0);
 	lua_newtable(L);
-
+	wxString s, ss;
 	for (i = 0; i<m_actwindow->GetDefVars()->size(); i++)
 	{
 		lua_pushstring(L, m_actwindow->GetDefVars()->at(i).GetName().mb_str(co).data());// .mb_str());
 		lua_newtable(L);
+		s = m_actwindow->GetDefVars()->at(i).GetValue().mb_str(co).data();
 		lua_pushstring(L, m_actwindow->GetDefVars()->at(i).GetValue().mb_str(co).data());// .mb_str());
+		ss = m_actwindow->GetDefVars()->at(i).GetName().mb_str(co).data();
 		lua_setfield(L, -2, "value");
 		lua_settable(L, -3);
+		wxString deb;
+
+		deb << "Name: (DefVar)" << ss << " Value: " << s;
+		wxLogDebug(deb);
 	}
 	//register this as table in global namespace wxamcl
 	lua_setglobal(L, "_amcdefvariables");
@@ -3552,6 +3605,8 @@ size_t i;
 	lua_getglobal(L, "_amcdefvariables");
 	lua_setfield(L, -2, "ClientVars"); // 5.2.0
 	lua_settop(L, 0);
+
+	
 
 	/*lua_getglobal(L, "_amcdefvariables");
 	lua_newtable(L);
@@ -4947,7 +5002,7 @@ int num;
 	//sd->m_port->ToLong(&iPort);
 	GetFParam(2).ToLong(&iPort);
 	addr.Service(iPort);
-	m_parent->m_actwindow->MyConnect(addr);
+	m_parent->m_actwindow->MyConnect6(addr);
 	return 0;
 }
 #endif
@@ -5650,7 +5705,7 @@ int InputTextCtrl::Info(wxString *sPar)
 		#endif
         #ifdef __WXMSW__
         else
-            s << _("Connected to ") << m_parent->m_actwindow->GetIP6Addr()->OrigHostname() << " " << m_parent->m_actwindow->GetIP6Addr()->Hostname() << " (IPV6)";
+            s << _("Connected to ") << m_parent->m_actwindow->GetIP6Addr()->IPAddress()/*OrigHostname()*/ << " " << m_parent->m_actwindow->GetIP6Addr()->Hostname() << " (IPV6)";
         #endif
     #endif
 	m_parent->m_actwindow->Msg(s);
