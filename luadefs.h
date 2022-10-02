@@ -17,6 +17,7 @@ int luafunc_showwindow(lua_State *L);
 int luafunc_captionwindow(lua_State *L);
 int luafunc_floatwindow(lua_State *L);
 int luafunc_dockwindow(lua_State *L);
+int luafunc_movewindow(lua_State* L);
 int luafunc_clearwindow(lua_State *L);
 int luafunc_destroywindow(lua_State *L);
 int luafunc_destroynb(lua_State *L);

@@ -1575,6 +1575,27 @@ int luafunc_dockwindow(lua_State *L)
 	return 1;
 }
 
+int luafunc_movewindow(lua_State* L)
+{
+	const char* winname;
+	MudWindow* mw;
+
+	class MudMainFrame* frame = wxGetApp().GetFrame();
+	winname = (char*)luaL_checkstring(L, 1);
+	wxCSConv co(frame->GetGlobalOptions()->GetCurEncoding());
+	wxString wname(winname, co);
+	unordered_map<wxString, wxWindow*> um = *frame->m_scriptwin->GetUserWindows();
+	mw = (MudWindow*)um[wname];
+	//mw = (MudWindow*)MudWindow::FindWindowByName(winname, frame);
+	if (!mw)
+	{
+		lua_pushnil(L);
+		return 1;
+	}
+
+	return 0;
+}
+
 //! wxamcl.clearwindow(windowname)
 
 //!	clears window in lua

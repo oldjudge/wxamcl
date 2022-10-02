@@ -308,7 +308,7 @@ bool MudClientApp::OnInit()
 	//frame->m_child->ParseNBuffer("mAsa");
 	//frame->m_child->SetMSP(true);
 	//frame->m_child->ParseNBuffer("<RExits>\x1b[32mYou see exits leading <COLOR #00FF00><SEND HREF=\"north\">north</SEND></COLOR> (open door) and <COLOR #00FF00><SEND HREF=\"down\">down</SEND></COLOR> (closed door).</RExits>");
-	amcMXP am(frame->m_child);
+	//amcMXP am(frame->m_child);
 	//wxString s = "\xff\xfa\xc9char.vitals{ \"hp\" : 394, \"mana\" : 457, \"moves\" : 709	 }\xff\xf0<\x1b[0; 31m394 / 394Hps \x1b[1; 32m457 / 457Ma \x1b[0; 32m709 / 711Mvs \x1b[0; 36m1qt\x1b[0; 37m> \x1b[0; 37m";
 	//wxString s = "> \x1b[0;37m";
 	//frame->m_child->ParseNBuffer(s.char_str().data());
@@ -366,8 +366,8 @@ bool MudClientApp::OnInit()
 	//am.Parse("<RNum 555><Rdesc>Hallo</Rdesc>");
 	//am.Parse("<EX1 up \"up \" nam>&name;</EX1>");
 	//am.Parse("<RName>LargePlaza</RName>");
-	am.Parse("<!ELEMENT help '<send href=\"help & text; \">'>");
-	am.Parse("<help>start_newbie</help>");
+	//am.Parse("<!ELEMENT help '<send href=\"help & text; \">'>");
+	//am.Parse("<help>start_newbie</help>");
 	//am.Parse("<!ELEMENT RExits FLAG='RoomExit'><!EL Ex '<SEND href=\"go\">'>");
 	//am.Parse("<RExits>[Exits: <Ex>north</Ex> <Ex>south</Ex> <Ex>west</Ex>]</RExits> ");//<Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
 	//am.Parse("\x1b[0;31m<RName>East-West Road</RName>\x1b[0;37m [\x1b[1;34mTaker's Place\x1b[0;37m]\r\n<RDesc>You are on a dirty road that leads east to west.  You can see several houses \r\non this road.  To the south is a large pantry.  There are some oil lamps \r\nhanging on top of wooden poles.</RDesc>  \r\n<RExits>[Exits: <Ex>north</Ex> <Ex>east</Ex> <Ex>west</Ex>]</RExits>\x1b[1;34m\x1b[0;37m  ");
@@ -2448,7 +2448,10 @@ li_it itl;
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			MudWindow* mw = (MudWindow*)MudWindow::FindWindowByName(*sit, this);
 			file->Write(wxString::Format("[\"font\"] = [[%s]], ", mw->GetFont()->GetNativeFontInfoDesc().c_str()));
-			file->Write(wxString::Format("[\"timestamps\"] = %s},\n", mw->UseTimeStamps() ? "true" : "false"));
+			file->Write(wxString::Format("[\"timestamps\"] = %s,\n", mw->UseTimeStamps() ? "true" : "false"));
+			wxAuiPaneInfo pa = m_mgr.GetPane(*sit);
+			wxString pi = m_mgr.SavePaneInfo(pa);
+			file->Write(wxString::Format("\t\t[\"amcpaneinfo\"] = [[%s]]}, \n", pi.c_str()));
 		}
 	}
 	file->Write("\t}");
@@ -2457,7 +2460,10 @@ li_it itl;
 	{
 		for (sit=m_actwindow->GetNbs()->begin();sit!=m_actwindow->GetNbs()->end();sit++)
 		{
-			file->Write(wxString::Format("\t\t[[%s]],\n", sit->c_str()));
+			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
+			wxAuiPaneInfo pa = m_mgr.GetPane(*sit);
+			wxString pi = m_mgr.SavePaneInfo(pa);
+			file->Write(wxString::Format("[\"amcpaneinfo\"] = [[%s]]}, \n", pi.c_str()));
 		}
 	}
 	file->Write("\t}");
@@ -2486,7 +2492,10 @@ li_it itl;
 		{
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			GaugeWindow* gw = (GaugeWindow*)GaugeWindow::FindWindowByName(*sit, this);
-			file->Write(wxString::Format("[\"font\"] = [[%s]]}, \n", gw->GetFont()->GetNativeFontInfoDesc().c_str()));
+			file->Write(wxString::Format("[\"font\"] = [[%s]], \n", gw->GetFont()->GetNativeFontInfoDesc().c_str()));
+			wxAuiPaneInfo pa = m_mgr.GetPane(*sit);
+			wxString pi = m_mgr.SavePaneInfo(pa);
+			file->Write(wxString::Format("\t\t[\"amcpaneinfo\"] = [[%s]]}, \n", pi.c_str()));
 			
 		}
 	}
@@ -2542,13 +2551,17 @@ li_it itl;
 		{
 			file->Write(wxString::Format("\t\t{[\"name\"] = [[%s]], ", sit->c_str()));
 			amcWindow* aw = (amcWindow*)amcWindow::FindWindowByName(*sit, this);
-			file->Write(wxString::Format("[\"fontname\"] = [[%s]]}, \n", aw->GetFont().GetNativeFontInfoDesc().c_str()));
-			
+			file->Write(wxString::Format("[\"fontname\"] = [[%s]], \n", aw->GetFont().GetNativeFontInfoDesc().c_str()));
+			wxAuiPaneInfo pa = m_mgr.GetPane(*sit);
+			wxString pi = m_mgr.SavePaneInfo(pa);
+			file->Write(wxString::Format("\t\t[\"amcpaneinfo\"] = [[%s]]}, \n", pi.c_str()));
 			
 		}
 	}
 	file->Write(("\t}"));
 	file->Write("\n\n\tamc_buttons = {\n");
+	wxString bttb_old;
+	std::vector<wxString> bttb;
 	if (!m_actwindow->GetButtons()->empty())
 	{
 		b_it bit;
@@ -2568,12 +2581,28 @@ li_it itl;
 			file->Write(ss.c_str());
 			ss.clear();
 			ss << "[\"tb\"] = [[" << bit->GetTbName() << "]], ";
+			if (bttb_old.Cmp(bit->GetTbName()))
+			{
+				bttb_old = bit->GetTbName();
+				bttb.push_back(bit->GetTbName());
+			}
+			
 			file->Write(ss.c_str());
 			ss.clear();
 			ss << "[\"bitmap\"] = [[" << bit->GetBitmap() << "]]},\n";
 			file->Write(ss.c_str());
 			ss.clear();
 		}
+	}
+	
+	file->Write("\t}");
+	file->Write("\t\n\n\tamc_tbs = {\n");
+	for (int i = 0; i < bttb.size(); i++)
+	{
+		file->Write(wxString::Format("\t{[\"name\"] = [[%s]], ", bttb.at(i)));
+		wxAuiPaneInfo pa = m_mgr.GetPane(bttb.at(i));
+		wxString pi = m_mgr.SavePaneInfo(pa);
+		file->Write(wxString::Format("[\"amcpaneinfo\"] = [[%s]]}, \n", pi.c_str()));
 	}
 	file->Write("\t}");
 	file->Write("\n\n\tamc_packages = {\n");
@@ -2627,9 +2656,38 @@ li_it itl;
 	wxString p = m_mgr.SavePerspective();
 	file->Write(("\n\n\tamc_layout = "));
 	file->Write(wxString::Format("[=[%s]=]\n", p.c_str()));
+	wxAuiPaneInfo pa = m_mgr.GetPane("amcinput");
+	wxString pi = m_mgr.SavePaneInfo(pa);
+	
+	file->Write(("\n\n\tamc_mainwindows = {\n"));
+	file->Write(wxString::Format("\t\t[\"amcinput\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amcmain");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amcmain\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amcsplitter");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amcsplitter\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amctoggle");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amctoggle\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amcmedia");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amcmedia\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amcmultinb");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amcmultinb\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amctooolbar");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amctoolbar\"] = [[%s]] ,\n", pi.c_str()));
+	pa = m_mgr.GetPane("amcprompt");
+	pi = m_mgr.SavePaneInfo(pa);
+	file->Write(wxString::Format("\t\t[\"amcprompt\"] = [[%s]] ,\n", pi.c_str()));
+
+	file->Write("\t}");
 	wxDateTime dt;
 	dt.SetToCurrent();
 	file->Write(wxString::Format(("\n\t-- written on %s, %s\n"), dt.FormatDate().c_str(), dt.FormatTime().c_str()));
+	
 	file->Close();
 	delete file;
 	return true;
@@ -2943,7 +3001,12 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			mw->SetUFont(&f);
 			aL->GetField(-3, "timestamps");
 			mw->SetTimeStamps(aL->GetBoolean(-1));
-			m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			aL->GetField(-4, "amcpaneinfo");
+			wxString info = aL->GetUTF8String(-1);
+			wxAuiPaneInfo pane;
+			m_mgr.LoadPaneInfo(info, pane);
+			m_mgr.AddPane(mw, pane);
+			//m_mgr.AddPane(mw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 			aL->SetTop(0);
 
 
@@ -2964,14 +3027,20 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 
 			aL->GetField(-2, "fontname");
 			wxFont f(aL->GetUTF8String(-1));
+			aL->GetField(-3, "amcpaneinfo");
+			wxString info = aL->GetUTF8String(-1);
+			
 
 			//amcWindow * aw = new amcWindow(this, win);
 			amcWindow * aw = new amcWindow(this, win);
 			aw->SetName(win);
 
-			m_mgr.AddPane(aw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			//m_mgr.AddPane(aw, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 			aL->SetTop(0);
 			uw[win] = aw;
+			wxAuiPaneInfo pane;
+			m_mgr.LoadPaneInfo(info, pane);
+			m_mgr.AddPane(aw, pane);
 		}
 
 		aL->GetGlobal("amc_nbs");
@@ -2983,6 +3052,7 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			aL->GetGlobal("amc_nbs");
 			aL->PushInt(i + 1);
 			aL->GetTable(-2);
+			aL->GetField(-1, "name");
 			wxString win = aL->GetUTF8String(-1);
 			GetNbs()->push_back(win);
 			vector<wxString> s;
@@ -2990,6 +3060,8 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			wxAuiNotebook * nb = new wxAuiNotebook(this);
 			nb->SetName(win);
 			nb->SetLabel(win);
+			aL->GetField(-2, "amcpaneinfo");
+			wxString info = aL->GetUTF8String(-1);
 			aL->GetGlobal("amc_nbpanes");
 			aL->PushInt(i + 1);
 			aL->GetTable(-2);
@@ -3022,7 +3094,10 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 				aL->SetTop(0);
 				//delete mw;
 			}
-			m_mgr.AddPane(nb, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			//m_mgr.AddPane(nb, wxAuiPaneInfo().Name(win).Caption(win).CaptionVisible(true).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			wxAuiPaneInfo pane;
+			m_mgr.LoadPaneInfo(info, pane);
+			m_mgr.AddPane(nb, pane);
 			aL->SetTop(0);
 			//delete nb;
 		}
@@ -3051,6 +3126,8 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			wxFont f(aL->GetUTF8String(-1));
 
 			gw->SetFont(&f);
+			aL->GetField(-3, "amcpaneinfo");
+			wxString info = aL->GetUTF8String(-1);
 			aL->GetGlobal(("amc_gauges"));
 			aL->PushInt(i + 1);
 			aL->GetTable(-2);
@@ -3114,8 +3191,11 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 				//gw->GetGauges()->push_back(g);
 				aL->SetTop(0);
 			}
-			m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).CaptionVisible(false).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
+			//m_mgr.AddPane(gw, wxAuiPaneInfo().Name(win).CaptionVisible(false).Floatable(true).FloatingSize(400, 200).BestSize(400, 200).Dockable(true).Dock().Top().Layer(1).Show());
 			aL->SetTop(0);
+			wxAuiPaneInfo pane;
+			m_mgr.LoadPaneInfo(info, pane);
+			m_mgr.AddPane(gw, pane);
 			//delete gw;
 		}
 
@@ -3169,6 +3249,7 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 		aL->SetTop(0);
 		m_buttons.push_back(b);
 	}
+	
 
 	aL->GetGlobal("amc_events");
 	aL->GetField(-1, "useevents");
@@ -3218,6 +3299,31 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 	f = aL->GetUTF8String(-1);
 	m_gopt->SetDatabaseDir(f);
 	aL->SetTop(0);
+	
+	aL->GetGlobal("amc_tbs");
+	len = aL->GetObjectLen();
+	aL->Pop(1);
+	for (int i = 0; i < len; i++)
+	{
+		aL->GetGlobal("amc_tbs");
+		aL->PushInt(i + 1);
+		aL->GetTable(-2);
+		aL->GetField(-1, "name");
+		wxString win = aL->GetUTF8String(-1);
+		aL->GetField(-2, "amcpaneinfo");
+		wxString info = aL->GetUTF8String(-1);
+		wxAuiPaneInfo pane;
+		m_mgr.LoadPaneInfo(info, pane);
+		bool k = m_mgr.GetPane(win).IsOk();
+		if (!k)
+		{
+			wxAuiToolBar* tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_TEXT | wxAUI_TB_GRIPPER);
+			tb->SetName(win);
+			uw[win] = tb;
+			tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
+			m_mgr.AddPane(tb, pane);
+		}
+	}
 
 	for (size_t i = 0; i < GetButtons()->size(); i++)
 	{
@@ -3246,12 +3352,9 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 		}
 		else
 		{
-			tb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_TEXT | wxAUI_TB_GRIPPER);
-			tb->SetName(n);
-			uw[n] = tb;
-			tb->SetToolTextOrientation(wxAUI_TBTOOL_TEXT_RIGHT);
-			m_mgr.AddPane(tb, wxAuiPaneInfo().Name(n).Caption(n).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
-			//m_mgr.Update();
+			
+			//m_mgr.AddPane(tb, wxAuiPaneInfo().Name(n).Caption(n).ToolbarPane().CaptionVisible(false).Floatable(true).BestSize(600, 24).LeftDockable(true).Dockable(true).Dock().Top());
+			
 			GetButtons()->at(i).SetParent(tb);
 			if (GetButtons()->at(i).GetName() == "separator")
 				tb->AddSeparator();
@@ -3266,7 +3369,7 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			//delete tb;
 		}
 	}
-	
+		
 
 	//BuildEncodingMenu(view);
 	int ec = (int)m_gopt->GetCurEncoding();
@@ -3336,12 +3439,57 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 			item->Check();
 		break;
 	}
-	
+	aL->GetGlobal("amc_mainwindows");
+	len = aL->GetObjectLen();
+	aL->Pop(1);
+	for (int i = 0; i < len; i++)
+	{
+		aL->GetField(-1, "amcinput");
+		f = aL->GetUTF8String(-1);
+		wxAuiPaneInfo pane;
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_input, pane);
+		aL->GetField(-2, "amcmain");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_child, pane);
+		aL->GetField(-3, "amcsplitter");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_splitter, pane);
+		aL->GetField(-4, "amctoggle");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_toggle, pane);
+		aL->GetField(-7, "amctoolbar");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_toolbar, pane);
+		aL->GetField(-6, "amcmultinb");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_notebook, pane);
+		aL->GetField(-5, "amcmedia");
+		f = aL->GetUTF8String(-1);
+		
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_media, pane);
+		aL->GetField(-8, "amcprompt");
+		f = aL->GetUTF8String(-1);
+
+		m_mgr.LoadPaneInfo(f, pane);
+		m_mgr.AddPane(m_prompt, pane);
+	}
 	
 	aL->GetGlobal("amc_layout");
 	wxString p = aL->GetUTF8String(-1);
 	aL->Pop(1);
-	m_mgr.LoadPerspective(p);
+	//m_mgr.LoadPerspective(p);
 	m_mgr.GetPane("amcmain").Show();
 	m_mgr.GetPane("amcmultinb").Hide();
 	m_mgr.Update();
@@ -3353,6 +3501,7 @@ bool MudMainFrame::LoadProfile(wxFileName s, bool firsttime)
 		}
 
 		int items1 = view->GetMenuItemCount() - 1;
+		
 		for (size_t i = 0; i < GetNbs()->size(); i++)
 			view->InsertCheckItem(i + items1 - 1, ID_USERWINDOW + items1 + i, GetNbs()->at(i));
 
